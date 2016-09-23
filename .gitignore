@@ -1,1 +1,28 @@
 # Created by .ignore support plugin (hsz.mobi)
+/target/
+*.jar
+*.class
+mvnw
+mvnw.cmd
+*.tar.gz
+/node_modules/
+/node/
+.DS_Store
+.tmp/
+src/tests/
+src/app/scripts/templates.js
+src/app/components/masthead/
+bower_components/
+npm-debug.log
+src/app/styles/main.css
+src/app/styles/main.css.map
+src/main/resources/static/
+bdd/dist/
+bdd/e2e/reports/
+bdd/node_modules/
+bdd/phantomjsdriver.log
+
+# IDEA files #
+######################
+.idea/
+**/*.iml
