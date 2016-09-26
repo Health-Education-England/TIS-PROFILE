@@ -84,7 +84,7 @@ public class LoginControllerTest {
 		//Then
 		ArgumentCaptor<HttpEntity> requestEntityCaptor = ArgumentCaptor.forClass(HttpEntity.class);
 		verify(restTemplate).
-				exchange(eq("http://ec2-52-17-13-23.eu-west-1.compute.amazonaws.com:8079/openam/json/users/{userName}"),
+				exchange(eq("http://openam.transformcloud.net:8079/openam/json/users/{userName}"),
 						eq(HttpMethod.GET), requestEntityCaptor.capture(), eq(UserProfile.class), eq(TIS_USER));
 
 		HttpEntity entity = requestEntityCaptor.getValue();
@@ -124,7 +124,7 @@ public class LoginControllerTest {
 		//Then
 		ArgumentCaptor<HttpEntity> requestEntityCaptor = ArgumentCaptor.forClass(HttpEntity.class);
 		verify(restTemplate).
-				exchange(eq("http://ec2-52-17-13-23.eu-west-1.compute.amazonaws.com:8079/openam/json/users/{userName}"),
+				exchange(eq("http://openam.transformcloud.net:8079/openam/json/users/{userName}"),
 						eq(HttpMethod.GET), requestEntityCaptor.capture(), eq(UserProfile.class), eq(TIS_USER));
 
 		HttpEntity entity = requestEntityCaptor.getValue();
@@ -159,7 +159,7 @@ public class LoginControllerTest {
 		//Then
 		ArgumentCaptor<HttpEntity> requestEntityCaptor = ArgumentCaptor.forClass(HttpEntity.class);
 		verify(restTemplate).postForObject(
-				eq("http://ec2-52-17-13-23.eu-west-1.compute.amazonaws.com:8079/openam/json/sessions/?_action=logout"),
+				eq("http://openam.transformcloud.net:8079/openam/json/sessions/?_action=logout"),
 				requestEntityCaptor.capture(), eq(String.class));
 		HttpEntity entity = requestEntityCaptor.getValue();
 		assertThat(entity.getHeaders().get("iplanetDirectoryPro")).contains(TIS_TOKENID);
