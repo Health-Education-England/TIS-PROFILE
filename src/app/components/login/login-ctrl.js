@@ -3,25 +3,24 @@
 
 angular.module('heeTisGuiApp')
 	.controller('LoginCtrl', ['$translate', '$translatePartialLoader', 'LoginService', 'PermissionsService', '$cookies',
-	'$cookieStore', '$rootScope', 'ROLES','$location', '$state',
+	'$cookieStore', '$rootScope', 'ROLES','$location', '$state', '$window',
 
 	function ($translate, $translatePartialLoader, LoginService, PermissionsService, $cookies, $cookieStore, $rootScope,
-	ROLES, $location, $state) {
+	ROLES, $location, $state, $window) {
 
 		var ctrl = this;
 
 		ctrl.authenticate = function (username, password) {
 			LoginService.authenticateUser.create({headers: { 'X-TIS-Username': username, 'X-TIS-Password':password}})
 			.then(function(response) {
-
 				// Prepare logged in user and set it in route scope
 				var fullName = response.fullName;
 				var uid = response.userName;
 				var roles = [];
 
-				response.roles.split("cn=").forEach(function(groupString){
-					if (groupString && groupString !== ''){
-						roles.push(groupString.split(',')[0]);
+				response.roles.forEach(function(roleString){
+					if (roleString && roleString !== ''){
+						roles.push(roleString);
 					}
 				});
 
@@ -43,15 +42,11 @@ angular.module('heeTisGuiApp')
 		};
 
 		ctrl.checkPermissions = function(user) {
+		    var appUrl = 'http://' + $location.host() + '/revalidation';
+		    console.log(appUrl);
 			PermissionsService.setPermissions(user, function() {
 				if ($location.url() === "" || $location.url() === "/login" || $location.url() === "/") {
-					if (user.isTrainee) {
-						$state.go('contactDetailsForm');
-					} else if (user.isOfficer) {
-						$state.go('dashboard.underNotice');
-					} else {
-						$state.go('dashboard.underNotice');
-					}
+					$window.location.replace(appUrl);
 				} else {
 					$state.reload();
 				}

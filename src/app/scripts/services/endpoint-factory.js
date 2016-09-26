@@ -5,12 +5,12 @@ angular.module('heeTisGuiApp')
 	.factory('EndpointFactory', ['$http', '$q', '$location',
 	function ($http, $q, $location) {
 
-		var Endpoints = function(endpoint) {
+		var Endpoints = function(endpoint, port) {
 
 			var self = this;
 			var methods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'];
 			var hostFromEnv = $location.host();
-			var base = 'http://' + hostFromEnv + ':8082/';
+			var base = 'http://' + hostFromEnv + ':' + port + '/';
 
 			var _endpoints = {};
 			// var version = 'v1';
@@ -173,8 +173,8 @@ angular.module('heeTisGuiApp')
 		};
 
 		return {
-			connect: function(endpoint) {
-				return new Endpoints(endpoint);
+			connect: function(endpoint, port) {
+				return new Endpoints(endpoint, port);
 			}
 		};
 

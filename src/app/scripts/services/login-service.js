@@ -9,8 +9,8 @@ angular.module('heeTisGuiApp')
 	.factory('LoginService', ['EndpointFactory', '$state', '$rootScope', '$location', '$cookieStore',
 	function(EndpointFactory, $state, $rootScope, $location, $cookieStore) {
 			return {
-				logout: EndpointFactory.connect('identity/logout'),
-				authenticateUser: EndpointFactory.connect('identity/authenticate'),
+				logout: EndpointFactory.connect('identity/logout','8082'),
+				authenticateUser: EndpointFactory.connect('identity/authenticate','8082'),
 				logoutUser: function() {
 					var userToken = $rootScope.user.token;
 

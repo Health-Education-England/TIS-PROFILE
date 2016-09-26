@@ -9,7 +9,7 @@ angular.module('heeTisGuiApp')
 	.factory('PermissionsService', ['EndpointFactory', 'authz', '$rootScope', '$state', '$cookieStore',
 			function (EndpointFactory, authz, $rootScope, $state, $cookieStore) {
 				return {
-					permissions: EndpointFactory.connect('permissions'),
+					permissions: EndpointFactory.connect('permissions','8080'),
 					setPermissions: function(user, callback) {
 						var roles = user.roles;
 						this.permissions.fetch({
