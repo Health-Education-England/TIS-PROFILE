@@ -10,7 +10,7 @@ angular.module('heeTisGuiApp')
 			var self = this;
 			var methods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'];
 			var hostFromEnv = $location.host();
-			var base = 'http://' + hostFromEnv + ':8080/';
+			var base = 'http://' + hostFromEnv + ':8082/';
 
 			var _endpoints = {};
 			// var version = 'v1';
