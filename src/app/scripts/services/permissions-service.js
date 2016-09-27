@@ -6,8 +6,8 @@
  * of roles
  */
 angular.module('heeTisGuiApp',['ngCookies'])
-	.factory('PermissionsService', ['EndpointFactory', 'authz', '$rootScope', '$cookies', '$location','$state',
-			function (EndpointFactory, authz, $rootScope, $cookies, $location, $state) {
+	.factory('PermissionsService', ['EndpointFactory', 'authz', '$rootScope', '$cookies', '$location','$state','$translate',
+			function (EndpointFactory, authz, $rootScope, $cookies, $location, $state, $translate) {
 				return {
 					permissions: EndpointFactory.connect('permissions','8080'),
 					setPermissions: function(user, callback) {
