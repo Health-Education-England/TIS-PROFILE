@@ -45,20 +45,13 @@
 </p>
 <![endif]-->
 
-<!--<div class="container" ng-controller="commonCtrl as commonCtrl">-->
-
-	<!--<modal-loader ng-show="commonCtrl.isUpdating" trigger="commonCtrl.isUpdating"></modal-loader>-->
-
-	<!--<div ui-view></div>-->
-<!--</div>-->
-
-<div class="container" ng-class="{ 'grey-border': user.loggedIn === true }" ng-controller="commonCtrl as commonCtrl">
-	<div ng-include="'app/components/masthead/masthead.html'"></div>
+<div class="container" ng-controller="commonCtrl as commonCtrl">
 
 	<modal-loader ng-show="commonCtrl.isUpdating" trigger="commonCtrl.isUpdating"></modal-loader>
 
 	<div ui-view></div>
 </div>
+
 
 <!--[if lt IE 9]>
 <script src="scripts/respond.min.afc1984a.js"></script>
