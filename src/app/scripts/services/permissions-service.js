@@ -5,9 +5,9 @@
  * This service provides access to the /permissions API which lists the permissions for a given set
  * of roles
  */
-angular.module('heeTisGuiApp')
-	.factory('PermissionsService', ['EndpointFactory', 'authz', '$rootScope', '$state', '$cookieStore', '$cookies','$location',
-			function (EndpointFactory, authz, $rootScope, $state, $cookieStore, $cookies, $location) {
+angular.module('heeTisGuiApp',['ngCookies'])
+	.factory('PermissionsService', ['EndpointFactory', 'authz', '$rootScope', '$cookies', '$location','$state',
+			function (EndpointFactory, authz, $rootScope, $cookies, $location, $state) {
 				return {
 					permissions: EndpointFactory.connect('permissions','8080'),
 					setPermissions: function(user, callback) {
