@@ -42,7 +42,8 @@ angular.module('heeTisGuiApp')
 		};
 
 		ctrl.checkPermissions = function(user) {
-		    var appUrl = 'http://' + $location.host() + '/revalidation';
+		    var appUrl = '//' + $location.host() + '/revalidation/';
+		    console.log('Redirecting to: '+ appUrl);
 		    console.log(appUrl);
 			PermissionsService.setPermissions(user, function() {
 				if ($location.url() === "" || $location.url() === "/login" || $location.url() === "/") {
