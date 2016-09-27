@@ -9,8 +9,11 @@ angular.module('heeTisGuiApp')
 
 			var self = this;
 			var methods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'];
-			var hostFromEnv = $location.host();
-			var base = 'http://' + hostFromEnv + ':' + port + '/';
+
+			var base = '//' + $location.host() + '/revalidation/';
+			if (port === '8082') {
+			    base = '//' + $location.host() + '/auth/';
+			}
 
 			var _endpoints = {};
 			// var version = 'v1';
