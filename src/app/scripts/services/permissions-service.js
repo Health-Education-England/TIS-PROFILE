@@ -6,8 +6,8 @@
  * of roles
  */
 angular.module('heeTisGuiApp')
-	.factory('PermissionsService', ['EndpointFactory', 'authz', '$rootScope', '$state', '$cookieStore',
-			function (EndpointFactory, authz, $rootScope, $state, $cookieStore) {
+	.factory('PermissionsService', ['EndpointFactory', 'authz', '$rootScope', '$state', '$cookieStore', '$cookies','$location',
+			function (EndpointFactory, authz, $rootScope, $state, $cookieStore, $cookies, $location) {
 				return {
 					permissions: EndpointFactory.connect('permissions','8080'),
 					setPermissions: function(user, callback) {
@@ -29,7 +29,8 @@ angular.module('heeTisGuiApp')
 							});
 							authz.setPermissions(permissions);
 							user.permissions = permissions;
-							$cookieStore.put('user', user);
+							//$cookieStore.put('user', user);
+							$cookies.put('user', user, { path: '/', domain: $location.host(), secure: true });
 
 							//check permissions per URL
 							$rootScope.$on('$stateChangeStart', function(event, toState) {
