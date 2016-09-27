@@ -9,9 +9,9 @@
 	<!--[if lt IE 9]>
 	<script src="scripts/html5shiv.min.40bd440d.js"></script>
 	<![endif]-->
-	<link rel="stylesheet" href="/common/vendor.css">
+	<link rel="stylesheet" href="//localhost:8085/vendor.css">
 	<!-- build:css styles/hee.css -->
-	<link rel="stylesheet" href="app/styles/main.css">
+	<link rel="stylesheet" href="styles/main.css">
 	<!-- endbuild -->
 	<!--[if lt IE 9]>
 	<script>
@@ -45,7 +45,15 @@
 </p>
 <![endif]-->
 
-<div class="container" ng-controller="commonCtrl as commonCtrl">
+<!--<div class="container" ng-controller="commonCtrl as commonCtrl">-->
+
+	<!--<modal-loader ng-show="commonCtrl.isUpdating" trigger="commonCtrl.isUpdating"></modal-loader>-->
+
+	<!--<div ui-view></div>-->
+<!--</div>-->
+
+<div class="container" ng-class="{ 'grey-border': user.loggedIn === true }" ng-controller="commonCtrl as commonCtrl">
+	<div ng-include="'app/components/masthead/masthead.html'"></div>
 
 	<modal-loader ng-show="commonCtrl.isUpdating" trigger="commonCtrl.isUpdating"></modal-loader>
 
@@ -56,17 +64,17 @@
 <script src="scripts/respond.min.afc1984a.js"></script>
 <![endif]-->
 
-<script src="/common/vendor.js"></script>
+<script src="//localhost:8085/vendor.js"></script>
 
 <!-- build:js scripts/hee.js -->
-<script src="app/scripts/app.js"></script>
-<script src="app/scripts/services/endpoint-factory.js"></script>
-<script src="app/scripts/templates.js"></script>
-<script src="app/components/masthead/masthead-ctrl.js"></script>
-<script src="app/scripts/services/permissions-service.js"></script>
-<script src="app/scripts/services/login-service.js"></script>
-<script src="app/components/common/common-ctrl.js"></script>
-<script src="app/components/login/login-ctrl.js"></script>
+-<script src="app.js"></script>
+-<script src="scripts/services/endpoint-factory.js"></script>
+-<script src="scripts/templates.js"></script>
+-<script src="components/masthead/masthead-ctrl.js"></script>
+-<script src="scripts/services/permissions-service.js"></script>
+-<script src="scripts/services/login-service.js"></script>
+-<script src="components/common/common-ctrl.js"></script>
+-<script src="components/login/login-ctrl.js"></script>
 <!-- endbuild -->
 </body>
 </html>
