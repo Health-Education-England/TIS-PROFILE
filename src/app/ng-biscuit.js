@@ -47,11 +47,7 @@ angular.module('ngBiscuit').
               break;
           }
         }
-        $document[0].cookie = encodeURIComponent(key) + "=" + encodeURIComponent(value)
-          + expires
-          + (domain ? "; domain=" + domain : "")
-          + (path ? "; path=" + path : "")
-          + (secure ? "; secure" : "");
+        $document[0].cookie = encodeURIComponent(key) + "=" + encodeURIComponent(value) + expires + (domain ? "; domain=" + domain : "") + (path ? "; path=" + path : "") + (secure ? "; secure" : "");
 
         return true;
       },
@@ -65,9 +61,7 @@ angular.module('ngBiscuit').
         var domain = (options && options.domain) || '',
           path = (options && options.path) || '';
 
-        $document[0].cookie = encodeURIComponent(key) + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT"
-          + ( domain ? "; domain=" + domain : "")
-          + ( path ? "; path=" + path : "");
+        $document[0].cookie = encodeURIComponent(key) + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT" + ( domain ? "; domain=" + domain : "") + ( path ? "; path=" + path : "");
 
         return true;
       }
