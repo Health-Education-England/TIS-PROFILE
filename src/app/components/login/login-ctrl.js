@@ -46,7 +46,7 @@ angular.module('heeTisGuiApp')
 		    console.log('Redirecting to: '+ appUrl);
 			PermissionsService.setPermissions(user, function(permissions) {
 			    user.permissions = permissions;
-			    cookieStore.put('user', user, { path: "/" });
+			    cookieStore.put('user', JSON.stringify(user), { path: "/" });
 				if ($location.url() === "" || $location.url() === "/login" || $location.url() === "/") {
 					$window.location.replace(appUrl);
 				} else {

@@ -28,8 +28,6 @@ angular.module('heeTisGuiApp')
 								}
 							});
 							authz.setPermissions(permissions);
-							user.permissions = permissions;
-							//cookieStore.put('user', user, { path: "/" });
 
 							//check permissions per URL
 							$rootScope.$on('$stateChangeStart', function(event, toState) {
@@ -40,7 +38,7 @@ angular.module('heeTisGuiApp')
 									$state.go('notAuthorized');
 								}
 							});
-							callback();
+							callback(permissions);
 						});
 					}
 				};
