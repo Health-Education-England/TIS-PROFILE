@@ -8,6 +8,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -25,6 +26,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.google.common.collect.Iterables.getFirst;
+import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -32,6 +34,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @Api(value = "/identity", description = "API to invoke OpenAm login and logout")
 @RequestMapping("/identity")
 public class LoginController {
+	private static final Logger LOG = getLogger(LoginController.class);
 
 	// OpenAM paths
 	private static final String LOGIN_PATH = "openam/json/authenticate";
@@ -66,7 +69,9 @@ public class LoginController {
 	                                  @RequestHeader(value = "X-TIS-Password") String password) {
 		String tokenId = getToken(userName, password);
 		UserProfile userProfile = getUserProfile(userName, tokenId);
-		return toLoginResponse(userProfile, tokenId);
+		LoginResponse loginResponse = toLoginResponse(userProfile, tokenId);
+		LOG.info("AuditEvent: User:{} logged in successfully", userName);
+		return loginResponse;
 	}
 
 	@ApiOperation(value = "logout()", notes = "logouts a user session",
@@ -83,6 +88,7 @@ public class LoginController {
 
 		String logoutUrl = openAMHost + LOGOUT_PATH;
 		restTemplate.postForObject(logoutUrl, request, String.class);
+		LOG.info("AuditEvent: Successfully loggedout");
 	}
 
 	private String getToken(String userName, String password) {
