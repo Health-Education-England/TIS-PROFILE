@@ -5,7 +5,8 @@
     "bootstrap": "3.2.0",
     "tis-common-components": "*",
     "html5shiv": "3.7.3",
-    "respond": "1.4.2"
+    "respond": "1.4.2",
+    "ng-biscuit":"0.2.1"
   },
   "appPath": "src",
   "distPath": "target/classes/static",

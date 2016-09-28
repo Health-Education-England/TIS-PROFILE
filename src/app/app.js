@@ -17,6 +17,7 @@ angular
 		'ngSanitize',
 		'ngTouch',
 		'ngCookies',
+		'ngBiscuit',
 		'angular-authz',
 		'heeTemplates',
 		'pascalprecht.translate',

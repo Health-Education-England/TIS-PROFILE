@@ -5,9 +5,9 @@
  * This service provides access to the /permissions API which lists the permissions for a given set
  * of roles
  */
-angular.module('heeTisGuiApp',['ngCookies'])
-	.factory('PermissionsService', ['EndpointFactory', 'authz', '$rootScope', '$cookies', '$location','$state','$translate',
-			function (EndpointFactory, authz, $rootScope, $cookies, $location, $state, $translate) {
+angular.module('heeTisGuiApp')
+	.factory('PermissionsService', ['EndpointFactory', 'authz', '$rootScope', '$cookies', '$location','$state','cookieStore',
+			function (EndpointFactory, authz, $rootScope, $cookies, $location, $state, cookieStore) {
 				return {
 					permissions: EndpointFactory.connect('permissions','8080'),
 					setPermissions: function(user, callback) {
@@ -29,8 +29,10 @@ angular.module('heeTisGuiApp',['ngCookies'])
 							});
 							authz.setPermissions(permissions);
 							user.permissions = permissions;
-							//$cookieStore.put('user', user);
-							$cookies.put('user', user, { path: '/', domain: $location.host(), secure: true });
+							cookieStore.put('user', user, { path: "/" });
+							//$cookies.put('user', user, { path: '/', domain: $location.host(), secure: true });
+							//CookieFactory.setCookie('user', user);
+							//$window.Cookies.set('user', user, { path: '/' });
 
 							//check permissions per URL
 							$rootScope.$on('$stateChangeStart', function(event, toState) {
