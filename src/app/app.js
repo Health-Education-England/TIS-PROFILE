@@ -12,7 +12,6 @@
 angular
 	.module('heeTisGuiApp', [
 		'ngAnimate',
-		'ngCookies',
 		'ngResource',
 		'ngSanitize',
 		'ngTouch',

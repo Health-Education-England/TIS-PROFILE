@@ -1,0 +1,148 @@
+.masthead {
+	.wrapper {
+		border-top: solid 1px @bk-dark-grey;
+		border-bottom: solid 1px @bk-dark-grey;
+		box-shadow: 1px 2px 6px 1px #bababa;
+		position: relative;
+		z-index: 1;
+	}
+	.tis-logo {
+		.font-size(@nhs-font-medium);
+		font-weight: bold;
+		color: #fff;
+		background-color: @nhs-blue;
+		width: 21em;
+		margin: 0 0 0.8em 1em;
+		padding: 0.8em 0;
+		text-align: center;
+		text-transform: uppercase;
+		border-radius: 0 0 0.8em 0.8em;
+	}
+	.tis-logo span {
+		.font-size(@nhs-font-xlarge);
+		font-weight: bold;
+	}
+	.nhs-logo {
+		text-align: right;
+		padding-right: 15px;
+
+		i {
+			font-weight: bold;
+			display: block;
+		}
+	}
+
+	nav {
+		width: 75%;
+
+		ul {
+			margin: 0;
+			padding: 0;
+			float: left;
+			border-right: solid 1px #fff;
+		}
+		li {
+			display: block;
+			float: left;
+			list-style: none;
+			padding: 10px 15px;
+			border-right: solid 1px @bk-dark-grey;
+			border-left: solid 1px #fff;
+
+			&:first-child {
+				border-left: none;
+			}
+		}
+
+		a {
+			font-weight: bold;
+			.font-size(@nhs-font-medium);
+			padding-bottom: 2px;
+
+			&:hover {
+				text-decoration: none;
+			}
+		}
+
+		.front-admin a {
+			color: black;
+
+			&:hover {
+				border-bottom: solid 3px @nhs-blue;
+			}
+		}
+
+		.front-white a {
+			&:hover {
+				color: white;
+				border-bottom: solid 3px white;
+			}
+		}
+
+		.hee-icon {
+			.font-size(@nhs-font-large);
+		}
+
+		.front-admin {
+			color: @nhs-blue;
+		}
+	}
+	.login-and-search {
+		.user-details {
+			width: 200px;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			.clickable();
+		}
+	}
+	.login-info {
+		.font-size(@nhs-font-small);
+		text-align: right;
+		padding-right: 15px;
+		border-right: solid 1px @bk-dark-grey;
+	}
+	.logout,
+	.search {
+		padding: 0 15px;
+		border-left: solid 1px #fff;
+		.clickable();
+
+		.glyphicon,
+		.hee-icon {
+			.font-size(@nhs-font-xxlarge);
+			top: 2px;
+		}
+	}
+
+	.sub-nav {
+		border-bottom: solid 1px @bk-dark-grey;
+		position: relative;
+		z-index: 0;
+
+		a {
+			color: #000;
+			.font-size(@nhs-font-normal);
+			padding: 10px;
+			min-width: 13%;
+			text-align: center;
+			font-weight: bold;
+			.grey-bg-gradient();
+			display: block;
+			float: left;
+			border-right: solid 1px @bk-dark-grey;
+
+			&:first-child {
+				border-left: none;
+			}
+
+			&.active {
+				background: #fff;
+				position: relative;
+				top: 1px;
+				padding-top: 9px;
+				border-bottom: solid 1px #fff;
+			}
+		}
+	}
+}

@@ -3,9 +3,9 @@
 
 angular.module('heeTisGuiApp')
 	.controller('LoginCtrl', ['$translate', '$translatePartialLoader', 'LoginService', 'PermissionsService', '$cookies',
-	'$cookieStore', '$rootScope', 'ROLES','$location', '$state', '$window',
+	'cookieStore', '$rootScope', 'ROLES','$location', '$state', '$window',
 
-	function ($translate, $translatePartialLoader, LoginService, PermissionsService, $cookies, $cookieStore, $rootScope,
+	function ($translate, $translatePartialLoader, LoginService, PermissionsService, $cookies, cookieStore, $rootScope,
 	ROLES, $location, $state, $window) {
 
 		var ctrl = this;
@@ -44,7 +44,9 @@ angular.module('heeTisGuiApp')
 		ctrl.checkPermissions = function(user) {
 		    var appUrl = '//' + $location.host() + '/revalidation/';
 		    console.log('Redirecting to: '+ appUrl);
-			PermissionsService.setPermissions(user, function() {
+			PermissionsService.setPermissions(user, function(permissions) {
+			    user.permissions = permissions;
+			    cookieStore.put('user', user, { path: "/" });
 				if ($location.url() === "" || $location.url() === "/login" || $location.url() === "/") {
 					$window.location.replace(appUrl);
 				} else {

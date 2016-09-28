@@ -1,0 +1,17 @@
+{
+	"MASTHEAD" : {
+		"TITLE": "Learner Information Network",
+		"HEE": "Health Education England",
+		"CONTACT_DETAILS": "Contact details",
+		"LOGGED_IN_AS": "You are logged in as",
+		"NAV": {
+			"TRAINEE_DOCTORS": "TRAINEE DOCTORS"
+		},
+		"SUB_NAV": {
+			"REVALIDATION": "Revalidation",
+			"CONCERNS_LOG": "Concerns log",
+			"MANAGE_GMC": "Manage GMC connections",
+			"ARCPS": "ARCPs"
+		}
+	}
+}
