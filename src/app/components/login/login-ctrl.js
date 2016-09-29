@@ -10,6 +10,10 @@ angular.module('heeTisGuiApp')
 
 		var ctrl = this;
 
+		if ($location.url() === "/logout") {
+            LoginService.logoutUser();
+        }
+
 		ctrl.authenticate = function (username, password) {
 			LoginService.authenticateUser.create({headers: { 'X-TIS-Username': username, 'X-TIS-Password':password}})
 			.then(function(response) {
@@ -33,8 +37,8 @@ angular.module('heeTisGuiApp')
 				var user = { name: fullName, uid: uid, roles: roles, permissions: [],
 					isAdmin: isAdmin, isOfficer: isOfficer, isTrainee: isTrainee, token: token, loggedIn: true};
 
+				user.permissions = response.permissions;
 				$rootScope.user = user;
-
 				ctrl.checkPermissions(user);
 			}, function() {
 				$state.go('notAuthorized');
@@ -44,16 +48,12 @@ angular.module('heeTisGuiApp')
 		ctrl.checkPermissions = function(user) {
 		    var appUrl = '//' + $location.host() + '/revalidation/';
 		    console.log('Redirecting to: '+ appUrl);
-			PermissionsService.setPermissions(user, function(permissions) {
-			    user.permissions = permissions;
-			    cookieStore.put('user', JSON.stringify(user), { path: "/" });
-				if ($location.url() === "" || $location.url() === "/login" || $location.url() === "/") {
-					$window.location.replace(appUrl);
-				} else {
-					$state.reload();
-				}
-				ctrl.init = true;
-			});
+            cookieStore.put('user', JSON.stringify(user), { path: "/" });
+            if ($location.url() === "" || $location.url() === "/login" || $location.url() === "/") {
+                $window.location.replace(appUrl);
+            } else {
+                $state.reload();
+            }
 		};
 
 		$translatePartialLoader.addPart('login');

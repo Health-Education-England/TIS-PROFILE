@@ -32,6 +32,12 @@ angular
 				templateUrl: 'app/components/login/login.html',
 				url: '/login'
 			})
+
+			// logout
+			.state('logout', {
+			    templateUrl: 'app/components/login/login.html',
+                url: '/logout'
+            })
 			// not authorized
 			.state('notAuthorized', {
 				templateUrl: 'app/components/not-authorized/not-authorized.html',
