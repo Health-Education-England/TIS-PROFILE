@@ -1,6 +1,7 @@
 package com.transformuk.hee.tis.auth.api;
 
 
+import com.google.common.collect.ImmutableMap;
 import com.transformuk.hee.tis.auth.model.LoginResponse;
 import com.transformuk.hee.tis.auth.model.UserProfile;
 import com.transformuk.hee.tis.auth.service.PermissionsService;
@@ -11,6 +12,8 @@ import io.swagger.annotations.ApiResponses;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.actuate.audit.AuditEvent;
+import org.springframework.boot.actuate.audit.AuditEventRepository;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -50,13 +53,15 @@ public class LoginController {
 	private final String openAMHost;
 
 	private PermissionsService permissionsService;
+	private AuditEventRepository auditEventRepository;
 
 	@Autowired
 	public LoginController(@Value("${openAM.host}") String openAMHost, RestTemplate restTemplate,
-	                       PermissionsService permissionsService) {
+	                       PermissionsService permissionsService, AuditEventRepository auditEventRepository) {
 		this.openAMHost = openAMHost;
 		this.restTemplate = restTemplate;
 		this.permissionsService = permissionsService;
+		this.auditEventRepository = auditEventRepository;
 	}
 
 	@ApiOperation(value = "authenticate()", notes = "authenticates user", response = LoginResponse.class)
@@ -70,7 +75,8 @@ public class LoginController {
 		String tokenId = getToken(userName, password);
 		UserProfile userProfile = getUserProfile(userName, tokenId);
 		LoginResponse loginResponse = toLoginResponse(userProfile, tokenId);
-		LOG.info("AuditEvent: User:{} logged in successfully", userName);
+		AuditEvent event = new AuditEvent(userName, "LoginEvent");
+		auditEventRepository.add(event);
 		return loginResponse;
 	}
 
@@ -88,7 +94,8 @@ public class LoginController {
 
 		String logoutUrl = openAMHost + LOGOUT_PATH;
 		restTemplate.postForObject(logoutUrl, request, String.class);
-		LOG.info("AuditEvent: Successfully loggedout");
+		AuditEvent event = new AuditEvent(tokenId, "LogoutEvent");
+		auditEventRepository.add(event);
 	}
 
 	private String getToken(String userName, String password) {
