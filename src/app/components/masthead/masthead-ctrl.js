@@ -2,17 +2,14 @@
 'use strict';
 
 angular.module('heeTisGuiApp')
-	.controller('mastheadCtrl', ['LoginService', '$translate', '$translatePartialLoader',
+	.controller('mastheadCtrl', ['$location', '$window', '$translate', '$translatePartialLoader',
 
-		function (LoginService, $translate, $translatePartialLoader) {
-
+		function ($location, $window, $translate, $translatePartialLoader) {
 			var ctrl = this;
-
 			ctrl.logout = function () {
-				LoginService.logoutUser();
-			};
-
+				var logInPageUrl = '//' + $location.host() + '/auth/#/logout';
+				$window.location.replace(logInPageUrl);
+            };
 			$translatePartialLoader.addPart('masthead');
 			$translate.refresh();
-
 		}]);
