@@ -3,24 +3,48 @@
 	<h1 class="text-center " translate>{{ 'LOGIN.APP_TITLE' }}</h1>
 	<h2 class="text-center" translate>{{ 'LOGIN.SIGN_IN' }}</h2>
 
-	<form class="col-md-offset-2 col-md-8">
-		<div class="form-group username">
-			<label for="login-username" translate>{{ 'LOGIN.USERNAME' }}</label>
+	<form class="col-md-offset-2 col-md-8" id="loginForm" name="ctrl.loginForm" ng-submit="ctrl.loginFormSubmit()"
+	novalidate>
+		<!-- login failed alert -->
+		<div class="alert" ng-class="ctrl.loginFeedback.state" ng-if="ctrl.showLoginFeedback">
+			{{ ctrl.loginFeedback.message | translate }}
+		</div>
+
+		<div class="form-group username"
+		ng-class="{ 'has-error': ctrl.loginForm.submitted && !ctrl.loginForm.username.$valid }">
+			<label for="login-username" class="control-label">
+				{{ 'LOGIN.USERNAME' | translate }}
+				<span ng-show="ctrl.loginForm.submitted && ctrl.loginForm.username.$error.required">
+					required
+				</span>
+				<span ng-show="ctrl.loginForm.submitted && ctrl.loginForm.username.$error.minlength">
+					is an invalid length
+				</span>
+			</label>
 			<input type="text" class="form-control tis-input input-lg" id="login-username"
-			ng-model="ctrl.form.username" />
+			ng-model="ctrl.loginForm.data.username" name="username" required ng-minlength="6" />
 		</div>
 		<div class="checkbox">
 			<label>
 				<input type="checkbox">{{ 'LOGIN.REMEMBER_USERNAME' | translate }}
 			</label>
 		</div>
-		<div class="form-group password">
-			<label for="login-password" translate>{{ 'LOGIN.PASSWORD' }}</label>
+		<div class="form-group password"
+		ng-class="{ 'has-error': ctrl.loginForm.submitted && !ctrl.loginForm.password.$valid }">
+			<label for="login-password" class="control-label">
+				{{ 'LOGIN.PASSWORD' | translate }}
+				<span ng-show="ctrl.loginForm.submitted && ctrl.loginForm.password.$error.required" translate>
+					LOGIN.REQUIRED
+				</span>
+				<span ng-show="ctrl.loginForm.submitted && ctrl.loginForm.password.$error.minlength" translate>
+					LOGIN.INVALID_LENGTH
+				</span>
+			</label>
 			<input type="password" class="form-control tis-input input-lg" id="login-password"
-			ng-model="ctrl.form.password" />
+			ng-model="ctrl.loginForm.data.password" name="password" required ng-minlength="6" />
 		</div>
-		<button class="btn tis-btn-nhs-blue center-block"
-		ng-click="ctrl.authenticate(ctrl.form.username, ctrl.form.password)"
-		translate>{{ 'LOGIN.LOGIN_BTN' }}</button>
+		<button class="btn tis-btn-nhs-blue center-block" type="submit" translate>{{ 'LOGIN.LOGIN_BTN' }}</button>
 	</form>
 </div>
+
+

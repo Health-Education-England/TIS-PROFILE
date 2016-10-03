@@ -5,6 +5,9 @@
 		"USERNAME": "Username",
 		"REMEMBER_USERNAME": "Remember my username",
 		"PASSWORD": "Password",
-		"LOGIN_BTN": "Log in"
+		"LOGIN_BTN": "Log in",
+		"LOGIN_FAILURE": "You've entered an incorrect password/username",
+		"REQUIRED": "required",
+		"INVALID_LENGTH": "is an invalid length"
 	}
 }

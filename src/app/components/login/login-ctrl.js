@@ -3,16 +3,25 @@
 
 angular.module('heeTisGuiApp')
 	.controller('LoginCtrl', ['$translate', '$translatePartialLoader', 'LoginService', 'PermissionsService', '$cookies',
-	'cookieStore', '$rootScope', 'ROLES','$location', '$state', '$window',
+	'cookieStore', '$rootScope', 'ROLES','$location', '$state', '$window', '$timeout',
 
 	function ($translate, $translatePartialLoader, LoginService, PermissionsService, $cookies, cookieStore, $rootScope,
-	ROLES, $location, $state, $window) {
+	ROLES, $location, $state, $window, $timeout) {
 
 		var ctrl = this;
 
 		if ($location.url() === "/logout") {
-            LoginService.logoutUser();
-        }
+			LoginService.logoutUser();
+		}
+
+		ctrl.loginFormSubmit = function () {
+			ctrl.loginForm.submitted = true;
+
+			// if client side validation passes then authenticate user
+			if(ctrl.loginForm.$valid){
+				ctrl.authenticate(ctrl.loginForm.data.username, ctrl.loginForm.data.password);
+			}
+		};
 
 		ctrl.authenticate = function (username, password) {
 			LoginService.authenticateUser.create({headers: { 'X-TIS-Username': username, 'X-TIS-Password':password}})
@@ -40,8 +49,19 @@ angular.module('heeTisGuiApp')
 				user.permissions = response.permissions;
 				$rootScope.user = user;
 				ctrl.checkPermissions(user);
-			}, function() {
-				$state.go('notAuthorized');
+			}, function(response) {
+				console.log(response.errorMessage);
+
+				ctrl.showLoginFeedback = true;
+
+				ctrl.loginFeedback = {
+					state: 'alert-danger',
+					message: 'LOGIN.LOGIN_FAILURE'
+				};
+
+				$timeout(function () {
+					ctrl.loginFeedback = null;
+				}, 2000);
 			});
 		};
 
