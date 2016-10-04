@@ -50,14 +50,14 @@ angular.module('heeTisGuiApp')
 				$rootScope.user = user;
 				ctrl.checkPermissions(user);
 			}, function(response) {
-				console.log(response.errorMessage);
-
 				ctrl.showLoginFeedback = true;
+				ctrl.loginFeedback = { state: 'alert-danger' };
 
-				ctrl.loginFeedback = {
-					state: 'alert-danger',
-					message: 'LOGIN.LOGIN_FAILURE'
-				};
+				if(response.status === '500'){
+					ctrl.loginFeedback.message = 'LOGIN.INTERNAL_SERVER_ERROR';
+				} else {
+					ctrl.loginFeedback.message = 'LOGIN.LOGIN_FAILURE';
+				}
 			});
 		};
 
