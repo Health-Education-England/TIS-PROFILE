@@ -14,7 +14,7 @@ angular.module('heeTisGuiApp')
 				logoutUser: function() {
 				    console.log('logging off !!');
                     var userToken = $rootScope.user.token;
-                    cookieStore.remove('user');
+                    cookieStore.remove('user', { path: "/" });
                     $rootScope.user = undefined;
                     this.logout.create({
                         headers: { 'X-TIS-TokenId': userToken}
