@@ -48,7 +48,8 @@ angular.module('heeTisGuiApp')
 					.success(function(response) {
 						opts.success(response);
 					})
-					.error(function(response) {
+					.error(function(response, status) {
+						response.status = status;
 						opts.failure(response);
 					});
 

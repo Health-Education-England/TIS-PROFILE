@@ -2,17 +2,26 @@
 'use strict';
 
 angular.module('heeTisGuiApp')
-	.controller('LoginCtrl', ['$translate', '$translatePartialLoader', 'LoginService', 'PermissionsService', '$cookies',
-	'cookieStore', '$rootScope', 'ROLES','$location', '$state', '$window',
+	.controller('LoginCtrl', ['$translate', '$translatePartialLoader', 'LoginService', 'PermissionsService',
+	'cookieStore', '$rootScope', 'ROLES','$location', '$window',
 
-	function ($translate, $translatePartialLoader, LoginService, PermissionsService, $cookies, cookieStore, $rootScope,
-	ROLES, $location, $state, $window) {
+	function ($translate, $translatePartialLoader, LoginService, PermissionsService, cookieStore, $rootScope, ROLES,
+	$location, $window) {
 
 		var ctrl = this;
 
 		if ($location.url() === "/logout") {
-            LoginService.logoutUser();
-        }
+			LoginService.logoutUser();
+		}
+
+		ctrl.loginFormSubmit = function () {
+			ctrl.loginForm.submitted = true;
+
+			// if client side validation passes then authenticate user
+			if(ctrl.loginForm.$valid){
+				ctrl.authenticate(ctrl.loginForm.data.username, ctrl.loginForm.data.password);
+			}
+		};
 
 		ctrl.authenticate = function (username, password) {
 			LoginService.authenticateUser.create({headers: { 'X-TIS-Username': username, 'X-TIS-Password':password}})
@@ -40,20 +49,27 @@ angular.module('heeTisGuiApp')
 				user.permissions = response.permissions;
 				$rootScope.user = user;
 				ctrl.checkPermissions(user);
-			}, function() {
-				$state.go('notAuthorized');
+			}, function(response) {
+				ctrl.showLoginFeedback = true;
+				ctrl.loginFeedback = { state: 'alert-danger' };
+
+				if(response.status === '500'){
+					ctrl.loginFeedback.message = 'LOGIN.INTERNAL_SERVER_ERROR';
+				} else {
+					ctrl.loginFeedback.message = 'LOGIN.LOGIN_FAILURE';
+				}
 			});
 		};
 
 		ctrl.checkPermissions = function(user) {
-		    var appUrl = '//' + $location.host() + '/revalidation/';
-		    console.log('Redirecting to: '+ appUrl);
-            cookieStore.put('user', JSON.stringify(user), { path: "/" });
-            if ($location.url() === "" || $location.url() === "/login" || $location.url() === "/") {
-                $window.location.replace(appUrl);
-            } else {
-                $state.reload();
-            }
+			var appUrl = '//' + $location.host() + '/revalidation/';
+
+			// add cookie
+			cookieStore.put('user', JSON.stringify(user), { path: "/" });
+
+			// redirect to revalidation app
+			$window.location.replace(appUrl);
+			console.log('Redirecting to: '+ appUrl);
 		};
 
 		$translatePartialLoader.addPart('login');

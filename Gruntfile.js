@@ -109,9 +109,9 @@ module.exports = function (grunt) {
 			options: {
 				jshintrc: '.jshintrc',
 				ignores: [
-					'src/app/scripts/templates.js',
-					'src/app/**/*.spec.js',
-					'src/app/fonts/**/*'
+					'js/app/scripts/templates.js',
+					'js/**/*.spec.js',
+					'js/app/fonts/**/*'
 				],
 				reporter: require('jshint-stylish')
 			},
@@ -174,7 +174,7 @@ module.exports = function (grunt) {
 			dist: {
 				files: [{
 					expand: true,
-					cwd: '.tmp/styles/',
+					cwd: '.tmp/Gruntfile.jsstyles/',
 					src: '{,*/}*.css',
 					dest: '.tmp/styles/'
 				}]
@@ -229,7 +229,7 @@ module.exports = function (grunt) {
 		// concat, minify and revision files. Creates configurations in memory so
 		// additional tasks can operate on them
 		useminPrepare: {
-			html: '<%= yeoman.app %>/app/index.html',
+			html: '<%= yeoman.app %>/index.html',
 			options: {
 				dest: '<%= yeoman.dist %>',
 				flow: {
@@ -273,7 +273,7 @@ module.exports = function (grunt) {
 				base: '<%= yeoman.app %>'
 			},
 			main: {
-				src: ['<%= yeoman.app %>/app/components/**/*.html'],
+				src: ['<%= yeoman.app %>/app/**/*.html'],
 				dest: '<%= yeoman.app %>/app/scripts/templates.js'
 			}
 		},
@@ -335,7 +335,7 @@ module.exports = function (grunt) {
 			bower: {
 				files: [{
 					expand: true,
-					cwd: 'bower_components/tis-common-components/app/components/',
+					cwd: '<%= yeoman.app %>/bower_components/tis-common-components/app/components/',
 					src: '**/**',
 					dest: '<%= yeoman.app %>/app/components',
 					filter: 'isFile'
@@ -370,12 +370,12 @@ module.exports = function (grunt) {
 					dest: '<%= yeoman.dist %>/fonts'
 				}, {
 					expand: true,
-					cwd: 'bower_components/respond/dest',
+					cwd: '<%= yeoman.app %>/bower_components/respond/dest',
 					src: 'respond.min.js',
 					dest: '<%= yeoman.dist %>/scripts'
 				}, {
 					expand: true,
-					cwd: 'bower_components/html5shiv/dist',
+					cwd: '<%= yeoman.app %>/bower_components/html5shiv/dist',
 					src: 'html5shiv.min.js',
 					dest: '<%= yeoman.dist %>/scripts'
 				}, {
@@ -386,7 +386,7 @@ module.exports = function (grunt) {
 				}, {
 					expand: true,
 					dot: true,
-					cwd: '<%= yeoman.app %>/app',
+					cwd: '<%= yeoman.app %>',
 					src: ['*.html'],
 					dest: '<%= yeoman.dist %>'
 				}, {
@@ -473,6 +473,7 @@ module.exports = function (grunt) {
 
 	grunt.registerTask('default', [
 		'newer:jshint',
+		'newer:jscs',
 		'prod'
 	]);
 };
