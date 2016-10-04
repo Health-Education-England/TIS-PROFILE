@@ -14,11 +14,11 @@
 		ng-class="{ 'has-error': ctrl.loginForm.submitted && !ctrl.loginForm.username.$valid }">
 			<label for="login-username" class="control-label">
 				{{ 'LOGIN.USERNAME' | translate }}
-				<span ng-show="ctrl.loginForm.submitted && ctrl.loginForm.username.$error.required">
-					required
+				<span ng-show="ctrl.loginForm.submitted && ctrl.loginForm.username.$error.required" translate>
+					LOGIN.REQUIRED
 				</span>
-				<span ng-show="ctrl.loginForm.submitted && ctrl.loginForm.username.$error.minlength">
-					is an invalid length
+				<span ng-show="ctrl.loginForm.submitted && ctrl.loginForm.username.$error.minlength" translate>
+					LOGIN.INVALID_LENGTH
 				</span>
 			</label>
 			<input type="text" class="form-control tis-input input-lg" id="login-username"

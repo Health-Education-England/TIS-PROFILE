@@ -2,11 +2,11 @@
 'use strict';
 
 angular.module('heeTisGuiApp')
-	.controller('LoginCtrl', ['$translate', '$translatePartialLoader', 'LoginService', 'PermissionsService', '$cookies',
-	'cookieStore', '$rootScope', 'ROLES','$location', '$state', '$window', '$timeout',
+	.controller('LoginCtrl', ['$translate', '$translatePartialLoader', 'LoginService', 'PermissionsService',
+	'cookieStore', '$rootScope', 'ROLES','$location', '$window',
 
-	function ($translate, $translatePartialLoader, LoginService, PermissionsService, $cookies, cookieStore, $rootScope,
-	ROLES, $location, $state, $window, $timeout) {
+	function ($translate, $translatePartialLoader, LoginService, PermissionsService, cookieStore, $rootScope, ROLES,
+	$location, $window) {
 
 		var ctrl = this;
 
@@ -58,22 +58,18 @@ angular.module('heeTisGuiApp')
 					state: 'alert-danger',
 					message: 'LOGIN.LOGIN_FAILURE'
 				};
-
-				$timeout(function () {
-					ctrl.loginFeedback = null;
-				}, 2000);
 			});
 		};
 
 		ctrl.checkPermissions = function(user) {
-		    var appUrl = '//' + $location.host() + '/revalidation/';
-		    console.log('Redirecting to: '+ appUrl);
-            cookieStore.put('user', JSON.stringify(user), { path: "/" });
-            if ($location.url() === "" || $location.url() === "/login" || $location.url() === "/") {
-                $window.location.replace(appUrl);
-            } else {
-                $state.reload();
-            }
+			var appUrl = '//' + $location.host() + '/revalidation/';
+
+			// add cookie
+			cookieStore.put('user', JSON.stringify(user), { path: "/" });
+
+			// redirect to revalidation app
+			$window.location.replace(appUrl);
+			console.log('Redirecting to: '+ appUrl);
 		};
 
 		$translatePartialLoader.addPart('login');
