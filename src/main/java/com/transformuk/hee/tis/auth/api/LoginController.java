@@ -1,9 +1,12 @@
 package com.transformuk.hee.tis.auth.api;
 
 
-import com.google.common.collect.ImmutableMap;
+import com.transformuk.hee.tis.auth.exception.UserNotFoundException;
 import com.transformuk.hee.tis.auth.model.LoginResponse;
+import com.transformuk.hee.tis.auth.model.User;
+import com.transformuk.hee.tis.auth.model.UserListResponse;
 import com.transformuk.hee.tis.auth.model.UserProfile;
+import com.transformuk.hee.tis.auth.service.LoginService;
 import com.transformuk.hee.tis.auth.service.PermissionsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -13,15 +16,12 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.audit.AuditEvent;
-import org.springframework.boot.actuate.audit.AuditEventRepository;
+import org.springframework.hateoas.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -30,7 +30,10 @@ import java.util.stream.Collectors;
 
 import static com.google.common.collect.Iterables.getFirst;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @RestController
@@ -53,15 +56,15 @@ public class LoginController {
 	private final String openAMHost;
 
 	private PermissionsService permissionsService;
-	private AuditEventRepository auditEventRepository;
+	private LoginService loginService;
 
 	@Autowired
 	public LoginController(@Value("${openAM.host}") String openAMHost, RestTemplate restTemplate,
-	                       PermissionsService permissionsService, AuditEventRepository auditEventRepository) {
+	                       PermissionsService permissionsService, LoginService loginService) {
 		this.openAMHost = openAMHost;
 		this.restTemplate = restTemplate;
 		this.permissionsService = permissionsService;
-		this.auditEventRepository = auditEventRepository;
+		this.loginService = loginService;
 	}
 
 	@ApiOperation(value = "authenticate()", notes = "authenticates user", response = LoginResponse.class)
@@ -75,9 +78,38 @@ public class LoginController {
 		String tokenId = getToken(userName, password);
 		UserProfile userProfile = getUserProfile(userName, tokenId);
 		LoginResponse loginResponse = toLoginResponse(userProfile, tokenId);
-		AuditEvent event = new AuditEvent(userName, "LoginEvent");
-		auditEventRepository.add(event);
+		loginService.logEvent(new AuditEvent(userName, "LoginEvent"));
 		return loginResponse;
+	}
+
+	@ApiOperation(value = "getUser()", notes = "GET a user with given userName", response = User.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Got user successfully", response = User.class)
+	})
+	@CrossOrigin
+	@RequestMapping(path = "/user", method = GET, produces = APPLICATION_JSON_VALUE)
+	public Resource<User> getUser(@RequestHeader(value = "Username") String userName) throws UserNotFoundException {
+		User user = loginService.getUserByUserName(userName);
+		Resource<User> resource = new Resource<>(user);
+		resource.add(linkTo(methodOn(LoginController.class).getUser(userName)).withSelfRel());
+		return resource;
+	}
+
+
+	@ApiOperation(value = "getUsers(). http://localhost:8084/users?offset=0&limit=1&filter=firstName=James" +
+			"Possible Filters:userName,firstName,lastName,gmcId,designatedBodyCode,phoneNumber", notes = "GETs users", response = User.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "User's list returned", response = User.class)
+	})
+	@CrossOrigin
+	@RequestMapping(path = "/users", method = GET, produces = APPLICATION_JSON_VALUE)
+	public Resource<UserListResponse> getUsers(@RequestParam(value = "offset") int offset,
+											@RequestParam(value = "limit") int limit,
+											@RequestParam(value = "filter", required = false) String filter) {
+		UserListResponse response = loginService.getUsers(offset, limit, filter);
+		Resource<UserListResponse> resource = new Resource<>(response);
+		resource.add(linkTo(methodOn(LoginController.class).getUsers(offset, limit, filter)).withSelfRel());
+		return resource;
 	}
 
 	@ApiOperation(value = "logout()", notes = "logouts a user session",
@@ -94,8 +126,7 @@ public class LoginController {
 
 		String logoutUrl = openAMHost + LOGOUT_PATH;
 		restTemplate.postForObject(logoutUrl, request, String.class);
-		AuditEvent event = new AuditEvent(tokenId, "LogoutEvent");
-		auditEventRepository.add(event);
+		loginService.logEvent(new AuditEvent(tokenId, "LogoutEvent"));
 	}
 
 	private String getToken(String userName, String password) {

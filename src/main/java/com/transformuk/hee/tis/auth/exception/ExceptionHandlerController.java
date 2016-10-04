@@ -12,6 +12,7 @@ import java.util.Map;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @ControllerAdvice
 public class ExceptionHandlerController {
@@ -29,6 +30,10 @@ public class ExceptionHandlerController {
 		if(ex instanceof IllegalArgumentException || ex instanceof MethodArgumentNotValidException) {
 			status = BAD_REQUEST;
 		}
+		if(ex instanceof UserNotFoundException) {
+			status = NOT_FOUND;
+		}
+		ex.printStackTrace();
 		errorMap.put("errorMessage", ex.getMessage());
 		return new ResponseEntity<>(errorMap, status);
 	}

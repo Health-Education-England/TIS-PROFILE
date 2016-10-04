@@ -2,13 +2,18 @@ package com.transformuk.hee.tis.auth.api;
 
 import com.google.common.collect.Sets;
 import com.transformuk.hee.tis.auth.model.LoginResponse;
+import com.transformuk.hee.tis.auth.model.User;
+import com.transformuk.hee.tis.auth.model.UserListResponse;
 import com.transformuk.hee.tis.auth.model.UserProfile;
+import com.transformuk.hee.tis.auth.service.LoginService;
 import com.transformuk.hee.tis.auth.service.PermissionsService;
 import org.flywaydb.core.Flyway;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.audit.AuditEvent;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpEntity;
@@ -29,9 +34,9 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(LoginController.class)
@@ -40,9 +45,13 @@ public class LoginControllerTest {
 	private static final String TIS_USER = "tisUser";
 	private static final String TIS_PASSWORD = "tisPassword";
 	private static final String TIS_TOKENID = "CNSAKFAjncdjfjkw";
+	public static final String USER_NAME = "jamesH";
 
 	@MockBean
 	private PermissionsService permissionsService;
+
+	@MockBean
+	private LoginService loginService;
 
 	@Autowired
 	private MockMvc mvc;
@@ -51,7 +60,10 @@ public class LoginControllerTest {
 	private RestTemplate restTemplate;
 
 	@MockBean // mocking to override init method otherwise test try to connect DB.
-			Flyway flyway;
+	private Flyway flyway;
+
+	@Captor
+	private ArgumentCaptor<AuditEvent> captor;
 
 	@Test
 	public void shouldReturnUserProfileDetails() throws Exception {
@@ -87,8 +99,43 @@ public class LoginControllerTest {
 				exchange(eq("http://openam.transformcloud.net:8079/openam/json/users/{userName}"),
 						eq(HttpMethod.GET), requestEntityCaptor.capture(), eq(UserProfile.class), eq(TIS_USER));
 
+
 		HttpEntity entity = requestEntityCaptor.getValue();
 		assertThat(entity.getHeaders().get("iplanetDirectoryPro")).contains(TIS_TOKENID);
+	}
+
+	@Test
+	public void shouldGETListOfUsers() throws Exception {
+		//Given
+		User user = new User(USER_NAME);
+		user.setGmcId("123");
+		UserListResponse response = new UserListResponse(1, newArrayList(user));
+		given(loginService.getUsers(0, 1, "first_name=James")).willReturn(response);
+
+		//When
+		this.mvc.perform(get("/identity/users").param("offset","0").param("limit", "1").param("filters", "first_name=James"))
+				.andExpect(status().isOk())
+				.andExpect(content().string(
+						"{\"total\":1,\"users\":[{\"user_name\":\"jamesH\",\"first_name\":null,\"last_name\":null," +
+								"\"gmc_id\":\"123\",\"designated_body_code\":null,\"phone_number\":null}]," +
+								"\"_links\":{\"self\":{\"href\":\"http://localhost/identity/users?" +
+								"offset=0&limit=1&filters=first_name%3DJames\"}}}"));
+	}
+
+	@Test
+	public void shouldGETUserByUserName() throws Exception {
+		//Given
+		User user = new User(USER_NAME);
+		user.setGmcId("123");
+		given(loginService.getUserByUserName(USER_NAME)).willReturn(user);
+
+		//When
+		this.mvc.perform(get("/identity/user").header("Username", USER_NAME))
+				.andExpect(status().isOk())
+				.andExpect(content().string(
+						"{\"user_name\":\"jamesH\",\"first_name\":null,\"last_name\":null,\"gmc_id\":\"123\"," +
+								"\"designated_body_code\":null,\"phone_number\":null," +
+								"\"_links\":{\"self\":{\"href\":\"http://localhost/identity/user\"}}}"));
 	}
 
 	@Test
