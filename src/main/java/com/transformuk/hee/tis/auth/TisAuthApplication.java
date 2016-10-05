@@ -2,7 +2,7 @@ package com.transformuk.hee.tis.auth;
 
 import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
-import com.transformuk.hee.tis.auth.repository.CustomAuditRepository;
+import com.transformuk.hee.tis.audit.repository.TisAuditRepository;
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.audit.AuditEventRepository;
@@ -102,7 +102,7 @@ public class TisAuthApplication {
 
 	@Bean
 	public AuditEventRepository auditEventRepository() {
-		return new CustomAuditRepository();
+		return new TisAuditRepository();
 	}
 
 	@Bean
