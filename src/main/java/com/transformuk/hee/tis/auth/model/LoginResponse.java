@@ -3,29 +3,33 @@ package com.transformuk.hee.tis.auth.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.annotations.ApiModelProperty;
 
-import java.util.List;
 import java.util.Set;
 
 /**
- * Response class to hold login results like tokenId, userDetails etc.
+ * Response class to hold login results like token, userDetails etc.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class LoginResponse {
 
-	private String tokenId;
+	private String token;
 	private String userName;
 	private String fullName;
+	private String firstName;
+	private String lastName;
 	private Set<String> roles;
 	private Set<String> permissions;
+	private String gmcId;
+	private String designatedBodyCode;
+	private String phoneNumber;
 
-	@ApiModelProperty(value = "tokenId that applications can present as a cookie value "
+	@ApiModelProperty(value = "token that applications can present as a cookie value "
 			+ "for other operations that require authentication")
-	public String getTokenId() {
-		return tokenId;
+	public String getToken() {
+		return token;
 	}
 
-	public void setTokenId(String tokenId) {
-		this.tokenId = tokenId;
+	public void setToken(String token) {
+		this.token = token;
 	}
 
 	@ApiModelProperty(value = "the roles the current user has in the TIS system")
@@ -47,6 +51,7 @@ public class LoginResponse {
 		this.permissions = permissions;
 	}
 
+	@ApiModelProperty(value = "The user name unique identifier")
 	public String getUserName() {
 		return userName;
 	}
@@ -55,6 +60,25 @@ public class LoginResponse {
 		this.userName = userName;
 	}
 
+	@ApiModelProperty(value = "The user's first name")
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	@ApiModelProperty(value = "The user's last name")
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	@ApiModelProperty(value = "The user's full name")
 	public String getFullName() {
 		return fullName;
 	}
@@ -63,14 +87,46 @@ public class LoginResponse {
 		this.fullName = fullName;
 	}
 
+	@ApiModelProperty(value = "The GMC ID of the user")
+	public String getGmcId() {
+		return gmcId;
+	}
+
+	public void setGmcId(String gmcId) {
+		this.gmcId = gmcId;
+	}
+
+	@ApiModelProperty(value = "The user's designated body code")
+	public String getDesignatedBodyCode() {
+		return designatedBodyCode;
+	}
+
+	public void setDesignatedBodyCode(String designatedBodyCode) {
+		this.designatedBodyCode = designatedBodyCode;
+	}
+
+	@ApiModelProperty(value = "The user's phone number")
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+
 	@Override
 	public String toString() {
 		return "LoginResponse{" +
 				"fullName='" + fullName + '\'' +
-				", tokenId='" + tokenId + '\'' +
+				", firstName='" + firstName + '\'' +
+				", lastName='" + lastName + '\'' +
+				", token='" + token + '\'' +
 				", userName='" + userName + '\'' +
 				", roles='" + roles + '\'' +
 				", permissions='" + permissions + '\'' +
+				", gmcId='" + gmcId + '\'' +
+				", designatedBodyCode='" + designatedBodyCode + '\'' +
+				", phoneNumber='" + phoneNumber + '\'' +
 				'}';
 	}
 }

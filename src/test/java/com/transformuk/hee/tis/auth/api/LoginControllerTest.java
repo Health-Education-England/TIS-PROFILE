@@ -78,7 +78,7 @@ public class LoginControllerTest {
 		userProfile.setIsMemberOf(newArrayList(roles));
 
 		LoginResponse loginResponse = new LoginResponse();
-		loginResponse.setTokenId(TIS_TOKENID);
+		loginResponse.setToken(TIS_TOKENID);
 		given(restTemplate.postForObject(any(String.class), any(HttpEntity.class), eq(LoginResponse.class))).
 				willReturn(loginResponse);
 
@@ -153,7 +153,7 @@ public class LoginControllerTest {
 				"cn=RVOfficer,ou=groups,dc=openam,dc=forgerock,dc=org")));
 
 		LoginResponse loginResponse = new LoginResponse();
-		loginResponse.setTokenId(TIS_TOKENID);
+		loginResponse.setToken(TIS_TOKENID);
 		given(restTemplate.postForObject(any(String.class), any(HttpEntity.class), eq(LoginResponse.class))).
 				willReturn(loginResponse);
 		given(permissionsService.getPermissions(any(Set.class))).willReturn(Sets.newHashSet("Perm1", "Perm2", "Perm3"));

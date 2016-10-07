@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -74,10 +75,11 @@ public class LoginController {
 	@CrossOrigin
 	@RequestMapping(path = "/authenticate", method = POST, produces = APPLICATION_JSON_VALUE)
 	public LoginResponse authenticate(@RequestHeader(value = "X-TIS-Username") String userName,
-	                                  @RequestHeader(value = "X-TIS-Password") String password) {
+				 @RequestHeader(value = "X-TIS-Password") String password) throws UserNotFoundException {
 		String tokenId = getToken(userName, password);
 		UserProfile userProfile = getUserProfile(userName, tokenId);
-		LoginResponse loginResponse = toLoginResponse(userProfile, tokenId);
+		User user = loginService.getUserByUserName(userName);
+		LoginResponse loginResponse = toLoginResponse(userProfile, tokenId, user);
 		loginService.logEvent(new AuditEvent(userName, "LoginEvent"));
 		return loginResponse;
 	}
@@ -136,7 +138,7 @@ public class LoginController {
 		HttpEntity<Void> request = new HttpEntity<>(headers);
 
 		String loginUrl = openAMHost + LOGIN_PATH;
-		return restTemplate.postForObject(loginUrl, request, LoginResponse.class).getTokenId();
+		return restTemplate.postForObject(loginUrl, request, Map.class).get("tokenId").toString();
 	}
 
 	private UserProfile getUserProfile(String userName, String tokenId) {
@@ -150,13 +152,18 @@ public class LoginController {
 		return responseEntity.getBody();
 	}
 
-	private LoginResponse toLoginResponse(UserProfile userProfile, String tokenId) {
+	private LoginResponse toLoginResponse(UserProfile userProfile, String tokenId, User user) {
 		LoginResponse loginResponse = new LoginResponse();
 		loginResponse.setUserName(userProfile.getUsername());
 		loginResponse.setFullName(getFirst(userProfile.getCn(), null));
 		loginResponse.setRoles(getRoles(userProfile.getIsMemberOf()));
 		loginResponse.setPermissions(permissionsService.getPermissions(loginResponse.getRoles()));
-		loginResponse.setTokenId(tokenId);
+		loginResponse.setToken(tokenId);
+		loginResponse.setDesignatedBodyCode(user.getDesignatedBodyCode());
+		loginResponse.setPhoneNumber(user.getPhoneNumber());
+		loginResponse.setGmcId(user.getGmcId());
+		loginResponse.setFirstName(user.getFirstName());
+		loginResponse.setLastName(user.getLastName());
 		return loginResponse;
 	}
 

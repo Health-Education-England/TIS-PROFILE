@@ -26,9 +26,9 @@ angular.module('heeTisGuiApp')
 		ctrl.authenticate = function (username, password) {
 			LoginService.authenticateUser.create({headers: { 'X-TIS-Username': username, 'X-TIS-Password':password}})
 			.then(function(response) {
+				
+				var user = response;
 				// Prepare logged in user and set it in route scope
-				var fullName = response.fullName;
-				var uid = response.userName;
 				var roles = [];
 
 				response.roles.forEach(function(roleString){
@@ -36,19 +36,21 @@ angular.module('heeTisGuiApp')
 						roles.push(roleString);
 					}
 				});
+				user.roles = roles;
 
-				var isAdmin = roles.indexOf(ROLES.ADMIN) !== -1;
-				var isOfficer = roles.indexOf(ROLES.OFFICER) !== -1;
-				var isTrainee = roles.indexOf(ROLES.TRAINEE) !== -1;
+				user.isAdmin = roles.indexOf(ROLES.ADMIN) !== -1;
+				user.isOfficer = roles.indexOf(ROLES.OFFICER) !== -1;
+				user.isTrainee = roles.indexOf(ROLES.TRAINEE) !== -1;
+				user.loggedIn = true;
 
-				var token = response.tokenId;
+				var appUrl = '//' + $location.host() + '/revalidation/';
 
-				var user = { name: fullName, uid: uid, roles: roles, permissions: [],
-					isAdmin: isAdmin, isOfficer: isOfficer, isTrainee: isTrainee, token: token, loggedIn: true};
+				// add cookie
+				cookieStore.put('user', JSON.stringify(user), { path: "/" });
 
-				user.permissions = response.permissions;
-				$rootScope.user = user;
-				ctrl.checkPermissions(user);
+				// redirect to revalidation app
+				$window.location.replace(appUrl);
+				console.log('Redirecting to: '+ appUrl);
 			}, function(response) {
 				ctrl.showLoginFeedback = true;
 				ctrl.loginFeedback = { state: 'alert-danger' };
@@ -59,17 +61,6 @@ angular.module('heeTisGuiApp')
 					ctrl.loginFeedback.message = 'LOGIN.LOGIN_FAILURE';
 				}
 			});
-		};
-
-		ctrl.checkPermissions = function(user) {
-			var appUrl = '//' + $location.host() + '/revalidation/';
-
-			// add cookie
-			cookieStore.put('user', JSON.stringify(user), { path: "/" });
-
-			// redirect to revalidation app
-			$window.location.replace(appUrl);
-			console.log('Redirecting to: '+ appUrl);
 		};
 
 		$translatePartialLoader.addPart('login');
