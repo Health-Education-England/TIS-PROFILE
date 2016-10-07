@@ -21,6 +21,8 @@ bdd/dist/
 bdd/e2e/reports/
 bdd/node_modules/
 bdd/phantomjsdriver.log
+/bower_components/
+
 
 # IDEA files #
 ######################

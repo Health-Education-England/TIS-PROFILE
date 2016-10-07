@@ -33,6 +33,7 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.endsWith;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -97,7 +98,7 @@ public class LoginControllerTest {
 		//Then
 		ArgumentCaptor<HttpEntity> requestEntityCaptor = ArgumentCaptor.forClass(HttpEntity.class);
 		verify(restTemplate).
-				exchange(eq("http://openam.transformcloud.net:8079/openam/json/users/{userName}"),
+				exchange(endsWith("/openam/json/users/{userName}"),
 						eq(HttpMethod.GET), requestEntityCaptor.capture(), eq(UserProfile.class), eq(TIS_USER));
 
 
@@ -174,7 +175,7 @@ public class LoginControllerTest {
 		//Then
 		ArgumentCaptor<HttpEntity> requestEntityCaptor = ArgumentCaptor.forClass(HttpEntity.class);
 		verify(restTemplate).
-				exchange(eq("http://openam.transformcloud.net:8079/openam/json/users/{userName}"),
+				exchange(endsWith("/openam/json/users/{userName}"),
 						eq(HttpMethod.GET), requestEntityCaptor.capture(), eq(UserProfile.class), eq(TIS_USER));
 
 		HttpEntity entity = requestEntityCaptor.getValue();
@@ -209,7 +210,7 @@ public class LoginControllerTest {
 		//Then
 		ArgumentCaptor<HttpEntity> requestEntityCaptor = ArgumentCaptor.forClass(HttpEntity.class);
 		verify(restTemplate).postForObject(
-				eq("http://openam.transformcloud.net:8079/openam/json/sessions/?_action=logout"),
+				endsWith("/openam/json/sessions/?_action=logout"),
 				requestEntityCaptor.capture(), eq(String.class));
 		HttpEntity entity = requestEntityCaptor.getValue();
 		assertThat(entity.getHeaders().get("iplanetDirectoryPro")).contains(TIS_TOKENID);
