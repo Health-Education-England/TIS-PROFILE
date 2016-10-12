@@ -1,5 +1,6 @@
 package com.transformuk.hee.tis.auth.api;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import com.transformuk.hee.tis.auth.model.LoginResponse;
 import com.transformuk.hee.tis.auth.model.User;
@@ -25,6 +26,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Map;
 import java.util.Set;
 
 import static com.google.common.collect.Lists.newArrayList;
@@ -48,6 +50,8 @@ public class LoginControllerTest {
 	private static final String TIS_PASSWORD = "tisPassword";
 	private static final String TIS_TOKENID = "CNSAKFAjncdjfjkw";
 	public static final String USER_NAME = "jamesH";
+	public static final String GMC_ID = "123";
+	public static final String DESIGNATED_BODY_CODE = "1-DGBODY";
 
 	@MockBean
 	private PermissionsService permissionsService;
@@ -72,27 +76,34 @@ public class LoginControllerTest {
 		//Given
 		String roles = "RVAdmin";
 
+		User user = new User(USER_NAME);
+		user.setGmcId(GMC_ID);
+		user.setDesignatedBodyCode(DESIGNATED_BODY_CODE);
+
 		UserProfile userProfile = new UserProfile();
 		userProfile.setUsername(TIS_USER);
 		userProfile.setCn(newArrayList(TIS_USER));
 		userProfile.setIsMemberOf(newArrayList(roles));
 
-		LoginResponse loginResponse = new LoginResponse();
-		loginResponse.setToken(TIS_TOKENID);
-		given(restTemplate.postForObject(any(String.class), any(HttpEntity.class), eq(LoginResponse.class))).
-				willReturn(loginResponse);
+		Map tokenMap = ImmutableMap.of("tokenId", TIS_TOKENID);
+		given(restTemplate.postForObject(any(String.class), any(HttpEntity.class), eq(Map.class))).
+				willReturn(tokenMap);
 
 		given(restTemplate.exchange(any(String.class), eq(HttpMethod.GET), any(HttpEntity.class),
 				eq(UserProfile.class), eq(TIS_USER))).willReturn(new ResponseEntity(userProfile, HttpStatus.OK));
+		
+		given(loginService.getUserByUserName(TIS_USER)).willReturn(user);
 
 		//When
 		this.mvc.perform(post("/identity/authenticate")
 				.header("X-TIS-Username", TIS_USER)
 				.header("X-TIS-Password", TIS_PASSWORD))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.tokenId").value(TIS_TOKENID))
+				.andExpect(jsonPath("$.token").value(TIS_TOKENID))
 				.andExpect(jsonPath("$.userName").value(TIS_USER))
 				.andExpect(jsonPath("$.fullName").value(TIS_USER))
+				.andExpect(jsonPath("$.gmcId").value(GMC_ID))
+				.andExpect(jsonPath("$.designatedBodyCode").value(DESIGNATED_BODY_CODE))
 				.andExpect(jsonPath("$.roles").value(roles));
 
 		//Then
@@ -152,10 +163,12 @@ public class LoginControllerTest {
 				"cn=RVAdmin,ou=groups,dc=openam,dc=forgerock,dc=org",
 				"cn=RVOfficer,ou=groups,dc=openam,dc=forgerock,dc=org")));
 
-		LoginResponse loginResponse = new LoginResponse();
-		loginResponse.setToken(TIS_TOKENID);
-		given(restTemplate.postForObject(any(String.class), any(HttpEntity.class), eq(LoginResponse.class))).
-				willReturn(loginResponse);
+		User user = new User(USER_NAME);
+		Map tokenMap = ImmutableMap.of("tokenId", TIS_TOKENID);
+		
+		given(restTemplate.postForObject(any(String.class), any(HttpEntity.class), eq(Map.class))).
+				willReturn(tokenMap);
+		given(loginService.getUserByUserName(TIS_USER)).willReturn(user);
 		given(permissionsService.getPermissions(any(Set.class))).willReturn(Sets.newHashSet("Perm1", "Perm2", "Perm3"));
 
 		given(restTemplate.exchange(any(String.class), eq(HttpMethod.GET), any(HttpEntity.class),
@@ -166,7 +179,7 @@ public class LoginControllerTest {
 				.header("X-TIS-Username", TIS_USER)
 				.header("X-TIS-Password", TIS_PASSWORD))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.tokenId").value(TIS_TOKENID))
+				.andExpect(jsonPath("$.token").value(TIS_TOKENID))
 				.andExpect(jsonPath("$.userName").value(TIS_USER))
 				.andExpect(jsonPath("$.fullName").value(TIS_USER))
 				.andExpect(jsonPath("$.roles").value(hasItems("Trainee", "RVAdmin", "RVOfficer")))
