@@ -10,7 +10,7 @@ angular.module('heeTisGuiApp')
 			var self = this;
 			var methods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'];
 
-			var base = '//' + $location.host() + '/auth/';
+			var base = '//' + $location.host() + '/profile/';
 			var _endpoints = {};
 			// var version = 'v1';
 
