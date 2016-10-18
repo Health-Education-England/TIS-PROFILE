@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.audit.AuditEvent;
+import org.springframework.boot.actuate.audit.AuditEventRepository;
 import org.springframework.hateoas.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -36,6 +37,8 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+import static com.transformuk.hee.tis.auth.model.AuditEventType.*;
 
 @RestController
 @Api(value = "/identity", description = "API to invoke OpenAm login and logout")
@@ -58,14 +61,17 @@ public class LoginController {
 
 	private PermissionsService permissionsService;
 	private LoginService loginService;
+	private AuditEventRepository auditEventRepository;
 
 	@Autowired
 	public LoginController(@Value("${openAM.host}") String openAMHost, RestTemplate restTemplate,
-	                       PermissionsService permissionsService, LoginService loginService) {
+	                       PermissionsService permissionsService, LoginService loginService,
+	                       AuditEventRepository auditEventRepository) {
 		this.openAMHost = openAMHost;
 		this.restTemplate = restTemplate;
 		this.permissionsService = permissionsService;
 		this.loginService = loginService;
+		this.auditEventRepository = auditEventRepository;
 	}
 
 	@ApiOperation(value = "authenticate()", notes = "authenticates user", response = LoginResponse.class)
@@ -80,7 +86,7 @@ public class LoginController {
 		UserProfile userProfile = getUserProfile(userName, tokenId);
 		User user = loginService.getUserByUserName(userName);
 		LoginResponse loginResponse = toLoginResponse(userProfile, tokenId, user);
-		loginService.logEvent(new AuditEvent(userName, "LoginEvent"));
+		auditEventRepository.add(createEvent(userName, login, loginResponse));
 		return loginResponse;
 	}
 
@@ -121,14 +127,15 @@ public class LoginController {
 					response = Void.class)})
 	@CrossOrigin
 	@RequestMapping(path = "/logout", method = POST)
-	public void logout(@RequestHeader(value = "X-TIS-TokenId") String tokenId) {
+	public void logout(@RequestHeader(value = "X-TIS-TokenId") String tokenId,
+	                   @RequestHeader(value = "userId")  String userId) {
 		HttpHeaders headers = new HttpHeaders();
 		headers.add(IPLANET_DIRECTORY_PRO, tokenId);
 		HttpEntity<Void> request = new HttpEntity<>(headers);
 
 		String logoutUrl = openAMHost + LOGOUT_PATH;
 		restTemplate.postForObject(logoutUrl, request, String.class);
-		loginService.logEvent(new AuditEvent(tokenId, "LogoutEvent"));
+		auditEventRepository.add(createEvent(userId, logout, tokenId));
 	}
 
 	private String getToken(String userName, String password) {

@@ -22,7 +22,7 @@ angular.module('heeTisGuiApp')
 					$rootScope.user = undefined;
 
 					this.logout.create({
-						headers: { 'X-TIS-TokenId': userToken}
+						headers: { 'X-TIS-TokenId': userToken, 'userId':cookieJson.userName }
 					}).then(function(response) {
 						console.log('logout response: '+response);
 						$state.go('login');
