@@ -3,14 +3,16 @@ package com.transformuk.hee.tis.auth.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class UserProfile {
+public class JwtAuthToken {
 
 	private String username;
 	private List<String> cn = new ArrayList<>();
-	private List<String> isMemberOf = new ArrayList<>();
+	private Set<String> roles = new HashSet<>();
 
 	public List<String> getCn() {
 		return cn;
@@ -20,12 +22,12 @@ public class UserProfile {
 		this.cn = cn;
 	}
 
-	public List<String> getIsMemberOf() {
-		return isMemberOf;
+	public Set<String> getRoles() {
+		return roles;
 	}
 
-	public void setIsMemberOf(List<String> isMemberOf) {
-		this.isMemberOf = isMemberOf;
+	public void setRoles(Set<String> roles) {
+		this.roles = roles;
 	}
 
 	public String getUsername() {

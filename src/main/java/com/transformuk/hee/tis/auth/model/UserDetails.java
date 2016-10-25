@@ -6,12 +6,11 @@ import io.swagger.annotations.ApiModelProperty;
 import java.util.Set;
 
 /**
- * Response class to hold login results like token, userDetails etc.
+ * Response class to hold UserDetails like name, roles, permissions etc.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class LoginResponse {
+public class UserDetails {
 
-	private String token;
 	private String userName;
 	private String fullName;
 	private String firstName;
@@ -21,16 +20,6 @@ public class LoginResponse {
 	private String gmcId;
 	private String designatedBodyCode;
 	private String phoneNumber;
-
-	@ApiModelProperty(value = "token that applications can present as a cookie value "
-			+ "for other operations that require authentication")
-	public String getToken() {
-		return token;
-	}
-
-	public void setToken(String token) {
-		this.token = token;
-	}
 
 	@ApiModelProperty(value = "the roles the current user has in the TIS system")
 	public Set<String> getRoles() {
@@ -116,11 +105,10 @@ public class LoginResponse {
 
 	@Override
 	public String toString() {
-		return "LoginResponse{" +
+		return "UserDetails{" +
 				"fullName='" + fullName + '\'' +
 				", firstName='" + firstName + '\'' +
 				", lastName='" + lastName + '\'' +
-				", token='" + token + '\'' +
 				", userName='" + userName + '\'' +
 				", roles='" + roles + '\'' +
 				", permissions='" + permissions + '\'' +
