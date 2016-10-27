@@ -23,6 +23,7 @@ import org.springframework.security.jwt.Jwt;
 import org.springframework.security.jwt.JwtHelper;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -35,7 +36,6 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @RestController
 @Api(value = "/identity", description = "API to get user profile with permissions")
@@ -109,7 +109,8 @@ public class UserProfileController {
 		Map<String, Object> claims = jsonParser.parseMap(jwt.getClaims());
 		String userName = getString(claims, "preferred_username");
 		String cn = getString(claims, "name");
-		String rawRolesString = getString(claims, "roles"); // list of roles in the form [role1, role2]
+		Map<String, Object> accessMap = (Map<String, Object>) claims.get("realm_access");
+		String rawRolesString = getString(accessMap, "roles");
 		String rolesString = CharMatcher.anyOf("[]").removeFrom(rawRolesString);
 		Set<String> roles = Pattern.compile(",").splitAsStream(rolesString)
 				.map(s -> s.trim())
