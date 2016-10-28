@@ -1,6 +1,5 @@
 package com.transformuk.hee.tis.auth.service;
 
-import com.transformuk.hee.tis.auth.model.Permission;
 import com.transformuk.hee.tis.auth.model.Role;
 import com.transformuk.hee.tis.auth.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +9,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
-
-import static java.lang.String.format;
 
 /**
  * Service for role based permissions
@@ -24,15 +21,6 @@ public class PermissionsService {
 	@Autowired
 	public PermissionsService(RoleRepository repository) {
 		this.repository = repository;
-	}
-
-	/**
-	 * @param roleName Name of the role
-	 * @return {@link Permission} or null if no role found for given roleId
-	 */
-	public Object getPermissions(String roleName) {
-		Role role = repository.findByName(roleName);
-		return role != null ? role.getPermissions() : format("Role %s not found", roleName);
 	}
 
 	/**

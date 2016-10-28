@@ -2,20 +2,16 @@ package com.transformuk.hee.tis.auth.model;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.transformuk.hee.tis.auth.model.Permission;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
 import java.util.Set;
 
-import static javax.persistence.GenerationType.AUTO;
-
 @Entity
 @Table(name = "role")
 @ApiModel(description = "Role that can be assigned to a user")
 public class Role {
-	private long id;
 	private String name;
 	private Set<Permission> permissions;
 
@@ -28,20 +24,9 @@ public class Role {
 		super();
 	}
 
-	@ApiModelProperty(required = true, value = "Role identifier")
-	@JsonProperty("id")
-	@Id
-	@GeneratedValue(strategy = AUTO)
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
 	@ApiModelProperty(required = true, value = "Role name")
 	@JsonProperty("name")
+	@Id
 	public String getName() {
 		return name;
 	}
@@ -53,7 +38,8 @@ public class Role {
 	@ApiModelProperty(required = true, value = "Permissions given to a role")
 	@JsonProperty("permissions")
 	@ManyToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "role_permissions", joinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "permission_id", referencedColumnName = "id"))
+	@JoinTable(name = "role_permissions", joinColumns = @JoinColumn(name = "role_name", referencedColumnName = "name"),
+			inverseJoinColumns = @JoinColumn(name = "permission_name", referencedColumnName = "name"))
 	public Set<Permission> getPermissions() {
 		return permissions;
 	}
@@ -65,8 +51,8 @@ public class Role {
 	@Override
 	public String toString() {
 		return "Role{" +
-				"id=" + id +
-				", name='" + name + '\'' +
+				"name='" + name + '\'' +
+				", permissions=" + permissions +
 				'}';
 	}
 }

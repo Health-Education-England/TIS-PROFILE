@@ -4,32 +4,46 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @ApiModel(description = "User object that contains the logged in user's details")
 public class User {
-    private String userName;
+    private String name;
     private String firstName;
     private String lastName;
     private String gmcId;
     private String designatedBodyCode;
     private String phoneNumber;
+    private Set<Role> roles;
 
     public User(){
         super();
     }
 
-    public User(String userName) {
-        this.userName = userName;
+    public User(String name) {
+        this.name = name;
     }
 
-    @ApiModelProperty(required = true, value = "User identifier")
+	@ApiModelProperty(required = true, value = "Roles assigned to a user")
+	@JsonProperty("roles")
+	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_name", referencedColumnName = "name"),
+			inverseJoinColumns = @JoinColumn(name = "role_name", referencedColumnName = "name"))
+	public Set<Role> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(Set<Role> roles) {
+		this.roles = roles;
+	}
+
+	@ApiModelProperty(required = true, value = "User identifier")
     @JsonProperty("user_name")
     @Id
-    public String getUserName() {
-        return userName;
+    public String getName() {
+        return name;
     }
 
     @ApiModelProperty(required = true, value = "User's first name")
@@ -62,8 +76,8 @@ public class User {
         return phoneNumber;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setName(String userName) {
+        this.name = name;
     }
 
     public void setFirstName(String firstName) {
@@ -86,15 +100,16 @@ public class User {
         this.phoneNumber = phoneNumber;
     }
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "userName='" + userName + '\'' +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", gmcId='" + gmcId + '\'' +
-                ", designatedBodyCode='" + designatedBodyCode + '\'' +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                '}';
-    }
+	@Override
+	public String toString() {
+		return "User{" +
+				"name='" + name + '\'' +
+				", firstName='" + firstName + '\'' +
+				", lastName='" + lastName + '\'' +
+				", gmcId='" + gmcId + '\'' +
+				", designatedBodyCode='" + designatedBodyCode + '\'' +
+				", phoneNumber='" + phoneNumber + '\'' +
+				", roles=" + roles +
+				'}';
+	}
 }
