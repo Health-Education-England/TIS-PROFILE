@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Health Education England - Training Information System</title>
+	<meta name="viewport" content="width=device-width">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+	<!--[if lt IE 9]>
+	<script src="scripts/html5shiv.min.40bd440d.js"></script>
+	<![endif]-->
+	<link rel="stylesheet" href="/common/vendor.css">
+	<!-- build:css styles/hee.css -->
+	<link rel="stylesheet" href="app/styles/main.css">
+	<!-- endbuild -->
+	<!--[if lt IE 9]>
+	<script>
+		document.createElement('ng-include');
+		document.createElement('ng-pluralize');
+		document.createElement('ng-view');
+		document.createElement('ui-select');
+		document.createElement('ui-select-match');
+		document.createElement('ui-select-choices');
+		document.createElement('modal-loader');
+		document.createElement('notes-toggler');
+
+		// Optionally these for CSS
+		document.createElement('ng:include');
+		document.createElement('ng:pluralize');
+		document.createElement('ng:view');
+	</script>
+	<![endif]-->
+</head>
+<!--[if IE 8 ]>
+<body ng-app="heeTisGuiApp" class="ie8">
+<![endif]-->
+
+<!--[if !IE]> -->
+<body ng-app="heeTisGuiApp">
+<!-- <![endif]-->
+
+<!--[if lt IE 8]>
+<p class="browsehappy">You are using an <strong>outdated</strong> browser. Please
+	<a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.
+</p>
+<![endif]-->
+
+<div class="container" ng-class="{ 'grey-border': user.loggedIn === true }">
+	<div ng-include="'app/components/masthead/masthead.html'"></div>
+	<div ui-view></div>
+</div>
+
+
+<!--[if lt IE 9]>
+<script src="scripts/respond.min.afc1984a.js"></script>
+<![endif]-->
+
+<script src="/common/vendor.js"></script>
+
+<!-- build:js scripts/hee.js -->
+<script src="app/scripts/app.js"></script>
+<script src="app/scripts/services/endpoint-factory.js"></script>
+<script src="app/scripts/services/permissions-service.js"></script>
+<script src="app/scripts/templates.js"></script>
+<script src="app/components/masthead/masthead-ctrl.js"></script>
+<!-- endbuild -->
+</body>
+</html>

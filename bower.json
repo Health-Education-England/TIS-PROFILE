@@ -1,0 +1,14 @@
+{
+  "name": "TIS-AUTH",
+  "version": "0.0.5",
+  "dependencies": {
+    "tis-common-components": "*",
+    "bootstrap": "3.2.0"
+  },
+  "appPath": "js",
+  "distPath": "target/classes/static",
+  "moduleName": "heeTisGuiApp",
+  "resolutions": {
+    "angular": ">=1.2.26 <1.6"
+  }
+}
