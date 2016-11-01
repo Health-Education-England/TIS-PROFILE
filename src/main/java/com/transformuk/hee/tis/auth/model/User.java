@@ -76,7 +76,7 @@ public class User {
         return phoneNumber;
     }
 
-    public void setName(String userName) {
+    public void setName(String name) {
         this.name = name;
     }
 
