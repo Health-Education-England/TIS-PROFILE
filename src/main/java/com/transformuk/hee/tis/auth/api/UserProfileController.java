@@ -3,10 +3,10 @@ package com.transformuk.hee.tis.auth.api;
 
 import com.google.common.base.CharMatcher;
 import com.transformuk.hee.tis.auth.exception.UserNotFoundException;
-import com.transformuk.hee.tis.auth.model.UserDetails;
-import com.transformuk.hee.tis.auth.model.User;
-import com.transformuk.hee.tis.auth.model.UserListResponse;
 import com.transformuk.hee.tis.auth.model.JwtAuthToken;
+import com.transformuk.hee.tis.auth.model.User;
+import com.transformuk.hee.tis.auth.model.UserDetails;
+import com.transformuk.hee.tis.auth.model.UserListResponse;
 import com.transformuk.hee.tis.auth.service.LoginService;
 import com.transformuk.hee.tis.auth.service.PermissionsService;
 import io.swagger.annotations.Api;
@@ -15,7 +15,6 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.audit.AuditEventRepository;
 import org.springframework.boot.json.JsonParser;
 import org.springframework.boot.json.JsonParserFactory;
 import org.springframework.hateoas.Resource;
@@ -23,7 +22,6 @@ import org.springframework.security.jwt.Jwt;
 import org.springframework.security.jwt.JwtHelper;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -46,16 +44,13 @@ public class UserProfileController {
 
 	private PermissionsService permissionsService;
 	private LoginService loginService;
-	private AuditEventRepository auditEventRepository;
 
 	private JsonParser jsonParser = JsonParserFactory.getJsonParser();
 
 	@Autowired
-	public UserProfileController(PermissionsService permissionsService, LoginService loginService,
-								 AuditEventRepository auditEventRepository) {
+	public UserProfileController(PermissionsService permissionsService, LoginService loginService) {
 		this.permissionsService = permissionsService;
 		this.loginService = loginService;
-		this.auditEventRepository = auditEventRepository;
 	}
 
 	@ApiOperation(value = "profile()", notes = "gets user profile with permissions", response = UserDetails.class)
