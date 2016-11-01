@@ -3,18 +3,15 @@ package com.transformuk.hee.tis.auth.api;
 
 import com.google.common.base.CharMatcher;
 import com.transformuk.hee.tis.auth.exception.UserNotFoundException;
-import com.transformuk.hee.tis.auth.model.JwtAuthToken;
-import com.transformuk.hee.tis.auth.model.User;
-import com.transformuk.hee.tis.auth.model.UserDetails;
-import com.transformuk.hee.tis.auth.model.UserListResponse;
+import com.transformuk.hee.tis.auth.model.*;
 import com.transformuk.hee.tis.auth.service.LoginService;
-import com.transformuk.hee.tis.auth.service.PermissionsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.audit.AuditEventRepository;
 import org.springframework.boot.json.JsonParser;
 import org.springframework.boot.json.JsonParserFactory;
 import org.springframework.hateoas.Resource;
@@ -22,11 +19,11 @@ import org.springframework.security.jwt.Jwt;
 import org.springframework.security.jwt.JwtHelper;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import static com.google.common.collect.Iterables.getFirst;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toSet;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -42,15 +39,16 @@ public class UserProfileController {
 	private static final Logger LOG = getLogger(UserProfileController.class);
 
 
-	private PermissionsService permissionsService;
 	private LoginService loginService;
+	private AuditEventRepository auditEventRepository;
 
 	private JsonParser jsonParser = JsonParserFactory.getJsonParser();
 
 	@Autowired
-	public UserProfileController(PermissionsService permissionsService, LoginService loginService) {
-		this.permissionsService = permissionsService;
+	public UserProfileController(LoginService loginService,
+								 AuditEventRepository auditEventRepository) {
 		this.loginService = loginService;
+		this.auditEventRepository = auditEventRepository;
 	}
 
 	@ApiOperation(value = "profile()", notes = "gets user profile with permissions", response = UserDetails.class)
@@ -64,7 +62,7 @@ public class UserProfileController {
 
 		JwtAuthToken jwtAuthToken = decode(token);
 		User user = loginService.getUserByUserName(jwtAuthToken.getUsername());
-		UserDetails userDetails = toLoginResponse(jwtAuthToken, user);
+		UserDetails userDetails = toLoginResponse(user);
 		return userDetails;
 	}
 
@@ -118,12 +116,13 @@ public class UserProfileController {
 		return profile;
 	}
 
-	private UserDetails toLoginResponse(JwtAuthToken jwtAuthToken, User user) {
+	private UserDetails toLoginResponse(User user) {
 		UserDetails userDetails = new UserDetails();
-		userDetails.setUserName(jwtAuthToken.getUsername());
-		userDetails.setFullName(getFirst(jwtAuthToken.getCn(), null));
-		userDetails.setRoles(jwtAuthToken.getRoles());
-		userDetails.setPermissions(permissionsService.getPermissions(userDetails.getRoles()));
+		userDetails.setUserName(user.getName());
+		userDetails.setFullName(user.getFirstName() + " " + user.getLastName());
+		Set<Role> roles = user.getRoles();
+		userDetails.setRoles(roles.stream().map(Role::getName).collect(toSet()));
+		userDetails.setPermissions(getPermissions(roles));
 		userDetails.setDesignatedBodyCode(user.getDesignatedBodyCode());
 		userDetails.setPhoneNumber(user.getPhoneNumber());
 		userDetails.setGmcId(user.getGmcId());
@@ -132,8 +131,22 @@ public class UserProfileController {
 		return userDetails;
 	}
 
+	private Set<String> getPermissions(Set<Role> roles) {
+		return roles.stream()
+				.map(this::getPermissions)
+				.flatMap(Collection::stream)
+				.collect(toSet());
+	}
+
+	private Set<String> getPermissions(Role role) {
+		return role.getPermissions().stream()
+				.map(Permission::getName)
+				.collect(toSet());
+	}
+
 	private String getString(Map<String, Object> claims, String name) {
 		Object v = claims.get(name);
 		return v != null ? String.valueOf(v) : null;
 	}
+
 }
