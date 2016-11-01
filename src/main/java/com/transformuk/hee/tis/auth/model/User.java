@@ -1,6 +1,5 @@
 package com.transformuk.hee.tis.auth.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -27,7 +26,6 @@ public class User {
     }
 
 	@ApiModelProperty(required = true, value = "Roles assigned to a user")
-	@JsonProperty("roles")
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_name", referencedColumnName = "name"),
 			inverseJoinColumns = @JoinColumn(name = "role_name", referencedColumnName = "name"))
@@ -40,38 +38,32 @@ public class User {
 	}
 
 	@ApiModelProperty(required = true, value = "User identifier")
-    @JsonProperty("user_name")
     @Id
     public String getName() {
         return name;
     }
 
     @ApiModelProperty(required = true, value = "User's first name")
-    @JsonProperty("first_name")
     public String getFirstName() {
         return firstName;
     }
 
     @ApiModelProperty(required = true, value = "User's last name")
-    @JsonProperty("last_name")
     public String getLastName() {
         return lastName;
     }
 
     @ApiModelProperty(required = true, value = "7 digit GMC Reference number of the user(Trainee doctor)")
-    @JsonProperty("gmc_id")
     public String getGmcId() {
         return gmcId;
     }
 
     @ApiModelProperty(required = true, value = "Designated Body code of user's organisation")
-    @JsonProperty("designated_body_code")
     public String getDesignatedBodyCode() {
         return designatedBodyCode;
     }
 
     @ApiModelProperty(value = "User's phone number")
-    @JsonProperty("phone_number")
     public String getPhoneNumber() {
         return phoneNumber;
     }
