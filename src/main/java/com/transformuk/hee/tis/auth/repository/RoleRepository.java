@@ -2,7 +2,6 @@ package com.transformuk.hee.tis.auth.repository;
 
 import com.transformuk.hee.tis.auth.model.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -20,7 +19,7 @@ public interface RoleRepository extends JpaRepository<Role, Long> {
 	 * @param roleName Name of the role
 	 * @return {@link Role} Role associated with the given role name
 	 */
-	Role findByName(@Param("name") String roleName);
+	Role findByName(String roleName);
 
 	/**
 	 * Finds the roles with the given names

@@ -25,7 +25,6 @@ public class Role {
 	}
 
 	@ApiModelProperty(required = true, value = "Role name")
-	@JsonProperty("name")
 	@Id
 	public String getName() {
 		return name;
@@ -36,7 +35,6 @@ public class Role {
 	}
 
 	@ApiModelProperty(required = true, value = "Permissions given to a role")
-	@JsonProperty("permissions")
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "role_permissions", joinColumns = @JoinColumn(name = "role_name", referencedColumnName = "name"),
 			inverseJoinColumns = @JoinColumn(name = "permission_name", referencedColumnName = "name"))

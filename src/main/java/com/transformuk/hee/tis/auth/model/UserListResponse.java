@@ -1,7 +1,6 @@
 package com.transformuk.hee.tis.auth.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -12,11 +11,9 @@ import java.util.List;
 public class UserListResponse {
 
 	@ApiModelProperty(value = "Total number of users in the system matching the given sorting and filter criteria")
-	@JsonProperty("total")
 	private long total;
 
 	@ApiModelProperty(value = "List of users to be returned in this response")
-	@JsonProperty("users")
 	private List<User> users;
 
 	public UserListResponse(long total, List<User> users) {

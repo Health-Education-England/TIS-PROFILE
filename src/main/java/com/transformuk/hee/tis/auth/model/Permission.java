@@ -2,12 +2,12 @@ package com.transformuk.hee.tis.auth.model;
 
 
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-import javax.persistence.*;
-import java.util.Set;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
 @Table(name = "permission")
@@ -23,7 +23,6 @@ public class Permission {
 	}
 
 	@ApiModelProperty(required = true, value = "Permission name")
-	@JsonProperty("name")
 	@Id
 	public String getName() {
 		return name;
