@@ -12,6 +12,7 @@ mvnw.cmd
 js/tests/
 js/app/scripts/templates.js
 js/app/components/masthead/
+js/app/scripts/services/profile-service.js
 js/bower_components/
 npm-debug.log
 js/app/styles/main.css

@@ -363,6 +363,12 @@ module.exports = function (grunt) {
 					src: '**/**',
 					dest: '<%= yeoman.app %>/app/components',
 					filter: 'isFile'
+				}, {
+					expand: true,
+					cwd: '<%= yeoman.app %>/bower_components/tis-common-components/app/services/',
+					src: '**/**',
+					dest: '<%= yeoman.app %>/app/scripts/services',
+					filter: 'isFile'
 				}]
 			},
 			prod: {
@@ -418,6 +424,11 @@ module.exports = function (grunt) {
 					cwd: '<%= yeoman.app %>/bower_components/jquery-ui/themes/base/images',
 					src: '*',
 					dest: '<%= yeoman.dist %>/images/jquery-ui'
+				}, {
+					expand: true,
+					cwd: '<%= yeoman.app %>/app/components/',
+					src: '{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
+					dest: '<%= yeoman.dist %>/images'
 				}]
 			},
 			styles: {
