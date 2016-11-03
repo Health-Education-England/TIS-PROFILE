@@ -7,6 +7,7 @@ import javax.persistence.*;
 import java.util.Set;
 
 @Entity
+@Table(name = "user")
 @ApiModel(description = "User object that contains the logged in user's details")
 public class User {
     private String name;
