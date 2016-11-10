@@ -6,6 +6,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +31,7 @@ public class ExceptionHandlerController {
 		if(ex instanceof IllegalArgumentException || ex instanceof MethodArgumentNotValidException) {
 			status = BAD_REQUEST;
 		}
-		if(ex instanceof UserNotFoundException) {
+		if(ex instanceof EntityNotFoundException) {
 			status = NOT_FOUND;
 		}
 		ex.printStackTrace();

@@ -1,6 +1,5 @@
 package com.transformuk.hee.tis.auth.service;
 
-import com.transformuk.hee.tis.auth.exception.UserNotFoundException;
 import com.transformuk.hee.tis.auth.model.User;
 import com.transformuk.hee.tis.auth.model.UserListResponse;
 import com.transformuk.hee.tis.auth.repository.UserRepository;
@@ -10,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 import static com.transformuk.hee.tis.auth.filters.UserSpecification.isEqualTo;
@@ -22,7 +22,8 @@ import static org.springframework.util.StringUtils.isEmpty;
  */
 @Service
 public class LoginService {
-	private UserRepository userRepository;
+	
+	private final UserRepository userRepository;
 
 	public LoginService(UserRepository userRepository) {
 		this.userRepository = userRepository;
@@ -32,10 +33,10 @@ public class LoginService {
 	 * @param userName User's unique identifier
 	 * @return {@link User} User associated with given unique user name
 	 */
-	public User getUserByUserName(String userName) throws UserNotFoundException {
+	public User getUserByUserName(String userName) {
 		User user = userRepository.findOne(userName);
 		if (user == null) {
-			throw new UserNotFoundException(format("User with username %s not found", userName));
+			throw new EntityNotFoundException(format("User with username %s not found", userName));
 		}
 		return user;
 	}

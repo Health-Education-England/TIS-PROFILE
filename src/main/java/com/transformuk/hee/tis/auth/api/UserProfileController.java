@@ -2,7 +2,6 @@ package com.transformuk.hee.tis.auth.api;
 
 
 import com.google.common.base.CharMatcher;
-import com.transformuk.hee.tis.auth.exception.UserNotFoundException;
 import com.transformuk.hee.tis.auth.model.*;
 import com.transformuk.hee.tis.auth.service.LoginService;
 import io.swagger.annotations.Api;
@@ -57,8 +56,7 @@ public class UserProfileController {
 	})
 	@CrossOrigin
 	@RequestMapping(path = "/userinfo", method = GET, produces = APPLICATION_JSON_VALUE)
-	public UserDetails profile(@RequestHeader(value = "OIDC_access_token") String token) throws
-			UserNotFoundException {
+	public UserDetails profile(@RequestHeader(value = "OIDC_access_token") String token)  {
 
 		JwtAuthToken jwtAuthToken = decode(token);
 		User user = loginService.getUserByUserName(jwtAuthToken.getUsername());
@@ -72,7 +70,7 @@ public class UserProfileController {
 	})
 	@CrossOrigin
 	@RequestMapping(path = "/user", method = GET, produces = APPLICATION_JSON_VALUE)
-	public Resource<User> getUser(@RequestHeader(value = "Username") String userName) throws UserNotFoundException {
+	public Resource<User> getUser(@RequestHeader(value = "Username") String userName) {
 		User user = loginService.getUserByUserName(userName);
 		Resource<User> resource = new Resource<>(user);
 		resource.add(linkTo(methodOn(UserProfileController.class).getUser(userName)).withSelfRel());

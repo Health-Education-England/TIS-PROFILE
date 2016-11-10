@@ -5,8 +5,6 @@ import com.transformuk.hee.tis.auth.model.Role;
 import com.transformuk.hee.tis.auth.model.User;
 import com.transformuk.hee.tis.auth.model.UserListResponse;
 import com.transformuk.hee.tis.auth.service.LoginService;
-import org.flywaydb.core.Flyway;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -18,8 +16,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.client.RestTemplate;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.Set;
 
 import static com.google.common.collect.Lists.newArrayList;
@@ -27,7 +25,8 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(UserProfileController.class)
@@ -49,12 +48,6 @@ public class UserProfileControllerTest {
 
 	@Autowired
 	private MockMvc mvc;
-
-	@MockBean
-	private RestTemplate restTemplate;
-
-	@MockBean // mocking to override init method otherwise test try to connect DB.
-	private Flyway flyway;
 
 	@Captor
 	private ArgumentCaptor<AuditEvent> captor;
@@ -78,27 +71,24 @@ public class UserProfileControllerTest {
 	}
 
 	@Test
-	@Ignore
 	public void shouldGETListOfUsers() throws Exception {
 		//Given
 		User user = new User(USER_NAME);
 		user.setGmcId("123");
+		user.setFirstName("James");
 		UserListResponse response = new UserListResponse(1, newArrayList(user));
-		given(loginService.getUsers(0, 1, "first_name=James")).willReturn(response);
+		given(loginService.getUsers(0, 1, "firstName=James")).willReturn(response);
 
 		//When
-		this.mvc.perform(get("/identity/users").param("offset", "0").param("limit", "1").param("filters",
-				"first_name=James"))
+		this.mvc.perform(get("/identity/users").param("offset", "0").param("limit", "1").param("filter",
+				"firstName=James"))
 				.andExpect(status().isOk())
-				.andExpect(content().string(
-						"{\"total\":1,\"users\":[{\"user_name\":\"jamesH\",\"first_name\":null,\"last_name\":null," +
-								"\"gmc_id\":\"123\",\"designated_body_code\":null,\"phone_number\":null}]," +
-								"\"_links\":{\"self\":{\"href\":\"http://localhost/identity/users?" +
-								"offset=0&limit=1&filters=first_name%3DJames\"}}}"));
+				.andExpect(jsonPath("$.total").value(1))
+				.andExpect(jsonPath("$.users[0].name").value("jamesh"))
+				.andExpect(jsonPath("$.users[0].gmcId").value("123"));
 	}
 
 	@Test
-	@Ignore
 	public void shouldGETUserByUserName() throws Exception {
 		//Given
 		User user = new User(USER_NAME);
@@ -108,10 +98,18 @@ public class UserProfileControllerTest {
 		//When
 		this.mvc.perform(get("/identity/user").header("Username", USER_NAME))
 				.andExpect(status().isOk())
-				.andExpect(content().string(
-						"{\"user_name\":\"jamesH\",\"first_name\":null,\"last_name\":null,\"gmc_id\":\"123\"," +
-								"\"designated_body_code\":null,\"phone_number\":null," +
-								"\"_links\":{\"self\":{\"href\":\"http://localhost/identity/user\"}}}"));
+				.andExpect(jsonPath("$.name").value("jamesh"))
+				.andExpect(jsonPath("$.gmcId").value("123"));
+	}
+
+	@Test
+	public void shouldRetunrBadRequestForInvalidUserName() throws Exception {
+		//Given
+		given(loginService.getUserByUserName(USER_NAME)).willThrow(EntityNotFoundException.class);
+
+		//When
+		this.mvc.perform(get("/identity/user").header("Username", "InValidUser"))
+				.andExpect(status().isBadRequest());
 	}
 
 	@Test
