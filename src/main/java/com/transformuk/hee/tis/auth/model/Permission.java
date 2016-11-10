@@ -10,7 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "permission")
+@Table(name = "Permission")
 @ApiModel(description = "Permission given to a role")
 public class Permission {
 	private String name;

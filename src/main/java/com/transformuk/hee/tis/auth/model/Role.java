@@ -1,7 +1,6 @@
 package com.transformuk.hee.tis.auth.model;
 
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -9,7 +8,7 @@ import javax.persistence.*;
 import java.util.Set;
 
 @Entity
-@Table(name = "role")
+@Table(name = "Role")
 @ApiModel(description = "Role that can be assigned to a user")
 public class Role {
 	private String name;
@@ -36,8 +35,8 @@ public class Role {
 
 	@ApiModelProperty(required = true, value = "Permissions given to a role")
 	@ManyToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "role_permissions", joinColumns = @JoinColumn(name = "role_name", referencedColumnName = "name"),
-			inverseJoinColumns = @JoinColumn(name = "permission_name", referencedColumnName = "name"))
+	@JoinTable(name = "RolePermission", joinColumns = @JoinColumn(name = "roleName", referencedColumnName = "name"),
+			inverseJoinColumns = @JoinColumn(name = "permissionName", referencedColumnName = "name"))
 	public Set<Permission> getPermissions() {
 		return permissions;
 	}

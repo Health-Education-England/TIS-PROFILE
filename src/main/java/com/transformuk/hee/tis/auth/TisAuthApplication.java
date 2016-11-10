@@ -36,6 +36,9 @@ public class TisAuthApplication {
 	@Value("${flyway.user}")
 	private String user;
 
+	@Value("${flyway.baseline-version}")
+	private String baseLineVersion;
+
 	@Value("${flyway.locations}")
 	private String migrationFilesLocations;
 
@@ -51,8 +54,7 @@ public class TisAuthApplication {
 	@Value("${flyway.out-of-order}")
 	private boolean outOfOrder;
 
-	public static void main(String[] args) {
-		run(TisAuthApplication.class, args);
+	public static void main(String[] args) {run(TisAuthApplication.class, args);
 	}
 
 	@Bean(initMethod = "migrate")
@@ -65,6 +67,7 @@ public class TisAuthApplication {
 		flyway.setCleanOnValidationError(cleanOnValidationError);
 		flyway.setOutOfOrder(outOfOrder);
 		flyway.info();
+		flyway.setBaselineVersionAsString(baseLineVersion);
 		return flyway;
 	}
 

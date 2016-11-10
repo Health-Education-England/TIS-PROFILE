@@ -7,7 +7,7 @@ import javax.persistence.*;
 import java.util.Set;
 
 @Entity
-@Table(name = "user")
+@Table(name = "HeeUser")
 @ApiModel(description = "User object that contains the logged in user's details")
 public class User {
     private String name;
@@ -28,8 +28,8 @@ public class User {
 
 	@ApiModelProperty(required = true, value = "Roles assigned to a user")
 	@ManyToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_name", referencedColumnName = "name"),
-			inverseJoinColumns = @JoinColumn(name = "role_name", referencedColumnName = "name"))
+	@JoinTable(name = "UserRole", joinColumns = @JoinColumn(name = "userName", referencedColumnName = "name"),
+			inverseJoinColumns = @JoinColumn(name = "roleName", referencedColumnName = "name"))
 	public Set<Role> getRoles() {
 		return roles;
 	}
