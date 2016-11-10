@@ -54,8 +54,7 @@ public class TisAuthApplication {
 	@Value("${flyway.out-of-order}")
 	private boolean outOfOrder;
 
-	public static void main(String[] args) {run(TisAuthApplication.class, args);
-	}
+	public static void main(String[] args) {run(TisAuthApplication.class, args);}
 
 	@Bean(initMethod = "migrate")
 	Flyway flyway() {
