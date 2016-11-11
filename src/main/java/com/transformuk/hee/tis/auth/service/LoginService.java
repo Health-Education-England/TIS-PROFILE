@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.List;
 import static com.transformuk.hee.tis.auth.filters.UserSpecification.isEqualTo;
 import static java.lang.String.format;
 import static org.springframework.data.domain.Sort.Direction.ASC;
+import static org.springframework.transaction.annotation.Propagation.REQUIRED;
 import static org.springframework.util.StringUtils.isEmpty;
 
 /**
@@ -33,6 +35,7 @@ public class LoginService {
 	 * @param userName User's unique identifier
 	 * @return {@link User} User associated with given unique user name
 	 */
+	@Transactional(readOnly = true, propagation = REQUIRED)
 	public User getUserByUserName(String userName) {
 		User user = userRepository.findOne(userName);
 		if (user == null) {
@@ -49,6 +52,7 @@ public class LoginService {
 	 * @param filter the filter to use
 	 * @return {@link List<User>} list of users
 	 */
+	@Transactional(readOnly = true, propagation = REQUIRED)
 	public UserListResponse getUsers(int offset, int limit, String filter) {
 		int pageNumber = offset / limit;
 		Pageable page = new PageRequest(pageNumber, limit, new Sort(ASC, "firstName"));
