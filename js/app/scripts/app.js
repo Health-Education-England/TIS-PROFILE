@@ -39,7 +39,11 @@ angular
 			.state('unauthorised', {
 				templateUrl: 'app/components/unauthorised/unauthorised.html',
 				url: '/unauthorised'
-			});
+			})
+			.state('error', {
+                templateUrl: 'app/components/error/error.html',
+                url: '/error'
+            });
 
 		$translateProvider.translations('en', {
 			//::translations:://
