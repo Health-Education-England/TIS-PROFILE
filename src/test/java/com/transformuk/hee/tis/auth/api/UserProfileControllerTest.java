@@ -60,7 +60,7 @@ public class UserProfileControllerTest {
 		given(loginService.getUserByUserName(USER_NAME)).willReturn(user);
 
 		// When & then
-		this.mvc.perform(get("/identity/userinfo")
+		this.mvc.perform(get("/api/userinfo")
 				.header("OIDC_access_token", TOKEN))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.userName").value(USER_NAME))
@@ -80,7 +80,7 @@ public class UserProfileControllerTest {
 		given(loginService.getUsers(0, 1, "firstName=James")).willReturn(response);
 
 		//When
-		this.mvc.perform(get("/identity/users").param("offset", "0").param("limit", "1").param("filter",
+		this.mvc.perform(get("/api/users").param("offset", "0").param("limit", "1").param("filter",
 				"firstName=James"))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.total").value(1))
@@ -96,7 +96,7 @@ public class UserProfileControllerTest {
 		given(loginService.getUserByUserName(USER_NAME)).willReturn(user);
 
 		//When
-		this.mvc.perform(get("/identity/user").header("Username", USER_NAME))
+		this.mvc.perform(get("/api/user").header("Username", USER_NAME))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.name").value("jamesh"))
 				.andExpect(jsonPath("$.gmcId").value("123"));
@@ -108,7 +108,7 @@ public class UserProfileControllerTest {
 		given(loginService.getUserByUserName(USER_NAME)).willThrow(EntityNotFoundException.class);
 
 		//When
-		this.mvc.perform(get("/identity/user").header("Username", "InValidUser"))
+		this.mvc.perform(get("/api/user").header("Username", "InValidUser"))
 				.andExpect(status().isBadRequest());
 	}
 
@@ -120,7 +120,7 @@ public class UserProfileControllerTest {
 		given(loginService.getUserByUserName(USER_NAME)).willReturn(user);
 
 		//When
-		this.mvc.perform(get("/identity/userinfo")
+		this.mvc.perform(get("/api/userinfo")
 				.header("OIDC_access_token", TOKEN))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.userName").value(USER_NAME))
@@ -130,7 +130,7 @@ public class UserProfileControllerTest {
 
 	@Test
 	public void shouldFailAuthenticationWhenNoHeaders() throws Exception {
-		this.mvc.perform(get("/identity/userinfo"))
+		this.mvc.perform(get("/api/userinfo"))
 				.andExpect(status().is5xxServerError()).andExpect(jsonPath("$.errorMessage")
 				.value(containsString("Missing request header 'OIDC_access_token'")));
 	}

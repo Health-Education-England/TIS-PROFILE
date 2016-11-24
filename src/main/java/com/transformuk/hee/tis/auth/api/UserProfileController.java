@@ -32,8 +32,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @RestController
-@Api(value = "/identity", description = "API to get user profile with permissions")
-@RequestMapping("/identity")
+@Api(value = "/api", description = "API to get user profile with permissions")
+@RequestMapping("/api")
 public class UserProfileController {
 	private static final Logger LOG = getLogger(UserProfileController.class);
 
@@ -50,7 +50,8 @@ public class UserProfileController {
 		this.auditEventRepository = auditEventRepository;
 	}
 
-	@ApiOperation(value = "profile()", notes = "gets user profile with permissions", response = UserDetails.class)
+	@ApiOperation(value = "Gets user profile", notes = "gets user profile with permissions", response = UserDetails
+			.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Returns user profile successfully", response = UserDetails.class)
 	})
@@ -64,7 +65,7 @@ public class UserProfileController {
 		return userDetails;
 	}
 
-	@ApiOperation(value = "getUser()", notes = "GET a user with given userName", response = User.class)
+	@ApiOperation(value = "Gets User deatils only", notes = "GET a user with given userName", response = User.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Got user successfully", response = User.class)
 	})
@@ -78,8 +79,9 @@ public class UserProfileController {
 	}
 
 
-	@ApiOperation(value = "getUsers(). http://localhost:8084/users?offset=0&limit=1&filter=firstName=James" +
-			"Possible Filters:userName,firstName,lastName,gmcId,designatedBodyCode,phoneNumber", notes = "GETs users",
+	@ApiOperation(value = "Returns list of users with pagination",
+			notes = "http://localhost:8084/users?offset=0&limit=1&filter=firstName=James\" +\n" +
+			"Possible Filters:userName,firstName,lastName,gmcId,designatedBodyCode,phoneNumber",
 			response = User.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "User's list returned", response = User.class)
