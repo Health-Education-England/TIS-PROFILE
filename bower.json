@@ -2,7 +2,7 @@
   "name": "TIS-AUTH",
   "version": "0.0.5",
   "dependencies": {
-    "tis-common-components": "0.9.3",
+    "tis-common-components": "0.9.4",
     "bootstrap": "3.2.0"
   },
   "appPath": "js",
