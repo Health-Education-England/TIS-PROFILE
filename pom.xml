@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.transformuk.hee</groupId>
 		<artifactId>tis-parent</artifactId>
-		<version>beta-001</version>
+		<version>beta-002</version>
 		<relativePath />
 	</parent>
 
@@ -78,7 +78,7 @@
 		<dependency>
 			<groupId>com.transformuk.hee</groupId>
 			<artifactId>audit</artifactId>
-			<version>beta-001</version>
+			<version>beta-002</version>
 		</dependency>
 		<!--SpringFox dependencies -->
 		<dependency>
