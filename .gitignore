@@ -20,6 +20,7 @@ js/app/components/common/tooltip/
 js/app/components/common/trainee-layout/
 js/app/components/common/equal-height/
 js/app/scripts/services/profile-service.js
+js/app/scripts/services/endpoint-factory.js
 js/bower_components/
 js/app/components/common/date-picker/
 js/app/scripts/services/configuration-service.js

@@ -159,20 +159,6 @@
 						</goals>
 					</execution>
 					<execution>
-						<id>exec-bower-update</id>
-						<phase>generate-sources</phase>
-						<configuration>
-							<executable>bower</executable>
-							<arguments>
-								<argument>update</argument>
-								<argument>tis-common-components</argument>
-							</arguments>
-						</configuration>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-					</execution>
-					<execution>
 						<id>exec-grunt</id>
 						<phase>process-resources</phase>
 						<configuration>

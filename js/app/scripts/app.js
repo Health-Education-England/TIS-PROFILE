@@ -21,21 +21,10 @@ angular
 		'pascalprecht.translate',
 		'ui.router'
 	])
-	.config(function ($stateProvider, $urlRouterProvider, $translateProvider, PERMISSIONS) {
-		$urlRouterProvider.otherwise('/welcome');
+	.config(function ($stateProvider, $urlRouterProvider, $translateProvider) {
+		$urlRouterProvider.otherwise('/error');
 
 		$stateProvider
-			.state('welcome', {
-				templateUrl: 'app/components/welcome/welcome.html',
-				url: '/welcome',
-				controller: 'welcomeCtrl',
-				controllerAs: 'ctrl',
-				resolve: {
-					permission: function(ProfileService) {
-						return ProfileService.checkPermission(PERMISSIONS.SEE_ALL_TRAINEES);
-					}
-				}
-			})
 			.state('unauthorised', {
 				templateUrl: 'app/components/unauthorised/unauthorised.html',
 				url: '/unauthorised'
