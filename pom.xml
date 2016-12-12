@@ -11,7 +11,7 @@
 
 	<groupId>com.transformuk.hee</groupId>
 	<artifactId>auth</artifactId>
-	<version>beta-003-snapshot</version>
+	<version>0.0.3</version>
 	<packaging>jar</packaging>
 
 	<name>HEE TIS AUTH</name>
@@ -23,7 +23,7 @@
 
 	<scm>
 		<developerConnection>scm:git:git@github.com:Health-Education-England/TIS-AUTH.git</developerConnection>
-	  <tag>HEAD</tag>
+	  <tag>0.0.3</tag>
   </scm>
 
 	<dependencies>
