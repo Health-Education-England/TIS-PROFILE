@@ -17,7 +17,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.Set;
 
 import static com.google.common.collect.Lists.newArrayList;
@@ -89,27 +88,18 @@ public class UserProfileControllerTest {
 	}
 
 	@Test
-	public void shouldGETUserByUserName() throws Exception {
+	public void shouldGetRoUserByDBC() throws Exception {
 		//Given
 		User user = new User(USER_NAME);
 		user.setGmcId("123");
-		given(loginService.getUserByUserName(USER_NAME)).willReturn(user);
+		user.setDesignatedBodyCode(DESIGNATED_BODY_CODE);
+		given(loginService.getRVOfficer(DESIGNATED_BODY_CODE)).willReturn(user);
 
 		//When
-		this.mvc.perform(get("/api/user").header("Username", USER_NAME))
+		this.mvc.perform(get("/api/ro-user/" + DESIGNATED_BODY_CODE))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.name").value("jamesh"))
 				.andExpect(jsonPath("$.gmcId").value("123"));
-	}
-
-	@Test
-	public void shouldRetunrBadRequestForInvalidUserName() throws Exception {
-		//Given
-		given(loginService.getUserByUserName(USER_NAME)).willThrow(EntityNotFoundException.class);
-
-		//When
-		this.mvc.perform(get("/api/user").header("Username", "InValidUser"))
-				.andExpect(status().isBadRequest());
 	}
 
 	@Test

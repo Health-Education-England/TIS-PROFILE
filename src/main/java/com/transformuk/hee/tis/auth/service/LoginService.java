@@ -23,6 +23,7 @@ import static org.springframework.util.StringUtils.isEmpty;
  * Service for user login/logout process and getting user's data
  */
 @Service
+@Transactional(readOnly = true)
 public class LoginService {
 	
 	private final UserRepository userRepository;
@@ -35,7 +36,6 @@ public class LoginService {
 	 * @param userName User's unique identifier
 	 * @return {@link User} User associated with given unique user name
 	 */
-	@Transactional(readOnly = true, propagation = REQUIRED)
 	public User getUserByUserName(String userName) {
 		User user = userRepository.findOne(userName);
 		if (user == null) {
@@ -52,7 +52,6 @@ public class LoginService {
 	 * @param filter the filter to use
 	 * @return {@link List<User>} list of users
 	 */
-	@Transactional(readOnly = true, propagation = REQUIRED)
 	public UserListResponse getUsers(int offset, int limit, String filter) {
 		int pageNumber = offset / limit;
 		Pageable page = new PageRequest(pageNumber, limit, new Sort(ASC, "firstName"));
@@ -64,5 +63,14 @@ public class LoginService {
 			users = userRepository.findAll(page);
 		}
 		return new UserListResponse(users.getTotalElements(), users.getContent());
+	}
+
+	/**
+	 * Gets RevalidationOfficer details by designatedBodyCode
+	 * @param designatedBodyCode
+	 * @return {@link User}
+	 */
+	public User getRVOfficer(String designatedBodyCode) {
+		return userRepository.findRVOfficerByDesignatedBodyCode(designatedBodyCode);
 	}
 }

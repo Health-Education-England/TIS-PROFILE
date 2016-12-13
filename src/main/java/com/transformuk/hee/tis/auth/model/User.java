@@ -16,6 +16,7 @@ public class User {
     private String gmcId;
     private String designatedBodyCode;
     private String phoneNumber;
+    private String emailAddress;
     private Set<Role> roles;
 
     public User(){
@@ -93,7 +94,16 @@ public class User {
         this.phoneNumber = phoneNumber;
     }
 
-	@Override
+    @ApiModelProperty(value = "User's email address")
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
+    }
+
+    @Override
 	public String toString() {
 		return "User{" +
 				"name='" + name + '\'' +
@@ -102,6 +112,7 @@ public class User {
 				", gmcId='" + gmcId + '\'' +
 				", designatedBodyCode='" + designatedBodyCode + '\'' +
 				", phoneNumber='" + phoneNumber + '\'' +
+				", emailAddress='" + emailAddress + '\'' +
 				", roles=" + roles +
 				'}';
 	}

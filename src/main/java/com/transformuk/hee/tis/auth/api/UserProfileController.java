@@ -65,20 +65,6 @@ public class UserProfileController {
 		return userDetails;
 	}
 
-	@ApiOperation(value = "Gets User deatils only", notes = "GET a user with given userName", response = User.class)
-	@ApiResponses(value = {
-			@ApiResponse(code = 200, message = "Got user successfully", response = User.class)
-	})
-	@CrossOrigin
-	@RequestMapping(path = "/user", method = GET, produces = APPLICATION_JSON_VALUE)
-	public Resource<User> getUser(@RequestHeader(value = "Username") String userName) {
-		User user = loginService.getUserByUserName(userName);
-		Resource<User> resource = new Resource<>(user);
-		resource.add(linkTo(methodOn(UserProfileController.class).getUser(userName)).withSelfRel());
-		return resource;
-	}
-
-
 	@ApiOperation(value = "Returns list of users with pagination",
 			notes = "http://localhost:8084/users?offset=0&limit=1&filter=firstName=James\" +\n" +
 			"Possible Filters:userName,firstName,lastName,gmcId,designatedBodyCode,phoneNumber",
@@ -95,6 +81,17 @@ public class UserProfileController {
 		Resource<UserListResponse> resource = new Resource<>(response);
 		resource.add(linkTo(methodOn(UserProfileController.class).getUsers(offset, limit, filter)).withSelfRel());
 		return resource;
+	}
+
+	@ApiOperation(value = "Gets RevalidationOfficer deatils", response = User.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Got user successfully", response = User.class)
+	})
+	@CrossOrigin
+	@RequestMapping(path = "/ro-user/{designatedBodyCode}", method = GET, produces = APPLICATION_JSON_VALUE)
+	public User getROByDesignatedBodyCode(@PathVariable(value = "designatedBodyCode") String designatedBodyCode) {
+		User user = loginService.getRVOfficer(designatedBodyCode);
+		return user;
 	}
 
 	private JwtAuthToken decode(String token) {
@@ -128,6 +125,7 @@ public class UserProfileController {
 		userDetails.setGmcId(user.getGmcId());
 		userDetails.setFirstName(user.getFirstName());
 		userDetails.setLastName(user.getLastName());
+		userDetails.setEmailAddress(user.getEmailAddress());
 		return userDetails;
 	}
 

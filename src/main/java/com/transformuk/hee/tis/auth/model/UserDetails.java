@@ -20,6 +20,7 @@ public class UserDetails {
 	private String gmcId;
 	private String designatedBodyCode;
 	private String phoneNumber;
+	private String emailAddress;
 
 	@ApiModelProperty(value = "the roles the current user has in the TIS system")
 	public Set<String> getRoles() {
@@ -103,6 +104,14 @@ public class UserDetails {
 		this.phoneNumber = phoneNumber;
 	}
 
+	public String getEmailAddress() {
+		return emailAddress;
+	}
+
+	public void setEmailAddress(String emailAddress) {
+		this.emailAddress = emailAddress;
+	}
+
 	@Override
 	public String toString() {
 		return "UserDetails{" +
@@ -114,6 +123,7 @@ public class UserDetails {
 				", permissions='" + permissions + '\'' +
 				", gmcId='" + gmcId + '\'' +
 				", designatedBodyCode='" + designatedBodyCode + '\'' +
+				", emailAddress='" + emailAddress + '\'' +
 				", phoneNumber='" + phoneNumber + '\'' +
 				'}';
 	}
