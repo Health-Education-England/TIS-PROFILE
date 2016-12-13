@@ -10,19 +10,19 @@
 	</parent>
 
 	<groupId>com.transformuk.hee</groupId>
-	<artifactId>auth</artifactId>
+	<artifactId>profile</artifactId>
 	<version>0.0.4-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>HEE TIS AUTH</name>
-	<description>HEE TIS AUTH</description>
+	<name>HEE TIS PROFILE</name>
+	<description>HEE TIS PROFILE</description>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
 	<scm>
-		<developerConnection>scm:git:git@github.com:Health-Education-England/TIS-AUTH.git</developerConnection>
+		<developerConnection>scm:git:git@github.com:Health-Education-England/TIS-PROFILE.git</developerConnection>
 	  <tag>HEAD</tag>
   </scm>
 

@@ -16,10 +16,10 @@ import static org.springframework.boot.SpringApplication.run;
 @Configuration
 @EnableAutoConfiguration
 @SpringBootApplication
-public class TisAuthApplication {
+public class TisProfileApplication {
 
 	public static void main(String[] args) {
-		run(TisAuthApplication.class, args);
+		run(TisProfileApplication.class, args);
 	}
 	
 	/**
