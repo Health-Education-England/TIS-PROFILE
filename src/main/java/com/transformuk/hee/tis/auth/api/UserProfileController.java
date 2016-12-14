@@ -61,7 +61,7 @@ public class UserProfileController {
 
 		JwtAuthToken jwtAuthToken = decode(token);
 		User user = loginService.getUserByUserName(jwtAuthToken.getUsername());
-		UserDetails userDetails = toLoginResponse(user);
+		UserDetails userDetails = toUserDetails(user);
 		return userDetails;
 	}
 
@@ -89,9 +89,9 @@ public class UserProfileController {
 	})
 	@CrossOrigin
 	@RequestMapping(path = "/ro-user/{designatedBodyCode}", method = GET, produces = APPLICATION_JSON_VALUE)
-	public User getROByDesignatedBodyCode(@PathVariable(value = "designatedBodyCode") String designatedBodyCode) {
+	public UserDetails getROByDesignatedBodyCode(@PathVariable(value = "designatedBodyCode") String designatedBodyCode) {
 		User user = loginService.getRVOfficer(designatedBodyCode);
-		return user;
+		return toUserDetails(user);
 	}
 
 	private JwtAuthToken decode(String token) {
@@ -113,7 +113,7 @@ public class UserProfileController {
 		return profile;
 	}
 
-	private UserDetails toLoginResponse(User user) {
+	private UserDetails toUserDetails(User user) {
 		UserDetails userDetails = new UserDetails();
 		userDetails.setUserName(user.getName());
 		userDetails.setFullName(user.getFirstName() + " " + user.getLastName());

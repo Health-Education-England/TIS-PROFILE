@@ -90,16 +90,14 @@ public class UserProfileControllerTest {
 	@Test
 	public void shouldGetRoUserByDBC() throws Exception {
 		//Given
-		User user = new User(USER_NAME);
-		user.setGmcId("123");
-		user.setDesignatedBodyCode(DESIGNATED_BODY_CODE);
+		User user = getUser();
 		given(loginService.getRVOfficer(DESIGNATED_BODY_CODE)).willReturn(user);
 
 		//When
 		this.mvc.perform(get("/api/ro-user/" + DESIGNATED_BODY_CODE))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.name").value("jamesh"))
-				.andExpect(jsonPath("$.gmcId").value("123"));
+				.andExpect(jsonPath("$.userName").value(USER_NAME))
+				.andExpect(jsonPath("$.gmcId").value(GMC_ID));
 	}
 
 	@Test
