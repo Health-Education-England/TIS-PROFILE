@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.transformuk.hee</groupId>
 		<artifactId>tis-parent</artifactId>
-		<version>beta-002</version>
+		<version>0.0.3</version>
 		<relativePath />
 	</parent>
 
@@ -23,8 +23,8 @@
 
 	<scm>
 		<developerConnection>scm:git:git@github.com:Health-Education-England/TIS-PROFILE.git</developerConnection>
-	  <tag>HEAD</tag>
-  </scm>
+		<tag>HEAD</tag>
+	</scm>
 
 	<dependencies>
 		<dependency>
@@ -78,7 +78,7 @@
 		<dependency>
 			<groupId>com.transformuk.hee</groupId>
 			<artifactId>audit</artifactId>
-			<version>beta-002</version>
+			<version>0.0.3</version>
 		</dependency>
 		<!--SpringFox dependencies -->
 		<dependency>
@@ -184,6 +184,9 @@
 						<version>1.9.4</version>
 					</dependency>
 				</dependencies>
+				<configuration>
+					<tagNameFormat>@{project.version}</tagNameFormat>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
