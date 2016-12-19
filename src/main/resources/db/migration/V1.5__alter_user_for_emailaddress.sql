@@ -1,0 +1,1 @@
+ALTER TABLE HeeUser MODIFY emailAddress VARCHAR(100) NOT NULL;
