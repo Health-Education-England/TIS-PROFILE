@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
 		<groupId>com.transformuk.hee</groupId>
 		<artifactId>tis-parent</artifactId>
 		<version>0.0.3</version>
-		<relativePath/>
+		<relativePath />
 	</parent>
 
 	<groupId>com.transformuk.hee</groupId>
 	<artifactId>profile</artifactId>
-	<version>0.0.5-SNAPSHOT</version>
+	<version>0.0.5</version>
 	<packaging>jar</packaging>
 
 	<name>HEE TIS PROFILE</name>
@@ -24,7 +23,7 @@
 
 	<scm>
 		<developerConnection>scm:git:git@github.com:Health-Education-England/TIS-PROFILE.git</developerConnection>
-		<tag>HEAD</tag>
+		<tag>0.0.5</tag>
 	</scm>
 
 	<dependencies>
