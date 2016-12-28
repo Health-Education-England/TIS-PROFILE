@@ -21,6 +21,8 @@ js/app/components/common/trainee-layout/
 js/app/components/common/equal-height/
 js/app/scripts/services/profile-service.js
 js/app/scripts/services/endpoint-factory.js
+js/app/components/common/common.i18n.en.json
+js/app/scripts/services/spec/endpoint-factory.spec.js
 js/bower_components/
 js/app/components/common/date-picker/
 js/app/scripts/services/configuration-service.js
