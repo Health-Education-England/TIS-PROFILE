@@ -11,7 +11,7 @@
 
 	<groupId>com.transformuk.hee</groupId>
 	<artifactId>profile</artifactId>
-	<version>0.0.7-SNAPSHOT</version>
+	<version>0.0.7</version>
 	<packaging>jar</packaging>
 
 	<name>HEE TIS PROFILE</name>
@@ -23,7 +23,7 @@
 
 	<scm>
 		<developerConnection>scm:git:git@github.com:Health-Education-England/TIS-PROFILE.git</developerConnection>
-		<tag>HEAD</tag>
+		<tag>0.0.7</tag>
 	</scm>
 
 	<dependencies>
