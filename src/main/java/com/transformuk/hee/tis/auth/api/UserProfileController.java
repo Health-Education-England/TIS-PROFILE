@@ -77,7 +77,7 @@ public class UserProfileController {
 	@CrossOrigin
 	@RequestMapping(path = "/users", method = GET, produces = APPLICATION_JSON_VALUE)
 	public Resource<UserListResponse> getUsers(@RequestParam(value = "offset") int offset,
-											   @RequestParam(value = "limit", defaultValue = "-1") int limit,
+											   @RequestParam(value = "limit") int limit,
 											   @RequestParam(value = "designatedBodyCode") String designatedBodyCode,
 											   @RequestParam(value = "permissions", required = false) String permissions) {
 
