@@ -3,7 +3,6 @@ package com.transformuk.hee.tis.auth.api;
 import com.transformuk.hee.tis.auth.model.Permission;
 import com.transformuk.hee.tis.auth.model.Role;
 import com.transformuk.hee.tis.auth.model.User;
-import com.transformuk.hee.tis.auth.model.UserListResponse;
 import com.transformuk.hee.tis.auth.service.LoginService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.audit.AuditEvent;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -75,12 +76,32 @@ public class UserProfileControllerTest {
 		User user = new User(USER_NAME);
 		user.setGmcId("123");
 		user.setFirstName("James");
-		UserListResponse response = new UserListResponse(1, newArrayList(user));
-		given(loginService.getUsers(0, 1, "firstName=James")).willReturn(response);
+		Page<User> page = new PageImpl<>(newArrayList(user));
+		given(loginService.getUsers(0, 1, DESIGNATED_BODY_CODE, null)).willReturn(page);
 
 		//When
-		this.mvc.perform(get("/api/users").param("offset", "0").param("limit", "1").param("filter",
-				"firstName=James"))
+		this.mvc.perform(get("/api/users").param("offset", "0").param("limit", "1").param("designatedBodyCode",
+				DESIGNATED_BODY_CODE))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.total").value(1))
+				.andExpect(jsonPath("$.users[0].name").value("jamesh"))
+				.andExpect(jsonPath("$.users[0].gmcId").value("123"));
+	}
+
+	@Test
+	public void shouldGETListOfUsersByPermissions() throws Exception {
+		//Given
+		String permissions = "revalidation:submit:to:gmc,revalidation:submit:on:behalf:of:ro";
+		User user = new User(USER_NAME);
+		user.setGmcId("123");
+		user.setFirstName("James");
+		Page<User> page = new PageImpl<>(newArrayList(user));
+		given(loginService.getUsers(0, 1, DESIGNATED_BODY_CODE, permissions)).willReturn(page);
+
+		//When
+		this.mvc.perform(get("/api/users").param("offset", "0").param("limit", "1")
+				.param("designatedBodyCode", DESIGNATED_BODY_CODE)
+				.param("permissions", permissions))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.total").value(1))
 				.andExpect(jsonPath("$.users[0].name").value("jamesh"))

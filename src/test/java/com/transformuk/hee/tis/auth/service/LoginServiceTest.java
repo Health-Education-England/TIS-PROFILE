@@ -1,7 +1,6 @@
 package com.transformuk.hee.tis.auth.service;
 
 import com.transformuk.hee.tis.auth.model.User;
-import com.transformuk.hee.tis.auth.model.UserListResponse;
 import com.transformuk.hee.tis.auth.repository.UserRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,6 +9,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.boot.actuate.audit.AuditEventRepository;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -17,7 +17,7 @@ import javax.persistence.EntityNotFoundException;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 
@@ -25,6 +25,7 @@ import static org.mockito.Matchers.any;
 public class LoginServiceTest {
 
     public static final String USER_NAME = "jamesh";
+    public static final String DESIGNATED_BODY_CODE = "1-DGBODY";
     
     @Mock
     private UserRepository userRepository;
@@ -32,38 +33,21 @@ public class LoginServiceTest {
     @Mock
     private AuditEventRepository auditEventRepository;
 
-    @Mock
-    private Page<User> users;
-
     @InjectMocks
     private LoginService service;
 
     @Test
-    public void shouldHandleFilterCorrectlyWhenFetchingUsers() {
+    public void shouldFetchUsersWithPermissions() {
         // given
-        given(users.getTotalElements()).willReturn(1L);
-        given(users.getContent()).willReturn(newArrayList(new User()));
-        given(userRepository.findAll(any(Specification.class), any(Pageable.class))).willReturn(users);
+        String permissions = "revalidation:submit:to:gmc,revalidation:submit:on:behalf:of:ro";
+        Page<User> page = new PageImpl<>(newArrayList(new User()));
+        given(userRepository.findAll(any(Specification.class), any(Pageable.class))).willReturn(page);
 
         // when
-        UserListResponse response = service.getUsers(0, 1, "(firstName=James)");
+        Page<User> actualPage =  service.getUsers(0, 1, DESIGNATED_BODY_CODE, permissions);
 
         // then
-        assertEquals(1L, response.getTotal());
-    }
-
-    @Test
-    public void shouldFetchUsersWithOutFilter() {
-        // given
-        given(users.getTotalElements()).willReturn(1L);
-        given(users.getContent()).willReturn(newArrayList(new User()));
-        given(userRepository.findAll(any(Pageable.class))).willReturn(users);
-
-        // when
-        UserListResponse response = service.getUsers(0, 1, null);
-
-        // then
-        assertEquals(1L, response.getTotal());
+        assertSame(page, actualPage);
     }
 
     @Test

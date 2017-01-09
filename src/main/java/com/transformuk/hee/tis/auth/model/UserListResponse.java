@@ -14,9 +14,9 @@ public class UserListResponse {
 	private long total;
 
 	@ApiModelProperty(value = "List of users to be returned in this response")
-	private List<User> users;
+	private List<UserInfoResponse> users;
 
-	public UserListResponse(long total, List<User> users) {
+	public UserListResponse(long total, List<UserInfoResponse> users) {
 		this.total = total;
 		this.users = users;
 	}
@@ -25,7 +25,7 @@ public class UserListResponse {
 		return total;
 	}
 
-	public List<User> getUsers() {
+	public List<UserInfoResponse> getUsers() {
 		return users;
 	}
 

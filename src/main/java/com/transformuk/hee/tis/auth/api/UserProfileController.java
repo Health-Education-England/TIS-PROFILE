@@ -13,17 +13,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.audit.AuditEventRepository;
 import org.springframework.boot.json.JsonParser;
 import org.springframework.boot.json.JsonParserFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.hateoas.Resource;
 import org.springframework.security.jwt.Jwt;
 import org.springframework.security.jwt.JwtHelper;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
 import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
@@ -66,20 +69,24 @@ public class UserProfileController {
 	}
 
 	@ApiOperation(value = "Returns list of users with pagination",
-			notes = "http://localhost:8084/users?offset=0&limit=1&filter=firstName=James\" +\n" +
-			"Possible Filters:userName,firstName,lastName,gmcId,designatedBodyCode,phoneNumber",
-			response = User.class)
+			notes = "http://localhost:8084/users?offset=0&limit=10&designatedBodyCode=DBC&permissions=comma separated values",
+			response = UserListResponse.class)
 	@ApiResponses(value = {
-			@ApiResponse(code = 200, message = "User's list returned", response = User.class)
+			@ApiResponse(code = 200, message = "User's list returned", response = UserListResponse.class)
 	})
 	@CrossOrigin
 	@RequestMapping(path = "/users", method = GET, produces = APPLICATION_JSON_VALUE)
 	public Resource<UserListResponse> getUsers(@RequestParam(value = "offset") int offset,
-											   @RequestParam(value = "limit") int limit,
-											   @RequestParam(value = "filter", required = false) String filter) {
-		UserListResponse response = loginService.getUsers(offset, limit, filter);
+											   @RequestParam(value = "limit", defaultValue = "-1") int limit,
+											   @RequestParam(value = "designatedBodyCode") String designatedBodyCode,
+											   @RequestParam(value = "permissions", required = false) String permissions) {
+
+
+		Page<User> page = loginService.getUsers(offset, limit, designatedBodyCode, permissions);
+		UserListResponse response = toUserListResponse(page);
 		Resource<UserListResponse> resource = new Resource<>(response);
-		resource.add(linkTo(methodOn(UserProfileController.class).getUsers(offset, limit, filter)).withSelfRel());
+		resource.add(linkTo(methodOn(UserProfileController.class).getUsers(offset, limit, designatedBodyCode, permissions))
+				.withSelfRel());
 		return resource;
 	}
 
@@ -145,6 +152,29 @@ public class UserProfileController {
 	private String getString(Map<String, Object> claims, String name) {
 		Object v = claims.get(name);
 		return v != null ? String.valueOf(v) : null;
+	}
+
+	private UserListResponse toUserListResponse(Page<User> users) {
+		return new UserListResponse(users.getTotalElements(), toUserInfoList(users.getContent()));
+	}
+
+	private List<UserInfoResponse> toUserInfoList(List<User> users) {
+		return users.stream()
+				.map(this::toUserInfo)
+				.collect(toList());
+	}
+
+	private UserInfoResponse toUserInfo(User user) {
+		UserInfoResponse userInfo = new UserInfoResponse();
+		userInfo.setDesignatedBodyCode(user.getDesignatedBodyCode());
+		userInfo.setEmailAddress(user.getEmailAddress());
+		userInfo.setFirstName(user.getFirstName());
+		userInfo.setLastName(user.getLastName());
+		userInfo.setName(user.getName());
+		userInfo.setPhoneNumber(user.getPhoneNumber());
+		userInfo.setGmcId(user.getGmcId());
+		userInfo.setFullName(user.getFirstName() + " " + user.getLastName());
+		return userInfo;
 	}
 
 }
