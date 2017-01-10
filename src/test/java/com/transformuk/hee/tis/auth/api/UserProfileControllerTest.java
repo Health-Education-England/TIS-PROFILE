@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.audit.AuditEvent;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -29,10 +30,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(UserProfileController.class)
+@WebMvcTest(value = UserProfileController.class, secure = false)
+@ComponentScan("com.transformuk.hee.tis.auth.assembler")
 public class UserProfileControllerTest {
 
-	private static final String TIS_USER = "tisUser";
 	public static final String GMC_ID = "123";
 	public static final String DESIGNATED_BODY_CODE = "1-DGBODY";
 	public static final String PERMISSION = "Perm1";
@@ -57,7 +58,7 @@ public class UserProfileControllerTest {
 		//Given
 		User user = getUser();
 
-		given(loginService.getUserByUserName(USER_NAME)).willReturn(user);
+		given(loginService.getUserByToken(TOKEN)).willReturn(user);
 
 		// When & then
 		this.mvc.perform(get("/api/userinfo")
@@ -115,7 +116,7 @@ public class UserProfileControllerTest {
 		given(loginService.getRVOfficer(DESIGNATED_BODY_CODE)).willReturn(user);
 
 		//When
-		this.mvc.perform(get("/api/ro-user/" + DESIGNATED_BODY_CODE))
+		this.mvc.perform(get("/api/users/ro-user/" + DESIGNATED_BODY_CODE))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.userName").value(USER_NAME))
 				.andExpect(jsonPath("$.gmcId").value(GMC_ID));
@@ -126,7 +127,7 @@ public class UserProfileControllerTest {
 		//Given
 		User user = getUser();
 		
-		given(loginService.getUserByUserName(USER_NAME)).willReturn(user);
+		given(loginService.getUserByToken(TOKEN)).willReturn(user);
 
 		//When
 		this.mvc.perform(get("/api/userinfo")
