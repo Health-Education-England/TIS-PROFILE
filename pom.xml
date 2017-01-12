@@ -5,13 +5,13 @@
 	<parent>
 		<groupId>com.transformuk.hee</groupId>
 		<artifactId>tis-parent</artifactId>
-		<version>0.0.3</version>
+		<version>0.0.4</version>
 		<relativePath />
 	</parent>
 
 	<groupId>com.transformuk.hee</groupId>
 	<artifactId>profile</artifactId>
-	<version>0.0.8-SNAPSHOT</version>
+	<version>0.0.8</version>
 	<packaging>jar</packaging>
 
 	<name>HEE TIS PROFILE</name>
@@ -82,12 +82,12 @@
 		<dependency>
 			<groupId>com.transformuk.hee</groupId>
 			<artifactId>audit</artifactId>
-			<version>0.0.3</version>
+			<version>0.0.4</version>
 		</dependency>
 		<dependency>
 			<groupId>com.transformuk.hee</groupId>
 			<artifactId>tis-security-jwt</artifactId>
-			<version>0.0.3</version>
+			<version>0.0.4</version>
 		</dependency>
 		<!--SpringFox dependencies -->
 		<dependency>
@@ -207,21 +207,6 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-release-plugin</artifactId>
-				<version>2.5.2</version>
-				<dependencies>
-					<dependency>
-						<groupId>org.apache.maven.scm</groupId>
-						<artifactId>maven-scm-provider-gitexe</artifactId>
-						<version>1.9.4</version>
-					</dependency>
-				</dependencies>
-				<configuration>
-					<tagNameFormat>@{project.version}</tagNameFormat>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>
