@@ -12,13 +12,8 @@ mvnw.cmd
 js/tests/
 js/app/scripts/templates.js
 js/app/components/masthead/
-js/app/components/common/file-upload/
-js/app/components/common/modal-loader/
-js/app/components/common/notes-toggler/
-js/app/components/common/pagination/
-js/app/components/common/tooltip/
-js/app/components/common/trainee-layout/
-js/app/components/common/equal-height/
+js/app/components/server-error-modal/
+js/app/components/common/
 js/app/scripts/services/profile-service.js
 js/app/scripts/services/endpoint-factory.js
 js/app/components/common/common.i18n.en.json
