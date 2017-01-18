@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import static com.transformuk.hee.tis.auth.filters.UserSpecification.active;
 import static com.transformuk.hee.tis.auth.filters.UserSpecification.withDBC;
 import static com.transformuk.hee.tis.auth.filters.UserSpecification.withPermissions;
 import static java.lang.String.format;
@@ -54,15 +55,16 @@ public class LoginService {
 	 */
 	public User getUserByToken(String token) {
 		JwtAuthToken jwtAuthToken = decode(token);
-		User user = userRepository.findOne(jwtAuthToken.getUsername());
+		User user = userRepository.findByActive(jwtAuthToken.getUsername());
 		if (user == null) {
-			throw new EntityNotFoundException(format("User with username %s not found", jwtAuthToken.getUsername()));
+			throw new EntityNotFoundException(format("User with username %s either not found or not active", 
+					jwtAuthToken.getUsername()));
 		}
 		return user;
 	}
 
 	/**
-	 * Returns all users by search criteria
+	 * Returns all active users by search criteria
 	 *
 	 * @param offset the result number to start from
 	 * @param limit  the page size
@@ -71,7 +73,7 @@ public class LoginService {
 	 * @return {@link List<User>} list of users
 	 */
 	public Page<User> getUsers(int offset, int limit, String designatedBodyCode, String permissions) {
-		Specifications<User> spec = Specifications.where(withDBC(designatedBodyCode));
+		Specifications<User> spec = Specifications.where(active()).and(withDBC(designatedBodyCode));
 		int pageNumber = offset / limit;
 		Pageable page = new PageRequest(pageNumber, limit, new Sort(ASC, "firstName"));
 		if (permissions != null) {

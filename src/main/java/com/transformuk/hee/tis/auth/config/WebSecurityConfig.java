@@ -4,13 +4,11 @@ import com.transformuk.hee.tis.security.JwtAuthenticationEntryPoint;
 import com.transformuk.hee.tis.security.JwtAuthenticationProvider;
 import com.transformuk.hee.tis.security.JwtAuthenticationSuccessHandler;
 import com.transformuk.hee.tis.security.RestAccessDeniedHandler;
-import com.transformuk.hee.tis.security.config.TisSecurityConfig;
 import com.transformuk.hee.tis.security.filter.JwtAuthenticationTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -40,7 +38,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	public AuthenticationManager authenticationManager() throws Exception {
 		return new ProviderManager(Arrays.asList(authenticationProvider));
 	}
-	@Bean
+	
 	public JwtAuthenticationTokenFilter authenticationTokenFilterBean() throws Exception {
 		JwtAuthenticationTokenFilter authenticationTokenFilter = new JwtAuthenticationTokenFilter("/api/users/**");
 		authenticationTokenFilter.setAuthenticationManager(authenticationManager());

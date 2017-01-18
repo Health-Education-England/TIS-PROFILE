@@ -17,6 +17,7 @@ public class User {
     private String designatedBodyCode;
     private String phoneNumber;
     private String emailAddress;
+    private boolean active;
     private Set<Role> roles;
 
     public User(){
@@ -103,6 +104,15 @@ public class User {
         this.emailAddress = emailAddress;
     }
 
+    @ApiModelProperty(value = "User's active flag")
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
     @Override
 	public String toString() {
 		return "User{" +
@@ -113,6 +123,7 @@ public class User {
 				", designatedBodyCode='" + designatedBodyCode + '\'' +
 				", phoneNumber='" + phoneNumber + '\'' +
 				", emailAddress='" + emailAddress + '\'' +
+				", active='" + active + '\'' +
 				", roles=" + roles +
 				'}';
 	}

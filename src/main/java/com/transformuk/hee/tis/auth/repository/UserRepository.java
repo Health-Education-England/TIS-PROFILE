@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface UserRepository extends JpaRepository<User, String>, JpaSpecificationExecutor<User> {
+	
 	/**
 	 * Gets RO by designatedBodyCode
 	 * @param designatedBodyCode
@@ -19,4 +20,8 @@ public interface UserRepository extends JpaRepository<User, String>, JpaSpecific
 	 */
 	@Query("select u from User u join u.roles r where r.name='RVOfficer' and u.designatedBodyCode = :dbc")
 	User findRVOfficerByDesignatedBodyCode(@Param("dbc")String designatedBodyCode);
+	
+	@Query("select u from User u inner join fetch u.roles r inner join fetch r.permissions p " +
+			"where u.active = true and u.name = :userName")
+	User findByActive(@Param("userName") String userName);
 }

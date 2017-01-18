@@ -10,6 +10,10 @@ import java.util.List;
  */
 public class UserSpecification {
 
+	public static Specification<User> active() {
+		return (root, query, cb) -> cb.equal(root.get("active"), true);
+	}
+
 	public static Specification<User> withDBC(String designatedBodyCode) {
 		return (root, query, cb) -> cb.equal(root.get("designatedBodyCode"), designatedBodyCode);
 	}

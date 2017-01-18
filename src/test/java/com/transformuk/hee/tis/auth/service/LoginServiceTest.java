@@ -59,7 +59,7 @@ public class LoginServiceTest {
         User aUser = new User();
         aUser.setName(USER_NAME);
         
-        given(userRepository.findOne(USER_NAME)).willReturn(aUser);
+        given(userRepository.findByActive(USER_NAME)).willReturn(aUser);
 
         // when
         User user = service.getUserByToken(TOKEN);
@@ -71,7 +71,7 @@ public class LoginServiceTest {
     @Test(expected = EntityNotFoundException.class)
     public void shouldThrowExceptionWhenUserNameNotFound() {
         // given
-        given(userRepository.findOne(USER_NAME)).willReturn(null);
+        given(userRepository.findByActive(USER_NAME)).willReturn(null);
 
         // when
         service.getUserByToken(TOKEN);
