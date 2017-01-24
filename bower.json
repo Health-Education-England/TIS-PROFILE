@@ -2,8 +2,8 @@
   "name": "TIS-AUTH",
   "version": "0.0.5",
   "dependencies": {
-    "tis-common-components": "1.4.7",
-    "bootstrap": "3.2.0"
+    "tis-common-components": "1.4.8",
+    "bootstrap": "3.3.7"
   },
   "appPath": "js",
   "distPath": "target/classes/static",
