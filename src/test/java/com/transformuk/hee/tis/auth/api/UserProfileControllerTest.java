@@ -25,6 +25,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.internal.util.collections.Sets.newSet;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -66,7 +67,7 @@ public class UserProfileControllerTest {
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.userName").value(USER_NAME))
 				.andExpect(jsonPath("$.gmcId").value(GMC_ID))
-				.andExpect(jsonPath("$.designatedBodyCode").value(DESIGNATED_BODY_CODE))
+				.andExpect(jsonPath("$.designatedBodyCodes[0]").value(DESIGNATED_BODY_CODE))
 				.andExpect(jsonPath("$.roles").isNotEmpty())
 				.andExpect(jsonPath("$.roles").value(hasItems(ROLES)));
 	}
@@ -78,7 +79,7 @@ public class UserProfileControllerTest {
 		user.setGmcId("123");
 		user.setFirstName("James");
 		Page<User> page = new PageImpl<>(newArrayList(user));
-		given(loginService.getUsers(0, 1, DESIGNATED_BODY_CODE, null)).willReturn(page);
+		given(loginService.getUsers(0, 1, newSet(DESIGNATED_BODY_CODE), null)).willReturn(page);
 
 		//When
 		this.mvc.perform(get("/api/users").param("offset", "0").param("limit", "1").param("designatedBodyCode",
@@ -97,7 +98,7 @@ public class UserProfileControllerTest {
 		user.setGmcId("123");
 		user.setFirstName("James");
 		Page<User> page = new PageImpl<>(newArrayList(user));
-		given(loginService.getUsers(0, 1, DESIGNATED_BODY_CODE, permissions)).willReturn(page);
+		given(loginService.getUsers(0, 1, newSet(DESIGNATED_BODY_CODE), permissions)).willReturn(page);
 
 		//When
 		this.mvc.perform(get("/api/users").param("offset", "0").param("limit", "1")
@@ -148,9 +149,9 @@ public class UserProfileControllerTest {
 	private User getUser() {
 		User user = new User(USER_NAME);
 		user.setGmcId(GMC_ID);
-		user.setDesignatedBodyCode(DESIGNATED_BODY_CODE);
-		Set<Permission> permissions = Sets.newSet(new Permission(PERMISSION));
-		user.setRoles(Sets.newSet(new Role(RV_ADMIN, permissions)));
+		user.setDesignatedBodyCodes(newSet(DESIGNATED_BODY_CODE));
+		Set<Permission> permissions = newSet(new Permission(PERMISSION));
+		user.setRoles(newSet(new Role(RV_ADMIN, permissions)));
 		return user;
 	}
 

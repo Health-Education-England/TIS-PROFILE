@@ -20,6 +20,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 import static java.util.stream.Collectors.toList;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -69,12 +70,12 @@ public class UserProfileController {
 	@PreAuthorize("hasAuthority('profile:get:users')")
 	public Resource<UserListResponse> getUsers(@RequestParam(value = "offset") int offset,
 											   @RequestParam(value = "limit") int limit,
-											   @RequestParam(value = "designatedBodyCode") String designatedBodyCode,
+											   @RequestParam(value = "designatedBodyCode") Set<String> designatedBodyCodes,
 											   @RequestParam(value = "permissions", required = false) String permissions) {
-		Page<User> page = loginService.getUsers(offset, limit, designatedBodyCode, permissions);
+		Page<User> page = loginService.getUsers(offset, limit, designatedBodyCodes, permissions);
 		UserListResponse response = toUserListResponse(page);
 		Resource<UserListResponse> resource = new Resource<>(response);
-		resource.add(linkTo(methodOn(UserProfileController.class).getUsers(offset, limit, designatedBodyCode, permissions))
+		resource.add(linkTo(methodOn(UserProfileController.class).getUsers(offset, limit, designatedBodyCodes, permissions))
 				.withSelfRel());
 		return resource;
 	}
@@ -103,7 +104,7 @@ public class UserProfileController {
 
 	private UserInfoResponse toUserInfo(User user) {
 		UserInfoResponse userInfo = new UserInfoResponse();
-		userInfo.setDesignatedBodyCode(user.getDesignatedBodyCode());
+		userInfo.setDesignatedBodyCodes(user.getDesignatedBodyCodes());
 		userInfo.setEmailAddress(user.getEmailAddress());
 		userInfo.setFirstName(user.getFirstName());
 		userInfo.setLastName(user.getLastName());

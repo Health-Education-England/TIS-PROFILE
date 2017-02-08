@@ -19,7 +19,7 @@ public class UserProfileAssembler {
 
 	public UserProfile toUserProfile(User user) {
 		UserProfile userProfile = new UserProfile();
-		userProfile.setDesignatedBodyCode(user.getDesignatedBodyCode());
+		userProfile.setDesignatedBodyCodes(user.getDesignatedBodyCodes());
 		userProfile.setEmailAddress(user.getEmailAddress());
 		userProfile.setFirstName(user.getFirstName());
 		userProfile.setFullName(user.getFirstName() + " " + user.getLastName());

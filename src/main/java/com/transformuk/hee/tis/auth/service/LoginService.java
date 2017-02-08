@@ -24,7 +24,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import static com.transformuk.hee.tis.auth.filters.UserSpecification.active;
-import static com.transformuk.hee.tis.auth.filters.UserSpecification.withDBC;
+import static com.transformuk.hee.tis.auth.filters.UserSpecification.withDBCs;
 import static com.transformuk.hee.tis.auth.filters.UserSpecification.withPermissions;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
@@ -66,14 +66,14 @@ public class LoginService {
 	/**
 	 * Returns all active users by search criteria
 	 *
+	 * @param designatedBodyCodes the designatedBodyCode to use
 	 * @param offset the result number to start from
 	 * @param limit  the page size
-	 * @param designatedBodyCode the designatedBodyCode to use
-	 * @param permissions the permissions to use
-	 * @return {@link List<User>} list of users
+	 * @param designatedBodyCodes
+	 *@param permissions the permissions to use  @return {@link List<User>} list of users
 	 */
-	public Page<User> getUsers(int offset, int limit, String designatedBodyCode, String permissions) {
-		Specifications<User> spec = Specifications.where(active()).and(withDBC(designatedBodyCode));
+	public Page<User> getUsers(int offset, int limit, Set<String> designatedBodyCodes, String permissions) {
+		Specifications<User> spec = Specifications.where(active()).and(withDBCs(designatedBodyCodes));
 		int pageNumber = offset / limit;
 		Pageable page = new PageRequest(pageNumber, limit, new Sort(ASC, "firstName"));
 		if (permissions != null) {

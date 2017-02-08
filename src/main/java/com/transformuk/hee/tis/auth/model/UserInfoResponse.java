@@ -3,6 +3,8 @@ package com.transformuk.hee.tis.auth.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.util.Set;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserInfoResponse {
     private String name;
@@ -10,7 +12,7 @@ public class UserInfoResponse {
     private String lastName;
     private String fullName;
     private String gmcId;
-    private String designatedBodyCode;
+    private Set<String> designatedBodyCodes;;
     private String phoneNumber;
     private String emailAddress;
 
@@ -34,9 +36,13 @@ public class UserInfoResponse {
         return gmcId;
     }
 
-    @ApiModelProperty(required = true, value = "Designated Body code of user's organisation")
-    public String getDesignatedBodyCode() {
-        return designatedBodyCode;
+    public void setDesignatedBodyCodes(Set<String> designatedBodyCodes) {
+        this.designatedBodyCodes = designatedBodyCodes;
+    }
+
+    @ApiModelProperty(required = true, value = "Designated Body codes of user's organisation")
+    public Set<String> getDesignatedBodyCodes() {
+        return designatedBodyCodes;
     }
 
     @ApiModelProperty(value = "User's phone number")
@@ -58,10 +64,6 @@ public class UserInfoResponse {
 
     public void setGmcId(String gmcId) {
         this.gmcId = gmcId;
-    }
-
-    public void setDesignatedBodyCode(String designatedBodyCode) {
-        this.designatedBodyCode = designatedBodyCode;
     }
 
     public void setPhoneNumber(String phoneNumber) {
@@ -93,7 +95,7 @@ public class UserInfoResponse {
 				", firstName='" + firstName + '\'' +
 				", lastName='" + lastName + '\'' +
 				", gmcId='" + gmcId + '\'' +
-				", designatedBodyCode='" + designatedBodyCode + '\'' +
+				", designatedBodyCodes='" + designatedBodyCodes + '\'' +
 				", phoneNumber='" + phoneNumber + '\'' +
 				", emailAddress='" + emailAddress + '\'' +
 				'}';

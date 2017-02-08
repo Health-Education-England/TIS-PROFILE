@@ -6,6 +6,8 @@ import io.swagger.annotations.ApiModelProperty;
 import javax.persistence.*;
 import java.util.Set;
 
+import static javax.persistence.FetchType.EAGER;
+
 @Entity
 @Table(name = "HeeUser")
 @ApiModel(description = "User object that contains the logged in user's details")
@@ -14,11 +16,11 @@ public class User {
     private String firstName;
     private String lastName;
     private String gmcId;
-    private String designatedBodyCode;
     private String phoneNumber;
     private String emailAddress;
     private boolean active;
     private Set<Role> roles;
+    private Set<String> designatedBodyCodes;
 
     public User(){
         super();
@@ -61,11 +63,6 @@ public class User {
         return gmcId;
     }
 
-    @ApiModelProperty(required = true, value = "Designated Body code of user's organisation")
-    public String getDesignatedBodyCode() {
-        return designatedBodyCode;
-    }
-
     @ApiModelProperty(value = "User's phone number")
     public String getPhoneNumber() {
         return phoneNumber;
@@ -85,10 +82,6 @@ public class User {
 
     public void setGmcId(String gmcId) {
         this.gmcId = gmcId;
-    }
-
-    public void setDesignatedBodyCode(String designatedBodyCode) {
-        this.designatedBodyCode = designatedBodyCode;
     }
 
     public void setPhoneNumber(String phoneNumber) {
@@ -113,6 +106,18 @@ public class User {
         this.active = active;
     }
 
+    @ElementCollection(fetch = EAGER)
+    @CollectionTable(name="UserDesignatedBody", joinColumns=@JoinColumn(name="userName"))
+    @Column(name="designatedBodyCode")
+    @ApiModelProperty(required = true, value = "Designated Body codes of user's organisation")
+    public Set<String> getDesignatedBodyCodes() {
+        return designatedBodyCodes;
+    }
+
+    public void setDesignatedBodyCodes(Set<String> designatedBodyCodes) {
+        this.designatedBodyCodes = designatedBodyCodes;
+    }
+
     @Override
 	public String toString() {
 		return "User{" +
@@ -120,7 +125,6 @@ public class User {
 				", firstName='" + firstName + '\'' +
 				", lastName='" + lastName + '\'' +
 				", gmcId='" + gmcId + '\'' +
-				", designatedBodyCode='" + designatedBodyCode + '\'' +
 				", phoneNumber='" + phoneNumber + '\'' +
 				", emailAddress='" + emailAddress + '\'' +
 				", active='" + active + '\'' +

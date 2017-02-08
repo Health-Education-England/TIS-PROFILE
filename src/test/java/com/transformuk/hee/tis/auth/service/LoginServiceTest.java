@@ -20,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertSame;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
+import static org.mockito.internal.util.collections.Sets.newSet;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LoginServiceTest {
@@ -47,7 +48,7 @@ public class LoginServiceTest {
         given(userRepository.findAll(any(Specification.class), any(Pageable.class))).willReturn(page);
 
         // when
-        Page<User> actualPage =  service.getUsers(0, 1, DESIGNATED_BODY_CODE, permissions);
+        Page<User> actualPage =  service.getUsers(0, 1, newSet(DESIGNATED_BODY_CODE), permissions);
 
         // then
         assertSame(page, actualPage);
