@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Set;
+
 /**
  * Repository for users
  */
@@ -15,11 +17,11 @@ public interface UserRepository extends JpaRepository<User, String>, JpaSpecific
 	
 	/**
 	 * Gets RO by designatedBodyCode
-	 * @param designatedBodyCode
+	 * @param designatedBodyCodes
 	 * @return RO user details
 	 */
-	@Query("select u from User u join u.roles r where r.name='RVOfficer' and u.designatedBodyCodes IN :dbc")
-	User findRVOfficerByDesignatedBodyCode(@Param("dbc")String designatedBodyCode);
+	@Query("select u from User u join u.roles r join u.designatedBodyCodes dbc where r.name='RVOfficer' and dbc = :dbc")
+	User findRVOfficerByDesignatedBodyCode(@Param("dbc") String designatedBodyCodes);
 	
 	@Query("select u from User u inner join fetch u.designatedBodyCodes inner join fetch u.roles r inner join fetch r.permissions p " +
 			"where u.active = true and u.name = :userName")
