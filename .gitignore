@@ -14,10 +14,9 @@ js/app/scripts/templates.js
 js/app/components/masthead/
 js/app/components/server-error-modal/
 js/app/components/common/
-js/app/scripts/services/profile-service.js
-js/app/scripts/services/endpoint-factory.js
+js/app/scripts/services/
 js/app/components/common/common.i18n.en.json
-js/app/scripts/services/spec/endpoint-factory.spec.js
+js/app/components/version-indicator/
 js/bower_components/
 js/app/components/common/date-picker/
 js/app/scripts/services/configuration-service.js
