@@ -40,7 +40,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	}
 	
 	public JwtAuthenticationTokenFilter authenticationTokenFilterBean() throws Exception {
-		JwtAuthenticationTokenFilter authenticationTokenFilter = new JwtAuthenticationTokenFilter("/api/users/**");
+		JwtAuthenticationTokenFilter authenticationTokenFilter = new JwtAuthenticationTokenFilter("/api/users/**",
+				"/api/trainee-id/**");
 		authenticationTokenFilter.setAuthenticationManager(authenticationManager());
 		authenticationTokenFilter.setAuthenticationSuccessHandler(new JwtAuthenticationSuccessHandler());
 		return authenticationTokenFilter;
