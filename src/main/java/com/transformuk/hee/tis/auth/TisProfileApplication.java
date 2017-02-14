@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.DispatcherServlet;
@@ -16,6 +17,7 @@ import static org.springframework.boot.SpringApplication.run;
 @Configuration
 @EnableAutoConfiguration
 @SpringBootApplication
+@EnableSpringDataWebSupport
 public class TisProfileApplication {
 
 	public static void main(String[] args) {
