@@ -9,16 +9,16 @@ import java.util.List;
  */
 public class TraineeIdListResponse {
     
-    private List<TraineeId> traineeIds;
+    private List<TraineeProfile> traineeIds;
 
     public TraineeIdListResponse() {    }
 
-    public TraineeIdListResponse(List<TraineeId> traineeIds) {
+    public TraineeIdListResponse(List<TraineeProfile> traineeIds) {
         this.traineeIds = traineeIds;
     }
 
     @ApiModelProperty(required = true, value = "traineeIdList")
-    public List<TraineeId> getTraineeIds() {
+    public List<TraineeProfile> getTraineeIds() {
         return traineeIds;
     }
 }

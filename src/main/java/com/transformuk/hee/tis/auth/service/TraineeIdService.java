@@ -1,6 +1,7 @@
 package com.transformuk.hee.tis.auth.service;
 
-import com.transformuk.hee.tis.auth.model.TraineeId;
+import com.transformuk.hee.tis.auth.model.RegistrationRequest;
+import com.transformuk.hee.tis.auth.model.TraineeProfile;
 import com.transformuk.hee.tis.auth.repository.TraineeIdRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -9,7 +10,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toMap;
 
 /**
  * Service to operate on TraineeId domain. 
@@ -26,43 +30,54 @@ public class TraineeIdService {
 
     /**
      * Get or create a traineeId which maps to given gmcNumber
-     * @param gmcNumbers
-     * @return list of {@link TraineeId}
+     * @param dbc designatedBodyCode of a trainee
+     * @param requests registration requests
+     * @return list of {@link TraineeProfile}
      */
     @Transactional
-    public List<TraineeId> findOrCreate(List<String> gmcNumbers) {
-        List<TraineeId> existingTraineeIds = traineeIdRepository.findByGmcNumberIn(gmcNumbers);
-        List<String> existingGmcNumbers = existingTraineeIds.stream()
-                .map(TraineeId::getGmcNumber)
-                .collect(Collectors.toList());
-        List<String> newGmcNumbers = gmcNumbers.stream()
-                .filter(e -> !existingGmcNumbers.contains(e))
-                .collect(Collectors.toList());
-        List<TraineeId> newTraineeIds = create(newGmcNumbers);
+    public List<TraineeProfile> findOrCreate(String dbc, List<RegistrationRequest> requests) {
+        Map<String, RegistrationRequest> requestMap = requests.stream().collect(toMap(t -> t.getGmcNumber(), v -> v));
+        List<TraineeProfile> dbProfiles = traineeIdRepository.findByGmcNumberIn(requestMap.keySet());
         
-        existingTraineeIds.addAll(newTraineeIds);
-        return existingTraineeIds;
+        List<String> existingGmcNumbers = dbProfiles.stream()
+                .map(TraineeProfile::getGmcNumber)
+                .collect(Collectors.toList());
+        
+        List<TraineeProfile> newTraineeProfiles = requests.stream()
+                .filter(e -> !existingGmcNumbers.contains(e.getGmcNumber()))
+                .map(e -> newProfile(dbc, e))
+                .collect(Collectors.toList());
+        
+        // update existing profiles to add extra info - dbc, active flag, dateAdded
+        dbProfiles.stream().forEach(e -> update(dbc, e, requestMap));
+
+        dbProfiles.addAll(newTraineeProfiles);
+        return traineeIdRepository.save(dbProfiles);
+    }
+
+    private void update(String dbc,TraineeProfile traineeProfile, Map<String, RegistrationRequest> requestMap ) {
+        RegistrationRequest request = requestMap.get(traineeProfile.getGmcNumber());
+        traineeProfile.setDesignatedBodyCodes(dbc);
+        traineeProfile.setDateAdded(request.getDateAdded());
+        traineeProfile.setActive(true);
     }
 
     /**
      * Gets paged traineeIds which maps to given gmcNumber
-     * @return list of {@link TraineeId}
+     * @return list of {@link TraineeProfile}
      * @param pageable
      */
-    public Page<TraineeId> findAll(Pageable pageable) {
+    public Page<TraineeProfile> findAll(Pageable pageable) {
         return traineeIdRepository.findAll(pageable);
     }
 
-    private List<TraineeId> create(List<String> gmcNumbers) {
-        List<TraineeId> traineeIds = gmcNumbers.stream()
-                .map(this::traineeId)
-                .collect(Collectors.toList());
-        return traineeIdRepository.save(traineeIds);
+    private TraineeProfile newProfile(String dbc, RegistrationRequest request) {
+        TraineeProfile traineeProfile = new TraineeProfile();
+        traineeProfile.setGmcNumber(request.getGmcNumber());
+        traineeProfile.setDateAdded(request.getDateAdded());
+        traineeProfile.setDesignatedBodyCodes(dbc);
+        traineeProfile.setActive(true);
+        return traineeProfile;
     }
 
-    private TraineeId traineeId(String gmcNumber) {
-        TraineeId traineeId = new TraineeId();
-        traineeId.setGmcNumber(gmcNumber);
-        return traineeId;
-    }
 }

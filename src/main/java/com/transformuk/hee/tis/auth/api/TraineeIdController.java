@@ -1,9 +1,9 @@
 package com.transformuk.hee.tis.auth.api;
 
 
-import com.transformuk.hee.tis.auth.model.GmcNumberWrapper;
+import com.transformuk.hee.tis.auth.model.RegistrationRequest;
 import com.transformuk.hee.tis.auth.model.PagedResponse;
-import com.transformuk.hee.tis.auth.model.TraineeId;
+import com.transformuk.hee.tis.auth.model.TraineeProfile;
 import com.transformuk.hee.tis.auth.model.TraineeIdListResponse;
 import com.transformuk.hee.tis.auth.service.TraineeIdService;
 import io.swagger.annotations.Api;
@@ -16,14 +16,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -51,13 +46,13 @@ public class TraineeIdController {
 			@ApiResponse(code = 200, message = "Mapped trainee Ids", response = TraineeIdListResponse.class)
 	})
 	@CrossOrigin
-	@RequestMapping(path = "/register", method = POST, produces = APPLICATION_JSON_VALUE, consumes = 
-			APPLICATION_JSON_VALUE)
+	@RequestMapping(path = "/{designatedBodyCode}/register", method = POST, produces = APPLICATION_JSON_VALUE, 
+			consumes = 	APPLICATION_JSON_VALUE)
 	@PreAuthorize("hasAuthority('trainee-id:register:trainee')")
-	public TraineeIdListResponse getOrCreateTraineeIds(@Valid @RequestBody List<GmcNumberWrapper> gmcNumbers) {
-		List<String> gmcIds = gmcNumbers.stream().map(GmcNumberWrapper::getGmcNumber).collect(Collectors.toList());
-		List<TraineeId> traineeIds = traineeIdService.findOrCreate(gmcIds);
-		return new TraineeIdListResponse(traineeIds);
+	public TraineeIdListResponse getOrCreateTraineeIds(@PathVariable(value = "designatedBodyCode") String designatedBodyCode,
+													   @RequestBody List<RegistrationRequest> requests) {
+		List<TraineeProfile> traineeProfiles = traineeIdService.findOrCreate(designatedBodyCode, requests);
+		return new TraineeIdListResponse(traineeProfiles);
 	}
 
 	@ApiOperation(value = "getTraineeIds()", notes = "returns mapped trainee Ids", response = TraineeIdListResponse.class,
@@ -68,8 +63,8 @@ public class TraineeIdController {
 	@CrossOrigin
 	@RequestMapping(path = "/mappings", method = GET, produces = APPLICATION_JSON_VALUE)
 	@PreAuthorize("hasAuthority('trainee-id:view:all:mappings')")
-	public PagedResponse<TraineeId> getTraineeIds(Pageable pageable) {
-		Page<TraineeId> page = traineeIdService.findAll(pageable);
+	public PagedResponse<TraineeProfile> getTraineeIds(Pageable pageable) {
+		Page<TraineeProfile> page = traineeIdService.findAll(pageable);
 		return new PagedResponse<>(page.getContent(), page.getTotalElements(), page.getTotalPages());
 	}
 }

@@ -1,7 +1,8 @@
 package com.transformuk.hee.tis.auth.api;
 
 
-import com.transformuk.hee.tis.auth.model.TraineeId;
+import com.transformuk.hee.tis.auth.model.RegistrationRequest;
+import com.transformuk.hee.tis.auth.model.TraineeProfile;
 import com.transformuk.hee.tis.auth.service.TraineeIdService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,6 +19,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Matchers.anyListOf;
+import static org.mockito.Matchers.eq;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -28,6 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class TraineeIdControllerTest {
 
     private static final String GMC_NUMBER = "gmc123";
+    public static final String DESIGNATED_BODY_CODE = "1-DGBODY";
     private static final Long TIS_ID = 1L;
     private static final String REQUEST = "[ { \"gmcNumber\": \"gmc123\" } ]";
     
@@ -40,11 +44,12 @@ public class TraineeIdControllerTest {
     @Test
     public void shouldReturnTraineeIds() throws Exception {
         //Given
-        TraineeId traineeId = new TraineeId(TIS_ID, GMC_NUMBER);
-        given(traineeIdService.findOrCreate(newArrayList(GMC_NUMBER))).willReturn(newArrayList(traineeId));
+        TraineeProfile traineeProfile = new TraineeProfile(TIS_ID, GMC_NUMBER);
+        given(traineeIdService.findOrCreate(eq(DESIGNATED_BODY_CODE), anyListOf(RegistrationRequest.class))).willReturn
+                (newArrayList(traineeProfile));
 
         // When & Then
-        this.mvc.perform(post("/api/trainee-id/register")
+        this.mvc.perform(post("/api/trainee-id/1-DGBODY/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(REQUEST))
                 .andExpect(status().isOk())
@@ -56,10 +61,10 @@ public class TraineeIdControllerTest {
     @Test
     public void shouldReturn500ForInternException() throws Exception {
         //Given
-        given(traineeIdService.findOrCreate(newArrayList(GMC_NUMBER))).willThrow(RuntimeException.class);
+        given(traineeIdService.findOrCreate(eq(DESIGNATED_BODY_CODE), anyListOf(RegistrationRequest.class))).willThrow(RuntimeException.class);
 
         // When & Then
-        this.mvc.perform(post("/api/trainee-id/register")
+        this.mvc.perform(post("/api/trainee-id/1-DGBODY/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(REQUEST))
                 .andExpect(status().isInternalServerError());
@@ -69,8 +74,8 @@ public class TraineeIdControllerTest {
     public void shouldReturnExistingTraineeIds() throws Exception {
         //Given
         Pageable pageable = new PageRequest(0, 10);
-        TraineeId existingTraineeId = new TraineeId(1L, GMC_NUMBER);
-        Page<TraineeId> page = new PageImpl<>(newArrayList(existingTraineeId));
+        TraineeProfile existingTraineeProfile = new TraineeProfile(1L, GMC_NUMBER);
+        Page<TraineeProfile> page = new PageImpl<>(newArrayList(existingTraineeProfile));
         
         given(traineeIdService.findAll(pageable)).willReturn(page);
 
