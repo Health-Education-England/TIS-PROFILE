@@ -57,7 +57,7 @@ public class TraineeIdService {
 
     private void update(String dbc,TraineeProfile traineeProfile, Map<String, RegistrationRequest> requestMap ) {
         RegistrationRequest request = requestMap.get(traineeProfile.getGmcNumber());
-        traineeProfile.setDesignatedBodyCodes(dbc);
+        traineeProfile.setDesignatedBodyCode(dbc);
         traineeProfile.setDateAdded(request.getDateAdded());
         traineeProfile.setActive(true);
     }
@@ -75,7 +75,7 @@ public class TraineeIdService {
         TraineeProfile traineeProfile = new TraineeProfile();
         traineeProfile.setGmcNumber(request.getGmcNumber());
         traineeProfile.setDateAdded(request.getDateAdded());
-        traineeProfile.setDesignatedBodyCodes(dbc);
+        traineeProfile.setDesignatedBodyCode(dbc);
         traineeProfile.setActive(true);
         return traineeProfile;
     }

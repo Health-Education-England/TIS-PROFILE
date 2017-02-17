@@ -7,9 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Objects;
-import java.util.Set;
 
 import static javax.persistence.GenerationType.AUTO;
 
@@ -23,7 +21,7 @@ public class TraineeProfile {
     private Long tisId;
     private String gmcNumber;
     private boolean active;
-    private String designatedBodyCodes;
+    private String designatedBodyCode;
     private LocalDate dateAdded;
 
     public TraineeProfile() { }
@@ -67,12 +65,12 @@ public class TraineeProfile {
         this.dateAdded = dateAdded;
     }
 
-    public String getDesignatedBodyCodes() {
-        return designatedBodyCodes;
+    public String getDesignatedBodyCode() {
+        return designatedBodyCode;
     }
 
-    public void setDesignatedBodyCodes(String designatedBodyCodes) {
-        this.designatedBodyCodes = designatedBodyCodes;
+    public void setDesignatedBodyCode(String designatedBodyCode) {
+        this.designatedBodyCode = designatedBodyCode;
     }
 
     @Override
@@ -95,7 +93,7 @@ public class TraineeProfile {
                 "active=" + active +
                 ", tisId=" + tisId +
                 ", gmcNumber='" + gmcNumber + '\'' +
-                ", designatedBodyCodes='" + designatedBodyCodes + '\'' +
+                ", designatedBodyCode='" + designatedBodyCode + '\'' +
                 ", dateAdded=" + dateAdded +
                 '}';
     }
