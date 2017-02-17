@@ -61,10 +61,11 @@ public class TraineeIdController {
 			@ApiResponse(code = 200, message = "returns mapped trainee Ids", response = TraineeIdListResponse.class)
 	})
 	@CrossOrigin
-	@RequestMapping(path = "/mappings", method = GET, produces = APPLICATION_JSON_VALUE)
+	@RequestMapping(path = "/{designatedBodyCode}/mappings", method = GET, produces = APPLICATION_JSON_VALUE)
 	@PreAuthorize("hasAuthority('trainee-id:view:all:mappings')")
-	public PagedResponse<TraineeProfile> getTraineeIds(Pageable pageable) {
-		Page<TraineeProfile> page = traineeIdService.findAll(pageable);
+	public PagedResponse<TraineeProfile> getTraineeIds(@PathVariable(value = "designatedBodyCode") String 
+																   designatedBodyCode, Pageable pageable) {
+		Page<TraineeProfile> page = traineeIdService.findAll(designatedBodyCode, pageable);
 		return new PagedResponse<>(page.getContent(), page.getTotalElements(), page.getTotalPages());
 	}
 }

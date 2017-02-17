@@ -19,7 +19,6 @@ import java.util.Set;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.anyList;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -84,10 +83,10 @@ public class TraineeIdServiceTest {
         TraineeProfile existingTraineeProfile = new TraineeProfile(1L, EXISTING_GMC_NUMBER);
         Page<TraineeProfile> page = new PageImpl<>(newArrayList(existingTraineeProfile));
         // given
-        given(traineeIdRepository.findAll(pageable)).willReturn(page);
+        given(traineeIdRepository.findByDesignatedBodyCode(DBC, pageable)).willReturn(page);
 
         // when
-        Page<TraineeProfile> actualPage = service.findAll(pageable);
+        Page<TraineeProfile> actualPage = service.findAll(DBC, pageable);
 
         // then
         assertThat(actualPage).isSameAs(page);

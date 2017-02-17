@@ -77,10 +77,10 @@ public class TraineeIdControllerTest {
         TraineeProfile existingTraineeProfile = new TraineeProfile(1L, GMC_NUMBER);
         Page<TraineeProfile> page = new PageImpl<>(newArrayList(existingTraineeProfile));
         
-        given(traineeIdService.findAll(pageable)).willReturn(page);
+        given(traineeIdService.findAll(DESIGNATED_BODY_CODE, pageable)).willReturn(page);
 
         // When & Then
-        this.mvc.perform(get("/api/trainee-id/mappings?page=0&size=10"))
+        this.mvc.perform(get("/api/trainee-id/1-DGBODY/mappings?page=0&size=10"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.totalElements").value(1))
                 .andExpect(jsonPath("$.totalPages").value(1))

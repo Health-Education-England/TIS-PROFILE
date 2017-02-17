@@ -65,10 +65,11 @@ public class TraineeIdService {
     /**
      * Gets paged traineeIds which maps to given gmcNumber
      * @return list of {@link TraineeProfile}
+     * @param designatedBodyCode
      * @param pageable
      */
-    public Page<TraineeProfile> findAll(Pageable pageable) {
-        return traineeIdRepository.findAll(pageable);
+    public Page<TraineeProfile> findAll(String designatedBodyCode, Pageable pageable) {
+        return traineeIdRepository.findByDesignatedBodyCode(designatedBodyCode, pageable);
     }
 
     private TraineeProfile newProfile(String dbc, RegistrationRequest request) {
