@@ -1,7 +1,7 @@
 package com.transformuk.hee.tis.auth.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import java.time.LocalDate;
 
@@ -14,7 +14,6 @@ public class RegistrationRequest {
     private LocalDate dateAdded;
 
     @ApiModelProperty(required = true, value = "Trainee's GmcNumber")
-    @NotEmpty
     public String getGmcNumber() {
         return gmcNumber;
     }
@@ -23,6 +22,7 @@ public class RegistrationRequest {
         this.gmcNumber = gmcNumber;
     }
 
+    @JsonFormat(pattern="dd/MM/yyyy")
     public LocalDate getDateAdded() {
         return dateAdded;
     }
