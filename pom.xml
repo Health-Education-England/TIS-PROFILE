@@ -5,13 +5,13 @@
 	<parent>
 		<groupId>com.transformuk.hee</groupId>
 		<artifactId>tis-parent</artifactId>
-		<version>0.0.4</version>
+		<version>0.0.5</version>
 		<relativePath />
 	</parent>
 
 	<groupId>com.transformuk.hee</groupId>
 	<artifactId>profile</artifactId>
-	<version>0.0.9</version>
+	<version>0.1.0</version>
 	<packaging>jar</packaging>
 
 	<name>HEE TIS PROFILE</name>
@@ -19,6 +19,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<shared.modules.version>0.0.5</shared.modules.version>
 	</properties>
 
 	<scm>
@@ -82,12 +83,12 @@
 		<dependency>
 			<groupId>com.transformuk.hee</groupId>
 			<artifactId>audit</artifactId>
-			<version>0.0.4</version>
+			<version>${shared.modules.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.transformuk.hee</groupId>
 			<artifactId>tis-security-jwt</artifactId>
-			<version>0.0.4</version>
+			<version>${shared.modules.version}</version>
 		</dependency>
 		<!--SpringFox dependencies -->
 		<dependency>
