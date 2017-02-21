@@ -32,11 +32,15 @@ public class FlywayConfig {
     @Value("${flyway.out-of-order}")
     private boolean outOfOrder;
 
+    @Value("${flyway.baseline-version}")
+    private String baseLineVersion;
+
     @Bean(initMethod = "migrate")
     Flyway flyway() {
         Flyway flyway = new Flyway();
         flyway.setBaselineOnMigrate(baseLineOnMigrate);
         flyway.setLocations(migrationFilesLocations);
+        flyway.setBaselineVersionAsString(baseLineVersion);
         flyway.setDataSource(url,user,password);
         flyway.setCleanOnValidationError(cleanOnValidationError);
         flyway.setOutOfOrder(outOfOrder);
