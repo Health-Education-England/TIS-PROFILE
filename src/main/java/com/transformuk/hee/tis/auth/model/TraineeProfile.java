@@ -2,6 +2,7 @@ package com.transformuk.hee.tis.auth.model;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,6 +15,7 @@ import static javax.persistence.GenerationType.AUTO;
 
 @Entity(name = "TraineeProfile")
 @ApiModel(description = "TraineeProfile entity")
+@Audited
 public class TraineeProfile {
 
     @Id

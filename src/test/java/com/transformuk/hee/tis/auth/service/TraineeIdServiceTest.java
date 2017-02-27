@@ -43,10 +43,12 @@ public class TraineeIdServiceTest {
         
         Set<String> gmcNumbers = newSet(EXISTING_GMC_NUMBER);
         TraineeProfile existingTraineeProfile = new TraineeProfile(1L, EXISTING_GMC_NUMBER);
+        existingTraineeProfile.setActive(true);
+        existingTraineeProfile.setDesignatedBodyCode(DBC);
 
         // given
+        given(traineeIdRepository.findByDesignatedBodyCode(DBC)).willReturn(newArrayList(existingTraineeProfile));
         given(traineeIdRepository.findByGmcNumberIn(gmcNumbers)).willReturn(newArrayList(existingTraineeProfile));
-        given(traineeIdRepository.save(anyListOf(TraineeProfile.class))).willReturn(newArrayList(existingTraineeProfile));
 
         // when
         List<TraineeProfile> traineeProfiles = service.findOrCreate(DBC, newArrayList(request));

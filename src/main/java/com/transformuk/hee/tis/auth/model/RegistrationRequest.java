@@ -22,6 +22,7 @@ public class RegistrationRequest {
         this.gmcNumber = gmcNumber;
     }
 
+    @ApiModelProperty(value = "date trainee added to designatedBody", example = "30/01/2016")
     @JsonFormat(pattern="dd/MM/yyyy")
     public LocalDate getDateAdded() {
         return dateAdded;
