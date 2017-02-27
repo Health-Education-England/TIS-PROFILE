@@ -9,6 +9,7 @@
 		<relativePath />
 	</parent>
 
+    <groupId>com.transformuk.hee</groupId>
 	<artifactId>profile</artifactId>
 	<version>1.0.0</version>
 	<packaging>jar</packaging>
