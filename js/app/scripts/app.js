@@ -43,19 +43,6 @@ angular
 		$translateProvider.useSanitizeValueStrategy('sanitize');
 
 	})
-	.constant('PERMISSIONS', {
-		SEE_ALL_TRAINEES: 'revalidation:see:dbc:trainees'
-	})
-	.constant('ROLES', {
-		TRAINEE: 'Trainee',
-		ADMIN: 'RVAdmin',
-		OFFICER: 'RVOfficer'
-	})
-	.constant('CONFIG', {
-		NOTIFICATION_TIME: 3000
-	})
-	.run(function ($rootScope, PERMISSIONS, ROLES) {
-		$rootScope.PERMISSIONS = PERMISSIONS;
-		$rootScope.ROLES = ROLES;
+	.run(function ($rootScope) {
 		$rootScope.applicationReference = '/profile/';
 	});
