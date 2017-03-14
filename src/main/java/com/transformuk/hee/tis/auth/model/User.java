@@ -16,7 +16,7 @@ import static javax.persistence.FetchType.EAGER;
 @ApiModel(description = "User object that contains the logged in user's details")
 public class User {
 
-	private static final String NONE="None";
+	public static final String NONE="None";
 
     private String name;
     private String firstName;
@@ -119,7 +119,7 @@ public class User {
 			"then set default to 'None'")
     public Set<String> getDesignatedBodyCodes() {
         if(CollectionUtils.isEmpty(this.designatedBodyCodes)){
-        	this.designatedBodyCodes = Sets.newHashSet(this.NONE);
+        	this.designatedBodyCodes = Sets.newHashSet(User.NONE);
 		}
     	return designatedBodyCodes;
     }
