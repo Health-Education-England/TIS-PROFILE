@@ -1,9 +1,12 @@
 package com.transformuk.hee.tis.auth.model;
 
+import com.google.common.collect.Sets;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.springframework.util.CollectionUtils;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 import static javax.persistence.FetchType.EAGER;
@@ -12,6 +15,9 @@ import static javax.persistence.FetchType.EAGER;
 @Table(name = "HeeUser")
 @ApiModel(description = "User object that contains the logged in user's details")
 public class User {
+
+	private static final String NONE="None";
+
     private String name;
     private String firstName;
     private String lastName;
@@ -109,9 +115,13 @@ public class User {
     @ElementCollection(fetch = EAGER)
     @CollectionTable(name="UserDesignatedBody", joinColumns=@JoinColumn(name="userName"))
     @Column(name="designatedBodyCode")
-    @ApiModelProperty(required = true, value = "Designated Body codes of user's organisation")
+    @ApiModelProperty(required = true, value = "Designated Body codes of user's organisation, if it is not available " +
+			"then set default to 'None'")
     public Set<String> getDesignatedBodyCodes() {
-        return designatedBodyCodes;
+        if(CollectionUtils.isEmpty(this.designatedBodyCodes)){
+        	this.designatedBodyCodes = Sets.newHashSet(this.NONE);
+		}
+    	return designatedBodyCodes;
     }
 
     public void setDesignatedBodyCodes(Set<String> designatedBodyCodes) {
