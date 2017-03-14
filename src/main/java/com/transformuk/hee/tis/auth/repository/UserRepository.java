@@ -23,7 +23,7 @@ public interface UserRepository extends JpaRepository<User, String>, JpaSpecific
 	@Query("select u from User u join u.roles r join u.designatedBodyCodes dbc where r.name='RVOfficer' and dbc = :dbc")
 	User findRVOfficerByDesignatedBodyCode(@Param("dbc") String designatedBodyCodes);
 	
-	@Query("select u from User u inner join fetch u.designatedBodyCodes inner join fetch u.roles r inner join fetch r.permissions p " +
+	@Query("select u from User u left outer join fetch u.designatedBodyCodes inner join fetch u.roles r inner join fetch r.permissions p " +
 			"where u.active = true and u.name = :userName")
 	User findByActive(@Param("userName") String userName);
 }
