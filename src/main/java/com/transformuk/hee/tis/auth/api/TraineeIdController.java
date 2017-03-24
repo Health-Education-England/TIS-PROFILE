@@ -1,10 +1,10 @@
 package com.transformuk.hee.tis.auth.api;
 
 
-import com.transformuk.hee.tis.auth.model.RegistrationRequest;
 import com.transformuk.hee.tis.auth.model.PagedResponse;
-import com.transformuk.hee.tis.auth.model.TraineeProfile;
+import com.transformuk.hee.tis.auth.model.RegistrationRequest;
 import com.transformuk.hee.tis.auth.model.TraineeIdListResponse;
+import com.transformuk.hee.tis.auth.model.TraineeProfile;
 import com.transformuk.hee.tis.auth.service.TraineeIdService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -30,7 +30,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @RequestMapping("/api/trainee-id")
 @Validated
 public class TraineeIdController {
-	
+
 	private static final Logger LOG = getLogger(TraineeIdController.class);
 
 	private TraineeIdService traineeIdService;
@@ -40,14 +40,14 @@ public class TraineeIdController {
 		this.traineeIdService = traineeIdService;
 	}
 
-	@ApiOperation(value = "traineeIds()", notes = "creates/gets mapping between traineeId and gmcIds", 
+	@ApiOperation(value = "traineeIds()", notes = "creates/gets mapping between traineeId and gmcIds",
 			response = TraineeIdListResponse.class, responseContainer = "traineeIdList")
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Mapped trainee Ids", response = TraineeIdListResponse.class)
 	})
 	@CrossOrigin
-	@RequestMapping(path = "/{designatedBodyCode}/register", method = POST, produces = APPLICATION_JSON_VALUE, 
-			consumes = 	APPLICATION_JSON_VALUE)
+	@RequestMapping(path = "/{designatedBodyCode}/register", method = POST, produces = APPLICATION_JSON_VALUE,
+			consumes = APPLICATION_JSON_VALUE)
 	@PreAuthorize("hasAuthority('trainee-id:register:trainee')")
 	public TraineeIdListResponse getOrCreateTraineeIds(@PathVariable(value = "designatedBodyCode") String designatedBodyCode,
 													   @RequestBody List<RegistrationRequest> requests) {
@@ -63,8 +63,8 @@ public class TraineeIdController {
 	@CrossOrigin
 	@RequestMapping(path = "/{designatedBodyCode}/mappings", method = GET, produces = APPLICATION_JSON_VALUE)
 	@PreAuthorize("hasAuthority('trainee-id:view:all:mappings')")
-	public PagedResponse<TraineeProfile> getTraineeIds(@PathVariable(value = "designatedBodyCode") String 
-																   designatedBodyCode, Pageable pageable) {
+	public PagedResponse<TraineeProfile> getTraineeIds(@PathVariable(value = "designatedBodyCode") String
+															   designatedBodyCode, Pageable pageable) {
 		Page<TraineeProfile> page = traineeIdService.findAll(designatedBodyCode, pageable);
 		return new PagedResponse<>(page.getContent(), page.getTotalElements(), page.getTotalPages());
 	}

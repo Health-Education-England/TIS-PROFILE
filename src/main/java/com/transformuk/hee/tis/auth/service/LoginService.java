@@ -23,9 +23,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import static com.transformuk.hee.tis.auth.filters.UserSpecification.active;
-import static com.transformuk.hee.tis.auth.filters.UserSpecification.withDBCs;
-import static com.transformuk.hee.tis.auth.filters.UserSpecification.withPermissions;
+import static com.transformuk.hee.tis.auth.filters.UserSpecification.*;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toSet;
@@ -38,12 +36,10 @@ import static org.springframework.data.domain.Sort.Direction.ASC;
 @Service
 @Transactional(readOnly = true)
 public class LoginService {
-	
-	private static final Logger LOG = getLogger(LoginService.class);
 
-	private JsonParser jsonParser = JsonParserFactory.getJsonParser();
-	
+	private static final Logger LOG = getLogger(LoginService.class);
 	private final UserRepository userRepository;
+	private JsonParser jsonParser = JsonParserFactory.getJsonParser();
 
 	public LoginService(UserRepository userRepository) {
 		this.userRepository = userRepository;
@@ -57,7 +53,7 @@ public class LoginService {
 		JwtAuthToken jwtAuthToken = decode(token);
 		User user = userRepository.findByActive(jwtAuthToken.getUsername());
 		if (user == null) {
-			throw new EntityNotFoundException(format("User with username %s either not found or not active", 
+			throw new EntityNotFoundException(format("User with username %s either not found or not active",
 					jwtAuthToken.getUsername()));
 		}
 		return user;
@@ -67,10 +63,10 @@ public class LoginService {
 	 * Returns all active users by search criteria
 	 *
 	 * @param designatedBodyCodes the designatedBodyCode to use
-	 * @param offset the result number to start from
-	 * @param limit  the page size
+	 * @param offset              the result number to start from
+	 * @param limit               the page size
 	 * @param designatedBodyCodes
-	 *@param permissions the permissions to use  @return {@link List<User>} list of users
+	 * @param permissions         the permissions to use  @return {@link List<User>} list of users
 	 */
 	public Page<User> getUsers(int offset, int limit, Set<String> designatedBodyCodes, String permissions) {
 		Specifications<User> spec = Specifications.where(active()).and(withDBCs(designatedBodyCodes));
@@ -78,12 +74,13 @@ public class LoginService {
 		Pageable page = new PageRequest(pageNumber, limit, new Sort(ASC, "firstName"));
 		if (permissions != null) {
 			spec = spec.and(withPermissions(asList(permissions.split(","))));
-		} 
+		}
 		return userRepository.findAll(spec, page);
 	}
 
 	/**
 	 * Gets RevalidationOfficer details by designatedBodyCode
+	 *
 	 * @param designatedBodyCode
 	 * @return {@link User}
 	 */

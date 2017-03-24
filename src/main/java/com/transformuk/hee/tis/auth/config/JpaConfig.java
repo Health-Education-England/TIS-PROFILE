@@ -5,7 +5,7 @@ import org.springframework.data.envers.repository.support.EnversRevisionReposito
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @Configuration
-@EnableJpaRepositories(basePackages = "com.transformuk.hee.tis.auth.repository", repositoryFactoryBeanClass = 
+@EnableJpaRepositories(basePackages = "com.transformuk.hee.tis.auth.repository", repositoryFactoryBeanClass =
 		EnversRevisionRepositoryFactoryBean.class)
 public class JpaConfig {
 }

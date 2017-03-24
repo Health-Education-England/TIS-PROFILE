@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Transactional(readOnly = true)
 public class ProfileUserDetailsServiceImpl implements UserDetailsService {
-	
+
 	private final LoginService loginService;
 	private final UserProfileAssembler userProfileAssembler;
 

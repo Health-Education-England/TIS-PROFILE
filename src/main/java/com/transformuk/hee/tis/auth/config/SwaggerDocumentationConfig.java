@@ -26,12 +26,12 @@ public class SwaggerDocumentationConfig {
 				.licenseUrl("")
 				.termsOfServiceUrl("")
 				.version("1.0.0")
-				.contact(new Contact("Transform","http://transformuk.com/", "info@transformuk,com"))
+				.contact(new Contact("Transform", "http://transformuk.com/", "info@transformuk,com"))
 				.build();
 	}
 
 	@Bean
-	public Docket customImplementation(){
+	public Docket customImplementation() {
 		return new Docket(DocumentationType.SWAGGER_2)
 				.select()
 				.apis(RequestHandlerSelectors.basePackage("com.transformuk.hee.tis.auth.api"))

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <property name="LOG_FILE_NAME" value="auth.log"/>
-    <include resource="org/springframework/boot/logging/logback/base.xml"/>
-    <include resource="audit-logback.xml"/>
-    <logger name="com.transformuk.hee.tis" level="INFO"/>
+	<property name="LOG_FILE_NAME" value="auth.log"/>
+	<include resource="org/springframework/boot/logging/logback/base.xml"/>
+	<include resource="audit-logback.xml"/>
+	<logger name="com.transformuk.hee.tis" level="INFO"/>
 </configuration>

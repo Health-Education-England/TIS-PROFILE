@@ -38,7 +38,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	public AuthenticationManager authenticationManager() throws Exception {
 		return new ProviderManager(Arrays.asList(authenticationProvider));
 	}
-	
+
 	public JwtAuthenticationTokenFilter authenticationTokenFilterBean() throws Exception {
 		JwtAuthenticationTokenFilter authenticationTokenFilter = new JwtAuthenticationTokenFilter("/api/users/**",
 				"/api/trainee-id/**");
@@ -54,7 +54,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.csrf().disable()
 				.exceptionHandling().authenticationEntryPoint(unauthorizedHandler).accessDeniedHandler(accessDeniedHandler)
 				.and()
-				 // don't create session
+				// don't create session
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); //.and()
 		// Custom JWT based security filter
 		httpSecurity

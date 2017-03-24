@@ -6,7 +6,6 @@ import io.swagger.annotations.ApiModelProperty;
 import org.springframework.util.CollectionUtils;
 
 import javax.persistence.*;
-import java.util.HashSet;
 import java.util.Set;
 
 import static javax.persistence.FetchType.EAGER;
@@ -54,9 +53,17 @@ public class User {
 		return name;
 	}
 
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	@ApiModelProperty(required = true, value = "User's first name")
 	public String getFirstName() {
 		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
 	}
 
 	@ApiModelProperty(required = true, value = "User's last name")
@@ -64,30 +71,22 @@ public class User {
 		return lastName;
 	}
 
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
 	@ApiModelProperty(required = true, value = "7 digit GMC Reference number of the user(Trainee doctor)")
 	public String getGmcId() {
 		return gmcId;
 	}
 
+	public void setGmcId(String gmcId) {
+		this.gmcId = gmcId;
+	}
+
 	@ApiModelProperty(value = "User's phone number")
 	public String getPhoneNumber() {
 		return phoneNumber;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-
-	public void setGmcId(String gmcId) {
-		this.gmcId = gmcId;
 	}
 
 	public void setPhoneNumber(String phoneNumber) {

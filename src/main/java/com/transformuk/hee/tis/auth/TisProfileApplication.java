@@ -23,9 +23,15 @@ public class TisProfileApplication {
 	public static void main(String[] args) {
 		run(TisProfileApplication.class, args);
 	}
-	
+
+	@Bean
+	public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+		return new PropertySourcesPlaceholderConfigurer();
+	}
+
 	/**
 	 * Allows to throw exception when no exception handler found
+	 *
 	 * @return DispatcherServlet
 	 */
 	@Bean
@@ -33,11 +39,6 @@ public class TisProfileApplication {
 		DispatcherServlet ds = new DispatcherServlet();
 		ds.setThrowExceptionIfNoHandlerFound(true);
 		return ds;
-	}
-
-	@Bean
-	public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
-		return new PropertySourcesPlaceholderConfigurer();
 	}
 
 	@Bean

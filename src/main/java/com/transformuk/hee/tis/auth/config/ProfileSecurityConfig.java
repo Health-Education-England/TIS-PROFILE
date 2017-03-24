@@ -25,7 +25,7 @@ import org.springframework.context.annotation.FilterType;
 				value = {TisSecurityConfig.class})
 		})
 public class ProfileSecurityConfig {
-	
+
 	@Autowired
 	private LoginService loginService;
 	@Autowired
@@ -50,5 +50,5 @@ public class ProfileSecurityConfig {
 	public RestAccessDeniedHandler accessDeniedHandler(AuditEventRepository auditEventRepository) {
 		return new RestAccessDeniedHandler(auditEventRepository);
 	}
-	
+
 }

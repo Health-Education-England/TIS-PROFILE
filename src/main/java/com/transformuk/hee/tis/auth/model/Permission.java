@@ -1,7 +1,6 @@
 package com.transformuk.hee.tis.auth.model;
 
 
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -14,11 +13,12 @@ import javax.persistence.Table;
 @ApiModel(description = "Permission given to a role")
 public class Permission {
 	private String name;
+
 	public Permission(String name) {
 		this.name = name;
 	}
 
-	public Permission(){
+	public Permission() {
 		super();
 	}
 

@@ -54,7 +54,7 @@ public class UserProfileController {
 	})
 	@CrossOrigin
 	@RequestMapping(path = "/userinfo", method = GET, produces = APPLICATION_JSON_VALUE)
-	public UserProfile profile(@RequestHeader(value = "OIDC_access_token") String token)  {
+	public UserProfile profile(@RequestHeader(value = "OIDC_access_token") String token) {
 		User user = loginService.getUserByToken(token);
 		return assembler.toUserProfile(user);
 	}
@@ -91,7 +91,7 @@ public class UserProfileController {
 		User user = loginService.getRVOfficer(designatedBodyCode);
 		return assembler.toUserProfile(user);
 	}
-	
+
 	private UserListResponse toUserListResponse(Page<User> users) {
 		return new UserListResponse(users.getTotalElements(), toUserInfoList(users.getContent()));
 	}

@@ -10,25 +10,25 @@ import java.time.LocalDate;
  */
 public class RegistrationRequest {
 
-    private String gmcNumber;
-    private LocalDate dateAdded;
+	private String gmcNumber;
+	private LocalDate dateAdded;
 
-    @ApiModelProperty(required = true, value = "Trainee's GmcNumber")
-    public String getGmcNumber() {
-        return gmcNumber;
-    }
+	@ApiModelProperty(required = true, value = "Trainee's GmcNumber")
+	public String getGmcNumber() {
+		return gmcNumber;
+	}
 
-    public void setGmcNumber(String gmcNumber) {
-        this.gmcNumber = gmcNumber;
-    }
+	public void setGmcNumber(String gmcNumber) {
+		this.gmcNumber = gmcNumber;
+	}
 
-    @ApiModelProperty(value = "date trainee added to designatedBody", example = "30/01/2016")
-    @JsonFormat(pattern="dd/MM/yyyy")
-    public LocalDate getDateAdded() {
-        return dateAdded;
-    }
+	@ApiModelProperty(value = "date trainee added to designatedBody", example = "30/01/2016")
+	@JsonFormat(pattern = "dd/MM/yyyy")
+	public LocalDate getDateAdded() {
+		return dateAdded;
+	}
 
-    public void setDateAdded(LocalDate dateAdded) {
-        this.dateAdded = dateAdded;
-    }
+	public void setDateAdded(LocalDate dateAdded) {
+		this.dateAdded = dateAdded;
+	}
 }

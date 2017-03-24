@@ -32,8 +32,8 @@ public class UserListResponse {
 	@Override
 	public String toString() {
 		return "UserListResponse{" +
-			", total=" + total +
-			", users=" + users +
-			'}';
+				", total=" + total +
+				", users=" + users +
+				'}';
 	}
 }

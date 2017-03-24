@@ -16,9 +16,9 @@ import java.util.List;
 @Repository
 public interface TraineeIdRepository extends RevisionRepository<TraineeProfile, Long, Integer>, JpaRepository<TraineeProfile, Long> {
 
-    List<TraineeProfile> findByGmcNumberIn(Collection<String> gmcNumber);
+	List<TraineeProfile> findByGmcNumberIn(Collection<String> gmcNumber);
 
-    Page<TraineeProfile> findByDesignatedBodyCode(String designatedBodyCode, Pageable pageable);
+	Page<TraineeProfile> findByDesignatedBodyCode(String designatedBodyCode, Pageable pageable);
 
-    List<TraineeProfile> findByDesignatedBodyCode(String dbc);
+	List<TraineeProfile> findByDesignatedBodyCode(String dbc);
 }
