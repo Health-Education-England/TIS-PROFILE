@@ -1,5 +1,6 @@
-package com.transformuk.hee.tis.profile.model;
+package com.transformuk.hee.tis.profile.dto;
 
+import com.transformuk.hee.tis.profile.model.TraineeProfile;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.List;

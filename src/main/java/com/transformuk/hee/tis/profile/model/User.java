@@ -1,8 +1,6 @@
 package com.transformuk.hee.tis.profile.model;
 
 import com.google.common.collect.Sets;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import org.springframework.util.CollectionUtils;
 
 import javax.persistence.*;
@@ -12,7 +10,6 @@ import static javax.persistence.FetchType.EAGER;
 
 @Entity
 @Table(name = "HeeUser")
-@ApiModel(description = "User object that contains the logged in user's details")
 public class User {
 
 	private static final String NONE = "None";
@@ -35,7 +32,6 @@ public class User {
 		this.name = name;
 	}
 
-	@ApiModelProperty(required = true, value = "Roles assigned to a user")
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "UserRole", joinColumns = @JoinColumn(name = "userName", referencedColumnName = "name"),
 			inverseJoinColumns = @JoinColumn(name = "roleName", referencedColumnName = "name"))
@@ -47,7 +43,6 @@ public class User {
 		this.roles = roles;
 	}
 
-	@ApiModelProperty(required = true, value = "User identifier")
 	@Id
 	public String getName() {
 		return name;
@@ -57,7 +52,6 @@ public class User {
 		this.name = name;
 	}
 
-	@ApiModelProperty(required = true, value = "User's first name")
 	public String getFirstName() {
 		return firstName;
 	}
@@ -66,7 +60,6 @@ public class User {
 		this.firstName = firstName;
 	}
 
-	@ApiModelProperty(required = true, value = "User's last name")
 	public String getLastName() {
 		return lastName;
 	}
@@ -75,7 +68,6 @@ public class User {
 		this.lastName = lastName;
 	}
 
-	@ApiModelProperty(required = true, value = "7 digit GMC Reference number of the user(Trainee doctor)")
 	public String getGmcId() {
 		return gmcId;
 	}
@@ -84,7 +76,6 @@ public class User {
 		this.gmcId = gmcId;
 	}
 
-	@ApiModelProperty(value = "User's phone number")
 	public String getPhoneNumber() {
 		return phoneNumber;
 	}
@@ -93,7 +84,6 @@ public class User {
 		this.phoneNumber = phoneNumber;
 	}
 
-	@ApiModelProperty(value = "User's email address")
 	public String getEmailAddress() {
 		return emailAddress;
 	}
@@ -102,7 +92,6 @@ public class User {
 		this.emailAddress = emailAddress;
 	}
 
-	@ApiModelProperty(value = "User's active flag")
 	public boolean isActive() {
 		return active;
 	}
@@ -114,8 +103,6 @@ public class User {
 	@ElementCollection(fetch = EAGER)
 	@CollectionTable(name = "UserDesignatedBody", joinColumns = @JoinColumn(name = "userName"))
 	@Column(name = "designatedBodyCode")
-	@ApiModelProperty(required = true, value = "Designated Body codes of user's organisation, if it is not available " +
-			"then set default to 'None'")
 	public Set<String> getDesignatedBodyCodes() {
 		if (CollectionUtils.isEmpty(this.designatedBodyCodes)) {
 			this.designatedBodyCodes = Sets.newHashSet(User.NONE);
@@ -129,7 +116,7 @@ public class User {
 
 	@Override
 	public String toString() {
-		return "User{" +
+		return "UserDto{" +
 				"name='" + name + '\'' +
 				", firstName='" + firstName + '\'' +
 				", lastName='" + lastName + '\'' +

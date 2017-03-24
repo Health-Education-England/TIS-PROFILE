@@ -1,4 +1,4 @@
-package com.transformuk.hee.tis.profile.model;
+package com.transformuk.hee.tis.profile.dto;
 
 import java.util.List;
 

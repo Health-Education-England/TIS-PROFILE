@@ -1,4 +1,4 @@
-package com.transformuk.hee.tis.profile.model;
+package com.transformuk.hee.tis.profile.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.annotations.ApiModelProperty;
@@ -17,7 +17,7 @@ public class UserInfoResponse {
 	private String phoneNumber;
 	private String emailAddress;
 
-	@ApiModelProperty(required = true, value = "User identifier")
+	@ApiModelProperty(required = true, value = "UserDto identifier")
 	public String getName() {
 		return name;
 	}
@@ -26,7 +26,7 @@ public class UserInfoResponse {
 		this.name = name;
 	}
 
-	@ApiModelProperty(required = true, value = "User's first name")
+	@ApiModelProperty(required = true, value = "UserDto's first name")
 	public String getFirstName() {
 		return firstName;
 	}
@@ -35,7 +35,7 @@ public class UserInfoResponse {
 		this.firstName = firstName;
 	}
 
-	@ApiModelProperty(required = true, value = "User's last name")
+	@ApiModelProperty(required = true, value = "UserDto's last name")
 	public String getLastName() {
 		return lastName;
 	}
@@ -62,7 +62,7 @@ public class UserInfoResponse {
 		this.designatedBodyCodes = designatedBodyCodes;
 	}
 
-	@ApiModelProperty(value = "User's phone number")
+	@ApiModelProperty(value = "UserDto's phone number")
 	public String getPhoneNumber() {
 		return phoneNumber;
 	}
@@ -71,7 +71,7 @@ public class UserInfoResponse {
 		this.phoneNumber = phoneNumber;
 	}
 
-	@ApiModelProperty(value = "User's email address")
+	@ApiModelProperty(value = "UserDto's email address")
 	public String getEmailAddress() {
 		return emailAddress;
 	}
@@ -91,7 +91,7 @@ public class UserInfoResponse {
 
 	@Override
 	public String toString() {
-		return "User{" +
+		return "UserDto{" +
 				"name='" + name + '\'' +
 				", firstName='" + firstName + '\'' +
 				", lastName='" + lastName + '\'' +

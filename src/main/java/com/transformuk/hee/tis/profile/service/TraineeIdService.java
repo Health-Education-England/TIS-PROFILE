@@ -1,6 +1,6 @@
 package com.transformuk.hee.tis.profile.service;
 
-import com.transformuk.hee.tis.profile.model.RegistrationRequest;
+import com.transformuk.hee.tis.profile.dto.RegistrationRequest;
 import com.transformuk.hee.tis.profile.model.TraineeProfile;
 import com.transformuk.hee.tis.profile.repository.TraineeIdRepository;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -20,6 +20,8 @@ import static org.springframework.boot.SpringApplication.run;
 @EnableSpringDataWebSupport
 public class Application {
 
+	public static final String SERVICE_NAME = "tis-profile";
+
 	public static void main(String[] args) {
 		run(Application.class, args);
 	}

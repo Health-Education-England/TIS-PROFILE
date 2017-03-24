@@ -1,4 +1,4 @@
-package com.transformuk.hee.tis.profile.model;
+package com.transformuk.hee.tis.profile.dto;
 
 import com.google.common.collect.ImmutableMap;
 import org.springframework.boot.actuate.audit.AuditEvent;

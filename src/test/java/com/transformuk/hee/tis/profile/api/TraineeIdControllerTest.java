@@ -1,7 +1,7 @@
 package com.transformuk.hee.tis.profile.api;
 
 
-import com.transformuk.hee.tis.profile.model.RegistrationRequest;
+import com.transformuk.hee.tis.profile.dto.RegistrationRequest;
 import com.transformuk.hee.tis.profile.model.TraineeProfile;
 import com.transformuk.hee.tis.profile.service.TraineeIdService;
 import org.junit.Test;

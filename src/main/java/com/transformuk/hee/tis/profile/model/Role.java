@@ -1,15 +1,11 @@
 package com.transformuk.hee.tis.profile.model;
 
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-
 import javax.persistence.*;
 import java.util.Set;
 
 @Entity
 @Table(name = "Role")
-@ApiModel(description = "Role that can be assigned to a user")
 public class Role {
 	private String name;
 	private Set<Permission> permissions;
@@ -23,7 +19,6 @@ public class Role {
 		super();
 	}
 
-	@ApiModelProperty(required = true, value = "Role name")
 	@Id
 	public String getName() {
 		return name;
@@ -33,7 +28,6 @@ public class Role {
 		this.name = name;
 	}
 
-	@ApiModelProperty(required = true, value = "Permissions given to a role")
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "RolePermission", joinColumns = @JoinColumn(name = "roleName", referencedColumnName = "name"),
 			inverseJoinColumns = @JoinColumn(name = "permissionName", referencedColumnName = "name"))

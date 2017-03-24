@@ -1,4 +1,4 @@
-package com.transformuk.hee.tis.profile.model;
+package com.transformuk.hee.tis.profile.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;

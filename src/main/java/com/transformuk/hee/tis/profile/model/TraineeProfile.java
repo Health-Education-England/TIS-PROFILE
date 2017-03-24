@@ -1,7 +1,5 @@
 package com.transformuk.hee.tis.profile.model;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.Entity;
@@ -14,7 +12,6 @@ import static javax.persistence.GenerationType.AUTO;
 
 
 @Entity(name = "TraineeProfile")
-@ApiModel(description = "TraineeProfile entity")
 @Audited
 public class TraineeProfile {
 
@@ -34,7 +31,6 @@ public class TraineeProfile {
 		this.tisId = tisId;
 	}
 
-	@ApiModelProperty(required = true, value = "Trainee's GmcNumber")
 	public String getGmcNumber() {
 		return gmcNumber;
 	}
@@ -43,7 +39,6 @@ public class TraineeProfile {
 		this.gmcNumber = gmcNumber;
 	}
 
-	@ApiModelProperty(required = true, value = "Trainee identifier")
 	public Long getTisId() {
 		return tisId;
 	}

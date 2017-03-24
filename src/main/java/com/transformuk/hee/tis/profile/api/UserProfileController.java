@@ -1,10 +1,11 @@
 package com.transformuk.hee.tis.profile.api;
 
+import com.transformuk.hee.tis.profile.Application;
 import com.transformuk.hee.tis.profile.assembler.UserProfileAssembler;
 import com.transformuk.hee.tis.profile.model.User;
-import com.transformuk.hee.tis.profile.model.UserDetails;
-import com.transformuk.hee.tis.profile.model.UserInfoResponse;
-import com.transformuk.hee.tis.profile.model.UserListResponse;
+import com.transformuk.hee.tis.profile.dto.UserDetails;
+import com.transformuk.hee.tis.profile.dto.UserInfoResponse;
+import com.transformuk.hee.tis.profile.dto.UserListResponse;
 import com.transformuk.hee.tis.profile.service.LoginService;
 import com.transformuk.hee.tis.security.model.UserProfile;
 import io.swagger.annotations.Api;
@@ -29,7 +30,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @RestController
-@Api(value = "/api", description = "API to get user profile with permissions")
+@Api(value = Application.SERVICE_NAME, description = "API to get user profile with permissions")
 @RequestMapping("/api")
 public class UserProfileController {
 	private static final Logger LOG = getLogger(UserProfileController.class);
@@ -43,10 +44,10 @@ public class UserProfileController {
 		this.assembler = assembler;
 	}
 
-	@ApiOperation(value = "Gets user profile", notes = "gets user profile with permissions", response = UserDetails
+	@ApiOperation(value = "Gets user profile", notes = "gets user profile with permissions", response = UserProfile
 			.class)
 	@ApiResponses(value = {
-			@ApiResponse(code = 200, message = "Returns user profile successfully", response = UserDetails.class)
+			@ApiResponse(code = 200, message = "Returns user profile successfully", response = UserProfile.class)
 	})
 	@CrossOrigin
 	@RequestMapping(path = "/userinfo", method = GET, produces = APPLICATION_JSON_VALUE)
@@ -59,7 +60,7 @@ public class UserProfileController {
 			notes = "http://localhost:8084/users?offset=0&limit=10&designatedBodyCode=DBC&permissions=comma separated values",
 			response = UserListResponse.class)
 	@ApiResponses(value = {
-			@ApiResponse(code = 200, message = "User's list returned", response = UserListResponse.class)
+			@ApiResponse(code = 200, message = "UserDto's list returned", response = UserListResponse.class)
 	})
 	@CrossOrigin
 	@RequestMapping(path = "/users", method = GET, produces = APPLICATION_JSON_VALUE)
@@ -76,9 +77,9 @@ public class UserProfileController {
 		return resource;
 	}
 
-	@ApiOperation(value = "Gets RevalidationOfficer deatils", response = User.class)
+	@ApiOperation(value = "Gets RevalidationOfficer deatils", response = UserProfile.class)
 	@ApiResponses(value = {
-			@ApiResponse(code = 200, message = "Got user successfully", response = User.class)
+			@ApiResponse(code = 200, message = "Got user successfully", response = UserProfile.class)
 	})
 	@CrossOrigin
 	@RequestMapping(path = "/users/ro-user/{designatedBodyCode}", method = GET, produces = APPLICATION_JSON_VALUE)

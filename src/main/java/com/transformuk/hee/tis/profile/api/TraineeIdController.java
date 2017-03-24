@@ -1,9 +1,10 @@
 package com.transformuk.hee.tis.profile.api;
 
 
-import com.transformuk.hee.tis.profile.model.PagedResponse;
-import com.transformuk.hee.tis.profile.model.RegistrationRequest;
-import com.transformuk.hee.tis.profile.model.TraineeIdListResponse;
+import com.transformuk.hee.tis.profile.Application;
+import com.transformuk.hee.tis.profile.dto.PagedResponse;
+import com.transformuk.hee.tis.profile.dto.RegistrationRequest;
+import com.transformuk.hee.tis.profile.dto.TraineeIdListResponse;
 import com.transformuk.hee.tis.profile.model.TraineeProfile;
 import com.transformuk.hee.tis.profile.service.TraineeIdService;
 import io.swagger.annotations.Api;
@@ -26,7 +27,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @RestController
-@Api(value = "/api/trainee-id", description = "API to get trainee id mappings")
+@Api(value = Application.SERVICE_NAME, description = "API to get trainee id mappings")
 @RequestMapping("/api/trainee-id")
 @Validated
 public class TraineeIdController {
@@ -55,10 +56,10 @@ public class TraineeIdController {
 		return new TraineeIdListResponse(traineeProfiles);
 	}
 
-	@ApiOperation(value = "getTraineeIds()", notes = "returns mapped trainee Ids", response = TraineeIdListResponse.class,
+	@ApiOperation(value = "getTraineeIds()", notes = "returns mapped trainee Ids", response = PagedResponse.class,
 			responseContainer = "traineeIdList")
 	@ApiResponses(value = {
-			@ApiResponse(code = 200, message = "returns mapped trainee Ids", response = TraineeIdListResponse.class)
+			@ApiResponse(code = 200, message = "returns mapped trainee Ids", response = PagedResponse.class)
 	})
 	@CrossOrigin
 	@RequestMapping(path = "/{designatedBodyCode}/mappings", method = GET, produces = APPLICATION_JSON_VALUE)
