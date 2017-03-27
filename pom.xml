@@ -9,11 +9,11 @@
 		<relativePath/>
 	</parent>
 
-	<!--<modules>-->
-		<!--<module>profile-api</module>-->
-		<!--<module>profile-client</module>-->
-		<!--<module>profile-service</module>-->
-	<!--</modules>-->
+	<modules>
+		<module>profile-api</module>
+		<module>profile-client</module>
+		<module>profile-service</module>
+	</modules>
 
 	<groupId>com.transformuk.hee</groupId>
 	<artifactId>profile</artifactId>
@@ -22,8 +22,6 @@
 
 	<name>HEE TIS PROFILE</name>
 	<description>HEE TIS PROFILE</description>
-
-
 
 	<scm>
 		<developerConnection>scm:git:git@github.com:Health-Education-England/TIS-PROFILE.git</developerConnection>
