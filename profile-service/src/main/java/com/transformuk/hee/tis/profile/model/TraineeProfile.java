@@ -11,7 +11,7 @@ import java.util.Objects;
 import static javax.persistence.GenerationType.AUTO;
 
 
-@Entity(name = "TraineeProfile")
+@Entity(name = "TraineeProfileDto")
 @Audited
 public class TraineeProfile {
 
@@ -87,7 +87,7 @@ public class TraineeProfile {
 
 	@Override
 	public String toString() {
-		return "TraineeProfile{" +
+		return "TraineeProfileDto{" +
 				"active=" + active +
 				", tisId=" + tisId +
 				", gmcNumber='" + gmcNumber + '\'' +

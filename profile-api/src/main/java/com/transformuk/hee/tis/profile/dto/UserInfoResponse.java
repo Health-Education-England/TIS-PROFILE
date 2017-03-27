@@ -13,11 +13,11 @@ public class UserInfoResponse {
 	private String fullName;
 	private String gmcId;
 	private Set<String> designatedBodyCodes;
-	;
+
 	private String phoneNumber;
 	private String emailAddress;
 
-	@ApiModelProperty(required = true, value = "UserDto identifier")
+	@ApiModelProperty(required = true, value = "User identifier")
 	public String getName() {
 		return name;
 	}
@@ -26,7 +26,7 @@ public class UserInfoResponse {
 		this.name = name;
 	}
 
-	@ApiModelProperty(required = true, value = "UserDto's first name")
+	@ApiModelProperty(required = true, value = "User's first name")
 	public String getFirstName() {
 		return firstName;
 	}
@@ -35,7 +35,7 @@ public class UserInfoResponse {
 		this.firstName = firstName;
 	}
 
-	@ApiModelProperty(required = true, value = "UserDto's last name")
+	@ApiModelProperty(required = true, value = "User's last name")
 	public String getLastName() {
 		return lastName;
 	}
@@ -62,7 +62,7 @@ public class UserInfoResponse {
 		this.designatedBodyCodes = designatedBodyCodes;
 	}
 
-	@ApiModelProperty(value = "UserDto's phone number")
+	@ApiModelProperty(value = "User's phone number")
 	public String getPhoneNumber() {
 		return phoneNumber;
 	}
@@ -71,7 +71,7 @@ public class UserInfoResponse {
 		this.phoneNumber = phoneNumber;
 	}
 
-	@ApiModelProperty(value = "UserDto's email address")
+	@ApiModelProperty(value = "User's email address")
 	public String getEmailAddress() {
 		return emailAddress;
 	}
@@ -91,12 +91,13 @@ public class UserInfoResponse {
 
 	@Override
 	public String toString() {
-		return "UserDto{" +
+		return "UserInfoResponse{" +
 				"name='" + name + '\'' +
 				", firstName='" + firstName + '\'' +
 				", lastName='" + lastName + '\'' +
+				", fullName='" + fullName + '\'' +
 				", gmcId='" + gmcId + '\'' +
-				", designatedBodyCodes='" + designatedBodyCodes + '\'' +
+				", designatedBodyCodes=" + designatedBodyCodes +
 				", phoneNumber='" + phoneNumber + '\'' +
 				", emailAddress='" + emailAddress + '\'' +
 				'}';

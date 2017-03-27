@@ -2,7 +2,6 @@ package com.transformuk.hee.tis.profile.service;
 
 import com.google.common.base.CharMatcher;
 import com.transformuk.hee.tis.profile.dto.JwtAuthToken;
-import com.transformuk.hee.tis.profile.dto.UserDto;
 import com.transformuk.hee.tis.profile.model.User;
 import com.transformuk.hee.tis.profile.repository.UserRepository;
 import org.slf4j.Logger;
@@ -48,13 +47,13 @@ public class LoginService {
 
 	/**
 	 * @param token jwtAuthToken
-	 * @return {@link User} UserDto associated with given unique user name
+	 * @return {@link User} User associated with given unique user name
 	 */
 	public User getUserByToken(String token) {
 		JwtAuthToken jwtAuthToken = decode(token);
 		User user = userRepository.findByActive(jwtAuthToken.getUsername());
 		if (user == null) {
-			throw new EntityNotFoundException(format("UserDto with username %s either not found or not active",
+			throw new EntityNotFoundException(format("User with username %s either not found or not active",
 					jwtAuthToken.getUsername()));
 		}
 		return user;

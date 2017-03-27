@@ -1,7 +1,6 @@
 package com.transformuk.hee.tis.profile.service;
 
 import com.transformuk.hee.tis.profile.assembler.UserProfileAssembler;
-import com.transformuk.hee.tis.profile.dto.UserDto;
 import com.transformuk.hee.tis.profile.model.User;
 import com.transformuk.hee.tis.security.model.UserProfile;
 import com.transformuk.hee.tis.security.service.UserDetailsService;

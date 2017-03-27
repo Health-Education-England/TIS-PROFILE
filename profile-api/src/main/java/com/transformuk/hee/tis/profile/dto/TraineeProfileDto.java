@@ -5,8 +5,8 @@ import io.swagger.annotations.ApiModelProperty;
 
 import java.time.LocalDate;
 
-@ApiModel(description = "TraineeProfile entity")
-public class TraineeProfile {
+@ApiModel(description = "TraineeProfileDto entity")
+public class TraineeProfileDto {
 	private Long tisId;
 	private String gmcNumber;
 	private boolean active;

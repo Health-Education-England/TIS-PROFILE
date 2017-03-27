@@ -1,6 +1,5 @@
 package com.transformuk.hee.tis.profile.dto;
 
-import com.transformuk.hee.tis.profile.model.TraineeProfile;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.List;
@@ -10,17 +9,17 @@ import java.util.List;
  */
 public class TraineeIdListResponse {
 
-	private List<TraineeProfile> traineeIds;
+	private List<TraineeProfileDto> traineeIds;
 
 	public TraineeIdListResponse() {
 	}
 
-	public TraineeIdListResponse(List<TraineeProfile> traineeIds) {
+	public TraineeIdListResponse(List<TraineeProfileDto> traineeIds) {
 		this.traineeIds = traineeIds;
 	}
 
 	@ApiModelProperty(required = true, value = "traineeIdList")
-	public List<TraineeProfile> getTraineeIds() {
+	public List<TraineeProfileDto> getTraineeIds() {
 		return traineeIds;
 	}
 }

@@ -2,10 +2,9 @@ package com.transformuk.hee.tis.profile.api;
 
 import com.transformuk.hee.tis.profile.Application;
 import com.transformuk.hee.tis.profile.assembler.UserProfileAssembler;
-import com.transformuk.hee.tis.profile.model.User;
-import com.transformuk.hee.tis.profile.dto.UserDetails;
 import com.transformuk.hee.tis.profile.dto.UserInfoResponse;
 import com.transformuk.hee.tis.profile.dto.UserListResponse;
+import com.transformuk.hee.tis.profile.model.User;
 import com.transformuk.hee.tis.profile.service.LoginService;
 import com.transformuk.hee.tis.security.model.UserProfile;
 import io.swagger.annotations.Api;
@@ -13,6 +12,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.slf4j.Logger;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.hateoas.Resource;
@@ -60,7 +60,7 @@ public class UserProfileController {
 			notes = "http://localhost:8084/users?offset=0&limit=10&designatedBodyCode=DBC&permissions=comma separated values",
 			response = UserListResponse.class)
 	@ApiResponses(value = {
-			@ApiResponse(code = 200, message = "UserDto's list returned", response = UserListResponse.class)
+			@ApiResponse(code = 200, message = "User list returned", response = UserListResponse.class)
 	})
 	@CrossOrigin
 	@RequestMapping(path = "/users", method = GET, produces = APPLICATION_JSON_VALUE)
@@ -101,13 +101,7 @@ public class UserProfileController {
 
 	private UserInfoResponse toUserInfo(User user) {
 		UserInfoResponse userInfo = new UserInfoResponse();
-		userInfo.setDesignatedBodyCodes(user.getDesignatedBodyCodes());
-		userInfo.setEmailAddress(user.getEmailAddress());
-		userInfo.setFirstName(user.getFirstName());
-		userInfo.setLastName(user.getLastName());
-		userInfo.setName(user.getName());
-		userInfo.setPhoneNumber(user.getPhoneNumber());
-		userInfo.setGmcId(user.getGmcId());
+		BeanUtils.copyProperties(user, userInfo);
 		userInfo.setFullName(user.getFirstName() + " " + user.getLastName());
 		return userInfo;
 	}

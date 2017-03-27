@@ -1,34 +1,34 @@
 # Created by .ignore support plugin (hsz.mobi)
-/target/
+*/target/
 *.jar
 *.class
 mvnw
 mvnw.cmd
 *.tar.gz
-/node_modules/
-/node/
+*/node_modules/*
+*/node/*
 .DS_Store
 .tmp/
-js/tests/
-js/app/scripts/templates.js
-js/app/components/masthead/
-js/app/components/server-error-modal/
-js/app/components/common/
-js/app/scripts/services/
-js/app/components/common/common.i18n.en.json
-js/app/components/version-indicator/
-js/bower_components/
-js/app/components/common/date-picker/
-js/app/scripts/services/configuration-service.js
-npm-debug.log
-js/app/styles/main.css
-js/app/styles/main.css.map
-src/main/resources/static/
-bdd/dist/
-bdd/e2e/reports/
-bdd/node_modules/
-bdd/phantomjsdriver.log
-/bower_components/
+*/js/tests/
+*/js/app/scripts/templates.js
+*/js/app/components/masthead/
+*/js/app/components/server-error-modal/
+*/js/app/components/common/
+*/js/app/scripts/services/
+*/js/app/components/common/common.i18n.en.json
+*/js/app/components/version-indicator/
+*/js/bower_components/
+*/js/app/components/common/date-picker/
+*/js/app/scripts/services/configuration-service.js
+*/npm-debug.log
+*/js/app/styles/main.css
+*/js/app/styles/main.css.map
+*/src/main/resources/static/
+*/bdd/dist/
+*/bdd/e2e/reports/
+*/bdd/node_modules/
+*/bdd/phantomjsdriver.log
+*/bower_components/
 
 
 # IDEA files #
