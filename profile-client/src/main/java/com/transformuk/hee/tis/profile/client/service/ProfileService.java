@@ -72,7 +72,7 @@ public class ProfileService {
 	 * @param permissions         submit_to_gmc permissions
 	 * @return json representation of AuthService's getUser's end point response.
 	 */
-	public JSONObject getAllUsers(String permissions, String accessToken, String... designatedBodyCodes) {
+	public JSONObject getAllUsers(String permissions, String... designatedBodyCodes) {
 			UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(serviceUrl + USERS_ENDPOINT)
 				.queryParam("offset", offset)
 				.queryParam("limit", limit)
@@ -82,4 +82,7 @@ public class ProfileService {
 		return responseEntity.getBody();
 	}
 
+	public void setServiceUrl(String serviceUrl) {
+		this.serviceUrl = serviceUrl;
+	}
 }
