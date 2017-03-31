@@ -11,7 +11,7 @@ import java.util.Objects;
 import static javax.persistence.GenerationType.AUTO;
 
 
-@Entity(name = "TraineeProfileDto")
+@Entity(name = "TraineeProfile")
 @Audited
 public class TraineeProfile {
 
