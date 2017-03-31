@@ -31,6 +31,7 @@ public class TraineeProfileDto {
 		this.gmcNumber = gmcNumber;
 	}
 
+	@ApiModelProperty(required = true, value = "Trainee profile is active or not")
 	public boolean isActive() {
 		return active;
 	}
@@ -39,6 +40,7 @@ public class TraineeProfileDto {
 		this.active = active;
 	}
 
+	@ApiModelProperty(value = "Trainee's designated body code")
 	public String getDesignatedBodyCode() {
 		return designatedBodyCode;
 	}
@@ -47,6 +49,7 @@ public class TraineeProfileDto {
 		this.designatedBodyCode = designatedBodyCode;
 	}
 
+	@ApiModelProperty(value = "The date for which the trainee was added")
 	public LocalDate getDateAdded() {
 		return dateAdded;
 	}

@@ -1,7 +1,11 @@
 package com.transformuk.hee.tis.profile.dto;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import java.util.Objects;
 
+@ApiModel(description = "Trainee identity data")
 public class TraineeId {
 	private Long tisId;
 	private String gmcNumber;
@@ -14,6 +18,7 @@ public class TraineeId {
 		this.tisId = tisId;
 	}
 
+	@ApiModelProperty(value = "Trainee's gmc number")
 	public String getGmcNumber() {
 		return gmcNumber;
 	}
@@ -22,6 +27,7 @@ public class TraineeId {
 		this.gmcNumber = gmcNumber;
 	}
 
+	@ApiModelProperty(value = "Trainee's TIS ID")
 	public Long getTisId() {
 		return tisId;
 	}

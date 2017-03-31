@@ -1,6 +1,7 @@
 package com.transformuk.hee.tis.profile.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Set;
@@ -9,6 +10,7 @@ import java.util.Set;
  * Class to hold userDetails like userName, roles, permissions etc.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
+@ApiModel(description = "User profile data")
 public class UserProfile {
 
 	private String userName;
@@ -104,6 +106,7 @@ public class UserProfile {
 		this.phoneNumber = phoneNumber;
 	}
 
+	@ApiModelProperty(value = "The user's email address")
 	public String getEmailAddress() {
 		return emailAddress;
 	}

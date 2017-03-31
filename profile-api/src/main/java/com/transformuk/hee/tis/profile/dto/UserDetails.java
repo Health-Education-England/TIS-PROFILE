@@ -104,6 +104,7 @@ public class UserDetails {
 		this.phoneNumber = phoneNumber;
 	}
 
+	@ApiModelProperty(value = "The users email address")
 	public String getEmailAddress() {
 		return emailAddress;
 	}
