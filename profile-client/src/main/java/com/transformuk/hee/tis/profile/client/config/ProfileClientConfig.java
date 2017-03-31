@@ -10,7 +10,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Provides a Keycloak client config
+ * Provides a Keycloak client config as well as bean configurations for rest template & factory
+ * Requires the user of this client to supply their own username and password
  */
 @Configuration
 public class ProfileClientConfig {

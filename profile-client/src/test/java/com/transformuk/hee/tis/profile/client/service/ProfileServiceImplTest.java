@@ -1,5 +1,6 @@
 package com.transformuk.hee.tis.profile.client.service;
 
+import com.transformuk.hee.tis.profile.client.service.impl.ProfileServiceImpl;
 import com.transformuk.hee.tis.profile.dto.PagedTraineeIdResponse;
 import com.transformuk.hee.tis.profile.dto.TraineeId;
 import com.transformuk.hee.tis.profile.dto.UserProfile;
@@ -33,7 +34,7 @@ import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class
 )
-public class ProfileServiceTest {
+public class ProfileServiceImplTest {
 
 	private static final String DBC = "1-DGBODY";
 	private static final String PROFILE_URL = "http://localhost:8888/trainee-id";
@@ -46,11 +47,11 @@ public class ProfileServiceTest {
 	@Mock
 	private KeycloakRestTemplate keycloakRestTemplate;
 	@InjectMocks
-	private ProfileService profileService;
+	private ProfileServiceImpl profileServiceImpl;
 
 	@Before
 	public void setUp() throws Exception {
-		profileService.setServiceUrl("http://localhost:8888/trainee-id");
+		profileServiceImpl.setServiceUrl("http://localhost:8888/trainee-id");
 	}
 
 
@@ -63,7 +64,7 @@ public class ProfileServiceTest {
 		given(keycloakRestTemplate.getForObject(any(URI.class), eq(PagedTraineeIdResponse.class))).willReturn(response);
 
 		// when
-		Page<TraineeId> allTraineeIdMappings = profileService.getPagedTraineeIds(DBC, pageable);
+		Page<TraineeId> allTraineeIdMappings = profileServiceImpl.getPagedTraineeIds(DBC, pageable);
 
 		// then
 		assertEquals(traineeIds, allTraineeIdMappings.getContent());
@@ -77,7 +78,7 @@ public class ProfileServiceTest {
 				eq(UserProfile.class))).willReturn(responseEntity);
 
 		// when
-		profileService.getRODetails(DBC);
+		profileServiceImpl.getRODetails(DBC);
 
 		// then
 		verify(keycloakRestTemplate).getForEntity(eq(PROFILE_URL + "/api/users/ro-user/" + DBC), eq(UserProfile.class));
@@ -93,7 +94,7 @@ public class ProfileServiceTest {
 				eq(UserProfile.class))).willReturn(responseEntity);
 
 		// when
-		UserProfile user = profileService.getRODetails(DBC);
+		UserProfile user = profileServiceImpl.getRODetails(DBC);
 
 		// then
 		Assert.assertSame(userProfile, user);
@@ -108,7 +109,7 @@ public class ProfileServiceTest {
 		given(keycloakRestTemplate.getForEntity(any(String.class), eq(JSONObject.class))).willReturn(responseEntity);
 
 		// when
-		profileService.getAllUsers(PERMISSIONS, DBC);
+		profileServiceImpl.getAllUsers(PERMISSIONS, DBC);
 
 		// then
 		verify(keycloakRestTemplate).getForEntity(eq(PROFILE_URL + "/api/users?offset&limit&designatedBodyCode=" + DBC +
