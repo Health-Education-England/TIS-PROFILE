@@ -1,4 +1,4 @@
-package com.transformuk.hee.tis.profile.client.service;
+package com.transformuk.hee.tis.profile.client.service.impl;
 
 import com.transformuk.hee.tis.profile.client.service.impl.ProfileServiceImpl;
 import com.transformuk.hee.tis.profile.dto.PagedTraineeIdResponse;
@@ -10,15 +10,12 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -38,12 +35,8 @@ public class ProfileServiceImplTest {
 
 	private static final String DBC = "1-DGBODY";
 	private static final String PROFILE_URL = "http://localhost:8888/trainee-id";
-	//	private static final String DBC = "1-85KJU0";
 	private static final String PERMISSIONS = "revalidation:submit:on:behalf:of:ro";
-	private static final String USER_ID = "James";
 
-	@Captor
-	private ArgumentCaptor<HttpEntity> entityArgumentCaptor;
 	@Mock
 	private KeycloakRestTemplate keycloakRestTemplate;
 	@InjectMocks
@@ -115,25 +108,4 @@ public class ProfileServiceImplTest {
 		verify(keycloakRestTemplate).getForEntity(eq(PROFILE_URL + "/api/users?offset&limit&designatedBodyCode=" + DBC +
 				"&permissions=" + PERMISSIONS), eq(JSONObject.class));
 	}
-
-
-//	public static void mockUserprofile(String userName, String... designatedBodyCodes) {
-//		UserProfile userProfile = new UserProfile();
-//		userProfile.setUserName(userName);
-//		userProfile.setDesignatedBodyCodes(Sets.newSet(designatedBodyCodes));
-//		AuthenticatedUser authenticatedUser = new AuthenticatedUser(userName, "dummyToekn", userProfile, null);
-//		UsernamePasswordAuthenticationToken authenticationToken = new
-//				UsernamePasswordAuthenticationToken(authenticatedUser, null);
-//
-//		SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-//	}
-//
-//	public static UserProfile mockWithPermissions(String userName, String...permissions) {
-//		UserProfile userProfile = new UserProfile();
-//		userProfile.setUserName(userName);
-//		userProfile.setDesignatedBodyCodes(newSet(DBC));
-//		Set<String> permSet = new HashSet<>(Arrays.asList(permissions));
-//		userProfile.setPermissions(permSet);
-//		return userProfile;
-//	}
 }
