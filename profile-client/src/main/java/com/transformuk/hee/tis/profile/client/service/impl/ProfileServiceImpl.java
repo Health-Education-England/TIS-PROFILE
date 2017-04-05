@@ -1,9 +1,7 @@
 package com.transformuk.hee.tis.profile.client.service.impl;
 
 import com.transformuk.hee.tis.profile.client.service.ProfileService;
-import com.transformuk.hee.tis.profile.dto.PagedTraineeIdResponse;
-import com.transformuk.hee.tis.profile.dto.TraineeId;
-import com.transformuk.hee.tis.profile.dto.UserProfile;
+import com.transformuk.hee.tis.profile.dto.*;
 import com.transformuk.hee.tis.security.client.KeycloakRestTemplate;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,11 +9,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.List;
+
+import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.web.util.UriComponentsBuilder.fromHttpUrl;
 
 /**
@@ -31,6 +33,7 @@ public class ProfileServiceImpl implements ProfileService {
 	private static final String USER_INFO_ENDPOINT = "/api/userinfo";
 	private static final String USERS_RO_USER_ENDPOINT = "/api/users/ro-user/";
 	private static final String USERS_ENDPOINT = "/api/users";
+	private static final String TRAINEE_DBC_REGISTER_ENDPOINT = "/api/trainee-id/{designatedBodyCode}/register";
 
 	private KeycloakRestTemplate keycloakRestTemplate;
 
@@ -64,6 +67,21 @@ public class ProfileServiceImpl implements ProfileService {
 				PagedTraineeIdResponse.class);
 		return new PageImpl<>(pagedTraineeIdResponse.getContent(), pageable, pagedTraineeIdResponse.getTotalElements());
 	}
+
+	/**
+	 * Returns trainee ids for given list of gmc doctors
+	 *
+	 * @return List of {@link TraineeId}
+	 */
+	public List<TraineeProfileDto> getTraineeIdsForGmcNumbers(String designatedBodyCode, List<RegistrationRequest> registrationRequests) {
+		HttpEntity<List<RegistrationRequest>> requestEntity = new HttpEntity<>(registrationRequests);
+		String url = serviceUrl + TRAINEE_DBC_REGISTER_ENDPOINT;
+		UriComponents uriComponents = fromHttpUrl(url).buildAndExpand(designatedBodyCode);
+		ResponseEntity<TraineeIdListResponse> response = keycloakRestTemplate.exchange(uriComponents.encode().toUri(), POST,
+				requestEntity, TraineeIdListResponse.class);
+		return response.getBody().getTraineeIds();
+	}
+
 
 	/**
 	 * Get a UserProfile for the current authenticated user
