@@ -2,21 +2,25 @@ package com.transformuk.hee.tis.profile.client.service.impl;
 
 import com.transformuk.hee.tis.profile.client.service.ProfileService;
 import com.transformuk.hee.tis.profile.dto.*;
-import com.transformuk.hee.tis.security.client.KeycloakRestTemplate;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 
+import static java.util.Objects.requireNonNull;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.web.util.UriComponentsBuilder.fromHttpUrl;
 
@@ -35,7 +39,8 @@ public class ProfileServiceImpl implements ProfileService {
 	private static final String USERS_ENDPOINT = "/api/users";
 	private static final String TRAINEE_DBC_REGISTER_ENDPOINT = "/api/trainee-id/{designatedBodyCode}/register";
 
-	private KeycloakRestTemplate keycloakRestTemplate;
+	private RestTemplate profileRestTemplate;
+	private RestTemplate restTemplate;
 
 	@Value("${profile.pagination.offset}")
 	private String offset;
@@ -46,9 +51,11 @@ public class ProfileServiceImpl implements ProfileService {
 	@Value("${profile.service.url}")
 	private String serviceUrl;
 
+
 	@Autowired
-	public ProfileServiceImpl(KeycloakRestTemplate keycloakRestTemplate) {
-		this.keycloakRestTemplate = keycloakRestTemplate;
+	public ProfileServiceImpl(@Qualifier("profileRestTemplate") RestTemplate profileRestTemplate, RestTemplate restTemplate) {
+		this.profileRestTemplate = profileRestTemplate;
+		this.restTemplate = restTemplate;
 	}
 
 	/**
@@ -63,7 +70,7 @@ public class ProfileServiceImpl implements ProfileService {
 				.queryParam(PAGE_QUERY_PARAM, pageable.getPageNumber())
 				.queryParam(SIZE_QUERY_PARAM, pageable.getPageSize())
 				.buildAndExpand(dbc);
-		PagedTraineeIdResponse pagedTraineeIdResponse = keycloakRestTemplate.getForObject(uriComponents.encode().toUri(),
+		PagedTraineeIdResponse pagedTraineeIdResponse = profileRestTemplate.getForObject(uriComponents.encode().toUri(),
 				PagedTraineeIdResponse.class);
 		return new PageImpl<>(pagedTraineeIdResponse.getContent(), pageable, pagedTraineeIdResponse.getTotalElements());
 	}
@@ -77,7 +84,7 @@ public class ProfileServiceImpl implements ProfileService {
 		HttpEntity<List<RegistrationRequest>> requestEntity = new HttpEntity<>(registrationRequests);
 		String url = serviceUrl + TRAINEE_DBC_REGISTER_ENDPOINT;
 		UriComponents uriComponents = fromHttpUrl(url).buildAndExpand(designatedBodyCode);
-		ResponseEntity<TraineeIdListResponse> response = keycloakRestTemplate.exchange(uriComponents.encode().toUri(), POST,
+		ResponseEntity<TraineeIdListResponse> response = profileRestTemplate.exchange(uriComponents.encode().toUri(), POST,
 				requestEntity, TraineeIdListResponse.class);
 		return response.getBody().getTraineeIds();
 	}
@@ -89,7 +96,23 @@ public class ProfileServiceImpl implements ProfileService {
 	 * @return UserProfile containing information of the current authenticated user
 	 */
 	public UserProfile getProfile() {
-		ResponseEntity<UserProfile> responseEntity = keycloakRestTemplate.getForEntity(serviceUrl + USER_INFO_ENDPOINT, UserProfile.class);
+		ResponseEntity<UserProfile> responseEntity = profileRestTemplate.getForEntity(serviceUrl + USER_INFO_ENDPOINT, UserProfile.class);
+		return responseEntity.getBody();
+	}
+
+	/**
+	 * Get a UserProfile using the provided security token. This method should only be used during authenticating the user
+	 * in Spring Security
+	 *
+	 * @return UserProfile containing information of the current authenticated user
+	 */
+	public UserProfile getProfile(String securityToken) {
+		requireNonNull(securityToken, "securityToken must not be null");
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("OIDC_access_token", securityToken);
+		HttpEntity<?> entity = new HttpEntity<String>(headers);
+		ResponseEntity<UserProfile> responseEntity = restTemplate.exchange(serviceUrl + USER_INFO_ENDPOINT, HttpMethod.GET, entity,
+				UserProfile.class);
 		return responseEntity.getBody();
 	}
 
@@ -101,7 +124,7 @@ public class ProfileServiceImpl implements ProfileService {
 	 */
 	public UserProfile getRODetails(String designatedBodyCode) {
 		String url = serviceUrl + USERS_RO_USER_ENDPOINT + designatedBodyCode;
-		ResponseEntity<UserProfile> responseEntity = keycloakRestTemplate.getForEntity(url, UserProfile.class);
+		ResponseEntity<UserProfile> responseEntity = profileRestTemplate.getForEntity(url, UserProfile.class);
 		return responseEntity.getBody();
 	}
 
@@ -119,7 +142,7 @@ public class ProfileServiceImpl implements ProfileService {
 				.queryParam("limit", limit)
 				.queryParam("designatedBodyCode", designatedBodyCodes)
 				.queryParam("permissions", permissions);
-		ResponseEntity<JSONObject> responseEntity = keycloakRestTemplate.getForEntity(builder.toUriString(), JSONObject.class);
+		ResponseEntity<JSONObject> responseEntity = profileRestTemplate.getForEntity(builder.toUriString(), JSONObject.class);
 		return responseEntity.getBody();
 	}
 

@@ -16,6 +16,8 @@ public interface ProfileService {
 
 	UserProfile getProfile();
 
+	UserProfile getProfile(String securityToken);
+
 	UserProfile getRODetails(String designatedBodyCode);
 
 	JSONObject getAllUsers(String permissions, String... designatedBodyCodes);

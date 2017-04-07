@@ -1,7 +1,6 @@
 package com.transformuk.hee.tis.profile.client.service.impl;
 
 import com.transformuk.hee.tis.profile.dto.*;
-import com.transformuk.hee.tis.security.client.KeycloakRestTemplate;
 import org.json.simple.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
@@ -15,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 import java.util.List;
@@ -39,7 +39,7 @@ public class ProfileServiceImplTest {
 	private static final long TIS_ID = 999L;
 
 	@Mock
-	private KeycloakRestTemplate keycloakRestTemplate;
+	private RestTemplate profileRestTemplate;
 	@InjectMocks
 	private ProfileServiceImpl profileServiceImpl;
 
@@ -55,7 +55,7 @@ public class ProfileServiceImplTest {
 		Pageable pageable = new PageRequest(0, 100);
 		List<TraineeId> traineeIds = newArrayList(new TraineeId(999L, "1234567	"));
 		PagedTraineeIdResponse response = new PagedTraineeIdResponse(traineeIds, 1);
-		given(keycloakRestTemplate.getForObject(any(URI.class), eq(PagedTraineeIdResponse.class))).willReturn(response);
+		given(profileRestTemplate.getForObject(any(URI.class), eq(PagedTraineeIdResponse.class))).willReturn(response);
 
 		// when
 		Page<TraineeId> allTraineeIdMappings = profileServiceImpl.getPagedTraineeIds(DBC, pageable);
@@ -68,14 +68,14 @@ public class ProfileServiceImplTest {
 	public void shouldPassSecurityTokenAsHeader() {
 		// given
 		ResponseEntity responseEntity = new ResponseEntity(HttpStatus.OK);
-		given(keycloakRestTemplate.getForEntity(eq(PROFILE_URL + "/api/users/ro-user/" + DBC),
+		given(profileRestTemplate.getForEntity(eq(PROFILE_URL + "/api/users/ro-user/" + DBC),
 				eq(UserProfile.class))).willReturn(responseEntity);
 
 		// when
 		profileServiceImpl.getRODetails(DBC);
 
 		// then
-		verify(keycloakRestTemplate).getForEntity(eq(PROFILE_URL + "/api/users/ro-user/" + DBC), eq(UserProfile.class));
+		verify(profileRestTemplate).getForEntity(eq(PROFILE_URL + "/api/users/ro-user/" + DBC), eq(UserProfile.class));
 
 	}
 
@@ -84,7 +84,7 @@ public class ProfileServiceImplTest {
 		// given
 		UserProfile userProfile = new UserProfile();
 		ResponseEntity responseEntity = new ResponseEntity(userProfile, HttpStatus.OK);
-		given(keycloakRestTemplate.getForEntity(eq(PROFILE_URL + "/api/users/ro-user/" + DBC),
+		given(profileRestTemplate.getForEntity(eq(PROFILE_URL + "/api/users/ro-user/" + DBC),
 				eq(UserProfile.class))).willReturn(responseEntity);
 
 		// when
@@ -100,13 +100,13 @@ public class ProfileServiceImplTest {
 		// given
 		JSONObject jsonObject = new JSONObject();
 		ResponseEntity responseEntity = new ResponseEntity(jsonObject, HttpStatus.OK);
-		given(keycloakRestTemplate.getForEntity(any(String.class), eq(JSONObject.class))).willReturn(responseEntity);
+		given(profileRestTemplate.getForEntity(any(String.class), eq(JSONObject.class))).willReturn(responseEntity);
 
 		// when
 		profileServiceImpl.getAllUsers(PERMISSIONS, DBC);
 
 		// then
-		verify(keycloakRestTemplate).getForEntity(eq(PROFILE_URL + "/api/users?offset&limit&designatedBodyCode=" + DBC +
+		verify(profileRestTemplate).getForEntity(eq(PROFILE_URL + "/api/users?offset&limit&designatedBodyCode=" + DBC +
 				"&permissions=" + PERMISSIONS), eq(JSONObject.class));
 	}
 
@@ -119,7 +119,7 @@ public class ProfileServiceImplTest {
 		traineeProfileDto.setTisId(TIS_ID);
 		traineeProfileDto.setGmcNumber(GMC_NUMBER);
 		TraineeIdListResponse listResponse = new TraineeIdListResponse(newArrayList(traineeProfileDto));
-		given(keycloakRestTemplate.exchange(any(URI.class), eq(POST), any(ResponseEntity.class), eq(TraineeIdListResponse.class)))
+		given(profileRestTemplate.exchange(any(URI.class), eq(POST), any(ResponseEntity.class), eq(TraineeIdListResponse.class)))
 				.willReturn(new ResponseEntity<>(listResponse, OK));
 
 		// when

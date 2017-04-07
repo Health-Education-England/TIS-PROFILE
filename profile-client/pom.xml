@@ -26,11 +26,6 @@
 		</dependency>
 		<dependency>
 			<groupId>com.transformuk.hee</groupId>
-			<artifactId>keycloak-client</artifactId>
-			<version>1.0.1</version>
-		</dependency>
-		<dependency>
-			<groupId>com.transformuk.hee</groupId>
 			<artifactId>profile-api</artifactId>
 			<version>1.0.1</version>
 		</dependency>
@@ -48,6 +43,16 @@
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
 			<version>1.10.19</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.4.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>4.3.4.RELEASE</version>
 		</dependency>
 	</dependencies>
 </project>
