@@ -2,6 +2,7 @@ package com.transformuk.hee.tis.profile.client.service.impl;
 
 import com.transformuk.hee.tis.profile.client.service.ProfileService;
 import com.transformuk.hee.tis.profile.dto.*;
+import com.transformuk.hee.tis.security.model.UserProfile;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -89,16 +90,6 @@ public class ProfileServiceImpl implements ProfileService {
 		return response.getBody().getTraineeIds();
 	}
 
-
-	/**
-	 * Get a UserProfile for the current authenticated user
-	 *
-	 * @return UserProfile containing information of the current authenticated user
-	 */
-	public UserProfile getProfile() {
-		ResponseEntity<UserProfile> responseEntity = profileRestTemplate.getForEntity(serviceUrl + USER_INFO_ENDPOINT, UserProfile.class);
-		return responseEntity.getBody();
-	}
 
 	/**
 	 * Get a UserProfile using the provided security token. This method should only be used during authenticating the user
