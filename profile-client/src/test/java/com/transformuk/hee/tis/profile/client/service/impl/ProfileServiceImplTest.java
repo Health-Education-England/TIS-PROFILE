@@ -1,6 +1,7 @@
 package com.transformuk.hee.tis.profile.client.service.impl;
 
 import com.transformuk.hee.tis.profile.dto.*;
+import com.transformuk.hee.tis.security.model.UserProfile;
 import org.json.simple.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
