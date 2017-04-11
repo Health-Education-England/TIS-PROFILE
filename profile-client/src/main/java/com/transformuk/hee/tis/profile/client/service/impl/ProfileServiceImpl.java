@@ -11,8 +11,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -21,7 +19,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 
-import static java.util.Objects.requireNonNull;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.web.util.UriComponentsBuilder.fromHttpUrl;
 
@@ -35,13 +32,11 @@ public class ProfileServiceImpl implements ProfileService {
 	private static final String PAGE_QUERY_PARAM = "page";
 	private static final String SIZE_QUERY_PARAM = "size";
 	private static final String TRAINEE_MAPPINGS_ENDPOINT = "/api/trainee-id/{dbc}/mappings";
-	private static final String USER_INFO_ENDPOINT = "/api/userinfo";
 	private static final String USERS_RO_USER_ENDPOINT = "/api/users/ro-user/";
 	private static final String USERS_ENDPOINT = "/api/users";
 	private static final String TRAINEE_DBC_REGISTER_ENDPOINT = "/api/trainee-id/{designatedBodyCode}/register";
 
 	private RestTemplate profileRestTemplate;
-	private RestTemplate restTemplate;
 
 	@Value("${profile.pagination.offset}")
 	private String offset;
@@ -54,9 +49,8 @@ public class ProfileServiceImpl implements ProfileService {
 
 
 	@Autowired
-	public ProfileServiceImpl(@Qualifier("profileRestTemplate") RestTemplate profileRestTemplate, RestTemplate restTemplate) {
+	public ProfileServiceImpl(@Qualifier("profileRestTemplate") RestTemplate profileRestTemplate) {
 		this.profileRestTemplate = profileRestTemplate;
-		this.restTemplate = restTemplate;
 	}
 
 	/**
@@ -90,22 +84,6 @@ public class ProfileServiceImpl implements ProfileService {
 		return response.getBody().getTraineeIds();
 	}
 
-
-	/**
-	 * Get a UserProfile using the provided security token. This method should only be used during authenticating the user
-	 * in Spring Security
-	 *
-	 * @return UserProfile containing information of the current authenticated user
-	 */
-	public UserProfile getProfile(String securityToken) {
-		requireNonNull(securityToken, "securityToken must not be null");
-		HttpHeaders headers = new HttpHeaders();
-		headers.set("OIDC_access_token", securityToken);
-		HttpEntity<?> entity = new HttpEntity<String>(headers);
-		ResponseEntity<UserProfile> responseEntity = restTemplate.exchange(serviceUrl + USER_INFO_ENDPOINT, HttpMethod.GET, entity,
-				UserProfile.class);
-		return responseEntity.getBody();
-	}
 
 	/**
 	 * Get the user profile of revalidation officer for a designated body code
