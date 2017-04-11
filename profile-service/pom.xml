@@ -12,8 +12,8 @@
 	</parent>
 
 	<groupId>com.transformuk.hee</groupId>
-	<artifactId>profile</artifactId>
-	<version>1.0.1</version>
+	<artifactId>profile-service</artifactId>
+	<version>1.0.2</version>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

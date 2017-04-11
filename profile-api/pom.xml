@@ -6,7 +6,7 @@
 
 	<groupId>com.transformuk.hee</groupId>
 	<artifactId>profile-api</artifactId>
-	<version>1.0.1</version>
+	<version>1.0.2</version>
 	<packaging>jar</packaging>
 
 	<properties>
