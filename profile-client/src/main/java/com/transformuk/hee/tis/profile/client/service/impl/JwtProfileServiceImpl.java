@@ -12,7 +12,11 @@ import org.springframework.web.client.RestTemplate;
 import static java.util.Objects.requireNonNull;
 
 public class JwtProfileServiceImpl implements JwtProfileService {
+
 	private static final String USER_INFO_ENDPOINT = "/api/userinfo";
+	private static final String OIDC_TOKEN_HEADER = "OIDC_access_token";
+	private static final String AUTH_TOKEN_HEADER = "Authorization";
+	private static final String AUTH_TOKEN_BEARER = "Bearer ";
 
 	@Value("${profile.service.url}")
 	private String serviceUrl;
@@ -32,7 +36,8 @@ public class JwtProfileServiceImpl implements JwtProfileService {
 	public UserProfile getProfile(String securityToken) {
 		requireNonNull(securityToken, "securityToken must not be null");
 		HttpHeaders headers = new HttpHeaders();
-		headers.set("OIDC_access_token", securityToken);
+		headers.set(OIDC_TOKEN_HEADER, securityToken);
+		headers.set(AUTH_TOKEN_HEADER, AUTH_TOKEN_BEARER + securityToken);
 		HttpEntity<?> entity = new HttpEntity<String>(headers);
 		ResponseEntity<UserProfile> responseEntity = restTemplate.exchange(serviceUrl + USER_INFO_ENDPOINT, HttpMethod.GET, entity,
 				UserProfile.class);
