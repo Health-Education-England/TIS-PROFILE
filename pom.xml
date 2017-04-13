@@ -7,6 +7,7 @@
 		<module>profile-api</module>
 		<module>profile-client</module>
 		<module>profile-service</module>
+		<module>profile-service-v2</module>
 	</modules>
 
 	<groupId>com.transformuk.hee</groupId>

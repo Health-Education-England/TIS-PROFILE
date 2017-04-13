@@ -5,7 +5,11 @@
 mvnw
 mvnw.cmd
 *.tar.gz
-*/node_modules/*
+node_modules
+profile-service/node_modules
+profile-ui/node
+profile-ui/node_modules
+profile-ui/ui-build
 */node/*
 .DS_Store
 .tmp/
