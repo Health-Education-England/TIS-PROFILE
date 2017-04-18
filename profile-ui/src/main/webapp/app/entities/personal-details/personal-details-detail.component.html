@@ -1,0 +1,81 @@
+<div *ngIf="personalDetails">
+	<h2><span jhiTranslate="profileApp.personalDetails.detail.title">Personal Details</span> {{personalDetails.id}}</h2>
+	<hr>
+	<jhi-alert-error></jhi-alert-error>
+	<dl class="row-md jh-entity-details">
+		<dt><span jhiTranslate="profileApp.personalDetails.tisId">Tis Id</span></dt>
+		<dd>
+			<span>{{personalDetails.tisId}}</span>
+		</dd>
+		<dt><span jhiTranslate="profileApp.personalDetails.surnameNb">Surname Nb</span></dt>
+		<dd>
+			<span>{{personalDetails.surnameNb}}</span>
+		</dd>
+		<dt><span jhiTranslate="profileApp.personalDetails.legalSurname">Legal Surname</span></dt>
+		<dd>
+			<span>{{personalDetails.legalSurname}}</span>
+		</dd>
+		<dt><span jhiTranslate="profileApp.personalDetails.forenames">Forenames</span></dt>
+		<dd>
+			<span>{{personalDetails.forenames}}</span>
+		</dd>
+		<dt><span jhiTranslate="profileApp.personalDetails.legalForenames">Legal Forenames</span></dt>
+		<dd>
+			<span>{{personalDetails.legalForenames}}</span>
+		</dd>
+		<dt><span jhiTranslate="profileApp.personalDetails.knownAs">Known As</span></dt>
+		<dd>
+			<span>{{personalDetails.knownAs}}</span>
+		</dd>
+		<dt><span jhiTranslate="profileApp.personalDetails.maidenName">Maiden Name</span></dt>
+		<dd>
+			<span>{{personalDetails.maidenName}}</span>
+		</dd>
+		<dt><span jhiTranslate="profileApp.personalDetails.initials">Initials</span></dt>
+		<dd>
+			<span>{{personalDetails.initials}}</span>
+		</dd>
+		<dt><span jhiTranslate="profileApp.personalDetails.title">Title</span></dt>
+		<dd>
+			<span>{{personalDetails.title}}</span>
+		</dd>
+		<dt><span jhiTranslate="profileApp.personalDetails.telephoneNumber">Telephone Number</span></dt>
+		<dd>
+			<span>{{personalDetails.telephoneNumber}}</span>
+		</dd>
+		<dt><span jhiTranslate="profileApp.personalDetails.mobileNumber">Mobile Number</span></dt>
+		<dd>
+			<span>{{personalDetails.mobileNumber}}</span>
+		</dd>
+		<dt><span jhiTranslate="profileApp.personalDetails.emailAddress">Email Address</span></dt>
+		<dd>
+			<span>{{personalDetails.emailAddress}}</span>
+		</dd>
+		<dt><span jhiTranslate="profileApp.personalDetails.correspondenceAddress">Correspondence Address</span></dt>
+		<dd>
+			<span>{{personalDetails.correspondenceAddress}}</span>
+		</dd>
+		<dt><span jhiTranslate="profileApp.personalDetails.correspondenceAddressPostCode">Correspondence Address Post Code</span>
+		</dt>
+		<dd>
+			<span>{{personalDetails.correspondenceAddressPostCode}}</span>
+		</dd>
+		<dt><span jhiTranslate="profileApp.personalDetails.status">Status</span></dt>
+		<dd>
+			<span>{{personalDetails.status}}</span>
+		</dd>
+	</dl>
+
+	<button type="submit"
+			(click)="previousState()"
+			class="btn btn-info">
+		<span class="fa fa-arrow-left"></span>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
+	</button>
+
+	<button type="button"
+			[routerLink]="['/', { outlets: { popup: 'personal-details/'+ personalDetails.id + '/edit'} }]"
+			replaceUrl="true"
+			class="btn btn-primary">
+		<span class="fa fa-pencil"></span>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+	</button>
+</div>

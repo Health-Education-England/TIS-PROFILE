@@ -21,5 +21,5 @@ import {MockLanguageService} from "./helpers/mock-language.service";
 		}
 	]
 })
-export class ReferenceTestModule {
+export class ProfileTestModule {
 }

@@ -1,0 +1,85 @@
+<div>
+	<h2>
+		<span jhiTranslate="profileApp.qualification.home.title">Qualifications</span>
+		<button class="btn btn-primary float-right create-qualification"
+				[routerLink]="['/', { outlets: { popup: ['qualification-new'] } }]">
+			<span class="fa fa-plus"></span>
+			<span jhiTranslate="profileApp.qualification.home.createLabel">
+            Create new Qualification
+            </span>
+		</button>
+	</h2>
+	<jhi-alert></jhi-alert>
+	<div class="row">
+	</div>
+	<br/>
+	<div class="table-responsive" *ngIf="qualifications">
+		<table class="table table-striped">
+			<thead>
+			<tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
+				<th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <span class="fa fa-sort"></span></th>
+				<th jhiSortBy="tisId"><span jhiTranslate="profileApp.qualification.tisId">Tis Id</span> <span
+						class="fa fa-sort"></span></th>
+				<th jhiSortBy="qualification"><span
+						jhiTranslate="profileApp.qualification.qualification">Qualification</span> <span
+						class="fa fa-sort"></span></th>
+				<th jhiSortBy="qualificationType"><span jhiTranslate="profileApp.qualification.qualificationType">Qualification Type</span>
+					<span class="fa fa-sort"></span></th>
+				<th jhiSortBy="dateAttained"><span
+						jhiTranslate="profileApp.qualification.dateAttained">Date Attained</span> <span
+						class="fa fa-sort"></span></th>
+				<th jhiSortBy="medicalSchool"><span
+						jhiTranslate="profileApp.qualification.medicalSchool">Medical School</span> <span
+						class="fa fa-sort"></span></th>
+				<th jhiSortBy="country"><span jhiTranslate="profileApp.qualification.country">Country</span> <span
+						class="fa fa-sort"></span></th>
+				<th></th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr *ngFor="let qualification of qualifications ;trackBy: trackId">
+				<td><a [routerLink]="['../qualification', qualification.id ]">{{qualification.id}}</a></td>
+				<td>{{qualification.tisId}}</td>
+				<td>{{qualification.qualification}}</td>
+				<td>{{qualification.qualificationType}}</td>
+				<td>{{qualification.dateAttained | date:'mediumDate'}}</td>
+				<td>{{qualification.medicalSchool}}</td>
+				<td>{{qualification.country}}</td>
+				<td class="text-right">
+					<div class="btn-group flex-btn-group-container">
+						<button type="submit"
+								[routerLink]="['../qualification', qualification.id ]"
+								class="btn btn-info btn-sm">
+							<span class="fa fa-eye"></span>
+							<span class="hidden-md-down" jhiTranslate="entity.action.view">View</span>
+						</button>
+						<button type="submit"
+								[routerLink]="['/', { outlets: { popup: 'qualification/'+ qualification.id + '/edit'} }]"
+								replaceUrl="true"
+								class="btn btn-primary btn-sm">
+							<span class="fa fa-pencil"></span>
+							<span class="hidden-md-down" jhiTranslate="entity.action.edit">Edit</span>
+						</button>
+						<button type="submit"
+								[routerLink]="['/', { outlets: { popup: 'qualification/'+ qualification.id + '/delete'} }]"
+								replaceUrl="true"
+								class="btn btn-danger btn-sm">
+							<span class="fa fa-remove"></span>
+							<span class="hidden-md-down" jhiTranslate="entity.action.delete">Delete</span>
+						</button>
+					</div>
+				</td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
+	<div *ngIf="qualifications && qualifications.length">
+		<div class="row justify-content-center">
+			<jhi-item-count [page]="page" [total]="queryCount" [itemsPerPage]="itemsPerPage"></jhi-item-count>
+		</div>
+		<div class="row justify-content-center">
+			<ngb-pagination [collectionSize]="totalItems" [(page)]="page"
+							(pageChange)="loadPage(page)"></ngb-pagination>
+		</div>
+	</div>
+</div>

@@ -3,7 +3,7 @@ import {Title} from "@angular/platform-browser";
 import {TranslateService} from "ng2-translate";
 import {AlertService} from "ng-jhipster";
 import {
-	ReferenceSharedLibsModule,
+	ProfileSharedLibsModule,
 	JhiLanguageHelper,
 	FindLanguageFromKeyPipe,
 	JhiAlertComponent,
@@ -19,7 +19,7 @@ export function alertServiceProvider(sanitizer: Sanitizer, translateService: Tra
 
 @NgModule({
 	imports: [
-		ReferenceSharedLibsModule
+		ProfileSharedLibsModule
 	],
 	declarations: [
 		FindLanguageFromKeyPipe,
@@ -36,11 +36,11 @@ export function alertServiceProvider(sanitizer: Sanitizer, translateService: Tra
 		Title
 	],
 	exports: [
-		ReferenceSharedLibsModule,
+		ProfileSharedLibsModule,
 		FindLanguageFromKeyPipe,
 		JhiAlertComponent,
 		JhiAlertErrorComponent
 	]
 })
-export class ReferenceSharedCommonModule {
+export class ProfileSharedCommonModule {
 }

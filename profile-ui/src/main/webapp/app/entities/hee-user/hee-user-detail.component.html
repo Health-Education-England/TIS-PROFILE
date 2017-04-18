@@ -1,0 +1,48 @@
+<div *ngIf="heeUser">
+	<h2><span jhiTranslate="profileApp.heeUser.detail.title">Hee User</span> {{heeUser.id}}</h2>
+	<hr>
+	<jhi-alert-error></jhi-alert-error>
+	<dl class="row-md jh-entity-details">
+		<dt><span jhiTranslate="profileApp.heeUser.name">Name</span></dt>
+		<dd>
+			<span>{{heeUser.name}}</span>
+		</dd>
+		<dt><span jhiTranslate="profileApp.heeUser.firstName">First Name</span></dt>
+		<dd>
+			<span>{{heeUser.firstName}}</span>
+		</dd>
+		<dt><span jhiTranslate="profileApp.heeUser.lastName">Last Name</span></dt>
+		<dd>
+			<span>{{heeUser.lastName}}</span>
+		</dd>
+		<dt><span jhiTranslate="profileApp.heeUser.gmcId">Gmc Id</span></dt>
+		<dd>
+			<span>{{heeUser.gmcId}}</span>
+		</dd>
+		<dt><span jhiTranslate="profileApp.heeUser.phoneNumber">Phone Number</span></dt>
+		<dd>
+			<span>{{heeUser.phoneNumber}}</span>
+		</dd>
+		<dt><span jhiTranslate="profileApp.heeUser.emailAddress">Email Address</span></dt>
+		<dd>
+			<span>{{heeUser.emailAddress}}</span>
+		</dd>
+		<dt><span jhiTranslate="profileApp.heeUser.active">Active</span></dt>
+		<dd>
+			<span>{{heeUser.active}}</span>
+		</dd>
+	</dl>
+
+	<button type="submit"
+			(click)="previousState()"
+			class="btn btn-info">
+		<span class="fa fa-arrow-left"></span>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
+	</button>
+
+	<button type="button"
+			[routerLink]="['/', { outlets: { popup: 'hee-user/'+ heeUser.id + '/edit'} }]"
+			replaceUrl="true"
+			class="btn btn-primary">
+		<span class="fa fa-pencil"></span>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+	</button>
+</div>

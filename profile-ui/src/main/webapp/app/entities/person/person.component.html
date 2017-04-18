@@ -1,0 +1,74 @@
+<div>
+	<h2>
+		<span jhiTranslate="profileApp.person.home.title">People</span>
+		<button class="btn btn-primary float-right create-person"
+				[routerLink]="['/', { outlets: { popup: ['person-new'] } }]">
+			<span class="fa fa-plus"></span>
+			<span jhiTranslate="profileApp.person.home.createLabel">
+            Create new Person
+            </span>
+		</button>
+	</h2>
+	<jhi-alert></jhi-alert>
+	<div class="row">
+	</div>
+	<br/>
+	<div class="table-responsive" *ngIf="people">
+		<table class="table table-striped">
+			<thead>
+			<tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
+				<th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <span class="fa fa-sort"></span></th>
+				<th jhiSortBy="tisId"><span jhiTranslate="profileApp.person.tisId">Tis Id</span> <span
+						class="fa fa-sort"></span></th>
+				<th jhiSortBy="publicHealthId"><span
+						jhiTranslate="profileApp.person.publicHealthId">Public Health Id</span> <span
+						class="fa fa-sort"></span></th>
+				<th jhiSortBy="active"><span jhiTranslate="profileApp.person.active">Active</span> <span
+						class="fa fa-sort"></span></th>
+				<th></th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr *ngFor="let person of people ;trackBy: trackId">
+				<td><a [routerLink]="['../person', person.id ]">{{person.id}}</a></td>
+				<td>{{person.tisId}}</td>
+				<td>{{person.publicHealthId}}</td>
+				<td>{{person.active}}</td>
+				<td class="text-right">
+					<div class="btn-group flex-btn-group-container">
+						<button type="submit"
+								[routerLink]="['../person', person.id ]"
+								class="btn btn-info btn-sm">
+							<span class="fa fa-eye"></span>
+							<span class="hidden-md-down" jhiTranslate="entity.action.view">View</span>
+						</button>
+						<button type="submit"
+								[routerLink]="['/', { outlets: { popup: 'person/'+ person.id + '/edit'} }]"
+								replaceUrl="true"
+								class="btn btn-primary btn-sm">
+							<span class="fa fa-pencil"></span>
+							<span class="hidden-md-down" jhiTranslate="entity.action.edit">Edit</span>
+						</button>
+						<button type="submit"
+								[routerLink]="['/', { outlets: { popup: 'person/'+ person.id + '/delete'} }]"
+								replaceUrl="true"
+								class="btn btn-danger btn-sm">
+							<span class="fa fa-remove"></span>
+							<span class="hidden-md-down" jhiTranslate="entity.action.delete">Delete</span>
+						</button>
+					</div>
+				</td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
+	<div *ngIf="people && people.length">
+		<div class="row justify-content-center">
+			<jhi-item-count [page]="page" [total]="queryCount" [itemsPerPage]="itemsPerPage"></jhi-item-count>
+		</div>
+		<div class="row justify-content-center">
+			<ngb-pagination [collectionSize]="totalItems" [(page)]="page"
+							(pageChange)="loadPage(page)"></ngb-pagination>
+		</div>
+	</div>
+</div>

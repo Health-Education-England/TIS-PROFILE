@@ -1,0 +1,97 @@
+<form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
+
+	<div class="modal-header">
+		<h4 class="modal-title" id="myGmcDetailsLabel" jhiTranslate="profileApp.gmcDetails.home.createOrEditLabel">
+			Create or edit a Gmc Details</h4>
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+				(click)="clear()">&times;</button>
+	</div>
+	<div class="modal-body">
+		<jhi-alert-error></jhi-alert-error>
+		<div class="form-group" [hidden]="!gmcDetails.id">
+			<label for="id" jhiTranslate="global.field.id">ID</label>
+			<input type="text" class="form-control" id="id" name="id"
+				   [(ngModel)]="gmcDetails.id" readonly/>
+		</div>
+		<div class="form-group">
+			<label class="form-control-label" jhiTranslate="profileApp.gmcDetails.tisId" for="field_tisId">Tis
+				Id</label>
+			<input type="number" class="form-control" name="tisId" id="field_tisId"
+				   [(ngModel)]="gmcDetails.tisId"
+				   required/>
+			<div [hidden]="!(editForm.controls.tisId?.dirty && editForm.controls.tisId?.invalid)">
+				<small class="form-text text-danger"
+					   [hidden]="!editForm.controls.tisId?.errors?.required" jhiTranslate="entity.validation.required">
+					This field is required.
+				</small>
+				<small class="form-text text-danger"
+					   [hidden]="!editForm.controls.tisId?.errors?.number" jhiTranslate="entity.validation.number">
+					This field should be a number.
+				</small>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="form-control-label" jhiTranslate="profileApp.gmcDetails.gmcNumber" for="field_gmcNumber">Gmc
+				Number</label>
+			<input type="text" class="form-control" name="gmcNumber" id="field_gmcNumber"
+				   [(ngModel)]="gmcDetails.gmcNumber"
+				   maxlength="7"/>
+			<div [hidden]="!(editForm.controls.gmcNumber?.dirty && editForm.controls.gmcNumber?.invalid)">
+				<small class="form-text text-danger"
+					   [hidden]="!editForm.controls.gmcNumber?.errors?.maxlength"
+					   jhiTranslate="entity.validation.maxlength" translateValues="{ max: 7 }">
+					This field cannot be longer than 7 characters.
+				</small>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="form-control-label" jhiTranslate="profileApp.gmcDetails.gmcStatus" for="field_gmcStatus">Gmc
+				Status</label>
+			<input type="text" class="form-control" name="gmcStatus" id="field_gmcStatus"
+				   [(ngModel)]="gmcDetails.gmcStatus"
+			/>
+		</div>
+		<div class="form-group">
+			<label class="form-control-label" jhiTranslate="profileApp.gmcDetails.gmcStartDate"
+				   for="field_gmcStartDate">Gmc Start Date</label>
+			<div class="input-group">
+				<input id="field_gmcStartDate" type="text" class="form-control" name="gmcStartDate" ngbDatepicker
+					   #gmcStartDateDp="ngbDatepicker" [(ngModel)]="gmcDetails.gmcStartDate"
+				/>
+				<span class="input-group-btn">
+                    <button type="button" class="btn btn-default" (click)="gmcStartDateDp.toggle()"><i
+							class="fa fa-calendar"></i></button>
+                </span>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="form-control-label" jhiTranslate="profileApp.gmcDetails.gmcExpiryDate"
+				   for="field_gmcExpiryDate">Gmc Expiry Date</label>
+			<div class="input-group">
+				<input id="field_gmcExpiryDate" type="text" class="form-control" name="gmcExpiryDate" ngbDatepicker
+					   #gmcExpiryDateDp="ngbDatepicker" [(ngModel)]="gmcDetails.gmcExpiryDate"
+				/>
+				<span class="input-group-btn">
+                    <button type="button" class="btn btn-default" (click)="gmcExpiryDateDp.toggle()"><i
+							class="fa fa-calendar"></i></button>
+                </span>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="form-control-label" jhiTranslate="profileApp.gmcDetails.designatedBodyCode"
+				   for="field_designatedBodyCode">Designated Body Code</label>
+			<input type="text" class="form-control" name="designatedBodyCode" id="field_designatedBodyCode"
+				   [(ngModel)]="gmcDetails.designatedBodyCode"
+			/>
+		</div>
+
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-default" data-dismiss="modal" (click)="clear()">
+			<span class="fa fa-ban"></span>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+		</button>
+		<button type="submit" [disabled]="editForm.form.invalid || isSaving" class="btn btn-primary">
+			<span class="fa fa-save"></span>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+		</button>
+	</div>
+</form>

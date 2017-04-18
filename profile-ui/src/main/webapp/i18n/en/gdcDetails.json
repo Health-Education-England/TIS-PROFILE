@@ -1,0 +1,24 @@
+{
+  "profileApp": {
+	"gdcDetails": {
+	  "home": {
+		"title": "Gdc Details",
+		"createLabel": "Create a new Gdc Details",
+		"createOrEditLabel": "Create or edit a Gdc Details"
+	  },
+	  "created": "A new Gdc Details is created with identifier {{ param }}",
+	  "updated": "A Gdc Details is updated with identifier {{ param }}",
+	  "deleted": "A Gdc Details is deleted with identifier {{ param }}",
+	  "delete": {
+		"question": "Are you sure you want to delete Gdc Details {{ id }}?"
+	  },
+	  "detail": {
+		"title": "Gdc Details"
+	  },
+	  "tisId": "Tis Id",
+	  "gdcNumber": "Gdc Number",
+	  "gdcStatus": "Gdc Status",
+	  "gdcStartDate": "Gdc Start Date"
+	}
+  }
+}

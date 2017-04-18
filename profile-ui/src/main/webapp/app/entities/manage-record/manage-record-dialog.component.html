@@ -1,0 +1,110 @@
+<form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
+
+	<div class="modal-header">
+		<h4 class="modal-title" id="myManageRecordLabel" jhiTranslate="profileApp.manageRecord.home.createOrEditLabel">
+			Create or edit a Manage Record</h4>
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+				(click)="clear()">&times;</button>
+	</div>
+	<div class="modal-body">
+		<jhi-alert-error></jhi-alert-error>
+		<div class="form-group" [hidden]="!manageRecord.id">
+			<label for="id" jhiTranslate="global.field.id">ID</label>
+			<input type="text" class="form-control" id="id" name="id"
+				   [(ngModel)]="manageRecord.id" readonly/>
+		</div>
+		<div class="form-group">
+			<label class="form-control-label" jhiTranslate="profileApp.manageRecord.tisId" for="field_tisId">Tis
+				Id</label>
+			<input type="number" class="form-control" name="tisId" id="field_tisId"
+				   [(ngModel)]="manageRecord.tisId"
+				   required/>
+			<div [hidden]="!(editForm.controls.tisId?.dirty && editForm.controls.tisId?.invalid)">
+				<small class="form-text text-danger"
+					   [hidden]="!editForm.controls.tisId?.errors?.required" jhiTranslate="entity.validation.required">
+					This field is required.
+				</small>
+				<small class="form-text text-danger"
+					   [hidden]="!editForm.controls.tisId?.errors?.number" jhiTranslate="entity.validation.number">
+					This field should be a number.
+				</small>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="form-control-label" jhiTranslate="profileApp.manageRecord.recordType" for="field_recordType">Record
+				Type</label>
+			<input type="text" class="form-control" name="recordType" id="field_recordType"
+				   [(ngModel)]="manageRecord.recordType"
+			/>
+		</div>
+		<div class="form-group">
+			<label class="form-control-label" jhiTranslate="profileApp.manageRecord.role" for="field_role">Role</label>
+			<input type="text" class="form-control" name="role" id="field_role"
+				   [(ngModel)]="manageRecord.role"
+			/>
+		</div>
+		<div class="form-group">
+			<label class="form-control-label" jhiTranslate="profileApp.manageRecord.recordStatus"
+				   for="field_recordStatus">Record Status</label>
+			<input type="text" class="form-control" name="recordStatus" id="field_recordStatus"
+				   [(ngModel)]="manageRecord.recordStatus"
+			/>
+		</div>
+		<div class="form-group">
+			<label class="form-control-label" jhiTranslate="profileApp.manageRecord.inactiveFrom"
+				   for="field_inactiveFrom">Inactive From</label>
+			<div class="input-group">
+				<input id="field_inactiveFrom" type="text" class="form-control" name="inactiveFrom" ngbDatepicker
+					   #inactiveFromDp="ngbDatepicker" [(ngModel)]="manageRecord.inactiveFrom"
+				/>
+				<span class="input-group-btn">
+                    <button type="button" class="btn btn-default" (click)="inactiveFromDp.toggle()"><i
+							class="fa fa-calendar"></i></button>
+                </span>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="form-control-label" jhiTranslate="profileApp.manageRecord.changedBy" for="field_changedBy">Changed
+				By</label>
+			<input type="number" class="form-control" name="changedBy" id="field_changedBy"
+				   [(ngModel)]="manageRecord.changedBy"
+			/>
+		</div>
+		<div class="form-group">
+			<label class="form-control-label" jhiTranslate="profileApp.manageRecord.inactiveReason"
+				   for="field_inactiveReason">Inactive Reason</label>
+			<input type="text" class="form-control" name="inactiveReason" id="field_inactiveReason"
+				   [(ngModel)]="manageRecord.inactiveReason"
+			/>
+		</div>
+		<div class="form-group">
+			<label class="form-control-label" jhiTranslate="profileApp.manageRecord.inactiveDate"
+				   for="field_inactiveDate">Inactive Date</label>
+			<div class="input-group">
+				<input id="field_inactiveDate" type="text" class="form-control" name="inactiveDate" ngbDatepicker
+					   #inactiveDateDp="ngbDatepicker" [(ngModel)]="manageRecord.inactiveDate"
+				/>
+				<span class="input-group-btn">
+                    <button type="button" class="btn btn-default" (click)="inactiveDateDp.toggle()"><i
+							class="fa fa-calendar"></i></button>
+                </span>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="form-control-label" jhiTranslate="profileApp.manageRecord.deletionReason"
+				   for="field_deletionReason">Deletion Reason</label>
+			<input type="text" class="form-control" name="deletionReason" id="field_deletionReason"
+				   [(ngModel)]="manageRecord.deletionReason"
+			/>
+		</div>
+
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-default" data-dismiss="modal" (click)="clear()">
+			<span class="fa fa-ban"></span>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+		</button>
+		<button type="submit" [disabled]="editForm.form.invalid || isSaving" class="btn btn-primary">
+			<span class="fa fa-save"></span>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+		</button>
+	</div>
+</form>

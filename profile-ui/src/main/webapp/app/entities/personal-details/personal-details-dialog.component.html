@@ -1,0 +1,140 @@
+<form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
+
+	<div class="modal-header">
+		<h4 class="modal-title" id="myPersonalDetailsLabel"
+			jhiTranslate="profileApp.personalDetails.home.createOrEditLabel">Create or edit a Personal Details</h4>
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+				(click)="clear()">&times;</button>
+	</div>
+	<div class="modal-body">
+		<jhi-alert-error></jhi-alert-error>
+		<div class="form-group" [hidden]="!personalDetails.id">
+			<label for="id" jhiTranslate="global.field.id">ID</label>
+			<input type="text" class="form-control" id="id" name="id"
+				   [(ngModel)]="personalDetails.id" readonly/>
+		</div>
+		<div class="form-group">
+			<label class="form-control-label" jhiTranslate="profileApp.personalDetails.tisId" for="field_tisId">Tis
+				Id</label>
+			<input type="number" class="form-control" name="tisId" id="field_tisId"
+				   [(ngModel)]="personalDetails.tisId"
+				   required/>
+			<div [hidden]="!(editForm.controls.tisId?.dirty && editForm.controls.tisId?.invalid)">
+				<small class="form-text text-danger"
+					   [hidden]="!editForm.controls.tisId?.errors?.required" jhiTranslate="entity.validation.required">
+					This field is required.
+				</small>
+				<small class="form-text text-danger"
+					   [hidden]="!editForm.controls.tisId?.errors?.number" jhiTranslate="entity.validation.number">
+					This field should be a number.
+				</small>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="form-control-label" jhiTranslate="profileApp.personalDetails.surnameNb" for="field_surnameNb">Surname
+				Nb</label>
+			<input type="text" class="form-control" name="surnameNb" id="field_surnameNb"
+				   [(ngModel)]="personalDetails.surnameNb"
+			/>
+		</div>
+		<div class="form-group">
+			<label class="form-control-label" jhiTranslate="profileApp.personalDetails.legalSurname"
+				   for="field_legalSurname">Legal Surname</label>
+			<input type="text" class="form-control" name="legalSurname" id="field_legalSurname"
+				   [(ngModel)]="personalDetails.legalSurname"
+			/>
+		</div>
+		<div class="form-group">
+			<label class="form-control-label" jhiTranslate="profileApp.personalDetails.forenames" for="field_forenames">Forenames</label>
+			<input type="text" class="form-control" name="forenames" id="field_forenames"
+				   [(ngModel)]="personalDetails.forenames"
+			/>
+		</div>
+		<div class="form-group">
+			<label class="form-control-label" jhiTranslate="profileApp.personalDetails.legalForenames"
+				   for="field_legalForenames">Legal Forenames</label>
+			<input type="text" class="form-control" name="legalForenames" id="field_legalForenames"
+				   [(ngModel)]="personalDetails.legalForenames"
+			/>
+		</div>
+		<div class="form-group">
+			<label class="form-control-label" jhiTranslate="profileApp.personalDetails.knownAs" for="field_knownAs">Known
+				As</label>
+			<input type="text" class="form-control" name="knownAs" id="field_knownAs"
+				   [(ngModel)]="personalDetails.knownAs"
+			/>
+		</div>
+		<div class="form-group">
+			<label class="form-control-label" jhiTranslate="profileApp.personalDetails.maidenName"
+				   for="field_maidenName">Maiden Name</label>
+			<input type="text" class="form-control" name="maidenName" id="field_maidenName"
+				   [(ngModel)]="personalDetails.maidenName"
+			/>
+		</div>
+		<div class="form-group">
+			<label class="form-control-label" jhiTranslate="profileApp.personalDetails.initials" for="field_initials">Initials</label>
+			<input type="text" class="form-control" name="initials" id="field_initials"
+				   [(ngModel)]="personalDetails.initials"
+			/>
+		</div>
+		<div class="form-group">
+			<label class="form-control-label" jhiTranslate="profileApp.personalDetails.title"
+				   for="field_title">Title</label>
+			<input type="text" class="form-control" name="title" id="field_title"
+				   [(ngModel)]="personalDetails.title"
+			/>
+		</div>
+		<div class="form-group">
+			<label class="form-control-label" jhiTranslate="profileApp.personalDetails.telephoneNumber"
+				   for="field_telephoneNumber">Telephone Number</label>
+			<input type="text" class="form-control" name="telephoneNumber" id="field_telephoneNumber"
+				   [(ngModel)]="personalDetails.telephoneNumber"
+			/>
+		</div>
+		<div class="form-group">
+			<label class="form-control-label" jhiTranslate="profileApp.personalDetails.mobileNumber"
+				   for="field_mobileNumber">Mobile Number</label>
+			<input type="text" class="form-control" name="mobileNumber" id="field_mobileNumber"
+				   [(ngModel)]="personalDetails.mobileNumber"
+			/>
+		</div>
+		<div class="form-group">
+			<label class="form-control-label" jhiTranslate="profileApp.personalDetails.emailAddress"
+				   for="field_emailAddress">Email Address</label>
+			<input type="text" class="form-control" name="emailAddress" id="field_emailAddress"
+				   [(ngModel)]="personalDetails.emailAddress"
+			/>
+		</div>
+		<div class="form-group">
+			<label class="form-control-label" jhiTranslate="profileApp.personalDetails.correspondenceAddress"
+				   for="field_correspondenceAddress">Correspondence Address</label>
+			<input type="text" class="form-control" name="correspondenceAddress" id="field_correspondenceAddress"
+				   [(ngModel)]="personalDetails.correspondenceAddress"
+			/>
+		</div>
+		<div class="form-group">
+			<label class="form-control-label" jhiTranslate="profileApp.personalDetails.correspondenceAddressPostCode"
+				   for="field_correspondenceAddressPostCode">Correspondence Address Post Code</label>
+			<input type="text" class="form-control" name="correspondenceAddressPostCode"
+				   id="field_correspondenceAddressPostCode"
+				   [(ngModel)]="personalDetails.correspondenceAddressPostCode"
+			/>
+		</div>
+		<div class="form-group">
+			<label class="form-control-label" jhiTranslate="profileApp.personalDetails.status"
+				   for="field_status">Status</label>
+			<input type="text" class="form-control" name="status" id="field_status"
+				   [(ngModel)]="personalDetails.status"
+			/>
+		</div>
+
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-default" data-dismiss="modal" (click)="clear()">
+			<span class="fa fa-ban"></span>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+		</button>
+		<button type="submit" [disabled]="editForm.form.invalid || isSaving" class="btn btn-primary">
+			<span class="fa fa-save"></span>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+		</button>
+	</div>
+</form>

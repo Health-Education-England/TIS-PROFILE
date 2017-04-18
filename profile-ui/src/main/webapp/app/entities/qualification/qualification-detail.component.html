@@ -1,0 +1,44 @@
+<div *ngIf="qualification">
+	<h2><span jhiTranslate="profileApp.qualification.detail.title">Qualification</span> {{qualification.id}}</h2>
+	<hr>
+	<jhi-alert-error></jhi-alert-error>
+	<dl class="row-md jh-entity-details">
+		<dt><span jhiTranslate="profileApp.qualification.tisId">Tis Id</span></dt>
+		<dd>
+			<span>{{qualification.tisId}}</span>
+		</dd>
+		<dt><span jhiTranslate="profileApp.qualification.qualification">Qualification</span></dt>
+		<dd>
+			<span>{{qualification.qualification}}</span>
+		</dd>
+		<dt><span jhiTranslate="profileApp.qualification.qualificationType">Qualification Type</span></dt>
+		<dd>
+			<span>{{qualification.qualificationType}}</span>
+		</dd>
+		<dt><span jhiTranslate="profileApp.qualification.dateAttained">Date Attained</span></dt>
+		<dd>
+			<span>{{qualification.dateAttained | date:'mediumDate'}}</span>
+		</dd>
+		<dt><span jhiTranslate="profileApp.qualification.medicalSchool">Medical School</span></dt>
+		<dd>
+			<span>{{qualification.medicalSchool}}</span>
+		</dd>
+		<dt><span jhiTranslate="profileApp.qualification.country">Country</span></dt>
+		<dd>
+			<span>{{qualification.country}}</span>
+		</dd>
+	</dl>
+
+	<button type="submit"
+			(click)="previousState()"
+			class="btn btn-info">
+		<span class="fa fa-arrow-left"></span>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
+	</button>
+
+	<button type="button"
+			[routerLink]="['/', { outlets: { popup: 'qualification/'+ qualification.id + '/edit'} }]"
+			replaceUrl="true"
+			class="btn btn-primary">
+		<span class="fa fa-pencil"></span>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+	</button>
+</div>

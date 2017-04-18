@@ -1,6 +1,6 @@
 import {NgModule, CUSTOM_ELEMENTS_SCHEMA} from "@angular/core";
 import {RouterModule} from "@angular/router";
-import {ReferenceSharedModule} from "../shared";
+import {ProfileSharedModule} from "../shared";
 import {
 	adminState,
 	LogsComponent,
@@ -19,7 +19,7 @@ import {
 
 @NgModule({
 	imports: [
-		ReferenceSharedModule,
+		ProfileSharedModule,
 		RouterModule.forRoot(adminState, {useHash: true})
 	],
 	declarations: [
@@ -43,5 +43,5 @@ import {
 	],
 	schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class ReferenceAdminModule {
+export class ProfileAdminModule {
 }

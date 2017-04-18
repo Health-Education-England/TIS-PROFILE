@@ -1,0 +1,29 @@
+{
+  "profileApp": {
+	"manageRecord": {
+	  "home": {
+		"title": "Manage Records",
+		"createLabel": "Create a new Manage Record",
+		"createOrEditLabel": "Create or edit a Manage Record"
+	  },
+	  "created": "A new Manage Record is created with identifier {{ param }}",
+	  "updated": "A Manage Record is updated with identifier {{ param }}",
+	  "deleted": "A Manage Record is deleted with identifier {{ param }}",
+	  "delete": {
+		"question": "Are you sure you want to delete Manage Record {{ id }}?"
+	  },
+	  "detail": {
+		"title": "Manage Record"
+	  },
+	  "tisId": "Tis Id",
+	  "recordType": "Record Type",
+	  "role": "Role",
+	  "recordStatus": "Record Status",
+	  "inactiveFrom": "Inactive From",
+	  "changedBy": "Changed By",
+	  "inactiveReason": "Inactive Reason",
+	  "inactiveDate": "Inactive Date",
+	  "deletionReason": "Deletion Reason"
+	}
+  }
+}

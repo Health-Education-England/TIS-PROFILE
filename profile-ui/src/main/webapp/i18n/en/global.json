@@ -1,6 +1,6 @@
 {
   "global": {
-	"title": "Reference",
+	"title": "Profile",
 	"headerTitle": "Trainee Information System",
 	"browsehappy": "You are using an <strong>outdated</strong> browser. Please <a href=\"http://browsehappy.com/?locale=en\">upgrade your browser</a> to improve your experience.",
 	"menu": {
@@ -8,6 +8,17 @@
 	  "jhipster-needle-menu-add-element": "JHipster will add additional menu entries here (do not translate!)",
 	  "entities": {
 		"main": "Entities",
+		"manageRecord": "Manage Record",
+		"equalityAndDiversity": "Equality And Diversity",
+		"gmcDetails": "Gmc Details",
+		"heeUser": "Hee User",
+		"immigration": "Immigration",
+		"gdcDetails": "Gdc Details",
+		"permission": "Permission",
+		"person": "Person",
+		"personalDetails": "Personal Details",
+		"qualification": "Qualification",
+		"role": "Role",
 		"jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
 	  },
 	  "account": {
@@ -127,5 +138,5 @@
 	"emailexists": "E-mail is already in use!",
 	"idexists": "A new {{ entityName }} cannot already have an ID"
   },
-  "footer": "REFERENCE V.0.0.2"
+  "footer": "PROFILE V.0.0.2"
 }

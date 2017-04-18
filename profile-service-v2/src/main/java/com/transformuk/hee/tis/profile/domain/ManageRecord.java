@@ -14,7 +14,6 @@ import java.util.Objects;
  * A ManageRecord.
  */
 @Entity
-@Table(name = "manage_record")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class ManageRecord implements Serializable {
 

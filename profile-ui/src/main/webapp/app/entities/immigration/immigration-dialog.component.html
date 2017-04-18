@@ -1,0 +1,97 @@
+<form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
+
+	<div class="modal-header">
+		<h4 class="modal-title" id="myImmigrationLabel" jhiTranslate="profileApp.immigration.home.createOrEditLabel">
+			Create or edit a Immigration</h4>
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+				(click)="clear()">&times;</button>
+	</div>
+	<div class="modal-body">
+		<jhi-alert-error></jhi-alert-error>
+		<div class="form-group" [hidden]="!immigration.id">
+			<label for="id" jhiTranslate="global.field.id">ID</label>
+			<input type="text" class="form-control" id="id" name="id"
+				   [(ngModel)]="immigration.id" readonly/>
+		</div>
+		<div class="form-group">
+			<label class="form-control-label" jhiTranslate="profileApp.immigration.tisId" for="field_tisId">Tis
+				Id</label>
+			<input type="number" class="form-control" name="tisId" id="field_tisId"
+				   [(ngModel)]="immigration.tisId"
+				   required/>
+			<div [hidden]="!(editForm.controls.tisId?.dirty && editForm.controls.tisId?.invalid)">
+				<small class="form-text text-danger"
+					   [hidden]="!editForm.controls.tisId?.errors?.required" jhiTranslate="entity.validation.required">
+					This field is required.
+				</small>
+				<small class="form-text text-danger"
+					   [hidden]="!editForm.controls.tisId?.errors?.number" jhiTranslate="entity.validation.number">
+					This field should be a number.
+				</small>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="form-control-label" jhiTranslate="profileApp.immigration.eeaResident" for="field_eeaResident">Eea
+				Resident</label>
+			<input type="checkbox" class="form-control" name="eeaResident" id="field_eeaResident"
+				   [(ngModel)]="immigration.eeaResident"
+			/>
+		</div>
+		<div class="form-group">
+			<label class="form-control-label" jhiTranslate="profileApp.immigration.permitToWork"
+				   for="field_permitToWork">Permit To Work</label>
+			<input type="text" class="form-control" name="permitToWork" id="field_permitToWork"
+				   [(ngModel)]="immigration.permitToWork"
+			/>
+		</div>
+		<div class="form-group">
+			<label class="form-control-label" jhiTranslate="profileApp.immigration.settled"
+				   for="field_settled">Settled</label>
+			<input type="text" class="form-control" name="settled" id="field_settled"
+				   [(ngModel)]="immigration.settled"
+			/>
+		</div>
+		<div class="form-group">
+			<label class="form-control-label" jhiTranslate="profileApp.immigration.visaIssued" for="field_visaIssued">Visa
+				Issued</label>
+			<div class="input-group">
+				<input id="field_visaIssued" type="text" class="form-control" name="visaIssued" ngbDatepicker
+					   #visaIssuedDp="ngbDatepicker" [(ngModel)]="immigration.visaIssued"
+				/>
+				<span class="input-group-btn">
+                    <button type="button" class="btn btn-default" (click)="visaIssuedDp.toggle()"><i
+							class="fa fa-calendar"></i></button>
+                </span>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="form-control-label" jhiTranslate="profileApp.immigration.visaValidTo" for="field_visaValidTo">Visa
+				Valid To</label>
+			<div class="input-group">
+				<input id="field_visaValidTo" type="text" class="form-control" name="visaValidTo" ngbDatepicker
+					   #visaValidToDp="ngbDatepicker" [(ngModel)]="immigration.visaValidTo"
+				/>
+				<span class="input-group-btn">
+                    <button type="button" class="btn btn-default" (click)="visaValidToDp.toggle()"><i
+							class="fa fa-calendar"></i></button>
+                </span>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="form-control-label" jhiTranslate="profileApp.immigration.visaDetailsNumber"
+				   for="field_visaDetailsNumber">Visa Details Number</label>
+			<input type="text" class="form-control" name="visaDetailsNumber" id="field_visaDetailsNumber"
+				   [(ngModel)]="immigration.visaDetailsNumber"
+			/>
+		</div>
+
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-default" data-dismiss="modal" (click)="clear()">
+			<span class="fa fa-ban"></span>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+		</button>
+		<button type="submit" [disabled]="editForm.form.invalid || isSaving" class="btn btn-primary">
+			<span class="fa fa-save"></span>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+		</button>
+	</div>
+</form>

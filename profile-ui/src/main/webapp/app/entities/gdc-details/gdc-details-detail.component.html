@@ -1,0 +1,36 @@
+<div *ngIf="gdcDetails">
+	<h2><span jhiTranslate="profileApp.gdcDetails.detail.title">Gdc Details</span> {{gdcDetails.id}}</h2>
+	<hr>
+	<jhi-alert-error></jhi-alert-error>
+	<dl class="row-md jh-entity-details">
+		<dt><span jhiTranslate="profileApp.gdcDetails.tisId">Tis Id</span></dt>
+		<dd>
+			<span>{{gdcDetails.tisId}}</span>
+		</dd>
+		<dt><span jhiTranslate="profileApp.gdcDetails.gdcNumber">Gdc Number</span></dt>
+		<dd>
+			<span>{{gdcDetails.gdcNumber}}</span>
+		</dd>
+		<dt><span jhiTranslate="profileApp.gdcDetails.gdcStatus">Gdc Status</span></dt>
+		<dd>
+			<span>{{gdcDetails.gdcStatus}}</span>
+		</dd>
+		<dt><span jhiTranslate="profileApp.gdcDetails.gdcStartDate">Gdc Start Date</span></dt>
+		<dd>
+			<span>{{gdcDetails.gdcStartDate | date:'mediumDate'}}</span>
+		</dd>
+	</dl>
+
+	<button type="submit"
+			(click)="previousState()"
+			class="btn btn-info">
+		<span class="fa fa-arrow-left"></span>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
+	</button>
+
+	<button type="button"
+			[routerLink]="['/', { outlets: { popup: 'gdc-details/'+ gdcDetails.id + '/edit'} }]"
+			replaceUrl="true"
+			class="btn btn-primary">
+		<span class="fa fa-pencil"></span>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+	</button>
+</div>

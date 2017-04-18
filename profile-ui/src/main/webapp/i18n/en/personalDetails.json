@@ -1,0 +1,35 @@
+{
+  "profileApp": {
+	"personalDetails": {
+	  "home": {
+		"title": "Personal Details",
+		"createLabel": "Create a new Personal Details",
+		"createOrEditLabel": "Create or edit a Personal Details"
+	  },
+	  "created": "A new Personal Details is created with identifier {{ param }}",
+	  "updated": "A Personal Details is updated with identifier {{ param }}",
+	  "deleted": "A Personal Details is deleted with identifier {{ param }}",
+	  "delete": {
+		"question": "Are you sure you want to delete Personal Details {{ id }}?"
+	  },
+	  "detail": {
+		"title": "Personal Details"
+	  },
+	  "tisId": "Tis Id",
+	  "surnameNb": "Surname Nb",
+	  "legalSurname": "Legal Surname",
+	  "forenames": "Forenames",
+	  "legalForenames": "Legal Forenames",
+	  "knownAs": "Known As",
+	  "maidenName": "Maiden Name",
+	  "initials": "Initials",
+	  "title": "Title",
+	  "telephoneNumber": "Telephone Number",
+	  "mobileNumber": "Mobile Number",
+	  "emailAddress": "Email Address",
+	  "correspondenceAddress": "Correspondence Address",
+	  "correspondenceAddressPostCode": "Correspondence Address Post Code",
+	  "status": "Status"
+	}
+  }
+}

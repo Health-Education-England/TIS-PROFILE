@@ -1,0 +1,94 @@
+<div>
+	<h2>
+		<span jhiTranslate="profileApp.manageRecord.home.title">Manage Records</span>
+		<button class="btn btn-primary float-right create-manage-record"
+				[routerLink]="['/', { outlets: { popup: ['manage-record-new'] } }]">
+			<span class="fa fa-plus"></span>
+			<span jhiTranslate="profileApp.manageRecord.home.createLabel">
+            Create new Manage Record
+            </span>
+		</button>
+	</h2>
+	<jhi-alert></jhi-alert>
+	<div class="row">
+	</div>
+	<br/>
+	<div class="table-responsive" *ngIf="manageRecords">
+		<table class="table table-striped">
+			<thead>
+			<tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
+				<th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <span class="fa fa-sort"></span></th>
+				<th jhiSortBy="tisId"><span jhiTranslate="profileApp.manageRecord.tisId">Tis Id</span> <span
+						class="fa fa-sort"></span></th>
+				<th jhiSortBy="recordType"><span jhiTranslate="profileApp.manageRecord.recordType">Record Type</span>
+					<span class="fa fa-sort"></span></th>
+				<th jhiSortBy="role"><span jhiTranslate="profileApp.manageRecord.role">Role</span> <span
+						class="fa fa-sort"></span></th>
+				<th jhiSortBy="recordStatus"><span
+						jhiTranslate="profileApp.manageRecord.recordStatus">Record Status</span> <span
+						class="fa fa-sort"></span></th>
+				<th jhiSortBy="inactiveFrom"><span
+						jhiTranslate="profileApp.manageRecord.inactiveFrom">Inactive From</span> <span
+						class="fa fa-sort"></span></th>
+				<th jhiSortBy="changedBy"><span jhiTranslate="profileApp.manageRecord.changedBy">Changed By</span> <span
+						class="fa fa-sort"></span></th>
+				<th jhiSortBy="inactiveReason"><span jhiTranslate="profileApp.manageRecord.inactiveReason">Inactive Reason</span>
+					<span class="fa fa-sort"></span></th>
+				<th jhiSortBy="inactiveDate"><span
+						jhiTranslate="profileApp.manageRecord.inactiveDate">Inactive Date</span> <span
+						class="fa fa-sort"></span></th>
+				<th jhiSortBy="deletionReason"><span jhiTranslate="profileApp.manageRecord.deletionReason">Deletion Reason</span>
+					<span class="fa fa-sort"></span></th>
+				<th></th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr *ngFor="let manageRecord of manageRecords ;trackBy: trackId">
+				<td><a [routerLink]="['../manage-record', manageRecord.id ]">{{manageRecord.id}}</a></td>
+				<td>{{manageRecord.tisId}}</td>
+				<td>{{manageRecord.recordType}}</td>
+				<td>{{manageRecord.role}}</td>
+				<td>{{manageRecord.recordStatus}}</td>
+				<td>{{manageRecord.inactiveFrom | date:'mediumDate'}}</td>
+				<td>{{manageRecord.changedBy}}</td>
+				<td>{{manageRecord.inactiveReason}}</td>
+				<td>{{manageRecord.inactiveDate | date:'mediumDate'}}</td>
+				<td>{{manageRecord.deletionReason}}</td>
+				<td class="text-right">
+					<div class="btn-group flex-btn-group-container">
+						<button type="submit"
+								[routerLink]="['../manage-record', manageRecord.id ]"
+								class="btn btn-info btn-sm">
+							<span class="fa fa-eye"></span>
+							<span class="hidden-md-down" jhiTranslate="entity.action.view">View</span>
+						</button>
+						<button type="submit"
+								[routerLink]="['/', { outlets: { popup: 'manage-record/'+ manageRecord.id + '/edit'} }]"
+								replaceUrl="true"
+								class="btn btn-primary btn-sm">
+							<span class="fa fa-pencil"></span>
+							<span class="hidden-md-down" jhiTranslate="entity.action.edit">Edit</span>
+						</button>
+						<button type="submit"
+								[routerLink]="['/', { outlets: { popup: 'manage-record/'+ manageRecord.id + '/delete'} }]"
+								replaceUrl="true"
+								class="btn btn-danger btn-sm">
+							<span class="fa fa-remove"></span>
+							<span class="hidden-md-down" jhiTranslate="entity.action.delete">Delete</span>
+						</button>
+					</div>
+				</td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
+	<div *ngIf="manageRecords && manageRecords.length">
+		<div class="row justify-content-center">
+			<jhi-item-count [page]="page" [total]="queryCount" [itemsPerPage]="itemsPerPage"></jhi-item-count>
+		</div>
+		<div class="row justify-content-center">
+			<ngb-pagination [collectionSize]="totalItems" [(page)]="page"
+							(pageChange)="loadPage(page)"></ngb-pagination>
+		</div>
+	</div>
+</div>
