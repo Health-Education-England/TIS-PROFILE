@@ -35,7 +35,7 @@ export class PermissionDialogComponent implements OnInit {
 
 	save() {
 		this.isSaving = true;
-		if (this.permission.id !== undefined) {
+		if (this.permission.name !== undefined) {
 			this.permissionService.update(this.permission)
 				.subscribe((res: Permission) =>
 					this.onSaveSuccess(res), (res: Response) => this.onSaveError(res.json()));
@@ -77,9 +77,9 @@ export class PermissionPopupComponent implements OnInit, OnDestroy {
 
 	ngOnInit() {
 		this.routeSub = this.route.params.subscribe(params => {
-			if (params['id']) {
+			if (params['name']) {
 				this.modalRef = this.permissionPopupService
-					.open(PermissionDialogComponent, params['id']);
+					.open(PermissionDialogComponent, params['name']);
 			} else {
 				this.modalRef = this.permissionPopupService
 					.open(PermissionDialogComponent);

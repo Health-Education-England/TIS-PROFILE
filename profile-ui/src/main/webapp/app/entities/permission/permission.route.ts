@@ -15,7 +15,7 @@ export class PermissionResolvePagingParams implements Resolve<any> {
 
 	resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
 		let page = route.queryParams['page'] ? route.queryParams['page'] : '1';
-		let sort = route.queryParams['sort'] ? route.queryParams['sort'] : 'id,asc';
+		let sort = route.queryParams['sort'] ? route.queryParams['sort'] : 'name,asc';
 		return {
 			page: this.paginationUtil.parsePage(page),
 			predicate: this.paginationUtil.parsePredicate(sort),
@@ -36,7 +36,7 @@ export const permissionRoute: Routes = [
 			pageTitle: 'profileApp.permission.home.title'
 		}
 	}, {
-		path: 'permission/:id',
+		path: 'permission/:name',
 		component: PermissionDetailComponent,
 		data: {
 			authorities: ['ROLE_USER'],
@@ -56,7 +56,7 @@ export const permissionPopupRoute: Routes = [
 		outlet: 'popup'
 	},
 	{
-		path: 'permission/:id/edit',
+		path: 'permission/:name/edit',
 		component: PermissionPopupComponent,
 		data: {
 			authorities: ['ROLE_USER'],
@@ -65,7 +65,7 @@ export const permissionPopupRoute: Routes = [
 		outlet: 'popup'
 	},
 	{
-		path: 'permission/:id/delete',
+		path: 'permission/:name/delete',
 		component: PermissionDeletePopupComponent,
 		data: {
 			authorities: ['ROLE_USER'],

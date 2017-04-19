@@ -53,19 +53,17 @@ public class PermissionResource {
 	@Timed
 	public ResponseEntity<PermissionDTO> createPermission(@Valid @RequestBody PermissionDTO permissionDTO) throws URISyntaxException {
 		log.debug("REST request to save Permission : {}", permissionDTO);
-		if (permissionDTO.getId() != null) {
-			return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new permission cannot already have an ID")).body(null);
-		}
 		Permission permission = permissionMapper.permissionDTOToPermission(permissionDTO);
 		permission = permissionRepository.save(permission);
 		PermissionDTO result = permissionMapper.permissionToPermissionDTO(permission);
-		return ResponseEntity.created(new URI("/api/permissions/" + result.getId()))
-				.headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
+		return ResponseEntity.created(new URI("/api/permissions/" + result.getName()))
+				.headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getName().toString()))
 				.body(result);
 	}
 
 	/**
-	 * PUT  /permissions : Updates an existing permission.
+	 * PUT  /permissions : Updates an existing permission. Please note, given that a permission is just
+	 * one string, updating a permission just means creating a new one, the existing one will still be there
 	 *
 	 * @param permissionDTO the permissionDTO to update
 	 * @return the ResponseEntity with status 200 (OK) and with body the updated permissionDTO,
@@ -77,15 +75,7 @@ public class PermissionResource {
 	@Timed
 	public ResponseEntity<PermissionDTO> updatePermission(@Valid @RequestBody PermissionDTO permissionDTO) throws URISyntaxException {
 		log.debug("REST request to update Permission : {}", permissionDTO);
-		if (permissionDTO.getId() == null) {
-			return createPermission(permissionDTO);
-		}
-		Permission permission = permissionMapper.permissionDTOToPermission(permissionDTO);
-		permission = permissionRepository.save(permission);
-		PermissionDTO result = permissionMapper.permissionToPermissionDTO(permission);
-		return ResponseEntity.ok()
-				.headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, permissionDTO.getId().toString()))
-				.body(result);
+		return createPermission(permissionDTO);
 	}
 
 	/**
@@ -105,32 +95,32 @@ public class PermissionResource {
 	}
 
 	/**
-	 * GET  /permissions/:id : get the "id" permission.
+	 * GET  /permissions/:name : get the "name" permission.
 	 *
-	 * @param id the id of the permissionDTO to retrieve
+	 * @param name the id of the permissionDTO to retrieve
 	 * @return the ResponseEntity with status 200 (OK) and with body the permissionDTO, or with status 404 (Not Found)
 	 */
-	@GetMapping("/permissions/{id}")
+	@GetMapping("/permissions/{name}")
 	@Timed
-	public ResponseEntity<PermissionDTO> getPermission(@PathVariable Long id) {
-		log.debug("REST request to get Permission : {}", id);
-		Permission permission = permissionRepository.findOne(id);
+	public ResponseEntity<PermissionDTO> getPermission(@PathVariable String name) {
+		log.debug("REST request to get Permission : {}", name);
+		Permission permission = permissionRepository.findOne(name);
 		PermissionDTO permissionDTO = permissionMapper.permissionToPermissionDTO(permission);
 		return ResponseUtil.wrapOrNotFound(Optional.ofNullable(permissionDTO));
 	}
 
 	/**
-	 * DELETE  /permissions/:id : delete the "id" permission.
+	 * DELETE  /permissions/:name : delete the "name" permission.
 	 *
-	 * @param id the id of the permissionDTO to delete
+	 * @param name the id of the permissionDTO to delete
 	 * @return the ResponseEntity with status 200 (OK)
 	 */
-	@DeleteMapping("/permissions/{id}")
+	@DeleteMapping("/permissions/{name}")
 	@Timed
-	public ResponseEntity<Void> deletePermission(@PathVariable Long id) {
-		log.debug("REST request to delete Permission : {}", id);
-		permissionRepository.delete(id);
-		return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
+	public ResponseEntity<Void> deletePermission(@PathVariable String name) {
+		log.debug("REST request to delete Permission : {}", name);
+		permissionRepository.delete(name);
+		return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, name)).build();
 	}
 
 }

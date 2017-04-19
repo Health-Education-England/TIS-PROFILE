@@ -30,7 +30,7 @@ describe('Component Tests', () => {
 					DatePipe,
 					{
 						provide: ActivatedRoute,
-						useValue: new MockActivatedRoute({id: 123})
+						useValue: new MockActivatedRoute({name: '123'})
 					},
 					{
 						provide: Http,
@@ -63,14 +63,14 @@ describe('Component Tests', () => {
 			it('Should call load all on init', () => {
 				// GIVEN
 
-				spyOn(service, 'find').and.returnValue(Observable.of(new Permission(10)));
+				spyOn(service, 'find').and.returnValue(Observable.of(new Permission('10')));
 
 				// WHEN
 				comp.ngOnInit();
 
 				// THEN
-				expect(service.find).toHaveBeenCalledWith(123);
-				expect(comp.permission).toEqual(jasmine.objectContaining({id: 10}));
+				expect(service.find).toHaveBeenCalledWith('123');
+				expect(comp.permission).toEqual(jasmine.objectContaining({name: '10'}));
 			});
 		});
 	});

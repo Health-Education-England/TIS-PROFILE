@@ -12,14 +12,14 @@ export class PermissionPopupService {
 				private permissionService: PermissionService) {
 	}
 
-	open(component: Component, id?: number | any): NgbModalRef {
+	open(component: Component, name?: string | any): NgbModalRef {
 		if (this.isOpen) {
 			return;
 		}
 		this.isOpen = true;
 
-		if (id) {
-			this.permissionService.find(id).subscribe(permission => {
+		if (name) {
+			this.permissionService.find(name).subscribe(permission => {
 				this.permissionModalRef(component, permission);
 			});
 		} else {

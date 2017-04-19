@@ -18,20 +18,9 @@ public class Permission implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-
 	@NotNull
 	@Column(name = "name", nullable = false)
 	private String name;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
 
 	public String getName() {
 		return name;
@@ -55,22 +44,21 @@ public class Permission implements Serializable {
 			return false;
 		}
 		Permission permission = (Permission) o;
-		if (permission.id == null || id == null) {
+		if (permission.name == null || name == null) {
 			return false;
 		}
-		return Objects.equals(id, permission.id);
+		return Objects.equals(name, permission.name);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hashCode(id);
+		return Objects.hashCode(name);
 	}
 
 	@Override
 	public String toString() {
 		return "Permission{" +
-				"id=" + id +
-				", name='" + name + "'" +
+				"name='" + name + "'" +
 				'}';
 	}
 }

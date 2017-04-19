@@ -104,7 +104,7 @@ public class PermissionResourceIntTest {
 		// Validate the Permission in the database
 		List<Permission> permissionList = permissionRepository.findAll();
 		assertThat(permissionList).hasSize(databaseSizeBeforeCreate + 1);
-		Permission testPermission = permissionList.get(permissionList.size() - 1);
+		Permission testPermission = permissionRepository.findOne(permission.getName());
 		assertThat(testPermission.getName()).isEqualTo(DEFAULT_NAME);
 	}
 
@@ -114,14 +114,14 @@ public class PermissionResourceIntTest {
 		int databaseSizeBeforeCreate = permissionRepository.findAll().size();
 
 		// Create the Permission with an existing ID
-		permission.setId(1L);
+		permission.setName("revalidation:data:sync");
 		PermissionDTO permissionDTO = permissionMapper.permissionToPermissionDTO(permission);
 
-		// An entity with an existing ID cannot be created, so this API call must fail
+		// Creating a permission with the same name will do nothing but not fail
 		restPermissionMockMvc.perform(post("/api/permissions")
 				.contentType(TestUtil.APPLICATION_JSON_UTF8)
 				.content(TestUtil.convertObjectToJsonBytes(permissionDTO)))
-				.andExpect(status().isBadRequest());
+				.andExpect(status().isCreated());
 
 		// Validate the Alice in the database
 		List<Permission> permissionList = permissionRepository.findAll();
@@ -154,10 +154,9 @@ public class PermissionResourceIntTest {
 		permissionRepository.saveAndFlush(permission);
 
 		// Get all the permissionList
-		restPermissionMockMvc.perform(get("/api/permissions?sort=id,desc"))
+		restPermissionMockMvc.perform(get("/api/permissions?sort=name,desc"))
 				.andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-				.andExpect(jsonPath("$.[*].id").value(hasItem(permission.getId().intValue())))
 				.andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())));
 	}
 
@@ -168,10 +167,9 @@ public class PermissionResourceIntTest {
 		permissionRepository.saveAndFlush(permission);
 
 		// Get the permission
-		restPermissionMockMvc.perform(get("/api/permissions/{id}", permission.getId()))
+		restPermissionMockMvc.perform(get("/api/permissions/{id}", permission.getName()))
 				.andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-				.andExpect(jsonPath("$.id").value(permission.getId().intValue()))
 				.andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()));
 	}
 
@@ -185,57 +183,13 @@ public class PermissionResourceIntTest {
 
 	@Test
 	@Transactional
-	public void updatePermission() throws Exception {
-		// Initialize the database
-		permissionRepository.saveAndFlush(permission);
-		int databaseSizeBeforeUpdate = permissionRepository.findAll().size();
-
-		// Update the permission
-		Permission updatedPermission = permissionRepository.findOne(permission.getId());
-		updatedPermission
-				.name(UPDATED_NAME);
-		PermissionDTO permissionDTO = permissionMapper.permissionToPermissionDTO(updatedPermission);
-
-		restPermissionMockMvc.perform(put("/api/permissions")
-				.contentType(TestUtil.APPLICATION_JSON_UTF8)
-				.content(TestUtil.convertObjectToJsonBytes(permissionDTO)))
-				.andExpect(status().isOk());
-
-		// Validate the Permission in the database
-		List<Permission> permissionList = permissionRepository.findAll();
-		assertThat(permissionList).hasSize(databaseSizeBeforeUpdate);
-		Permission testPermission = permissionList.get(permissionList.size() - 1);
-		assertThat(testPermission.getName()).isEqualTo(UPDATED_NAME);
-	}
-
-	@Test
-	@Transactional
-	public void updateNonExistingPermission() throws Exception {
-		int databaseSizeBeforeUpdate = permissionRepository.findAll().size();
-
-		// Create the Permission
-		PermissionDTO permissionDTO = permissionMapper.permissionToPermissionDTO(permission);
-
-		// If the entity doesn't have an ID, it will be created instead of just being updated
-		restPermissionMockMvc.perform(put("/api/permissions")
-				.contentType(TestUtil.APPLICATION_JSON_UTF8)
-				.content(TestUtil.convertObjectToJsonBytes(permissionDTO)))
-				.andExpect(status().isCreated());
-
-		// Validate the Permission in the database
-		List<Permission> permissionList = permissionRepository.findAll();
-		assertThat(permissionList).hasSize(databaseSizeBeforeUpdate + 1);
-	}
-
-	@Test
-	@Transactional
 	public void deletePermission() throws Exception {
 		// Initialize the database
 		permissionRepository.saveAndFlush(permission);
 		int databaseSizeBeforeDelete = permissionRepository.findAll().size();
 
 		// Get the permission
-		restPermissionMockMvc.perform(delete("/api/permissions/{id}", permission.getId())
+		restPermissionMockMvc.perform(delete("/api/permissions/{id}", permission.getName())
 				.accept(TestUtil.APPLICATION_JSON_UTF8))
 				.andExpect(status().isOk());
 

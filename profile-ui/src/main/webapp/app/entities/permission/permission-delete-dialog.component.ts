@@ -25,8 +25,8 @@ export class PermissionDeleteDialogComponent {
 		this.activeModal.dismiss('cancel');
 	}
 
-	confirmDelete(id: number) {
-		this.permissionService.delete(id).subscribe(response => {
+	confirmDelete(name: string) {
+		this.permissionService.delete(name).subscribe(response => {
 			this.eventManager.broadcast({
 				name: 'permissionListModification',
 				content: 'Deleted an permission'
@@ -52,7 +52,7 @@ export class PermissionDeletePopupComponent implements OnInit, OnDestroy {
 	ngOnInit() {
 		this.routeSub = this.route.params.subscribe(params => {
 			this.modalRef = this.permissionPopupService
-				.open(PermissionDeleteDialogComponent, params['id']);
+				.open(PermissionDeleteDialogComponent, params['name']);
 		});
 	}
 

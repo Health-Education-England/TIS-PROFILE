@@ -24,8 +24,8 @@ export class PermissionService {
 		});
 	}
 
-	find(id: number): Observable<Permission> {
-		return this.http.get(`${this.resourceUrl}/${id}`).map((res: Response) => {
+	find(name: string): Observable<Permission> {
+		return this.http.get(`${this.resourceUrl}/${name}`).map((res: Response) => {
 			return res.json();
 		});
 	}
@@ -36,8 +36,8 @@ export class PermissionService {
 			;
 	}
 
-	delete(id: number): Observable<Response> {
-		return this.http.delete(`${this.resourceUrl}/${id}`);
+	delete(name: string): Observable<Response> {
+		return this.http.delete(`${this.resourceUrl}/${name}`);
 	}
 
 

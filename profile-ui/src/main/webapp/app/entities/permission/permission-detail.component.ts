@@ -21,12 +21,12 @@ export class PermissionDetailComponent implements OnInit, OnDestroy {
 
 	ngOnInit() {
 		this.subscription = this.route.params.subscribe(params => {
-			this.load(params['id']);
+			this.load(params['name']);
 		});
 	}
 
-	load(id) {
-		this.permissionService.find(id).subscribe(permission => {
+	load(name) {
+		this.permissionService.find(name).subscribe(permission => {
 			this.permission = permission;
 		});
 	}

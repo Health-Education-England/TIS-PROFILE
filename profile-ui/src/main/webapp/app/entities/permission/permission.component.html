@@ -17,7 +17,6 @@
 		<table class="table table-striped">
 			<thead>
 			<tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
-				<th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <span class="fa fa-sort"></span></th>
 				<th jhiSortBy="name"><span jhiTranslate="profileApp.permission.name">Name</span> <span
 						class="fa fa-sort"></span></th>
 				<th></th>
@@ -25,25 +24,24 @@
 			</thead>
 			<tbody>
 			<tr *ngFor="let permission of permissions ;trackBy: trackId">
-				<td><a [routerLink]="['../permission', permission.id ]">{{permission.id}}</a></td>
-				<td>{{permission.name}}</td>
+				<td><a [routerLink]="['../permission', permission.name ]">{{permission.name}}</a></td>
 				<td class="text-right">
 					<div class="btn-group flex-btn-group-container">
 						<button type="submit"
-								[routerLink]="['../permission', permission.id ]"
+								[routerLink]="['../permission', permission.name ]"
 								class="btn btn-info btn-sm">
 							<span class="fa fa-eye"></span>
 							<span class="hidden-md-down" jhiTranslate="entity.action.view">View</span>
 						</button>
 						<button type="submit"
-								[routerLink]="['/', { outlets: { popup: 'permission/'+ permission.id + '/edit'} }]"
+								[routerLink]="['/', { outlets: { popup: 'permission/'+ permission.name + '/edit'} }]"
 								replaceUrl="true"
 								class="btn btn-primary btn-sm">
 							<span class="fa fa-pencil"></span>
 							<span class="hidden-md-down" jhiTranslate="entity.action.edit">Edit</span>
 						</button>
 						<button type="submit"
-								[routerLink]="['/', { outlets: { popup: 'permission/'+ permission.id + '/delete'} }]"
+								[routerLink]="['/', { outlets: { popup: 'permission/'+ permission.name + '/delete'} }]"
 								replaceUrl="true"
 								class="btn btn-danger btn-sm">
 							<span class="fa fa-remove"></span>

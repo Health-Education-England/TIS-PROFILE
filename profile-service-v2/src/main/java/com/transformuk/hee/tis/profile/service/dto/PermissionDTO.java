@@ -10,18 +10,8 @@ import java.util.Objects;
  */
 public class PermissionDTO implements Serializable {
 
-	private Long id;
-
 	@NotNull
 	private String name;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
 
 	public String getName() {
 		return name;
@@ -42,7 +32,7 @@ public class PermissionDTO implements Serializable {
 
 		PermissionDTO permissionDTO = (PermissionDTO) o;
 
-		if (!Objects.equals(id, permissionDTO.id)) {
+		if (!Objects.equals(name, permissionDTO.name)) {
 			return false;
 		}
 
@@ -51,14 +41,13 @@ public class PermissionDTO implements Serializable {
 
 	@Override
 	public int hashCode() {
-		return Objects.hashCode(id);
+		return Objects.hashCode(name);
 	}
 
 	@Override
 	public String toString() {
 		return "PermissionDTO{" +
-				"id=" + id +
-				", name='" + name + "'" +
+				"name='" + name + "'" +
 				'}';
 	}
 }

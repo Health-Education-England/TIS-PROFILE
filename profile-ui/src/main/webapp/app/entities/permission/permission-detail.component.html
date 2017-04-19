@@ -1,5 +1,5 @@
 <div *ngIf="permission">
-	<h2><span jhiTranslate="profileApp.permission.detail.title">Permission</span> {{permission.id}}</h2>
+	<h2><span jhiTranslate="profileApp.permission.detail.title">Permission</span> {{permission.name}}</h2>
 	<hr>
 	<jhi-alert-error></jhi-alert-error>
 	<dl class="row-md jh-entity-details">
@@ -16,7 +16,7 @@
 	</button>
 
 	<button type="button"
-			[routerLink]="['/', { outlets: { popup: 'permission/'+ permission.id + '/edit'} }]"
+			[routerLink]="['/', { outlets: { popup: 'permission/'+ permission.name + '/edit'} }]"
 			replaceUrl="true"
 			class="btn btn-primary">
 		<span class="fa fa-pencil"></span>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
