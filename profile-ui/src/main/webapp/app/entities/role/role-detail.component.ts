@@ -21,12 +21,12 @@ export class RoleDetailComponent implements OnInit, OnDestroy {
 
 	ngOnInit() {
 		this.subscription = this.route.params.subscribe(params => {
-			this.load(params['id']);
+			this.load(params['name']);
 		});
 	}
 
-	load(id) {
-		this.roleService.find(id).subscribe(role => {
+	load(name) {
+		this.roleService.find(name).subscribe(role => {
 			this.role = role;
 		});
 	}

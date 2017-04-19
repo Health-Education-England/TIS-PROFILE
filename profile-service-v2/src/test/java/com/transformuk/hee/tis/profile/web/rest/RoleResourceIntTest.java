@@ -104,7 +104,7 @@ public class RoleResourceIntTest {
 		// Validate the Role in the database
 		List<Role> roleList = roleRepository.findAll();
 		assertThat(roleList).hasSize(databaseSizeBeforeCreate + 1);
-		Role testRole = roleList.get(roleList.size() - 1);
+		Role testRole = roleRepository.findOne(role.getName());
 		assertThat(testRole.getName()).isEqualTo(DEFAULT_NAME);
 	}
 
@@ -114,14 +114,14 @@ public class RoleResourceIntTest {
 		int databaseSizeBeforeCreate = roleRepository.findAll().size();
 
 		// Create the Role with an existing ID
-		role.setId(1L);
+		role.setName("RVAdmin");
 		RoleDTO roleDTO = roleMapper.roleToRoleDTO(role);
 
-		// An entity with an existing ID cannot be created, so this API call must fail
+		// Creating a role with the same name will do nothing but not fail
 		restRoleMockMvc.perform(post("/api/roles")
 				.contentType(TestUtil.APPLICATION_JSON_UTF8)
 				.content(TestUtil.convertObjectToJsonBytes(roleDTO)))
-				.andExpect(status().isBadRequest());
+				.andExpect(status().isCreated());
 
 		// Validate the Alice in the database
 		List<Role> roleList = roleRepository.findAll();
@@ -154,10 +154,9 @@ public class RoleResourceIntTest {
 		roleRepository.saveAndFlush(role);
 
 		// Get all the roleList
-		restRoleMockMvc.perform(get("/api/roles?sort=id,desc"))
+		restRoleMockMvc.perform(get("/api/roles?sort=name,desc"))
 				.andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-				.andExpect(jsonPath("$.[*].id").value(hasItem(role.getId().intValue())))
 				.andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())));
 	}
 
@@ -168,10 +167,9 @@ public class RoleResourceIntTest {
 		roleRepository.saveAndFlush(role);
 
 		// Get the role
-		restRoleMockMvc.perform(get("/api/roles/{id}", role.getId()))
+		restRoleMockMvc.perform(get("/api/roles/{id}", role.getName()))
 				.andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-				.andExpect(jsonPath("$.id").value(role.getId().intValue()))
 				.andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()));
 	}
 
@@ -181,31 +179,6 @@ public class RoleResourceIntTest {
 		// Get the role
 		restRoleMockMvc.perform(get("/api/roles/{id}", Long.MAX_VALUE))
 				.andExpect(status().isNotFound());
-	}
-
-	@Test
-	@Transactional
-	public void updateRole() throws Exception {
-		// Initialize the database
-		roleRepository.saveAndFlush(role);
-		int databaseSizeBeforeUpdate = roleRepository.findAll().size();
-
-		// Update the role
-		Role updatedRole = roleRepository.findOne(role.getId());
-		updatedRole
-				.name(UPDATED_NAME);
-		RoleDTO roleDTO = roleMapper.roleToRoleDTO(updatedRole);
-
-		restRoleMockMvc.perform(put("/api/roles")
-				.contentType(TestUtil.APPLICATION_JSON_UTF8)
-				.content(TestUtil.convertObjectToJsonBytes(roleDTO)))
-				.andExpect(status().isOk());
-
-		// Validate the Role in the database
-		List<Role> roleList = roleRepository.findAll();
-		assertThat(roleList).hasSize(databaseSizeBeforeUpdate);
-		Role testRole = roleList.get(roleList.size() - 1);
-		assertThat(testRole.getName()).isEqualTo(UPDATED_NAME);
 	}
 
 	@Test
@@ -235,7 +208,7 @@ public class RoleResourceIntTest {
 		int databaseSizeBeforeDelete = roleRepository.findAll().size();
 
 		// Get the role
-		restRoleMockMvc.perform(delete("/api/roles/{id}", role.getId())
+		restRoleMockMvc.perform(delete("/api/roles/{id}", role.getName())
 				.accept(TestUtil.APPLICATION_JSON_UTF8))
 				.andExpect(status().isOk());
 

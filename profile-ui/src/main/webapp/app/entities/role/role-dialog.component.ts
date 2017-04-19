@@ -35,7 +35,7 @@ export class RoleDialogComponent implements OnInit {
 
 	save() {
 		this.isSaving = true;
-		if (this.role.id !== undefined) {
+		if (this.role.name !== undefined) {
 			this.roleService.update(this.role)
 				.subscribe((res: Role) =>
 					this.onSaveSuccess(res), (res: Response) => this.onSaveError(res.json()));
@@ -77,9 +77,9 @@ export class RolePopupComponent implements OnInit, OnDestroy {
 
 	ngOnInit() {
 		this.routeSub = this.route.params.subscribe(params => {
-			if (params['id']) {
+			if (params['name']) {
 				this.modalRef = this.rolePopupService
-					.open(RoleDialogComponent, params['id']);
+					.open(RoleDialogComponent, params['name']);
 			} else {
 				this.modalRef = this.rolePopupService
 					.open(RoleDialogComponent);

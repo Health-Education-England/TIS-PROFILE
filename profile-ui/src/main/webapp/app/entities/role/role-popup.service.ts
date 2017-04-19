@@ -12,14 +12,14 @@ export class RolePopupService {
 				private roleService: RoleService) {
 	}
 
-	open(component: Component, id?: number | any): NgbModalRef {
+	open(component: Component, name?: string | any): NgbModalRef {
 		if (this.isOpen) {
 			return;
 		}
 		this.isOpen = true;
 
-		if (id) {
-			this.roleService.find(id).subscribe(role => {
+		if (name) {
+			this.roleService.find(name).subscribe(role => {
 				this.roleModalRef(component, role);
 			});
 		} else {

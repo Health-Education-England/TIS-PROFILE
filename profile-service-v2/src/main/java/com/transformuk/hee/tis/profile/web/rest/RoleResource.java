@@ -53,19 +53,18 @@ public class RoleResource {
 	@Timed
 	public ResponseEntity<RoleDTO> createRole(@Valid @RequestBody RoleDTO roleDTO) throws URISyntaxException {
 		log.debug("REST request to save Role : {}", roleDTO);
-		if (roleDTO.getId() != null) {
-			return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new role cannot already have an ID")).body(null);
-		}
 		Role role = roleMapper.roleDTOToRole(roleDTO);
 		role = roleRepository.save(role);
 		RoleDTO result = roleMapper.roleToRoleDTO(role);
-		return ResponseEntity.created(new URI("/api/roles/" + result.getId()))
-				.headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
+		return ResponseEntity.created(new URI("/api/roles/" + result.getName()))
+				.headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getName().toString()))
 				.body(result);
 	}
 
 	/**
-	 * PUT  /roles : Updates an existing role.
+	 * PUT  /roles : Updates an existing role. Please note, given that a permission is just
+	 * one string, updating a permission just means creating a new one, the existing one will still
+	 * be there
 	 *
 	 * @param roleDTO the roleDTO to update
 	 * @return the ResponseEntity with status 200 (OK) and with body the updated roleDTO,
@@ -77,15 +76,7 @@ public class RoleResource {
 	@Timed
 	public ResponseEntity<RoleDTO> updateRole(@Valid @RequestBody RoleDTO roleDTO) throws URISyntaxException {
 		log.debug("REST request to update Role : {}", roleDTO);
-		if (roleDTO.getId() == null) {
-			return createRole(roleDTO);
-		}
-		Role role = roleMapper.roleDTOToRole(roleDTO);
-		role = roleRepository.save(role);
-		RoleDTO result = roleMapper.roleToRoleDTO(role);
-		return ResponseEntity.ok()
-				.headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, roleDTO.getId().toString()))
-				.body(result);
+		return createRole(roleDTO);
 	}
 
 	/**
@@ -105,32 +96,32 @@ public class RoleResource {
 	}
 
 	/**
-	 * GET  /roles/:id : get the "id" role.
+	 * GET  /roles/:name : get the "name" role.
 	 *
-	 * @param id the id of the roleDTO to retrieve
+	 * @param name the name of the roleDTO to retrieve
 	 * @return the ResponseEntity with status 200 (OK) and with body the roleDTO, or with status 404 (Not Found)
 	 */
-	@GetMapping("/roles/{id}")
+	@GetMapping("/roles/{name}")
 	@Timed
-	public ResponseEntity<RoleDTO> getRole(@PathVariable Long id) {
-		log.debug("REST request to get Role : {}", id);
-		Role role = roleRepository.findOne(id);
+	public ResponseEntity<RoleDTO> getRole(@PathVariable String name) {
+		log.debug("REST request to get Role : {}", name);
+		Role role = roleRepository.findOne(name);
 		RoleDTO roleDTO = roleMapper.roleToRoleDTO(role);
 		return ResponseUtil.wrapOrNotFound(Optional.ofNullable(roleDTO));
 	}
 
 	/**
-	 * DELETE  /roles/:id : delete the "id" role.
+	 * DELETE  /roles/:name : delete the "name" role.
 	 *
-	 * @param id the id of the roleDTO to delete
+	 * @param name the name of the roleDTO to delete
 	 * @return the ResponseEntity with status 200 (OK)
 	 */
-	@DeleteMapping("/roles/{id}")
+	@DeleteMapping("/roles/{name}")
 	@Timed
-	public ResponseEntity<Void> deleteRole(@PathVariable Long id) {
-		log.debug("REST request to delete Role : {}", id);
-		roleRepository.delete(id);
-		return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
+	public ResponseEntity<Void> deleteRole(@PathVariable String name) {
+		log.debug("REST request to delete Role : {}", name);
+		roleRepository.delete(name);
+		return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, name)).build();
 	}
 
 }

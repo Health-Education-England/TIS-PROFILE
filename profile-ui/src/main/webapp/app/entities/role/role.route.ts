@@ -15,7 +15,7 @@ export class RoleResolvePagingParams implements Resolve<any> {
 
 	resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
 		let page = route.queryParams['page'] ? route.queryParams['page'] : '1';
-		let sort = route.queryParams['sort'] ? route.queryParams['sort'] : 'id,asc';
+		let sort = route.queryParams['sort'] ? route.queryParams['sort'] : 'name,asc';
 		return {
 			page: this.paginationUtil.parsePage(page),
 			predicate: this.paginationUtil.parsePredicate(sort),
@@ -36,7 +36,7 @@ export const roleRoute: Routes = [
 			pageTitle: 'profileApp.role.home.title'
 		}
 	}, {
-		path: 'role/:id',
+		path: 'role/:name',
 		component: RoleDetailComponent,
 		data: {
 			authorities: ['ROLE_USER'],
@@ -56,7 +56,7 @@ export const rolePopupRoute: Routes = [
 		outlet: 'popup'
 	},
 	{
-		path: 'role/:id/edit',
+		path: 'role/:name/edit',
 		component: RolePopupComponent,
 		data: {
 			authorities: ['ROLE_USER'],
@@ -65,7 +65,7 @@ export const rolePopupRoute: Routes = [
 		outlet: 'popup'
 	},
 	{
-		path: 'role/:id/delete',
+		path: 'role/:name/delete',
 		component: RoleDeletePopupComponent,
 		data: {
 			authorities: ['ROLE_USER'],

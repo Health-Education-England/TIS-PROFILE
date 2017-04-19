@@ -10,18 +10,8 @@ import java.util.Objects;
  */
 public class RoleDTO implements Serializable {
 
-	private Long id;
-
 	@NotNull
 	private String name;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
 
 	public String getName() {
 		return name;
@@ -42,7 +32,7 @@ public class RoleDTO implements Serializable {
 
 		RoleDTO roleDTO = (RoleDTO) o;
 
-		if (!Objects.equals(id, roleDTO.id)) {
+		if (!Objects.equals(name, roleDTO.name)) {
 			return false;
 		}
 
@@ -51,14 +41,13 @@ public class RoleDTO implements Serializable {
 
 	@Override
 	public int hashCode() {
-		return Objects.hashCode(id);
+		return Objects.hashCode(name);
 	}
 
 	@Override
 	public String toString() {
 		return "RoleDTO{" +
-				"id=" + id +
-				", name='" + name + "'" +
+				"name='" + name + "'" +
 				'}';
 	}
 }

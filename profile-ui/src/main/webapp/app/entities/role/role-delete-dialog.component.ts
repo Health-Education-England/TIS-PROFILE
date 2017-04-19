@@ -25,8 +25,8 @@ export class RoleDeleteDialogComponent {
 		this.activeModal.dismiss('cancel');
 	}
 
-	confirmDelete(id: number) {
-		this.roleService.delete(id).subscribe(response => {
+	confirmDelete(name: string) {
+		this.roleService.delete(name).subscribe(response => {
 			this.eventManager.broadcast({
 				name: 'roleListModification',
 				content: 'Deleted an role'
@@ -52,7 +52,7 @@ export class RoleDeletePopupComponent implements OnInit, OnDestroy {
 	ngOnInit() {
 		this.routeSub = this.route.params.subscribe(params => {
 			this.modalRef = this.rolePopupService
-				.open(RoleDeleteDialogComponent, params['id']);
+				.open(RoleDeleteDialogComponent, params['name']);
 		});
 	}
 
