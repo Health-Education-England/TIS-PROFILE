@@ -1,12 +1,17 @@
 package com.transformuk.hee.tis.profile.domain;
 
+import com.google.common.collect.Sets;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.springframework.util.CollectionUtils;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.Set;
+
+import static javax.persistence.FetchType.EAGER;
 
 /**
  * A HeeUser.
@@ -16,24 +21,31 @@ import java.util.Objects;
 public class HeeUser implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+	private static final String NONE = "None";
+
+	private String name;
+	private String firstName;
+	private String lastName;
+	private String gmcId;
+	private String phoneNumber;
+	private String emailAddress;
+	private Boolean active;
+
+	private Set<Role> roles;
+	private Set<String> designatedBodyCodes;
+
+	public HeeUser() {
+		super();
+	}
+
+	public HeeUser(String name) {
+		this.name = name;
+	}
+
 
 	@Id
 	@NotNull
 	@Column(name = "name", nullable = false)
-	private String name;
-
-	private String firstName;
-
-	private String lastName;
-
-	private String gmcId;
-
-	private String phoneNumber;
-
-	private String emailAddress;
-
-	private Boolean active;
-
 	public String getName() {
 		return name;
 	}
@@ -125,6 +137,32 @@ public class HeeUser implements Serializable {
 		this.active = active;
 	}
 
+	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "UserRole", joinColumns = @JoinColumn(name = "userName", referencedColumnName = "name"),
+			inverseJoinColumns = @JoinColumn(name = "roleName", referencedColumnName = "name"))
+	public Set<Role> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(Set<Role> roles) {
+		this.roles = roles;
+	}
+
+	@ElementCollection(fetch = EAGER)
+	@CollectionTable(name = "UserDesignatedBody", joinColumns = @JoinColumn(name = "userName"))
+	@Column(name = "designatedBodyCode")
+	public Set<String> getDesignatedBodyCodes() {
+		if (CollectionUtils.isEmpty(this.designatedBodyCodes)) {
+			this.designatedBodyCodes = Sets.newHashSet(HeeUser.NONE);
+		}
+		return designatedBodyCodes;
+	}
+
+	public void setDesignatedBodyCodes(Set<String> designatedBodyCodes) {
+		this.designatedBodyCodes = designatedBodyCodes;
+	}
+
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
@@ -155,6 +193,8 @@ public class HeeUser implements Serializable {
 				", phoneNumber='" + phoneNumber + "'" +
 				", emailAddress='" + emailAddress + "'" +
 				", active='" + active + "'" +
+				", roles=" + roles +
+				", designatedBodyCodes=" + designatedBodyCodes +
 				'}';
 	}
 }

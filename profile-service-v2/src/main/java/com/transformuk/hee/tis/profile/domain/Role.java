@@ -7,6 +7,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * A Role.
@@ -16,12 +17,22 @@ import java.util.Objects;
 public class Role implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+	private String name;
+
+	private Set<Permission> permissions;
+
+	public Role(String name, Set<Permission> permissions) {
+		this.name = name;
+		this.permissions = permissions;
+	}
+
+	public Role() {
+		super();
+	}
 
 	@Id
 	@NotNull
 	@Column(name = "name", nullable = false)
-	private String name;
-
 	public String getName() {
 		return name;
 	}
@@ -34,6 +45,18 @@ public class Role implements Serializable {
 		this.name = name;
 		return this;
 	}
+
+	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "RolePermission", joinColumns = @JoinColumn(name = "roleName", referencedColumnName = "name"),
+			inverseJoinColumns = @JoinColumn(name = "permissionName", referencedColumnName = "name"))
+	public Set<Permission> getPermissions() {
+		return permissions;
+	}
+
+	public void setPermissions(Set<Permission> permissions) {
+		this.permissions = permissions;
+	}
+
 
 	@Override
 	public boolean equals(Object o) {
@@ -59,6 +82,7 @@ public class Role implements Serializable {
 	public String toString() {
 		return "Role{" +
 				"name='" + name + "'" +
+				", permissions=" + permissions +
 				'}';
 	}
 }

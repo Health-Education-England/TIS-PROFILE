@@ -1,7 +1,9 @@
 package com.transformuk.hee.tis.profile;
 
+import com.transformuk.hee.tis.audit.repository.TisAuditRepository;
 import com.transformuk.hee.tis.profile.config.ApplicationProperties;
 import com.transformuk.hee.tis.profile.config.DefaultProfileUtil;
+import org.springframework.boot.actuate.audit.AuditEventRepository;
 import io.github.jhipster.config.JHipsterConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,8 +12,13 @@ import org.springframework.boot.actuate.autoconfigure.MetricFilterAutoConfigurat
 import org.springframework.boot.actuate.autoconfigure.MetricRepositoryAutoConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
+import org.springframework.validation.Validator;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.springframework.web.servlet.DispatcherServlet;
 
 import javax.annotation.PostConstruct;
 import java.net.InetAddress;
@@ -25,6 +32,8 @@ import java.util.Collection;
 public class ProfileApp {
 
 	private static final Logger log = LoggerFactory.getLogger(ProfileApp.class);
+
+	public static final String SERVICE_NAME = "tis-profile";
 
 	private final Environment env;
 
@@ -78,5 +87,32 @@ public class ProfileApp {
 			log.error("You have misconfigured your application! It should not" +
 					"run with both the 'dev' and 'cloud' profiles at the same time.");
 		}
+	}
+
+	@Bean
+	public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+		return new PropertySourcesPlaceholderConfigurer();
+	}
+
+	/**
+	 * Allows to throw exception when no exception handler found
+	 *
+	 * @return DispatcherServlet
+	 */
+	@Bean
+	public DispatcherServlet dispatcherServlet() {
+		DispatcherServlet ds = new DispatcherServlet();
+		ds.setThrowExceptionIfNoHandlerFound(true);
+		return ds;
+	}
+
+	@Bean
+	public Validator validator() {
+		return new LocalValidatorFactoryBean();
+	}
+
+	@Bean
+	public AuditEventRepository auditEventRepository() {
+		return new TisAuditRepository();
 	}
 }

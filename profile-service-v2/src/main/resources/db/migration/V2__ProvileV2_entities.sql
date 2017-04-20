@@ -1,4 +1,5 @@
 ALTER TABLE HeeUser MODIFY active BIT;
+ALTER TABLE TraineeProfile MODIFY active BIT;
 
 -- Create syntax for TABLE 'EqualityAndDiversity'
 CREATE TABLE `EqualityAndDiversity` (

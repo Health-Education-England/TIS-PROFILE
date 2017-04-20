@@ -17,6 +17,14 @@ public class Permission implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	public Permission(String name) {
+		this.name = name;
+	}
+
+	public Permission() {
+		super();
+	}
+
 	@Id
 	@NotNull
 	@Column(name = "name", nullable = false)

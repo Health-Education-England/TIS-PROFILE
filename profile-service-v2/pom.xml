@@ -110,6 +110,35 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>com.transformuk.hee</groupId>
+			<artifactId>profile-api</artifactId>
+			<version>1.0.2</version>
+		</dependency>
+
+		<!-- TIS shared modules -->
+		<dependency>
+			<groupId>com.transformuk.hee</groupId>
+			<artifactId>audit</artifactId>
+			<version>${tis.shared.modules.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.transformuk.hee</groupId>
+			<artifactId>tis-security-jwt</artifactId>
+			<version>${tis.shared.modules.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-hateoas</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-envers</artifactId>
+			<version>1.1.0.RELEASE</version>
+		</dependency>
+
+		<dependency>
 			<groupId>io.github.jhipster</groupId>
 			<artifactId>jhipster</artifactId>
 			<version>${jhipster.server.version}</version>
@@ -306,6 +335,10 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-jwt</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
