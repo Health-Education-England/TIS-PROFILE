@@ -1,5 +1,5 @@
 <div *ngIf="heeUser">
-	<h2><span jhiTranslate="profileApp.heeUser.detail.title">Hee User</span> {{heeUser.id}}</h2>
+	<h2><span jhiTranslate="profileApp.heeUser.detail.title">Hee User</span> {{heeUser.name}}</h2>
 	<hr>
 	<jhi-alert-error></jhi-alert-error>
 	<dl class="row-md jh-entity-details">
@@ -40,7 +40,7 @@
 	</button>
 
 	<button type="button"
-			[routerLink]="['/', { outlets: { popup: 'hee-user/'+ heeUser.id + '/edit'} }]"
+			[routerLink]="['/', { outlets: { popup: 'hee-user/'+ heeUser.name + '/edit'} }]"
 			replaceUrl="true"
 			class="btn btn-primary">
 		<span class="fa fa-pencil"></span>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>

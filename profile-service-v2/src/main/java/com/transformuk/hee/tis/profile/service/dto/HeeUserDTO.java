@@ -10,8 +10,6 @@ import java.util.Objects;
  */
 public class HeeUserDTO implements Serializable {
 
-	private Long id;
-
 	@NotNull
 	private String name;
 
@@ -26,14 +24,6 @@ public class HeeUserDTO implements Serializable {
 	private String emailAddress;
 
 	private Boolean active;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
 
 	public String getName() {
 		return name;
@@ -102,7 +92,7 @@ public class HeeUserDTO implements Serializable {
 
 		HeeUserDTO heeUserDTO = (HeeUserDTO) o;
 
-		if (!Objects.equals(id, heeUserDTO.id)) {
+		if (!Objects.equals(name, heeUserDTO.name)) {
 			return false;
 		}
 
@@ -111,14 +101,13 @@ public class HeeUserDTO implements Serializable {
 
 	@Override
 	public int hashCode() {
-		return Objects.hashCode(id);
+		return Objects.hashCode(name);
 	}
 
 	@Override
 	public String toString() {
 		return "HeeUserDTO{" +
-				"id=" + id +
-				", name='" + name + "'" +
+				"name='" + name + "'" +
 				", firstName='" + firstName + "'" +
 				", lastName='" + lastName + "'" +
 				", gmcId='" + gmcId + "'" +

@@ -35,7 +35,7 @@ export class HeeUserDialogComponent implements OnInit {
 
 	save() {
 		this.isSaving = true;
-		if (this.heeUser.id !== undefined) {
+		if (this.heeUser.name !== undefined) {
 			this.heeUserService.update(this.heeUser)
 				.subscribe((res: HeeUser) =>
 					this.onSaveSuccess(res), (res: Response) => this.onSaveError(res.json()));
@@ -77,9 +77,9 @@ export class HeeUserPopupComponent implements OnInit, OnDestroy {
 
 	ngOnInit() {
 		this.routeSub = this.route.params.subscribe(params => {
-			if (params['id']) {
+			if (params['name']) {
 				this.modalRef = this.heeUserPopupService
-					.open(HeeUserDialogComponent, params['id']);
+					.open(HeeUserDialogComponent, params['name']);
 			} else {
 				this.modalRef = this.heeUserPopupService
 					.open(HeeUserDialogComponent);

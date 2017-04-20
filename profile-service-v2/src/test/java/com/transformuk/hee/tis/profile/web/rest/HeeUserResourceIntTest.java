@@ -46,8 +46,8 @@ public class HeeUserResourceIntTest {
 	private static final String DEFAULT_LAST_NAME = "AAAAAAAAAA";
 	private static final String UPDATED_LAST_NAME = "BBBBBBBBBB";
 
-	private static final String DEFAULT_GMC_ID = "AAAAAAAAAA";
-	private static final String UPDATED_GMC_ID = "BBBBBBBBBB";
+	private static final String DEFAULT_GMC_ID = "1234567";
+	private static final String UPDATED_GMC_ID = "7654321";
 
 	private static final String DEFAULT_PHONE_NUMBER = "AAAAAAAAAA";
 	private static final String UPDATED_PHONE_NUMBER = "BBBBBBBBBB";
@@ -143,19 +143,19 @@ public class HeeUserResourceIntTest {
 	public void createHeeUserWithExistingId() throws Exception {
 		int databaseSizeBeforeCreate = heeUserRepository.findAll().size();
 
-		// Create the HeeUser with an existing ID
-		heeUser.setId(1L);
+		// Create the HeeUser with an existing name
+		heeUser.setName(DEFAULT_NAME);
 		HeeUserDTO heeUserDTO = heeUserMapper.heeUserToHeeUserDTO(heeUser);
 
-		// An entity with an existing ID cannot be created, so this API call must fail
+		// A user with the same name will update the existing user
 		restHeeUserMockMvc.perform(post("/api/hee-users")
 				.contentType(TestUtil.APPLICATION_JSON_UTF8)
 				.content(TestUtil.convertObjectToJsonBytes(heeUserDTO)))
-				.andExpect(status().isBadRequest());
+				.andExpect(status().isCreated());
 
 		// Validate the Alice in the database
 		List<HeeUser> heeUserList = heeUserRepository.findAll();
-		assertThat(heeUserList).hasSize(databaseSizeBeforeCreate);
+		assertThat(heeUserList).hasSize(databaseSizeBeforeCreate + 1);
 	}
 
 	@Test
@@ -184,10 +184,9 @@ public class HeeUserResourceIntTest {
 		heeUserRepository.saveAndFlush(heeUser);
 
 		// Get all the heeUserList
-		restHeeUserMockMvc.perform(get("/api/hee-users?sort=id,desc"))
+		restHeeUserMockMvc.perform(get("/api/hee-users?sort=name,desc"))
 				.andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-				.andExpect(jsonPath("$.[*].id").value(hasItem(heeUser.getId().intValue())))
 				.andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
 				.andExpect(jsonPath("$.[*].firstName").value(hasItem(DEFAULT_FIRST_NAME.toString())))
 				.andExpect(jsonPath("$.[*].lastName").value(hasItem(DEFAULT_LAST_NAME.toString())))
@@ -204,10 +203,9 @@ public class HeeUserResourceIntTest {
 		heeUserRepository.saveAndFlush(heeUser);
 
 		// Get the heeUser
-		restHeeUserMockMvc.perform(get("/api/hee-users/{id}", heeUser.getId()))
+		restHeeUserMockMvc.perform(get("/api/hee-users/{id}", heeUser.getName()))
 				.andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-				.andExpect(jsonPath("$.id").value(heeUser.getId().intValue()))
 				.andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()))
 				.andExpect(jsonPath("$.firstName").value(DEFAULT_FIRST_NAME.toString()))
 				.andExpect(jsonPath("$.lastName").value(DEFAULT_LAST_NAME.toString()))
@@ -233,9 +231,8 @@ public class HeeUserResourceIntTest {
 		int databaseSizeBeforeUpdate = heeUserRepository.findAll().size();
 
 		// Update the heeUser
-		HeeUser updatedHeeUser = heeUserRepository.findOne(heeUser.getId());
+		HeeUser updatedHeeUser = heeUserRepository.findOne(heeUser.getName());
 		updatedHeeUser
-				.name(UPDATED_NAME)
 				.firstName(UPDATED_FIRST_NAME)
 				.lastName(UPDATED_LAST_NAME)
 				.gmcId(UPDATED_GMC_ID)
@@ -253,7 +250,7 @@ public class HeeUserResourceIntTest {
 		List<HeeUser> heeUserList = heeUserRepository.findAll();
 		assertThat(heeUserList).hasSize(databaseSizeBeforeUpdate);
 		HeeUser testHeeUser = heeUserList.get(heeUserList.size() - 1);
-		assertThat(testHeeUser.getName()).isEqualTo(UPDATED_NAME);
+		assertThat(testHeeUser.getName()).isEqualTo(DEFAULT_NAME);
 		assertThat(testHeeUser.getFirstName()).isEqualTo(UPDATED_FIRST_NAME);
 		assertThat(testHeeUser.getLastName()).isEqualTo(UPDATED_LAST_NAME);
 		assertThat(testHeeUser.getGmcId()).isEqualTo(UPDATED_GMC_ID);
@@ -269,12 +266,13 @@ public class HeeUserResourceIntTest {
 
 		// Create the HeeUser
 		HeeUserDTO heeUserDTO = heeUserMapper.heeUserToHeeUserDTO(heeUser);
+		heeUserDTO.setName(UPDATED_NAME);
 
 		// If the entity doesn't have an ID, it will be created instead of just being updated
 		restHeeUserMockMvc.perform(put("/api/hee-users")
 				.contentType(TestUtil.APPLICATION_JSON_UTF8)
 				.content(TestUtil.convertObjectToJsonBytes(heeUserDTO)))
-				.andExpect(status().isCreated());
+				.andExpect(status().isOk());
 
 		// Validate the HeeUser in the database
 		List<HeeUser> heeUserList = heeUserRepository.findAll();
@@ -289,7 +287,7 @@ public class HeeUserResourceIntTest {
 		int databaseSizeBeforeDelete = heeUserRepository.findAll().size();
 
 		// Get the heeUser
-		restHeeUserMockMvc.perform(delete("/api/hee-users/{id}", heeUser.getId())
+		restHeeUserMockMvc.perform(delete("/api/hee-users/{id}", heeUser.getName())
 				.accept(TestUtil.APPLICATION_JSON_UTF8))
 				.andExpect(status().isOk());
 

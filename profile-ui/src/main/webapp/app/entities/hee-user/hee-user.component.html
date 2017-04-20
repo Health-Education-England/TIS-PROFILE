@@ -17,7 +17,6 @@
 		<table class="table table-striped">
 			<thead>
 			<tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
-				<th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <span class="fa fa-sort"></span></th>
 				<th jhiSortBy="name"><span jhiTranslate="profileApp.heeUser.name">Name</span> <span
 						class="fa fa-sort"></span></th>
 				<th jhiSortBy="firstName"><span jhiTranslate="profileApp.heeUser.firstName">First Name</span> <span
@@ -37,8 +36,7 @@
 			</thead>
 			<tbody>
 			<tr *ngFor="let heeUser of heeUsers ;trackBy: trackId">
-				<td><a [routerLink]="['../hee-user', heeUser.id ]">{{heeUser.id}}</a></td>
-				<td>{{heeUser.name}}</td>
+				<td><a [routerLink]="['../hee-user', heeUser.name ]">{{heeUser.name}}</a></td>
 				<td>{{heeUser.firstName}}</td>
 				<td>{{heeUser.lastName}}</td>
 				<td>{{heeUser.gmcId}}</td>
@@ -48,20 +46,20 @@
 				<td class="text-right">
 					<div class="btn-group flex-btn-group-container">
 						<button type="submit"
-								[routerLink]="['../hee-user', heeUser.id ]"
+								[routerLink]="['../hee-user', heeUser.name ]"
 								class="btn btn-info btn-sm">
 							<span class="fa fa-eye"></span>
 							<span class="hidden-md-down" jhiTranslate="entity.action.view">View</span>
 						</button>
 						<button type="submit"
-								[routerLink]="['/', { outlets: { popup: 'hee-user/'+ heeUser.id + '/edit'} }]"
+								[routerLink]="['/', { outlets: { popup: 'hee-user/'+ heeUser.name + '/edit'} }]"
 								replaceUrl="true"
 								class="btn btn-primary btn-sm">
 							<span class="fa fa-pencil"></span>
 							<span class="hidden-md-down" jhiTranslate="entity.action.edit">Edit</span>
 						</button>
 						<button type="submit"
-								[routerLink]="['/', { outlets: { popup: 'hee-user/'+ heeUser.id + '/delete'} }]"
+								[routerLink]="['/', { outlets: { popup: 'hee-user/'+ heeUser.name + '/delete'} }]"
 								replaceUrl="true"
 								class="btn btn-danger btn-sm">
 							<span class="fa fa-remove"></span>

@@ -37,19 +37,6 @@ CREATE TABLE `GmcDetails` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Create syntax for TABLE 'HeeUser'
-CREATE TABLE `HeeUser` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL,
-  `firstName` varchar(255) DEFAULT NULL,
-  `lastName` varchar(255) DEFAULT NULL,
-  `gmcId` varchar(255) DEFAULT NULL,
-  `phoneNumber` varchar(255) DEFAULT NULL,
-  `emailAddress` varchar(255) DEFAULT NULL,
-  `active` bit(1) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 -- Create syntax for TABLE 'Immigration'
 CREATE TABLE `Immigration` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,

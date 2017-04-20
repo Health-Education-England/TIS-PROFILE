@@ -12,14 +12,14 @@ export class HeeUserPopupService {
 				private heeUserService: HeeUserService) {
 	}
 
-	open(component: Component, id?: number | any): NgbModalRef {
+	open(component: Component, name?: string | any): NgbModalRef {
 		if (this.isOpen) {
 			return;
 		}
 		this.isOpen = true;
 
-		if (id) {
-			this.heeUserService.find(id).subscribe(heeUser => {
+		if (name) {
+			this.heeUserService.find(name).subscribe(heeUser => {
 				this.heeUserModalRef(component, heeUser);
 			});
 		} else {

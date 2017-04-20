@@ -1,6 +1,5 @@
 export class HeeUser {
-	constructor(public id?: number,
-				public name?: string,
+	constructor(public name?: string,
 				public firstName?: string,
 				public lastName?: string,
 				public gmcId?: string,

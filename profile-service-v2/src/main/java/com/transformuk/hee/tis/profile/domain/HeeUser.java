@@ -18,9 +18,6 @@ public class HeeUser implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-
 	@NotNull
 	@Column(name = "name", nullable = false)
 	private String name;
@@ -36,14 +33,6 @@ public class HeeUser implements Serializable {
 	private String emailAddress;
 
 	private Boolean active;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
 
 	public String getName() {
 		return name;
@@ -145,22 +134,21 @@ public class HeeUser implements Serializable {
 			return false;
 		}
 		HeeUser heeUser = (HeeUser) o;
-		if (heeUser.id == null || id == null) {
+		if (heeUser.name == null || name == null) {
 			return false;
 		}
-		return Objects.equals(id, heeUser.id);
+		return Objects.equals(name, heeUser.name);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hashCode(id);
+		return Objects.hashCode(name);
 	}
 
 	@Override
 	public String toString() {
 		return "HeeUser{" +
-				"id=" + id +
-				", name='" + name + "'" +
+				"name='" + name + "'" +
 				", firstName='" + firstName + "'" +
 				", lastName='" + lastName + "'" +
 				", gmcId='" + gmcId + "'" +

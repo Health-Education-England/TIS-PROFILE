@@ -25,8 +25,8 @@ export class HeeUserDeleteDialogComponent {
 		this.activeModal.dismiss('cancel');
 	}
 
-	confirmDelete(id: number) {
-		this.heeUserService.delete(id).subscribe(response => {
+	confirmDelete(name: string) {
+		this.heeUserService.delete(name).subscribe(response => {
 			this.eventManager.broadcast({
 				name: 'heeUserListModification',
 				content: 'Deleted an heeUser'
@@ -52,7 +52,7 @@ export class HeeUserDeletePopupComponent implements OnInit, OnDestroy {
 	ngOnInit() {
 		this.routeSub = this.route.params.subscribe(params => {
 			this.modalRef = this.heeUserPopupService
-				.open(HeeUserDeleteDialogComponent, params['id']);
+				.open(HeeUserDeleteDialogComponent, params['name']);
 		});
 	}
 

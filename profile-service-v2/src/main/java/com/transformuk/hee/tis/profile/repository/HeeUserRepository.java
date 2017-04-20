@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * Spring Data JPA repository for the HeeUser entity.
  */
 @SuppressWarnings("unused")
-public interface HeeUserRepository extends JpaRepository<HeeUser, Long> {
+public interface HeeUserRepository extends JpaRepository<HeeUser, String> {
 
 }

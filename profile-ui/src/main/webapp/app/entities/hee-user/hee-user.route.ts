@@ -15,7 +15,7 @@ export class HeeUserResolvePagingParams implements Resolve<any> {
 
 	resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
 		let page = route.queryParams['page'] ? route.queryParams['page'] : '1';
-		let sort = route.queryParams['sort'] ? route.queryParams['sort'] : 'id,asc';
+		let sort = route.queryParams['sort'] ? route.queryParams['sort'] : 'name,asc';
 		return {
 			page: this.paginationUtil.parsePage(page),
 			predicate: this.paginationUtil.parsePredicate(sort),
@@ -36,7 +36,7 @@ export const heeUserRoute: Routes = [
 			pageTitle: 'profileApp.heeUser.home.title'
 		}
 	}, {
-		path: 'hee-user/:id',
+		path: 'hee-user/:name',
 		component: HeeUserDetailComponent,
 		data: {
 			authorities: ['ROLE_USER'],
@@ -56,7 +56,7 @@ export const heeUserPopupRoute: Routes = [
 		outlet: 'popup'
 	},
 	{
-		path: 'hee-user/:id/edit',
+		path: 'hee-user/:name/edit',
 		component: HeeUserPopupComponent,
 		data: {
 			authorities: ['ROLE_USER'],
@@ -65,7 +65,7 @@ export const heeUserPopupRoute: Routes = [
 		outlet: 'popup'
 	},
 	{
-		path: 'hee-user/:id/delete',
+		path: 'hee-user/:name/delete',
 		component: HeeUserDeletePopupComponent,
 		data: {
 			authorities: ['ROLE_USER'],

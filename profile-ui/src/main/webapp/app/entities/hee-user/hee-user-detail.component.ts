@@ -21,12 +21,12 @@ export class HeeUserDetailComponent implements OnInit, OnDestroy {
 
 	ngOnInit() {
 		this.subscription = this.route.params.subscribe(params => {
-			this.load(params['id']);
+			this.load(params['name']);
 		});
 	}
 
-	load(id) {
-		this.heeUserService.find(id).subscribe(heeUser => {
+	load(name) {
+		this.heeUserService.find(name).subscribe(heeUser => {
 			this.heeUser = heeUser;
 		});
 	}

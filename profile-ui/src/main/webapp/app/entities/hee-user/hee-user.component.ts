@@ -100,7 +100,7 @@ export class HeeUserComponent implements OnInit, OnDestroy {
 	}
 
 	trackId(index: number, item: HeeUser) {
-		return item.id;
+		return item.name;
 	}
 
 
@@ -110,8 +110,8 @@ export class HeeUserComponent implements OnInit, OnDestroy {
 
 	sort() {
 		let result = [this.predicate + ',' + (this.reverse ? 'asc' : 'desc')];
-		if (this.predicate !== 'id') {
-			result.push('id');
+		if (this.predicate !== 'name') {
+			result.push('name');
 		}
 		return result;
 	}

@@ -53,14 +53,11 @@ public class HeeUserResource {
 	@Timed
 	public ResponseEntity<HeeUserDTO> createHeeUser(@Valid @RequestBody HeeUserDTO heeUserDTO) throws URISyntaxException {
 		log.debug("REST request to save HeeUser : {}", heeUserDTO);
-		if (heeUserDTO.getId() != null) {
-			return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new heeUser cannot already have an ID")).body(null);
-		}
 		HeeUser heeUser = heeUserMapper.heeUserDTOToHeeUser(heeUserDTO);
 		heeUser = heeUserRepository.save(heeUser);
 		HeeUserDTO result = heeUserMapper.heeUserToHeeUserDTO(heeUser);
-		return ResponseEntity.created(new URI("/api/hee-users/" + result.getId()))
-				.headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
+		return ResponseEntity.created(new URI("/api/hee-users/" + result.getName()))
+				.headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getName()))
 				.body(result);
 	}
 
@@ -77,14 +74,14 @@ public class HeeUserResource {
 	@Timed
 	public ResponseEntity<HeeUserDTO> updateHeeUser(@Valid @RequestBody HeeUserDTO heeUserDTO) throws URISyntaxException {
 		log.debug("REST request to update HeeUser : {}", heeUserDTO);
-		if (heeUserDTO.getId() == null) {
+		if (heeUserDTO.getName() == null) {
 			return createHeeUser(heeUserDTO);
 		}
 		HeeUser heeUser = heeUserMapper.heeUserDTOToHeeUser(heeUserDTO);
 		heeUser = heeUserRepository.save(heeUser);
 		HeeUserDTO result = heeUserMapper.heeUserToHeeUserDTO(heeUser);
 		return ResponseEntity.ok()
-				.headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, heeUserDTO.getId().toString()))
+				.headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, heeUserDTO.getName().toString()))
 				.body(result);
 	}
 
@@ -105,32 +102,32 @@ public class HeeUserResource {
 	}
 
 	/**
-	 * GET  /hee-users/:id : get the "id" heeUser.
+	 * GET  /hee-users/:name : get the "name" heeUser.
 	 *
-	 * @param id the id of the heeUserDTO to retrieve
+	 * @param name the name of the heeUserDTO to retrieve
 	 * @return the ResponseEntity with status 200 (OK) and with body the heeUserDTO, or with status 404 (Not Found)
 	 */
-	@GetMapping("/hee-users/{id}")
+	@GetMapping("/hee-users/{name}")
 	@Timed
-	public ResponseEntity<HeeUserDTO> getHeeUser(@PathVariable Long id) {
-		log.debug("REST request to get HeeUser : {}", id);
-		HeeUser heeUser = heeUserRepository.findOne(id);
+	public ResponseEntity<HeeUserDTO> getHeeUser(@PathVariable String name) {
+		log.debug("REST request to get HeeUser : {}", name);
+		HeeUser heeUser = heeUserRepository.findOne(name);
 		HeeUserDTO heeUserDTO = heeUserMapper.heeUserToHeeUserDTO(heeUser);
 		return ResponseUtil.wrapOrNotFound(Optional.ofNullable(heeUserDTO));
 	}
 
 	/**
-	 * DELETE  /hee-users/:id : delete the "id" heeUser.
+	 * DELETE  /hee-users/:name : delete the "name" heeUser.
 	 *
-	 * @param id the id of the heeUserDTO to delete
+	 * @param name the name of the heeUserDTO to delete
 	 * @return the ResponseEntity with status 200 (OK)
 	 */
-	@DeleteMapping("/hee-users/{id}")
+	@DeleteMapping("/hee-users/{name}")
 	@Timed
-	public ResponseEntity<Void> deleteHeeUser(@PathVariable Long id) {
-		log.debug("REST request to delete HeeUser : {}", id);
-		heeUserRepository.delete(id);
-		return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
+	public ResponseEntity<Void> deleteHeeUser(@PathVariable String name) {
+		log.debug("REST request to delete HeeUser : {}", name);
+		heeUserRepository.delete(name);
+		return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, name)).build();
 	}
 
 }
