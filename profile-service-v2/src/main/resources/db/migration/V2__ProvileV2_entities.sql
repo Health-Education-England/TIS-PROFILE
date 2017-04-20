@@ -1,3 +1,5 @@
+ALTER TABLE HeeUser MODIFY active BIT;
+
 -- Create syntax for TABLE 'EqualityAndDiversity'
 CREATE TABLE `EqualityAndDiversity` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
