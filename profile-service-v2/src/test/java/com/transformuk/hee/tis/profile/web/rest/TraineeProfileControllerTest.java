@@ -2,11 +2,14 @@ package com.transformuk.hee.tis.profile.web.rest;
 
 
 import com.transformuk.hee.tis.profile.ProfileApp;
-import com.transformuk.hee.tis.profile.dto.RegistrationRequest;
 import com.transformuk.hee.tis.profile.domain.TraineeProfile;
+import com.transformuk.hee.tis.profile.dto.RegistrationRequest;
 import com.transformuk.hee.tis.profile.service.TraineeProfileService;
+import com.transformuk.hee.tis.profile.web.rest.errors.ExceptionTranslator;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -14,9 +17,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static org.mockito.BDDMockito.given;
@@ -36,11 +42,27 @@ public class TraineeProfileControllerTest {
 	private static final Long TIS_ID = 1L;
 	private static final String REQUEST = "[ { \"gmcNumber\": \"gmc123\" } ]";
 
+	@Autowired
+	private MappingJackson2HttpMessageConverter jacksonMessageConverter;
+	@Autowired
+	private PageableHandlerMethodArgumentResolver pageableArgumentResolver;
+	@Autowired
+	private ExceptionTranslator exceptionTranslator;
+
 	@MockBean
 	private TraineeProfileService traineeProfileService;
 
-	@Autowired
 	private MockMvc mvc;
+
+	@Before
+	public void setup() {
+		MockitoAnnotations.initMocks(this);
+		TraineeProfileController profileController = new TraineeProfileController(traineeProfileService);
+		this.mvc = MockMvcBuilders.standaloneSetup(profileController)
+				.setCustomArgumentResolvers(pageableArgumentResolver)
+				.setControllerAdvice(exceptionTranslator)
+				.setMessageConverters(jacksonMessageConverter).build();
+	}
 
 	@Test
 	public void shouldReturnTraineeIds() throws Exception {
