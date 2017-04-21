@@ -137,7 +137,7 @@ public class HeeUser implements Serializable {
 		this.active = active;
 	}
 
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinTable(name = "UserRole", joinColumns = @JoinColumn(name = "userName", referencedColumnName = "name"),
 			inverseJoinColumns = @JoinColumn(name = "roleName", referencedColumnName = "name"))
 	public Set<Role> getRoles() {
