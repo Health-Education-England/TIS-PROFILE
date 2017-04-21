@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -51,6 +52,7 @@ public class RoleResource {
 	 */
 	@PostMapping("/roles")
 	@Timed
+	@PreAuthorize("hasAuthority('profile:add:modify:entities')")
 	public ResponseEntity<RoleDTO> createRole(@Valid @RequestBody RoleDTO roleDTO) throws URISyntaxException {
 		log.debug("REST request to save Role : {}", roleDTO);
 		Role role = roleMapper.roleDTOToRole(roleDTO);
@@ -74,6 +76,7 @@ public class RoleResource {
 	 */
 	@PutMapping("/roles")
 	@Timed
+	@PreAuthorize("hasAuthority('profile:add:modify:entities')")
 	public ResponseEntity<RoleDTO> updateRole(@Valid @RequestBody RoleDTO roleDTO) throws URISyntaxException {
 		log.debug("REST request to update Role : {}", roleDTO);
 		return createRole(roleDTO);
@@ -88,6 +91,7 @@ public class RoleResource {
 	 */
 	@GetMapping("/roles")
 	@Timed
+	@PreAuthorize("hasAuthority('profile:view:entities')")
 	public ResponseEntity<List<RoleDTO>> getAllRoles(@ApiParam Pageable pageable) {
 		log.debug("REST request to get a page of Roles");
 		Page<Role> page = roleRepository.findAll(pageable);
@@ -103,6 +107,7 @@ public class RoleResource {
 	 */
 	@GetMapping("/roles/{name}")
 	@Timed
+	@PreAuthorize("hasAuthority('profile:view:entities')")
 	public ResponseEntity<RoleDTO> getRole(@PathVariable String name) {
 		log.debug("REST request to get Role : {}", name);
 		Role role = roleRepository.findOne(name);
@@ -118,6 +123,7 @@ public class RoleResource {
 	 */
 	@DeleteMapping("/roles/{name}")
 	@Timed
+	@PreAuthorize("hasAuthority('profile:delete:entities')")
 	public ResponseEntity<Void> deleteRole(@PathVariable String name) {
 		log.debug("REST request to delete Role : {}", name);
 		roleRepository.delete(name);

@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -51,6 +52,7 @@ public class ImmigrationResource {
 	 */
 	@PostMapping("/immigrations")
 	@Timed
+	@PreAuthorize("hasAuthority('profile:add:modify:entities')")
 	public ResponseEntity<ImmigrationDTO> createImmigration(@Valid @RequestBody ImmigrationDTO immigrationDTO) throws URISyntaxException {
 		log.debug("REST request to save Immigration : {}", immigrationDTO);
 		if (immigrationDTO.getId() != null) {
@@ -75,6 +77,7 @@ public class ImmigrationResource {
 	 */
 	@PutMapping("/immigrations")
 	@Timed
+	@PreAuthorize("hasAuthority('profile:add:modify:entities')")
 	public ResponseEntity<ImmigrationDTO> updateImmigration(@Valid @RequestBody ImmigrationDTO immigrationDTO) throws URISyntaxException {
 		log.debug("REST request to update Immigration : {}", immigrationDTO);
 		if (immigrationDTO.getId() == null) {
@@ -97,6 +100,7 @@ public class ImmigrationResource {
 	 */
 	@GetMapping("/immigrations")
 	@Timed
+	@PreAuthorize("hasAuthority('profile:view:entities')")
 	public ResponseEntity<List<ImmigrationDTO>> getAllImmigrations(@ApiParam Pageable pageable) {
 		log.debug("REST request to get a page of Immigrations");
 		Page<Immigration> page = immigrationRepository.findAll(pageable);
@@ -112,6 +116,7 @@ public class ImmigrationResource {
 	 */
 	@GetMapping("/immigrations/{id}")
 	@Timed
+	@PreAuthorize("hasAuthority('profile:view:entities')")
 	public ResponseEntity<ImmigrationDTO> getImmigration(@PathVariable Long id) {
 		log.debug("REST request to get Immigration : {}", id);
 		Immigration immigration = immigrationRepository.findOne(id);
@@ -127,6 +132,7 @@ public class ImmigrationResource {
 	 */
 	@DeleteMapping("/immigrations/{id}")
 	@Timed
+	@PreAuthorize("hasAuthority('profile:delete:entities')")
 	public ResponseEntity<Void> deleteImmigration(@PathVariable Long id) {
 		log.debug("REST request to delete Immigration : {}", id);
 		immigrationRepository.delete(id);

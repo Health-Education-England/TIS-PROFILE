@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -51,6 +52,7 @@ public class GmcDetailsResource {
 	 */
 	@PostMapping("/gmc-details")
 	@Timed
+	@PreAuthorize("hasAuthority('profile:add:modify:entities')")
 	public ResponseEntity<GmcDetailsDTO> createGmcDetails(@Valid @RequestBody GmcDetailsDTO gmcDetailsDTO) throws URISyntaxException {
 		log.debug("REST request to save GmcDetails : {}", gmcDetailsDTO);
 		if (gmcDetailsDTO.getId() != null) {
@@ -75,6 +77,7 @@ public class GmcDetailsResource {
 	 */
 	@PutMapping("/gmc-details")
 	@Timed
+	@PreAuthorize("hasAuthority('profile:add:modify:entities')")
 	public ResponseEntity<GmcDetailsDTO> updateGmcDetails(@Valid @RequestBody GmcDetailsDTO gmcDetailsDTO) throws URISyntaxException {
 		log.debug("REST request to update GmcDetails : {}", gmcDetailsDTO);
 		if (gmcDetailsDTO.getId() == null) {
@@ -97,6 +100,7 @@ public class GmcDetailsResource {
 	 */
 	@GetMapping("/gmc-details")
 	@Timed
+	@PreAuthorize("hasAuthority('profile:view:entities')")
 	public ResponseEntity<List<GmcDetailsDTO>> getAllGmcDetails(@ApiParam Pageable pageable) {
 		log.debug("REST request to get a page of GmcDetails");
 		Page<GmcDetails> page = gmcDetailsRepository.findAll(pageable);
@@ -112,6 +116,7 @@ public class GmcDetailsResource {
 	 */
 	@GetMapping("/gmc-details/{id}")
 	@Timed
+	@PreAuthorize("hasAuthority('profile:view:entities')")
 	public ResponseEntity<GmcDetailsDTO> getGmcDetails(@PathVariable Long id) {
 		log.debug("REST request to get GmcDetails : {}", id);
 		GmcDetails gmcDetails = gmcDetailsRepository.findOne(id);
@@ -127,6 +132,7 @@ public class GmcDetailsResource {
 	 */
 	@DeleteMapping("/gmc-details/{id}")
 	@Timed
+	@PreAuthorize("hasAuthority('profile:delete:entities')")
 	public ResponseEntity<Void> deleteGmcDetails(@PathVariable Long id) {
 		log.debug("REST request to delete GmcDetails : {}", id);
 		gmcDetailsRepository.delete(id);

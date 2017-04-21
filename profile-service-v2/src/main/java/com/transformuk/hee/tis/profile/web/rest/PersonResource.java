@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -51,6 +52,7 @@ public class PersonResource {
 	 */
 	@PostMapping("/people")
 	@Timed
+	@PreAuthorize("hasAuthority('profile:add:modify:entities')")
 	public ResponseEntity<PersonDTO> createPerson(@Valid @RequestBody PersonDTO personDTO) throws URISyntaxException {
 		log.debug("REST request to save Person : {}", personDTO);
 		if (personDTO.getId() != null) {
@@ -75,6 +77,7 @@ public class PersonResource {
 	 */
 	@PutMapping("/people")
 	@Timed
+	@PreAuthorize("hasAuthority('profile:add:modify:entities')")
 	public ResponseEntity<PersonDTO> updatePerson(@Valid @RequestBody PersonDTO personDTO) throws URISyntaxException {
 		log.debug("REST request to update Person : {}", personDTO);
 		if (personDTO.getId() == null) {
@@ -97,6 +100,7 @@ public class PersonResource {
 	 */
 	@GetMapping("/people")
 	@Timed
+	@PreAuthorize("hasAuthority('profile:view:entities')")
 	public ResponseEntity<List<PersonDTO>> getAllPeople(@ApiParam Pageable pageable) {
 		log.debug("REST request to get a page of People");
 		Page<Person> page = personRepository.findAll(pageable);
@@ -112,6 +116,7 @@ public class PersonResource {
 	 */
 	@GetMapping("/people/{id}")
 	@Timed
+	@PreAuthorize("hasAuthority('profile:view:entities')")
 	public ResponseEntity<PersonDTO> getPerson(@PathVariable Long id) {
 		log.debug("REST request to get Person : {}", id);
 		Person person = personRepository.findOne(id);
@@ -127,6 +132,7 @@ public class PersonResource {
 	 */
 	@DeleteMapping("/people/{id}")
 	@Timed
+	@PreAuthorize("hasAuthority('profile:delete:entities')")
 	public ResponseEntity<Void> deletePerson(@PathVariable Long id) {
 		log.debug("REST request to delete Person : {}", id);
 		personRepository.delete(id);

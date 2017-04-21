@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -51,6 +52,7 @@ public class PermissionResource {
 	 */
 	@PostMapping("/permissions")
 	@Timed
+	@PreAuthorize("hasAuthority('profile:add:modify:entities')")
 	public ResponseEntity<PermissionDTO> createPermission(@Valid @RequestBody PermissionDTO permissionDTO) throws URISyntaxException {
 		log.debug("REST request to save Permission : {}", permissionDTO);
 		Permission permission = permissionMapper.permissionDTOToPermission(permissionDTO);
@@ -73,6 +75,7 @@ public class PermissionResource {
 	 */
 	@PutMapping("/permissions")
 	@Timed
+	@PreAuthorize("hasAuthority('profile:add:modify:entities')")
 	public ResponseEntity<PermissionDTO> updatePermission(@Valid @RequestBody PermissionDTO permissionDTO) throws URISyntaxException {
 		log.debug("REST request to update Permission : {}", permissionDTO);
 		return createPermission(permissionDTO);
@@ -87,6 +90,7 @@ public class PermissionResource {
 	 */
 	@GetMapping("/permissions")
 	@Timed
+	@PreAuthorize("hasAuthority('profile:view:entities')")
 	public ResponseEntity<List<PermissionDTO>> getAllPermissions(@ApiParam Pageable pageable) {
 		log.debug("REST request to get a page of Permissions");
 		Page<Permission> page = permissionRepository.findAll(pageable);
@@ -102,6 +106,7 @@ public class PermissionResource {
 	 */
 	@GetMapping("/permissions/{name}")
 	@Timed
+	@PreAuthorize("hasAuthority('profile:view:entities')")
 	public ResponseEntity<PermissionDTO> getPermission(@PathVariable String name) {
 		log.debug("REST request to get Permission : {}", name);
 		Permission permission = permissionRepository.findOne(name);
@@ -117,6 +122,7 @@ public class PermissionResource {
 	 */
 	@DeleteMapping("/permissions/{name}")
 	@Timed
+	@PreAuthorize("hasAuthority('profile:delete:entities')")
 	public ResponseEntity<Void> deletePermission(@PathVariable String name) {
 		log.debug("REST request to delete Permission : {}", name);
 		permissionRepository.delete(name);

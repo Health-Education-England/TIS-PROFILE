@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -51,6 +52,7 @@ public class QualificationResource {
 	 */
 	@PostMapping("/qualifications")
 	@Timed
+	@PreAuthorize("hasAuthority('profile:add:modify:entities')")
 	public ResponseEntity<QualificationDTO> createQualification(@Valid @RequestBody QualificationDTO qualificationDTO) throws URISyntaxException {
 		log.debug("REST request to save Qualification : {}", qualificationDTO);
 		if (qualificationDTO.getId() != null) {
@@ -75,6 +77,7 @@ public class QualificationResource {
 	 */
 	@PutMapping("/qualifications")
 	@Timed
+	@PreAuthorize("hasAuthority('profile:add:modify:entities')")
 	public ResponseEntity<QualificationDTO> updateQualification(@Valid @RequestBody QualificationDTO qualificationDTO) throws URISyntaxException {
 		log.debug("REST request to update Qualification : {}", qualificationDTO);
 		if (qualificationDTO.getId() == null) {
@@ -97,6 +100,7 @@ public class QualificationResource {
 	 */
 	@GetMapping("/qualifications")
 	@Timed
+	@PreAuthorize("hasAuthority('profile:view:entities')")
 	public ResponseEntity<List<QualificationDTO>> getAllQualifications(@ApiParam Pageable pageable) {
 		log.debug("REST request to get a page of Qualifications");
 		Page<Qualification> page = qualificationRepository.findAll(pageable);
@@ -112,6 +116,7 @@ public class QualificationResource {
 	 */
 	@GetMapping("/qualifications/{id}")
 	@Timed
+	@PreAuthorize("hasAuthority('profile:view:entities')")
 	public ResponseEntity<QualificationDTO> getQualification(@PathVariable Long id) {
 		log.debug("REST request to get Qualification : {}", id);
 		Qualification qualification = qualificationRepository.findOne(id);
@@ -127,6 +132,7 @@ public class QualificationResource {
 	 */
 	@DeleteMapping("/qualifications/{id}")
 	@Timed
+	@PreAuthorize("hasAuthority('profile:delete:entities')")
 	public ResponseEntity<Void> deleteQualification(@PathVariable Long id) {
 		log.debug("REST request to delete Qualification : {}", id);
 		qualificationRepository.delete(id);

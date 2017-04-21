@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -51,6 +52,7 @@ public class EqualityAndDiversityResource {
 	 */
 	@PostMapping("/equality-and-diversities")
 	@Timed
+	@PreAuthorize("hasAuthority('profile:add:modify:entities')")
 	public ResponseEntity<EqualityAndDiversityDTO> createEqualityAndDiversity(@Valid @RequestBody EqualityAndDiversityDTO equalityAndDiversityDTO) throws URISyntaxException {
 		log.debug("REST request to save EqualityAndDiversity : {}", equalityAndDiversityDTO);
 		if (equalityAndDiversityDTO.getId() != null) {
@@ -75,6 +77,7 @@ public class EqualityAndDiversityResource {
 	 */
 	@PutMapping("/equality-and-diversities")
 	@Timed
+	@PreAuthorize("hasAuthority('profile:add:modify:entities')")
 	public ResponseEntity<EqualityAndDiversityDTO> updateEqualityAndDiversity(@Valid @RequestBody EqualityAndDiversityDTO equalityAndDiversityDTO) throws URISyntaxException {
 		log.debug("REST request to update EqualityAndDiversity : {}", equalityAndDiversityDTO);
 		if (equalityAndDiversityDTO.getId() == null) {
@@ -97,6 +100,7 @@ public class EqualityAndDiversityResource {
 	 */
 	@GetMapping("/equality-and-diversities")
 	@Timed
+	@PreAuthorize("hasAuthority('profile:view:entities')")
 	public ResponseEntity<List<EqualityAndDiversityDTO>> getAllEqualityAndDiversities(@ApiParam Pageable pageable) {
 		log.debug("REST request to get a page of EqualityAndDiversities");
 		Page<EqualityAndDiversity> page = equalityAndDiversityRepository.findAll(pageable);
@@ -112,6 +116,7 @@ public class EqualityAndDiversityResource {
 	 */
 	@GetMapping("/equality-and-diversities/{id}")
 	@Timed
+	@PreAuthorize("hasAuthority('profile:view:entities')")
 	public ResponseEntity<EqualityAndDiversityDTO> getEqualityAndDiversity(@PathVariable Long id) {
 		log.debug("REST request to get EqualityAndDiversity : {}", id);
 		EqualityAndDiversity equalityAndDiversity = equalityAndDiversityRepository.findOne(id);
@@ -127,6 +132,7 @@ public class EqualityAndDiversityResource {
 	 */
 	@DeleteMapping("/equality-and-diversities/{id}")
 	@Timed
+	@PreAuthorize("hasAuthority('profile:delete:entities')")
 	public ResponseEntity<Void> deleteEqualityAndDiversity(@PathVariable Long id) {
 		log.debug("REST request to delete EqualityAndDiversity : {}", id);
 		equalityAndDiversityRepository.delete(id);

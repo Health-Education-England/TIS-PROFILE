@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -51,6 +52,7 @@ public class ManageRecordResource {
 	 */
 	@PostMapping("/manage-records")
 	@Timed
+	@PreAuthorize("hasAuthority('profile:add:modify:entities')")
 	public ResponseEntity<ManageRecordDTO> createManageRecord(@Valid @RequestBody ManageRecordDTO manageRecordDTO) throws URISyntaxException {
 		log.debug("REST request to save ManageRecord : {}", manageRecordDTO);
 		if (manageRecordDTO.getId() != null) {
@@ -75,6 +77,7 @@ public class ManageRecordResource {
 	 */
 	@PutMapping("/manage-records")
 	@Timed
+	@PreAuthorize("hasAuthority('profile:add:modify:entities')")
 	public ResponseEntity<ManageRecordDTO> updateManageRecord(@Valid @RequestBody ManageRecordDTO manageRecordDTO) throws URISyntaxException {
 		log.debug("REST request to update ManageRecord : {}", manageRecordDTO);
 		if (manageRecordDTO.getId() == null) {
@@ -97,6 +100,7 @@ public class ManageRecordResource {
 	 */
 	@GetMapping("/manage-records")
 	@Timed
+	@PreAuthorize("hasAuthority('profile:view:entities')")
 	public ResponseEntity<List<ManageRecordDTO>> getAllManageRecords(@ApiParam Pageable pageable) {
 		log.debug("REST request to get a page of ManageRecords");
 		Page<ManageRecord> page = manageRecordRepository.findAll(pageable);
@@ -112,6 +116,7 @@ public class ManageRecordResource {
 	 */
 	@GetMapping("/manage-records/{id}")
 	@Timed
+	@PreAuthorize("hasAuthority('profile:view:entities')")
 	public ResponseEntity<ManageRecordDTO> getManageRecord(@PathVariable Long id) {
 		log.debug("REST request to get ManageRecord : {}", id);
 		ManageRecord manageRecord = manageRecordRepository.findOne(id);
@@ -127,6 +132,7 @@ public class ManageRecordResource {
 	 */
 	@DeleteMapping("/manage-records/{id}")
 	@Timed
+	@PreAuthorize("hasAuthority('profile:delete:entities')")
 	public ResponseEntity<Void> deleteManageRecord(@PathVariable Long id) {
 		log.debug("REST request to delete ManageRecord : {}", id);
 		manageRecordRepository.delete(id);

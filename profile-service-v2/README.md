@@ -82,7 +82,7 @@ And for the UI, if you have not done so already install http-server, then run:
 
     npm install http-server -g
 
-    http-server /Users/Alex/ws/hee_tis/TIS-CORE-SERVICES/ui-build -p 9088 -d false
+    http-server /Users/Alex/ws/hee_tis/TIS-CORE-SERVICES/ui-build -p 9082 -d false
 
 With the proxy server up and configured, then navigate to [http://local.alxd.com/profile/](http://local.alxd.com/profile/) in your browser.
 

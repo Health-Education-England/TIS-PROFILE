@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -51,6 +52,7 @@ public class PersonalDetailsResource {
 	 */
 	@PostMapping("/personal-details")
 	@Timed
+	@PreAuthorize("hasAuthority('profile:add:modify:entities')")
 	public ResponseEntity<PersonalDetailsDTO> createPersonalDetails(@Valid @RequestBody PersonalDetailsDTO personalDetailsDTO) throws URISyntaxException {
 		log.debug("REST request to save PersonalDetails : {}", personalDetailsDTO);
 		if (personalDetailsDTO.getId() != null) {
@@ -75,6 +77,7 @@ public class PersonalDetailsResource {
 	 */
 	@PutMapping("/personal-details")
 	@Timed
+	@PreAuthorize("hasAuthority('profile:add:modify:entities')")
 	public ResponseEntity<PersonalDetailsDTO> updatePersonalDetails(@Valid @RequestBody PersonalDetailsDTO personalDetailsDTO) throws URISyntaxException {
 		log.debug("REST request to update PersonalDetails : {}", personalDetailsDTO);
 		if (personalDetailsDTO.getId() == null) {
@@ -97,6 +100,7 @@ public class PersonalDetailsResource {
 	 */
 	@GetMapping("/personal-details")
 	@Timed
+	@PreAuthorize("hasAuthority('profile:view:entities')")
 	public ResponseEntity<List<PersonalDetailsDTO>> getAllPersonalDetails(@ApiParam Pageable pageable) {
 		log.debug("REST request to get a page of PersonalDetails");
 		Page<PersonalDetails> page = personalDetailsRepository.findAll(pageable);
@@ -112,6 +116,7 @@ public class PersonalDetailsResource {
 	 */
 	@GetMapping("/personal-details/{id}")
 	@Timed
+	@PreAuthorize("hasAuthority('profile:view:entities')")
 	public ResponseEntity<PersonalDetailsDTO> getPersonalDetails(@PathVariable Long id) {
 		log.debug("REST request to get PersonalDetails : {}", id);
 		PersonalDetails personalDetails = personalDetailsRepository.findOne(id);
@@ -127,6 +132,7 @@ public class PersonalDetailsResource {
 	 */
 	@DeleteMapping("/personal-details/{id}")
 	@Timed
+	@PreAuthorize("hasAuthority('profile:delete:entities')")
 	public ResponseEntity<Void> deletePersonalDetails(@PathVariable Long id) {
 		log.debug("REST request to delete PersonalDetails : {}", id);
 		personalDetailsRepository.delete(id);

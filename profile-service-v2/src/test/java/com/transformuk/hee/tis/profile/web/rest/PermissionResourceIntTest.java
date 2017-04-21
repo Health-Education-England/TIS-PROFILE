@@ -154,7 +154,7 @@ public class PermissionResourceIntTest {
 		permissionRepository.saveAndFlush(permission);
 
 		// Get all the permissionList
-		restPermissionMockMvc.perform(get("/api/permissions?sort=name,desc"))
+		restPermissionMockMvc.perform(get("/api/permissions?sort=name,asc"))
 				.andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
 				.andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())));

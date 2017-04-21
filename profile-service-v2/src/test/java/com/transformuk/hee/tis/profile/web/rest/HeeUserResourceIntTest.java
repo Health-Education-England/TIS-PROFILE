@@ -128,7 +128,7 @@ public class HeeUserResourceIntTest {
 		// Validate the HeeUser in the database
 		List<HeeUser> heeUserList = heeUserRepository.findAll();
 		assertThat(heeUserList).hasSize(databaseSizeBeforeCreate + 1);
-		HeeUser testHeeUser = heeUserList.get(heeUserList.size() - 1);
+		HeeUser testHeeUser = heeUserRepository.findOne(DEFAULT_NAME);
 		assertThat(testHeeUser.getName()).isEqualTo(DEFAULT_NAME);
 		assertThat(testHeeUser.getFirstName()).isEqualTo(DEFAULT_FIRST_NAME);
 		assertThat(testHeeUser.getLastName()).isEqualTo(DEFAULT_LAST_NAME);
@@ -249,7 +249,7 @@ public class HeeUserResourceIntTest {
 		// Validate the HeeUser in the database
 		List<HeeUser> heeUserList = heeUserRepository.findAll();
 		assertThat(heeUserList).hasSize(databaseSizeBeforeUpdate);
-		HeeUser testHeeUser = heeUserList.get(heeUserList.size() - 1);
+		HeeUser testHeeUser = heeUserRepository.findOne(DEFAULT_NAME);
 		assertThat(testHeeUser.getName()).isEqualTo(DEFAULT_NAME);
 		assertThat(testHeeUser.getFirstName()).isEqualTo(UPDATED_FIRST_NAME);
 		assertThat(testHeeUser.getLastName()).isEqualTo(UPDATED_LAST_NAME);

@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -51,6 +52,7 @@ public class HeeUserResource {
 	 */
 	@PostMapping("/hee-users")
 	@Timed
+	@PreAuthorize("hasAuthority('profile:add:modify:entities')")
 	public ResponseEntity<HeeUserDTO> createHeeUser(@Valid @RequestBody HeeUserDTO heeUserDTO) throws URISyntaxException {
 		log.debug("REST request to save HeeUser : {}", heeUserDTO);
 		HeeUser heeUser = heeUserMapper.heeUserDTOToHeeUser(heeUserDTO);
@@ -72,6 +74,7 @@ public class HeeUserResource {
 	 */
 	@PutMapping("/hee-users")
 	@Timed
+	@PreAuthorize("hasAuthority('profile:add:modify:entities')")
 	public ResponseEntity<HeeUserDTO> updateHeeUser(@Valid @RequestBody HeeUserDTO heeUserDTO) throws URISyntaxException {
 		log.debug("REST request to update HeeUser : {}", heeUserDTO);
 		if (heeUserDTO.getName() == null) {
@@ -94,6 +97,7 @@ public class HeeUserResource {
 	 */
 	@GetMapping("/hee-users")
 	@Timed
+	@PreAuthorize("hasAuthority('profile:view:entities')")
 	public ResponseEntity<List<HeeUserDTO>> getAllHeeUsers(@ApiParam Pageable pageable) {
 		log.debug("REST request to get a page of HeeUsers");
 		Page<HeeUser> page = heeUserRepository.findAll(pageable);
@@ -109,6 +113,7 @@ public class HeeUserResource {
 	 */
 	@GetMapping("/hee-users/{name}")
 	@Timed
+	@PreAuthorize("hasAuthority('profile:view:entities')")
 	public ResponseEntity<HeeUserDTO> getHeeUser(@PathVariable String name) {
 		log.debug("REST request to get HeeUser : {}", name);
 		HeeUser heeUser = heeUserRepository.findOne(name);
@@ -124,6 +129,7 @@ public class HeeUserResource {
 	 */
 	@DeleteMapping("/hee-users/{name}")
 	@Timed
+	@PreAuthorize("hasAuthority('profile:delete:entities')")
 	public ResponseEntity<Void> deleteHeeUser(@PathVariable String name) {
 		log.debug("REST request to delete HeeUser : {}", name);
 		heeUserRepository.delete(name);
