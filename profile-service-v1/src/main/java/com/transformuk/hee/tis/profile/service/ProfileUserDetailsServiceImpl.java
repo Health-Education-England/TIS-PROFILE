@@ -1,7 +1,7 @@
 package com.transformuk.hee.tis.profile.service;
 
 import com.transformuk.hee.tis.profile.assembler.UserProfileAssembler;
-import com.transformuk.hee.tis.profile.domain.HeeUser;
+import com.transformuk.hee.tis.profile.model.User;
 import com.transformuk.hee.tis.security.model.UserProfile;
 import com.transformuk.hee.tis.security.service.UserDetailsService;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +22,7 @@ public class ProfileUserDetailsServiceImpl implements UserDetailsService {
 
 	@Override
 	public UserProfile getProfile(String token) {
-		HeeUser user = loginService.getUserByToken(token);
+		User user = loginService.getUserByToken(token);
 		return userProfileAssembler.toUserProfile(user);
 	}
 }

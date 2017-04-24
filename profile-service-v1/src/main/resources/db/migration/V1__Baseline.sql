@@ -3,7 +3,7 @@
 CREATE TABLE Permission (
   name varchar(100) NOT NULL,
   PRIMARY KEY (name)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data for table Permission
 INSERT INTO Permission VALUES 
@@ -18,7 +18,7 @@ INSERT INTO Permission VALUES
 CREATE TABLE Role (
   name varchar(100) NOT NULL,
   PRIMARY KEY (name)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data for table Role
 INSERT INTO Role VALUES ('ConcernsAdmin'),('ETL'),('RVAdmin'),('RVOfficer'),('TisAdmin');
@@ -31,7 +31,7 @@ CREATE TABLE RolePermission (
   KEY fk_rolepermissions_permission_namex (permissionName),
   CONSTRAINT fk_rolepermissions_permission FOREIGN KEY (permissionName) REFERENCES Permission (name) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT fk_rolepermissions_role FOREIGN KEY (roleName) REFERENCES Role (name) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Data for table RolePermission
 INSERT INTO RolePermission VALUES ('ConcernsAdmin','concerns:change:add:concern'),('ETL','concerns:data:sync'),
@@ -55,7 +55,7 @@ CREATE TABLE HeeUser (
   emailAddress varchar(100) NOT NULL,
   active tinyint(1) DEFAULT '1',
   PRIMARY KEY (name)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Table structure for table UserDesignatedBody
 CREATE TABLE UserDesignatedBody (
@@ -63,7 +63,7 @@ CREATE TABLE UserDesignatedBody (
   designatedBodyCode varchar(50) NOT NULL,
   PRIMARY KEY (userName,designatedBodyCode),
   CONSTRAINT fk_dbc_heeuser FOREIGN KEY (userName) REFERENCES HeeUser (name) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Table structure for table UserRole
 CREATE TABLE UserRole (
@@ -73,7 +73,7 @@ CREATE TABLE UserRole (
   KEY fk_userrole_role_namex (roleName),
   CONSTRAINT fk_userrole_heeuser FOREIGN KEY (userName) REFERENCES HeeUser (name) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT fk_userrole_role FOREIGN KEY (roleName) REFERENCES Role (name) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- Static user data (ETLs)
 INSERT INTO HeeUser VALUES ('core_etl',NULL,'',NULL,NULL,'fake_email@fake.com',1),('gmc_etl',NULL,'',NULL,NULL,'fake_email@fake.com',1);
@@ -91,4 +91,4 @@ CREATE TABLE TraineeProfile (
   designatedBodyCode varchar(20) DEFAULT NULL,
   PRIMARY KEY (tisId),
   UNIQUE KEY gmcNumber (gmcNumber)
-) ENGINE=InnoDB AUTO_INCREMENT=1090 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1090 DEFAULT CHARSET=latin1;

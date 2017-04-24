@@ -1,9 +1,9 @@
 package com.transformuk.hee.tis.profile.service;
 
 import com.google.common.base.CharMatcher;
-import com.transformuk.hee.tis.profile.domain.HeeUser;
 import com.transformuk.hee.tis.profile.dto.JwtAuthToken;
-import com.transformuk.hee.tis.profile.repository.HeeUserRepository;
+import com.transformuk.hee.tis.profile.model.User;
+import com.transformuk.hee.tis.profile.repository.UserRepository;
 import org.slf4j.Logger;
 import org.springframework.boot.json.JsonParser;
 import org.springframework.boot.json.JsonParserFactory;
@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import static com.transformuk.hee.tis.profile.filters.HeeUserSpecification.*;
+import static com.transformuk.hee.tis.profile.filters.UserSpecification.*;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toSet;
@@ -38,20 +38,20 @@ import static org.springframework.data.domain.Sort.Direction.ASC;
 public class LoginService {
 
 	private static final Logger LOG = getLogger(LoginService.class);
-	private final HeeUserRepository userRepository;
+	private final UserRepository userRepository;
 	private JsonParser jsonParser = JsonParserFactory.getJsonParser();
 
-	public LoginService(HeeUserRepository userRepository) {
+	public LoginService(UserRepository userRepository) {
 		this.userRepository = userRepository;
 	}
 
 	/**
 	 * @param token jwtAuthToken
-	 * @return {@link HeeUser} User associated with given unique user name
+	 * @return {@link User} User associated with given unique user name
 	 */
-	public HeeUser getUserByToken(String token) {
+	public User getUserByToken(String token) {
 		JwtAuthToken jwtAuthToken = decode(token);
-		HeeUser user = userRepository.findByActive(jwtAuthToken.getUsername());
+		User user = userRepository.findByActive(jwtAuthToken.getUsername());
 		if (user == null) {
 			throw new EntityNotFoundException(format("User with username %s either not found or not active",
 					jwtAuthToken.getUsername()));
@@ -66,10 +66,10 @@ public class LoginService {
 	 * @param offset              the result number to start from
 	 * @param limit               the page size
 	 * @param designatedBodyCodes
-	 * @param permissions         the permissions to use  @return {@link List<HeeUser>} list of users
+	 * @param permissions         the permissions to use  @return {@link List<User>} list of users
 	 */
-	public Page<HeeUser> getUsers(int offset, int limit, Set<String> designatedBodyCodes, String permissions) {
-		Specifications<HeeUser> spec = Specifications.where(active()).and(withDBCs(designatedBodyCodes));
+	public Page<User> getUsers(int offset, int limit, Set<String> designatedBodyCodes, String permissions) {
+		Specifications<User> spec = Specifications.where(active()).and(withDBCs(designatedBodyCodes));
 		int pageNumber = offset / limit;
 		Pageable page = new PageRequest(pageNumber, limit, new Sort(ASC, "firstName"));
 		if (permissions != null) {
@@ -82,9 +82,9 @@ public class LoginService {
 	 * Gets RevalidationOfficer details by designatedBodyCode
 	 *
 	 * @param designatedBodyCode
-	 * @return {@link HeeUser}
+	 * @return {@link User}
 	 */
-	public HeeUser getRVOfficer(String designatedBodyCode) {
+	public User getRVOfficer(String designatedBodyCode) {
 		return userRepository.findRVOfficerByDesignatedBodyCode(designatedBodyCode);
 	}
 

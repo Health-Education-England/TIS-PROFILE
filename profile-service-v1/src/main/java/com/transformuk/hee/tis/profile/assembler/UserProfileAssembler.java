@@ -1,8 +1,8 @@
 package com.transformuk.hee.tis.profile.assembler;
 
-import com.transformuk.hee.tis.profile.domain.Permission;
-import com.transformuk.hee.tis.profile.domain.Role;
-import com.transformuk.hee.tis.profile.domain.HeeUser;
+import com.transformuk.hee.tis.profile.model.Permission;
+import com.transformuk.hee.tis.profile.model.Role;
+import com.transformuk.hee.tis.profile.model.User;
 import com.transformuk.hee.tis.security.model.UserProfile;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +17,7 @@ import static java.util.stream.Collectors.toSet;
 @Component
 public class UserProfileAssembler {
 
-	public UserProfile toUserProfile(HeeUser user) {
+	public UserProfile toUserProfile(User user) {
 		UserProfile userProfile = new UserProfile();
 		userProfile.setDesignatedBodyCodes(user.getDesignatedBodyCodes());
 		userProfile.setEmailAddress(user.getEmailAddress());

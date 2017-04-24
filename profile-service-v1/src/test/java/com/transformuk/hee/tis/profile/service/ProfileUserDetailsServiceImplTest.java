@@ -1,7 +1,7 @@
 package com.transformuk.hee.tis.profile.service;
 
 import com.transformuk.hee.tis.profile.assembler.UserProfileAssembler;
-import com.transformuk.hee.tis.profile.domain.HeeUser;
+import com.transformuk.hee.tis.profile.model.User;
 import com.transformuk.hee.tis.security.model.UserProfile;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,14 +23,14 @@ public class ProfileUserDetailsServiceImplTest {
 	private LoginService loginService;
 	@Mock
 	private UserProfileAssembler userProfileAssembler;
-
+	
 	@InjectMocks
 	private ProfileUserDetailsServiceImpl service;
-
+	
 	@Test
 	public void shouldGetUserProfile() {
 		// given
-		HeeUser aUser = new HeeUser();
+		User aUser = new User();
 		UserProfile aProfile = new UserProfile();
 		given(loginService.getUserByToken(TOKEN)).willReturn(aUser);
 		given(userProfileAssembler.toUserProfile(aUser)).willReturn(aProfile);
@@ -39,4 +39,6 @@ public class ProfileUserDetailsServiceImplTest {
 		// then
 		assertThat(profile).isSameAs(aProfile);
 	}
+	
+	
 }

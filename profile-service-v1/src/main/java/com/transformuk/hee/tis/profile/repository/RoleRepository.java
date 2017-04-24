@@ -1,16 +1,17 @@
 package com.transformuk.hee.tis.profile.repository;
 
-import com.transformuk.hee.tis.profile.domain.Role;
+import com.transformuk.hee.tis.profile.model.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Set;
 
 /**
- * Spring Data JPA repository for the Role entity.
+ * Repository for roles
  */
-@SuppressWarnings("unused")
-public interface RoleRepository extends JpaRepository<Role, String> {
+@Repository
+public interface RoleRepository extends JpaRepository<Role, Long> {
 
 	/**
 	 * Returns a role with given name
