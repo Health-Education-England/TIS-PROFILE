@@ -2,8 +2,6 @@
 */target/
 *.jar
 *.class
-mvnw
-mvnw.cmd
 *.tar.gz
 node_modules
 profile-service/node_modules

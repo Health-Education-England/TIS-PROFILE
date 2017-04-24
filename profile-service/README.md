@@ -1,5 +1,4 @@
-# TIS MICROSERVICE TEMPLATE
-This is intended to be used as a template to spin up scafolded web services. 
+# TIS PROFILE
 
 It was created using Jhipster and then modifying the generated code to the structure we need. 
 Some of the things we did where:
