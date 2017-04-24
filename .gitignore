@@ -1,12 +1,12 @@
 # Created by .ignore support plugin (hsz.mobi)
 */target/
-*.jar
 *.class
 *.tar.gz
 node_modules
 profile-service/node_modules
 profile-ui/node
 profile-ui/node_modules
+profile-ui/yarn.lock
 profile-ui/ui-build
 */node/*
 .DS_Store
