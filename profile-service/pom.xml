@@ -14,7 +14,7 @@
 	<artifactId>profile-service</artifactId>
 	<version>2.0.0</version>
 	<packaging>war</packaging>
-	<name>Profile</name>
+	<name>profile-service</name>
 
 	<prerequisites>
 		<maven>${maven.version}</maven>
