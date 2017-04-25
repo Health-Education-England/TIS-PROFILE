@@ -6,7 +6,7 @@
 
 	<groupId>com.transformuk.hee</groupId>
 	<artifactId>profile-client</artifactId>
-	<version>1.0.7</version>
+	<version>1.0.8</version>
 	<packaging>jar</packaging>
 
 	<properties>
@@ -43,6 +43,7 @@
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
 			<version>1.10.19</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
