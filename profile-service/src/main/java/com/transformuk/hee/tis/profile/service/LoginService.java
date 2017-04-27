@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -62,7 +63,9 @@ public class LoginService {
 	 * @param permissions         the permissions to use  @return {@link List<HeeUser>} list of users
 	 */
 	public List<HeeUser> getUsers(Set<String> designatedBodyCodes, String permissions) {
-		String designatedBodyCodesValue = StringUtils.join(designatedBodyCodes, ",");
+		List<String> sortedDesignatedBodyCodes = Lists.newArrayList(designatedBodyCodes);
+		Collections.sort(sortedDesignatedBodyCodes);
+		String designatedBodyCodesValue = StringUtils.join(sortedDesignatedBodyCodes, ",");
 		List<String> permissionList = Lists.newArrayList();
 		if (permissions != null) {
 			permissionList.addAll(asList(permissions.split(",")));

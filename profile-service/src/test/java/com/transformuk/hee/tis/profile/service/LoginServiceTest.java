@@ -74,9 +74,9 @@ public class LoginServiceTest {
 	}
 
 	/**
-	 * User Alison has two designatedBodyCodes 1-DGBODY,1-AIIDWT and
-	 * user Jamesh has one designatedBodyCodes 1-DGBODY,1-AIIDWT
-	 * when we fetch by two designatedBodyCodes 1-DGBODY,1-AIIDWT it should match with other users exactly
+	 * User Alison has two designatedBodyCodes 1-AIIDWT,1-DGBODY and
+	 * user Jamesh has one designatedBodyCodes 1-AIIDWT,1-DGBODY
+	 * when we fetch by two designatedBodyCodes 1-AIIDWT,1-DGBODY it should match with other users exactly
 	 * same designatedBodyCodes
 	 * Expected: two user Alison and Jamesh
 	 */
@@ -94,7 +94,7 @@ public class LoginServiceTest {
 
 		List<HeeUser> users = Lists.newArrayList(aUser, bUser);
 		given(userRepository.findDistinctByExactDesignatedBodyCodes(
-				DESIGNATED_BODY_CODE_1DGBODY + "," + DESIGNATED_BODY_CODE_1AIIDWT)).willReturn(users);
+				DESIGNATED_BODY_CODE_1AIIDWT + "," + DESIGNATED_BODY_CODE_1DGBODY)).willReturn(users);
 
 		// when
 		List<HeeUser> actualUsers = service.getUsers(newSet(DESIGNATED_BODY_CODE_1DGBODY, DESIGNATED_BODY_CODE_1AIIDWT),
@@ -106,9 +106,9 @@ public class LoginServiceTest {
 	}
 
 	/**
-	 * User Alison has two designatedBodyCodes 1-DGBODY,1-AIIDWT and
+	 * User Alison has two designatedBodyCodes 1-AIIDWT,1-DGBODY and
 	 * user Jamesh has one designatedBodyCodes 1-AIIDWT
-	 * when we fetch by two designatedBodyCodes 1-DGBODY,1-AIIDWT it should match with other users exactly
+	 * when we fetch by two designatedBodyCodes 1-AIIDWT,1-DGBODY it should match with other users exactly
 	 * same designatedBodyCodes
 	 * Expected: only one user Alison
 	 */
@@ -127,7 +127,7 @@ public class LoginServiceTest {
 
 		List<HeeUser> users = Lists.newArrayList(aUser, bUser);
 		given(userRepository.findDistinctByExactDesignatedBodyCodes(
-				DESIGNATED_BODY_CODE_1DGBODY + "," + DESIGNATED_BODY_CODE_1AIIDWT))
+				DESIGNATED_BODY_CODE_1AIIDWT + "," + DESIGNATED_BODY_CODE_1DGBODY))
 				.willReturn(Lists.newArrayList(aUser));
 
 		// when
