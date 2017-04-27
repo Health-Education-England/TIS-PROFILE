@@ -2,9 +2,9 @@ package com.transformuk.hee.tis.profile.web.rest;
 
 import com.transformuk.hee.tis.profile.ProfileApp;
 import com.transformuk.hee.tis.profile.assembler.UserProfileAssembler;
+import com.transformuk.hee.tis.profile.domain.HeeUser;
 import com.transformuk.hee.tis.profile.dto.UserInfoResponse;
 import com.transformuk.hee.tis.profile.dto.UserListResponse;
-import com.transformuk.hee.tis.profile.domain.HeeUser;
 import com.transformuk.hee.tis.profile.service.LoginService;
 import com.transformuk.hee.tis.security.model.UserProfile;
 import io.swagger.annotations.Api;
@@ -14,7 +14,6 @@ import io.swagger.annotations.ApiResponses;
 import org.slf4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.hateoas.Resource;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -56,8 +55,8 @@ public class UserProfileController {
 		return assembler.toUserProfile(user);
 	}
 
-	@ApiOperation(value = "Returns list of users with pagination",
-			notes = "http://localhost:8084/users?offset=0&limit=10&designatedBodyCode=DBC&permissions=comma separated values",
+	@ApiOperation(value = "Returns list of users by exact matching of given designatedBodyCodes",
+			notes = "http://localhost:8084/users?designatedBodyCode=DBC&permissions=comma separated values",
 			response = UserListResponse.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "User list returned", response = UserListResponse.class)
@@ -65,14 +64,12 @@ public class UserProfileController {
 	@CrossOrigin
 	@RequestMapping(path = "/users", method = GET, produces = APPLICATION_JSON_VALUE)
 	@PreAuthorize("hasAuthority('profile:get:users')")
-	public Resource<UserListResponse> getUsers(@RequestParam(value = "offset") int offset,
-											   @RequestParam(value = "limit") int limit,
-											   @RequestParam(value = "designatedBodyCode") Set<String> designatedBodyCodes,
+	public Resource<UserListResponse> getUsers(@RequestParam(value = "designatedBodyCode") Set<String> designatedBodyCodes,
 											   @RequestParam(value = "permissions", required = false) String permissions) {
-		Page<HeeUser> page = loginService.getUsers(offset, limit, designatedBodyCodes, permissions);
-		UserListResponse response = toUserListResponse(page);
+		List<HeeUser> users = loginService.getUsers(designatedBodyCodes, permissions);
+		UserListResponse response = toUserListResponse(users);
 		Resource<UserListResponse> resource = new Resource<>(response);
-		resource.add(linkTo(methodOn(UserProfileController.class).getUsers(offset, limit, designatedBodyCodes, permissions))
+		resource.add(linkTo(methodOn(UserProfileController.class).getUsers(designatedBodyCodes, permissions))
 				.withSelfRel());
 		return resource;
 	}
@@ -89,8 +86,8 @@ public class UserProfileController {
 		return assembler.toUserProfile(user);
 	}
 
-	private UserListResponse toUserListResponse(Page<HeeUser> users) {
-		return new UserListResponse(users.getTotalElements(), toUserInfoList(users.getContent()));
+	private UserListResponse toUserListResponse(List<HeeUser> users) {
+		return new UserListResponse(users.size(), toUserInfoList(users));
 	}
 
 	private List<UserInfoResponse> toUserInfoList(List<HeeUser> users) {
