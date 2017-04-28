@@ -14,7 +14,7 @@ import org.springframework.web.client.RestTemplate;
 @Import(TisSecurityConfig.class)
 public class ProfileClientConfig {
 
-	@Value("${PROFILE_REST_TIMEOUT:10000}")
+	@Value("${PROFILE_REST_TIMEOUT:30000}")
 	private int timeout;
 
 	@Bean
