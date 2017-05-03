@@ -1,10 +1,11 @@
 package com.transformuk.hee.tis.profile.web.rest;
 
+import com.google.common.collect.Lists;
 import com.transformuk.hee.tis.profile.ProfileApp;
 import com.transformuk.hee.tis.profile.assembler.UserProfileAssembler;
+import com.transformuk.hee.tis.profile.domain.HeeUser;
 import com.transformuk.hee.tis.profile.domain.Permission;
 import com.transformuk.hee.tis.profile.domain.Role;
-import com.transformuk.hee.tis.profile.domain.HeeUser;
 import com.transformuk.hee.tis.profile.service.LoginService;
 import com.transformuk.hee.tis.profile.web.rest.errors.ExceptionTranslator;
 import org.junit.Before;
@@ -15,21 +16,18 @@ import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.audit.AuditEvent;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.List;
 import java.util.Set;
 
-import static com.google.common.collect.Lists.newArrayList;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.mockito.BDDMockito.given;
@@ -105,11 +103,11 @@ public class UserProfileControllerTest {
 		HeeUser user = new HeeUser(USER_NAME);
 		user.setGmcId("123");
 		user.setFirstName("James");
-		Page<HeeUser> page = new PageImpl<>(newArrayList(user));
-		given(loginService.getUsers(0, 1, newSet(DESIGNATED_BODY_CODE), null)).willReturn(page);
+		List<HeeUser> userList = Lists.newArrayList(user);
+		given(loginService.getUsers(newSet(DESIGNATED_BODY_CODE), null)).willReturn(userList);
 
 		//When
-		this.mvc.perform(get("/api/users").param("offset", "0").param("limit", "1").param("designatedBodyCode",
+		this.mvc.perform(get("/api/users").param("designatedBodyCode",
 				DESIGNATED_BODY_CODE))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.total").value(1))
@@ -124,11 +122,11 @@ public class UserProfileControllerTest {
 		HeeUser user = new HeeUser(USER_NAME);
 		user.setGmcId("123");
 		user.setFirstName("James");
-		Page<HeeUser> page = new PageImpl<>(newArrayList(user));
-		given(loginService.getUsers(0, 1, newSet(DESIGNATED_BODY_CODE), permissions)).willReturn(page);
+		List<HeeUser> userList = Lists.newArrayList(user);
+		given(loginService.getUsers(newSet(DESIGNATED_BODY_CODE), permissions)).willReturn(userList);
 
 		//When
-		this.mvc.perform(get("/api/users").param("offset", "0").param("limit", "1")
+		this.mvc.perform(get("/api/users")
 				.param("designatedBodyCode", DESIGNATED_BODY_CODE)
 				.param("permissions", permissions))
 				.andExpect(status().isOk())

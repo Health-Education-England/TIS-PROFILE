@@ -1,34 +1,30 @@
 package com.transformuk.hee.tis.profile.service;
 
 import com.google.common.base.CharMatcher;
+import com.google.common.collect.Lists;
 import com.transformuk.hee.tis.profile.domain.HeeUser;
 import com.transformuk.hee.tis.profile.dto.JwtAuthToken;
 import com.transformuk.hee.tis.profile.repository.HeeUserRepository;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.springframework.boot.json.JsonParser;
 import org.springframework.boot.json.JsonParserFactory;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.security.jwt.Jwt;
 import org.springframework.security.jwt.JwtHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import static com.transformuk.hee.tis.profile.filters.HeeUserSpecification.*;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toSet;
 import static org.slf4j.LoggerFactory.getLogger;
-import static org.springframework.data.domain.Sort.Direction.ASC;
 
 /**
  * Service for user login/logout process and getting user's data
@@ -60,22 +56,23 @@ public class LoginService {
 	}
 
 	/**
-	 * Returns all active users by search criteria
+	 * Returns all active users by exact matching with given designatedBodyCodes and permissions if any
 	 *
 	 * @param designatedBodyCodes the designatedBodyCode to use
-	 * @param offset              the result number to start from
-	 * @param limit               the page size
 	 * @param designatedBodyCodes
 	 * @param permissions         the permissions to use  @return {@link List<HeeUser>} list of users
 	 */
-	public Page<HeeUser> getUsers(int offset, int limit, Set<String> designatedBodyCodes, String permissions) {
-		Specifications<HeeUser> spec = Specifications.where(active()).and(withDBCs(designatedBodyCodes));
-		int pageNumber = offset / limit;
-		Pageable page = new PageRequest(pageNumber, limit, new Sort(ASC, "firstName"));
+	public List<HeeUser> getUsers(Set<String> designatedBodyCodes, String permissions) {
+		List<String> sortedDesignatedBodyCodes = Lists.newArrayList(designatedBodyCodes);
+		Collections.sort(sortedDesignatedBodyCodes);
+		String designatedBodyCodesValue = StringUtils.join(sortedDesignatedBodyCodes, ",");
+		List<String> permissionList = Lists.newArrayList();
 		if (permissions != null) {
-			spec = spec.and(withPermissions(asList(permissions.split(","))));
+			permissionList.addAll(asList(permissions.split(",")));
+			return userRepository.findDistinctByExactDesignatedBodyCodesAndPermissions(designatedBodyCodesValue, permissionList);
 		}
-		return userRepository.findAll(spec, page);
+		return userRepository.findDistinctByExactDesignatedBodyCodes(
+				designatedBodyCodesValue);
 	}
 
 	/**
