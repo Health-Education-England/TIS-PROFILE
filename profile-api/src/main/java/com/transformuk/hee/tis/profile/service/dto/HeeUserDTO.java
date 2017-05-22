@@ -26,10 +26,25 @@ public class HeeUserDTO implements Serializable {
 
 	private Boolean active;
 
-	private String passowrd;
+	private String password;
 
 	private Set<RoleDTO> roles;
 	private Set<String> designatedBodyCodes;
+
+	public HeeUserDTO(String name, String firstName, String lastName, String gmcId,
+					  String phoneNumber, String emailAddress, Boolean active,
+					  String password, Set<RoleDTO> roles, Set<String> designatedBodyCodes) {
+		this.name = name;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.gmcId = gmcId;
+		this.phoneNumber = phoneNumber;
+		this.emailAddress = emailAddress;
+		this.active = active;
+		this.password = password;
+		this.roles = roles;
+		this.designatedBodyCodes = designatedBodyCodes;
+	}
 
 	public String getName() {
 		return name;
@@ -87,28 +102,20 @@ public class HeeUserDTO implements Serializable {
 		this.active = active;
 	}
 
-	public String getPassowrd() {
-		return passowrd;
+	public String getPassword() {
+		return password;
 	}
 
-	public void setPassowrd(String passowrd) {
-		this.passowrd = passowrd;
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 	public Set<RoleDTO> getRoles() {
 		return roles;
 	}
 
-	public void setRoles(Set<RoleDTO> roles) {
-		this.roles = roles;
-	}
-
 	public Set<String> getDesignatedBodyCodes() {
 		return designatedBodyCodes;
-	}
-
-	public void setDesignatedBodyCodes(Set<String> designatedBodyCodes) {
-		this.designatedBodyCodes = designatedBodyCodes;
 	}
 
 	@Override

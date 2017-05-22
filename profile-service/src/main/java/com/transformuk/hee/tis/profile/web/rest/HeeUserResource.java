@@ -66,7 +66,7 @@ public class HeeUserResource {
 	public ResponseEntity<HeeUserDTO> createHeeUser(@Valid @RequestBody HeeUserDTO heeUserDTO) throws URISyntaxException {
 		log.debug("REST request to save HeeUser : {}", heeUserDTO);
 		HeeUser heeUser = heeUserMapper.heeUserDTOToHeeUser(heeUserDTO);
-		heeUser.setPassword(heeUserDTO.getPassowrd());
+		heeUser.setPassword(heeUserDTO.getPassword());
 		//Validate password
 		heeUserValidator.validatePassword(heeUser.getPassword());
 		//Validate
