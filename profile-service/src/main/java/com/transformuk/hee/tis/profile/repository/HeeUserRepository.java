@@ -29,6 +29,7 @@ public interface HeeUserRepository extends JpaRepository<HeeUser, String>, JpaSp
 
 	/**
 	 * Gets distinct Users by exact designatedBodyCodes and permissions
+	 *
 	 * @param designatedBodyCodes
 	 * @param permissions
 	 * @return
@@ -47,6 +48,7 @@ public interface HeeUserRepository extends JpaRepository<HeeUser, String>, JpaSp
 
 	/**
 	 * Gets distinct Users by exact designatedBodyCodes
+	 *
 	 * @param designatedBodyCodes
 	 * @return
 	 */

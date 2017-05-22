@@ -3,12 +3,16 @@ package com.transformuk.hee.tis.profile.web.rest;
 import com.transformuk.hee.tis.profile.ProfileApp;
 import com.transformuk.hee.tis.profile.domain.HeeUser;
 import com.transformuk.hee.tis.profile.repository.HeeUserRepository;
+import com.transformuk.hee.tis.profile.repository.PermissionRepository;
+import com.transformuk.hee.tis.profile.service.KeyclockAdminClientService;
 import com.transformuk.hee.tis.profile.service.dto.HeeUserDTO;
 import com.transformuk.hee.tis.profile.service.mapper.HeeUserMapper;
+import com.transformuk.hee.tis.profile.validators.HeeUserValidator;
 import com.transformuk.hee.tis.profile.web.rest.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import java.util.List;
 
+import static com.transformuk.hee.tis.profile.web.rest.TestUtil.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -37,29 +42,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = ProfileApp.class)
 public class HeeUserResourceIntTest {
 
-	private static final String DEFAULT_NAME = "AAAAAAAAAA";
-	private static final String UPDATED_NAME = "BBBBBBBBBB";
-
-	private static final String DEFAULT_FIRST_NAME = "AAAAAAAAAA";
-	private static final String UPDATED_FIRST_NAME = "BBBBBBBBBB";
-
-	private static final String DEFAULT_LAST_NAME = "AAAAAAAAAA";
-	private static final String UPDATED_LAST_NAME = "BBBBBBBBBB";
-
-	private static final String DEFAULT_GMC_ID = "1234567";
-	private static final String UPDATED_GMC_ID = "7654321";
-
-	private static final String DEFAULT_PHONE_NUMBER = "AAAAAAAAAA";
-	private static final String UPDATED_PHONE_NUMBER = "BBBBBBBBBB";
-
-	private static final String DEFAULT_EMAIL_ADDRESS = "AAAAAAAAAA";
-	private static final String UPDATED_EMAIL_ADDRESS = "BBBBBBBBBB";
-
-	private static final Boolean DEFAULT_ACTIVE = false;
-	private static final Boolean UPDATED_ACTIVE = true;
 
 	@Autowired
 	private HeeUserRepository heeUserRepository;
+
+	@Autowired
+	private PermissionRepository permissionRepository;
 
 	@Autowired
 	private HeeUserMapper heeUserMapper;
@@ -73,6 +61,12 @@ public class HeeUserResourceIntTest {
 	@Autowired
 	private ExceptionTranslator exceptionTranslator;
 
+	@Mock
+	private KeyclockAdminClientService keyclockAdminClientService;
+
+	@Mock
+	private HeeUserValidator heeUserValidator;
+
 	@Autowired
 	private EntityManager em;
 
@@ -80,28 +74,12 @@ public class HeeUserResourceIntTest {
 
 	private HeeUser heeUser;
 
-	/**
-	 * Create an entity for this test.
-	 * <p>
-	 * This is a static method, as tests for other entities might also need it,
-	 * if they test an entity which requires the current entity.
-	 */
-	public static HeeUser createEntity(EntityManager em) {
-		HeeUser heeUser = new HeeUser()
-				.name(DEFAULT_NAME)
-				.firstName(DEFAULT_FIRST_NAME)
-				.lastName(DEFAULT_LAST_NAME)
-				.gmcId(DEFAULT_GMC_ID)
-				.phoneNumber(DEFAULT_PHONE_NUMBER)
-				.emailAddress(DEFAULT_EMAIL_ADDRESS)
-				.active(DEFAULT_ACTIVE);
-		return heeUser;
-	}
 
 	@Before
 	public void setup() {
 		MockitoAnnotations.initMocks(this);
-		HeeUserResource heeUserResource = new HeeUserResource(heeUserRepository, heeUserMapper);
+		HeeUserResource heeUserResource = new HeeUserResource(heeUserRepository, heeUserMapper,
+				keyclockAdminClientService, heeUserValidator);
 		this.restHeeUserMockMvc = MockMvcBuilders.standaloneSetup(heeUserResource)
 				.setCustomArgumentResolvers(pageableArgumentResolver)
 				.setControllerAdvice(exceptionTranslator)
@@ -117,6 +95,7 @@ public class HeeUserResourceIntTest {
 	@Transactional
 	public void createHeeUser() throws Exception {
 		int databaseSizeBeforeCreate = heeUserRepository.findAll().size();
+		int databasePermissionSizeBeforeCreate = permissionRepository.findAll().size();
 
 		// Create the HeeUser
 		HeeUserDTO heeUserDTO = heeUserMapper.heeUserToHeeUserDTO(heeUser);
@@ -136,6 +115,8 @@ public class HeeUserResourceIntTest {
 		assertThat(testHeeUser.getPhoneNumber()).isEqualTo(DEFAULT_PHONE_NUMBER);
 		assertThat(testHeeUser.getEmailAddress()).isEqualTo(DEFAULT_EMAIL_ADDRESS);
 		assertThat(testHeeUser.isActive()).isEqualTo(DEFAULT_ACTIVE);
+		assertThat(permissionRepository.findAll().size()).isEqualTo(databasePermissionSizeBeforeCreate);
+
 	}
 
 	@Test
@@ -229,6 +210,7 @@ public class HeeUserResourceIntTest {
 		// Initialize the database
 		heeUserRepository.saveAndFlush(heeUser);
 		int databaseSizeBeforeUpdate = heeUserRepository.findAll().size();
+		int databasePermissionSizeBeforeCreate = permissionRepository.findAll().size();
 
 		// Update the heeUser
 		HeeUser updatedHeeUser = heeUserRepository.findOne(heeUser.getName());
@@ -257,6 +239,8 @@ public class HeeUserResourceIntTest {
 		assertThat(testHeeUser.getPhoneNumber()).isEqualTo(UPDATED_PHONE_NUMBER);
 		assertThat(testHeeUser.getEmailAddress()).isEqualTo(UPDATED_EMAIL_ADDRESS);
 		assertThat(testHeeUser.isActive()).isEqualTo(UPDATED_ACTIVE);
+
+		assertThat(permissionRepository.findAll().size()).isEqualTo(databasePermissionSizeBeforeCreate);
 	}
 
 	@Test
@@ -272,7 +256,7 @@ public class HeeUserResourceIntTest {
 		restHeeUserMockMvc.perform(put("/api/hee-users")
 				.contentType(TestUtil.APPLICATION_JSON_UTF8)
 				.content(TestUtil.convertObjectToJsonBytes(heeUserDTO)))
-				.andExpect(status().isOk());
+				.andExpect(status().is2xxSuccessful());
 
 		// Validate the HeeUser in the database
 		List<HeeUser> heeUserList = heeUserRepository.findAll();

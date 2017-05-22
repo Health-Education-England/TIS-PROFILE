@@ -4,6 +4,7 @@ package com.transformuk.hee.tis.profile.service.dto;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * A DTO for the HeeUser entity.
@@ -24,6 +25,11 @@ public class HeeUserDTO implements Serializable {
 	private String emailAddress;
 
 	private Boolean active;
+
+	private String passowrd;
+
+	private Set<RoleDTO> roles;
+	private Set<String> designatedBodyCodes;
 
 	public String getName() {
 		return name;
@@ -81,6 +87,30 @@ public class HeeUserDTO implements Serializable {
 		this.active = active;
 	}
 
+	public String getPassowrd() {
+		return passowrd;
+	}
+
+	public void setPassowrd(String passowrd) {
+		this.passowrd = passowrd;
+	}
+
+	public Set<RoleDTO> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(Set<RoleDTO> roles) {
+		this.roles = roles;
+	}
+
+	public Set<String> getDesignatedBodyCodes() {
+		return designatedBodyCodes;
+	}
+
+	public void setDesignatedBodyCodes(Set<String> designatedBodyCodes) {
+		this.designatedBodyCodes = designatedBodyCodes;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
@@ -107,13 +137,15 @@ public class HeeUserDTO implements Serializable {
 	@Override
 	public String toString() {
 		return "HeeUserDTO{" +
-				"name='" + name + "'" +
-				", firstName='" + firstName + "'" +
-				", lastName='" + lastName + "'" +
-				", gmcId='" + gmcId + "'" +
-				", phoneNumber='" + phoneNumber + "'" +
-				", emailAddress='" + emailAddress + "'" +
-				", active='" + active + "'" +
+				"name='" + name + '\'' +
+				", firstName='" + firstName + '\'' +
+				", lastName='" + lastName + '\'' +
+				", gmcId='" + gmcId + '\'' +
+				", phoneNumber='" + phoneNumber + '\'' +
+				", emailAddress='" + emailAddress + '\'' +
+				", active=" + active +
+				", roles=" + roles +
+				", designatedBodyCodes=" + designatedBodyCodes +
 				'}';
 	}
 }

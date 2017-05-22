@@ -3,8 +3,10 @@ package com.transformuk.hee.tis.profile.web.rest;
 import com.codahale.metrics.annotation.Timed;
 import com.transformuk.hee.tis.profile.domain.HeeUser;
 import com.transformuk.hee.tis.profile.repository.HeeUserRepository;
+import com.transformuk.hee.tis.profile.service.KeyclockAdminClientService;
 import com.transformuk.hee.tis.profile.service.dto.HeeUserDTO;
 import com.transformuk.hee.tis.profile.service.mapper.HeeUserMapper;
+import com.transformuk.hee.tis.profile.validators.HeeUserValidator;
 import com.transformuk.hee.tis.profile.web.rest.util.HeaderUtil;
 import com.transformuk.hee.tis.profile.web.rest.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
@@ -35,12 +37,20 @@ public class HeeUserResource {
 	private static final String ENTITY_NAME = "heeUser";
 	private final Logger log = LoggerFactory.getLogger(HeeUserResource.class);
 	private final HeeUserRepository heeUserRepository;
+	private static final String REALM_LIN = "lin";
 
 	private final HeeUserMapper heeUserMapper;
 
-	public HeeUserResource(HeeUserRepository heeUserRepository, HeeUserMapper heeUserMapper) {
+	private KeyclockAdminClientService keyclockAdminClientService;
+
+	private HeeUserValidator heeUserValidator;
+
+	public HeeUserResource(HeeUserRepository heeUserRepository, HeeUserMapper heeUserMapper,
+						   KeyclockAdminClientService keyclockAdminClientService, HeeUserValidator heeUserValidator) {
 		this.heeUserRepository = heeUserRepository;
 		this.heeUserMapper = heeUserMapper;
+		this.keyclockAdminClientService = keyclockAdminClientService;
+		this.heeUserValidator = heeUserValidator;
 	}
 
 	/**
@@ -56,6 +66,15 @@ public class HeeUserResource {
 	public ResponseEntity<HeeUserDTO> createHeeUser(@Valid @RequestBody HeeUserDTO heeUserDTO) throws URISyntaxException {
 		log.debug("REST request to save HeeUser : {}", heeUserDTO);
 		HeeUser heeUser = heeUserMapper.heeUserDTOToHeeUser(heeUserDTO);
+		heeUser.setPassword(heeUserDTO.getPassowrd());
+		//Validate password
+		heeUserValidator.validatePassword(heeUser.getPassword());
+		//Validate
+		validateHeeUser(heeUser);
+
+		// First try to create user in KeyClock
+		keyclockAdminClientService.createUser(heeUser);
+
 		heeUser = heeUserRepository.save(heeUser);
 		HeeUserDTO result = heeUserMapper.heeUserToHeeUserDTO(heeUser);
 		return ResponseEntity.created(new URI("/api/hee-users/" + result.getName()))
@@ -77,10 +96,18 @@ public class HeeUserResource {
 	@PreAuthorize("hasAuthority('profile:add:modify:entities')")
 	public ResponseEntity<HeeUserDTO> updateHeeUser(@Valid @RequestBody HeeUserDTO heeUserDTO) throws URISyntaxException {
 		log.debug("REST request to update HeeUser : {}", heeUserDTO);
-		if (heeUserDTO.getName() == null) {
+
+		HeeUser dbHeeUser = heeUserRepository.findOne(heeUserDTO.getName());
+		if (dbHeeUser == null || dbHeeUser.getName() == null) {
 			return createHeeUser(heeUserDTO);
 		}
 		HeeUser heeUser = heeUserMapper.heeUserDTOToHeeUser(heeUserDTO);
+		//Validate
+		validateHeeUser(heeUser);
+
+		// First try to update user in KeyClock
+		keyclockAdminClientService.updateUser(heeUser);
+
 		heeUser = heeUserRepository.save(heeUser);
 		HeeUserDTO result = heeUserMapper.heeUserToHeeUserDTO(heeUser);
 		return ResponseEntity.ok()
@@ -134,6 +161,15 @@ public class HeeUserResource {
 		log.debug("REST request to delete HeeUser : {}", name);
 		heeUserRepository.delete(name);
 		return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, name)).build();
+	}
+
+	private void validateHeeUser(HeeUser heeUser) {
+		//validate GMC id
+		heeUserValidator.validateGmcId(heeUser.getGmcId());
+		//Validate DBC code
+		heeUserValidator.validateDBCIds(heeUser.getDesignatedBodyCodes());
+		//Validate Role name
+		heeUserValidator.validateRoles(heeUser.getRoles());
 	}
 
 }
