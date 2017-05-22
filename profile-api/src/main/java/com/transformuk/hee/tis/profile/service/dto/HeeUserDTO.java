@@ -31,6 +31,9 @@ public class HeeUserDTO implements Serializable {
 	private Set<RoleDTO> roles;
 	private Set<String> designatedBodyCodes;
 
+	public HeeUserDTO() {
+	}
+
 	public HeeUserDTO(String name, String firstName, String lastName, String gmcId,
 					  String phoneNumber, String emailAddress, Boolean active,
 					  String password, Set<RoleDTO> roles, Set<String> designatedBodyCodes) {
@@ -116,6 +119,14 @@ public class HeeUserDTO implements Serializable {
 
 	public Set<String> getDesignatedBodyCodes() {
 		return designatedBodyCodes;
+	}
+
+	public void setRoles(Set<RoleDTO> roles) {
+		this.roles = roles;
+	}
+
+	public void setDesignatedBodyCodes(Set<String> designatedBodyCodes) {
+		this.designatedBodyCodes = designatedBodyCodes;
 	}
 
 	@Override

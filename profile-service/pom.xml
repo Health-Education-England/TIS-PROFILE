@@ -154,11 +154,6 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<dependency>
-			<groupId>com.transformuk.hee.tis</groupId>
-			<artifactId>keyclock-admin-client</artifactId>
-			<version>1.1.0</version>
-		</dependency>
 
 		<!-- TIS shared modules -->
 		<dependency>
@@ -185,6 +180,11 @@
 			<groupId>com.transformuk.hee</groupId>
 			<artifactId>tis-security-jwt</artifactId>
 			<version>${tis.shared.modules.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.transformuk.hee.tis</groupId>
+			<artifactId>keycloak-admin-client</artifactId>
+			<version>1.1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.zaxxer</groupId>

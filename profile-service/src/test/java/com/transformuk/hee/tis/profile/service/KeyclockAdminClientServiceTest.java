@@ -1,7 +1,7 @@
 package com.transformuk.hee.tis.profile.service;
 
-import com.transform.keycloak.KeyclockAdminClient;
-import com.transform.keycloak.User;
+import com.transform.hee.tis.keycloak.KeyclockAdminClient;
+import com.transform.hee.tis.keycloak.User;
 import com.transformuk.hee.tis.profile.domain.HeeUser;
 import org.junit.Before;
 import org.junit.Test;
