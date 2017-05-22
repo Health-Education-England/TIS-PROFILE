@@ -21,7 +21,7 @@ import static javax.persistence.FetchType.EAGER;
 public class HeeUser implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private static final String NONE = "None";
+	public static final String NONE = "None";
 
 	private String name;
 	private String firstName;
@@ -30,6 +30,8 @@ public class HeeUser implements Serializable {
 	private String phoneNumber;
 	private String emailAddress;
 	private Boolean active;
+
+	private String password;
 
 	private Set<Role> roles;
 	private Set<String> designatedBodyCodes;
@@ -137,7 +139,16 @@ public class HeeUser implements Serializable {
 		this.active = active;
 	}
 
-	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@Transient
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	@ManyToMany(cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
 	@JoinTable(name = "UserRole", joinColumns = @JoinColumn(name = "userName", referencedColumnName = "name"),
 			inverseJoinColumns = @JoinColumn(name = "roleName", referencedColumnName = "name"))
 	public Set<Role> getRoles() {

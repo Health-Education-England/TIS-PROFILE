@@ -3,10 +3,14 @@ package com.transformuk.hee.tis.profile.web.rest;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.google.common.collect.Sets;
+import com.transformuk.hee.tis.profile.domain.HeeUser;
+import com.transformuk.hee.tis.profile.domain.Role;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
 import org.springframework.http.MediaType;
 
+import javax.persistence.EntityManager;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.time.ZonedDateTime;
@@ -18,6 +22,30 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Utility class for testing REST controllers.
  */
 public class TestUtil {
+
+	public static final String DEFAULT_NAME = "AAAAAAAAAA";
+	public static final String UPDATED_NAME = "BBBBBBBBBB";
+
+	public static final String DEFAULT_FIRST_NAME = "AAAAAAAAAA";
+	public static final String UPDATED_FIRST_NAME = "BBBBBBBBBB";
+
+	public static final String DEFAULT_LAST_NAME = "AAAAAAAAAA";
+	public static final String UPDATED_LAST_NAME = "BBBBBBBBBB";
+
+	public static final String DEFAULT_GMC_ID = "1234567";
+	public static final String UPDATED_GMC_ID = "7654321";
+
+	public static final String DEFAULT_PHONE_NUMBER = "AAAAAAAAAA";
+	public static final String UPDATED_PHONE_NUMBER = "BBBBBBBBBB";
+
+	public static final String DEFAULT_EMAIL_ADDRESS = "AAAAAAAAAA";
+	public static final String UPDATED_EMAIL_ADDRESS = "BBBBBBBBBB";
+
+	public static final Boolean DEFAULT_ACTIVE = false;
+	public static final Boolean UPDATED_ACTIVE = true;
+
+	public static final String DEFAULT_ROLE = "RVAdmin";
+	public static final String DEFAULT_DESIGNATED_CODE = "1-AIIDH1";
 
 	/**
 	 * MediaType for JSON UTF8
@@ -117,5 +145,29 @@ public class TestUtil {
 		public void describeTo(Description description) {
 			description.appendText("a String representing the same Instant as ").appendValue(date);
 		}
+	}
+
+	/**
+	 * Create an entity for this test.
+	 * <p>
+	 * This is a static method, as tests for other entities might also need it,
+	 * if they test an entity which requires the current entity.
+	 */
+	public static HeeUser createEntity(EntityManager em) {
+		Role role = new Role();
+		role.setName(DEFAULT_ROLE);
+
+		HeeUser heeUser = new HeeUser()
+				.name(DEFAULT_NAME)
+				.firstName(DEFAULT_FIRST_NAME)
+				.lastName(DEFAULT_LAST_NAME)
+				.gmcId(DEFAULT_GMC_ID)
+				.phoneNumber(DEFAULT_PHONE_NUMBER)
+				.emailAddress(DEFAULT_EMAIL_ADDRESS)
+				.active(DEFAULT_ACTIVE);
+
+		heeUser.setRoles(Sets.newHashSet(role));
+		heeUser.setDesignatedBodyCodes(Sets.newHashSet(DEFAULT_DESIGNATED_CODE));
+		return heeUser;
 	}
 }

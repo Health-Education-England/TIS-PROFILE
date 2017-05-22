@@ -1,9 +1,8 @@
 package com.transformuk.hee.tis.profile.web.rest;
 
 import com.transformuk.hee.tis.profile.ProfileApp;
-import com.transformuk.hee.tis.profile.domain.Permission;
+import com.transformuk.hee.tis.profile.dto.Permission;
 import com.transformuk.hee.tis.profile.repository.PermissionRepository;
-import com.transformuk.hee.tis.profile.service.dto.PermissionDTO;
 import com.transformuk.hee.tis.profile.service.mapper.PermissionMapper;
 import com.transformuk.hee.tis.profile.web.rest.errors.ExceptionTranslator;
 import org.junit.Before;
@@ -60,7 +59,7 @@ public class PermissionResourceIntTest {
 
 	private MockMvc restPermissionMockMvc;
 
-	private Permission permission;
+	private com.transformuk.hee.tis.profile.domain.Permission permission;
 
 	/**
 	 * Create an entity for this test.
@@ -68,8 +67,8 @@ public class PermissionResourceIntTest {
 	 * This is a static method, as tests for other entities might also need it,
 	 * if they test an entity which requires the current entity.
 	 */
-	public static Permission createEntity(EntityManager em) {
-		Permission permission = new Permission()
+	public static com.transformuk.hee.tis.profile.domain.Permission createEntity(EntityManager em) {
+		com.transformuk.hee.tis.profile.domain.Permission permission = new com.transformuk.hee.tis.profile.domain.Permission()
 				.name(DEFAULT_NAME);
 		return permission;
 	}
@@ -95,16 +94,16 @@ public class PermissionResourceIntTest {
 		int databaseSizeBeforeCreate = permissionRepository.findAll().size();
 
 		// Create the Permission
-		PermissionDTO permissionDTO = permissionMapper.permissionToPermissionDTO(permission);
+		Permission permission = permissionMapper.permissionToPermissionDTO(this.permission);
 		restPermissionMockMvc.perform(post("/api/permissions")
 				.contentType(TestUtil.APPLICATION_JSON_UTF8)
-				.content(TestUtil.convertObjectToJsonBytes(permissionDTO)))
+				.content(TestUtil.convertObjectToJsonBytes(permission)))
 				.andExpect(status().isCreated());
 
 		// Validate the Permission in the database
-		List<Permission> permissionList = permissionRepository.findAll();
+		List<com.transformuk.hee.tis.profile.domain.Permission> permissionList = permissionRepository.findAll();
 		assertThat(permissionList).hasSize(databaseSizeBeforeCreate + 1);
-		Permission testPermission = permissionRepository.findOne(permission.getName());
+		com.transformuk.hee.tis.profile.domain.Permission testPermission = permissionRepository.findOne(this.permission.getName());
 		assertThat(testPermission.getName()).isEqualTo(DEFAULT_NAME);
 	}
 
@@ -114,17 +113,17 @@ public class PermissionResourceIntTest {
 		int databaseSizeBeforeCreate = permissionRepository.findAll().size();
 
 		// Create the Permission with an existing ID
-		permission.setName("revalidation:data:sync");
-		PermissionDTO permissionDTO = permissionMapper.permissionToPermissionDTO(permission);
+		this.permission.setName("revalidation:data:sync");
+		Permission permission = permissionMapper.permissionToPermissionDTO(this.permission);
 
 		// Creating a permission with the same name will do nothing but not fail
 		restPermissionMockMvc.perform(post("/api/permissions")
 				.contentType(TestUtil.APPLICATION_JSON_UTF8)
-				.content(TestUtil.convertObjectToJsonBytes(permissionDTO)))
+				.content(TestUtil.convertObjectToJsonBytes(permission)))
 				.andExpect(status().isCreated());
 
 		// Validate the Alice in the database
-		List<Permission> permissionList = permissionRepository.findAll();
+		List<com.transformuk.hee.tis.profile.domain.Permission> permissionList = permissionRepository.findAll();
 		assertThat(permissionList).hasSize(databaseSizeBeforeCreate);
 	}
 
@@ -133,17 +132,17 @@ public class PermissionResourceIntTest {
 	public void checkNameIsRequired() throws Exception {
 		int databaseSizeBeforeTest = permissionRepository.findAll().size();
 		// set the field null
-		permission.setName(null);
+		this.permission.setName(null);
 
 		// Create the Permission, which fails.
-		PermissionDTO permissionDTO = permissionMapper.permissionToPermissionDTO(permission);
+		Permission permission = permissionMapper.permissionToPermissionDTO(this.permission);
 
 		restPermissionMockMvc.perform(post("/api/permissions")
 				.contentType(TestUtil.APPLICATION_JSON_UTF8)
-				.content(TestUtil.convertObjectToJsonBytes(permissionDTO)))
+				.content(TestUtil.convertObjectToJsonBytes(permission)))
 				.andExpect(status().isBadRequest());
 
-		List<Permission> permissionList = permissionRepository.findAll();
+		List<com.transformuk.hee.tis.profile.domain.Permission> permissionList = permissionRepository.findAll();
 		assertThat(permissionList).hasSize(databaseSizeBeforeTest);
 	}
 
@@ -194,13 +193,13 @@ public class PermissionResourceIntTest {
 				.andExpect(status().isOk());
 
 		// Validate the database is empty
-		List<Permission> permissionList = permissionRepository.findAll();
+		List<com.transformuk.hee.tis.profile.domain.Permission> permissionList = permissionRepository.findAll();
 		assertThat(permissionList).hasSize(databaseSizeBeforeDelete - 1);
 	}
 
 	@Test
 	@Transactional
 	public void equalsVerifier() throws Exception {
-		TestUtil.equalsVerifier(Permission.class);
+		TestUtil.equalsVerifier(com.transformuk.hee.tis.profile.domain.Permission.class);
 	}
 }

@@ -4,6 +4,7 @@ package com.transformuk.hee.tis.profile.service.dto;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * A DTO for the HeeUser entity.
@@ -24,6 +25,26 @@ public class HeeUserDTO implements Serializable {
 	private String emailAddress;
 
 	private Boolean active;
+
+	private String password;
+
+	private Set<RoleDTO> roles;
+	private Set<String> designatedBodyCodes;
+
+	public HeeUserDTO(String name, String firstName, String lastName, String gmcId,
+					  String phoneNumber, String emailAddress, Boolean active,
+					  String password, Set<RoleDTO> roles, Set<String> designatedBodyCodes) {
+		this.name = name;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.gmcId = gmcId;
+		this.phoneNumber = phoneNumber;
+		this.emailAddress = emailAddress;
+		this.active = active;
+		this.password = password;
+		this.roles = roles;
+		this.designatedBodyCodes = designatedBodyCodes;
+	}
 
 	public String getName() {
 		return name;
@@ -81,6 +102,22 @@ public class HeeUserDTO implements Serializable {
 		this.active = active;
 	}
 
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public Set<RoleDTO> getRoles() {
+		return roles;
+	}
+
+	public Set<String> getDesignatedBodyCodes() {
+		return designatedBodyCodes;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
@@ -107,13 +144,15 @@ public class HeeUserDTO implements Serializable {
 	@Override
 	public String toString() {
 		return "HeeUserDTO{" +
-				"name='" + name + "'" +
-				", firstName='" + firstName + "'" +
-				", lastName='" + lastName + "'" +
-				", gmcId='" + gmcId + "'" +
-				", phoneNumber='" + phoneNumber + "'" +
-				", emailAddress='" + emailAddress + "'" +
-				", active='" + active + "'" +
+				"name='" + name + '\'' +
+				", firstName='" + firstName + '\'' +
+				", lastName='" + lastName + '\'' +
+				", gmcId='" + gmcId + '\'' +
+				", phoneNumber='" + phoneNumber + '\'' +
+				", emailAddress='" + emailAddress + '\'' +
+				", active=" + active +
+				", roles=" + roles +
+				", designatedBodyCodes=" + designatedBodyCodes +
 				'}';
 	}
 }
