@@ -16,6 +16,9 @@ import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.Set;
 
+/**
+ * Validator to validate DBC codes,roles, password and gmc id of a Hee User
+ */
 @Component
 public class HeeUserValidator {
 

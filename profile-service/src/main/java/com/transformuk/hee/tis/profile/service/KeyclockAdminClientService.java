@@ -6,6 +6,9 @@ import com.transformuk.hee.tis.profile.domain.HeeUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * Wrapper service class for Keyclock admin client to create/update User
+ */
 @Service
 public class KeyclockAdminClientService {
 	private static final String REALM_LIN = "lin";
