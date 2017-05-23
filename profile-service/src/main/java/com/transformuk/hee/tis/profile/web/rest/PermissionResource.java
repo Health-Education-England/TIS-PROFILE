@@ -1,7 +1,8 @@
 package com.transformuk.hee.tis.profile.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
-import com.transformuk.hee.tis.profile.dto.Permission;
+import com.transformuk.hee.tis.profile.domain.Permission;
+import com.transformuk.hee.tis.profile.dto.PermissionDTO;
 import com.transformuk.hee.tis.profile.repository.PermissionRepository;
 import com.transformuk.hee.tis.profile.service.mapper.PermissionMapper;
 import com.transformuk.hee.tis.profile.web.rest.util.HeaderUtil;
@@ -52,11 +53,11 @@ public class PermissionResource {
 	@PostMapping("/permissions")
 	@Timed
 	@PreAuthorize("hasAuthority('profile:add:modify:entities')")
-	public ResponseEntity<Permission> createPermission(@Valid @RequestBody Permission permissionDTO) throws URISyntaxException {
+	public ResponseEntity<PermissionDTO> createPermission(@Valid @RequestBody PermissionDTO permissionDTO) throws URISyntaxException {
 		log.debug("REST request to save Permission : {}", permissionDTO);
-		com.transformuk.hee.tis.profile.domain.Permission permission = permissionMapper.permissionDTOToPermission(permissionDTO);
+		Permission permission = permissionMapper.permissionDTOToPermission(permissionDTO);
 		permission = permissionRepository.save(permission);
-		Permission result = permissionMapper.permissionToPermissionDTO(permission);
+		PermissionDTO result = permissionMapper.permissionToPermissionDTO(permission);
 		return ResponseEntity.created(new URI("/api/permissions/" + result.getName()))
 				.headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getName().toString()))
 				.body(result);
@@ -75,7 +76,7 @@ public class PermissionResource {
 	@PutMapping("/permissions")
 	@Timed
 	@PreAuthorize("hasAuthority('profile:add:modify:entities')")
-	public ResponseEntity<Permission> updatePermission(@Valid @RequestBody Permission permission) throws URISyntaxException {
+	public ResponseEntity<PermissionDTO> updatePermission(@Valid @RequestBody PermissionDTO permission) throws URISyntaxException {
 		log.debug("REST request to update Permission : {}", permission);
 		return createPermission(permission);
 	}
@@ -90,9 +91,9 @@ public class PermissionResource {
 	@GetMapping("/permissions")
 	@Timed
 	@PreAuthorize("hasAuthority('profile:view:entities')")
-	public ResponseEntity<List<Permission>> getAllPermissions(@ApiParam Pageable pageable) {
+	public ResponseEntity<List<PermissionDTO>> getAllPermissions(@ApiParam Pageable pageable) {
 		log.debug("REST request to get a page of Permissions");
-		Page<com.transformuk.hee.tis.profile.domain.Permission> page = permissionRepository.findAll(pageable);
+		Page<Permission> page = permissionRepository.findAll(pageable);
 		HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/permissions");
 		return new ResponseEntity<>(permissionMapper.permissionsToPermissionDTOs(page.getContent()), headers, HttpStatus.OK);
 	}
@@ -106,10 +107,10 @@ public class PermissionResource {
 	@GetMapping("/permissions/{name}")
 	@Timed
 	@PreAuthorize("hasAuthority('profile:view:entities')")
-	public ResponseEntity<Permission> getPermission(@PathVariable String name) {
+	public ResponseEntity<PermissionDTO> getPermission(@PathVariable String name) {
 		log.debug("REST request to get Permission : {}", name);
-		com.transformuk.hee.tis.profile.domain.Permission permission = permissionRepository.findOne(name);
-		Permission permissionDTO = permissionMapper.permissionToPermissionDTO(permission);
+		Permission permission = permissionRepository.findOne(name);
+		PermissionDTO permissionDTO = permissionMapper.permissionToPermissionDTO(permission);
 		return ResponseUtil.wrapOrNotFound(Optional.ofNullable(permissionDTO));
 	}
 

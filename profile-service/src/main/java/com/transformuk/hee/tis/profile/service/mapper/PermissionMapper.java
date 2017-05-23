@@ -1,6 +1,7 @@
 package com.transformuk.hee.tis.profile.service.mapper;
 
-import com.transformuk.hee.tis.profile.dto.Permission;
+import com.transformuk.hee.tis.profile.domain.Permission;
+import com.transformuk.hee.tis.profile.dto.PermissionDTO;
 import org.mapstruct.Mapper;
 
 import java.util.List;
@@ -11,11 +12,11 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = {})
 public interface PermissionMapper {
 
-	Permission permissionToPermissionDTO(com.transformuk.hee.tis.profile.domain.Permission permission);
+	PermissionDTO permissionToPermissionDTO(Permission permission);
 
-	List<Permission> permissionsToPermissionDTOs(List<com.transformuk.hee.tis.profile.domain.Permission> permissions);
+	List<PermissionDTO> permissionsToPermissionDTOs(List<Permission> permissions);
 
-	com.transformuk.hee.tis.profile.domain.Permission permissionDTOToPermission(Permission permission);
+	Permission permissionDTOToPermission(PermissionDTO permission);
 
-	List<com.transformuk.hee.tis.profile.domain.Permission> permissionDTOsToPermissions(List<Permission> permissions);
+	List<Permission> permissionDTOsToPermissions(List<PermissionDTO> permissions);
 }

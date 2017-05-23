@@ -88,7 +88,7 @@ public class HeeUserResourceIntTest {
 
 	@Before
 	public void initTest() {
-		heeUser = createEntity(em);
+		heeUser = createEntityHeeUser(em);
 	}
 
 	@Test

@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @ApiModel(description = "Permission given to a role")
-public class Permission implements Serializable{
+public class PermissionDTO implements Serializable{
 	@NotNull
 	private String name;
 
@@ -25,7 +25,7 @@ public class Permission implements Serializable{
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 
-		Permission that = (Permission) o;
+		PermissionDTO that = (PermissionDTO) o;
 
 		return name != null ? name.equals(that.name) : that.name == null;
 	}

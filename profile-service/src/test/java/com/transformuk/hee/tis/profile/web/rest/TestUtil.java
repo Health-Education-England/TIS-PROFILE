@@ -153,7 +153,7 @@ public class TestUtil {
 	 * This is a static method, as tests for other entities might also need it,
 	 * if they test an entity which requires the current entity.
 	 */
-	public static HeeUser createEntity(EntityManager em) {
+	public static HeeUser createEntityHeeUser(EntityManager em) {
 		Role role = new Role();
 		role.setName(DEFAULT_ROLE);
 
