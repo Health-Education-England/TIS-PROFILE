@@ -62,4 +62,13 @@ public interface HeeUserRepository extends JpaRepository<HeeUser, String>, JpaSp
 			nativeQuery = true)
 	List<HeeUser> findDistinctByExactDesignatedBodyCodes(@Param("designatedBodyCodes") String designatedBodyCodes);
 
+
+	/**
+	 * Gets counts of users by roles
+	 *
+	 * @param roleName
+	 * @return
+	 */
+	long countByRolesNameAndActive(@Param("roleName") String roleName, @Param("active") Boolean active);
+
 }

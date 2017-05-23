@@ -13,7 +13,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.persistence.EntityManager;
 
-import static com.transformuk.hee.tis.profile.web.rest.TestUtil.createEntity;
+import static com.transformuk.hee.tis.profile.web.rest.TestUtil.createEntityHeeUser;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
@@ -37,7 +37,7 @@ public class KeyclockAdminClientServiceTest {
 
 	@Before
 	public void initTest() {
-		heeUser = createEntity(em);
+		heeUser = createEntityHeeUser(em);
 	}
 
 	@Test

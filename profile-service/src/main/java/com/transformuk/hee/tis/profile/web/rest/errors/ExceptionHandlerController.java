@@ -31,7 +31,8 @@ public class ExceptionHandlerController {
 	public ResponseEntity<Map<String, Object>> handleException(Exception ex) throws IOException {
 		HttpStatus status = INTERNAL_SERVER_ERROR;
 		Map<String, Object> errorMap = new HashMap<>();
-		if (ex instanceof IllegalArgumentException || ex instanceof MethodArgumentNotValidException) {
+		if (ex instanceof IllegalArgumentException || ex instanceof MethodArgumentNotValidException
+				|| ex instanceof CustomParameterizedException ) {
 			status = BAD_REQUEST;
 		}
 		if (ex instanceof EntityNotFoundException) {

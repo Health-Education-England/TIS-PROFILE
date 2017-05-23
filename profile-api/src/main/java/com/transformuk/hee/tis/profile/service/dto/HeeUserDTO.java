@@ -1,6 +1,8 @@
 package com.transformuk.hee.tis.profile.service.dto;
 
 
+import com.transformuk.hee.tis.profile.dto.RoleDTO;
+
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Objects;

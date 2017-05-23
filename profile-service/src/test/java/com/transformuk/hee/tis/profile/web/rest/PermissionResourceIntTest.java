@@ -1,7 +1,7 @@
 package com.transformuk.hee.tis.profile.web.rest;
 
 import com.transformuk.hee.tis.profile.ProfileApp;
-import com.transformuk.hee.tis.profile.dto.Permission;
+import com.transformuk.hee.tis.profile.dto.PermissionDTO;
 import com.transformuk.hee.tis.profile.repository.PermissionRepository;
 import com.transformuk.hee.tis.profile.service.mapper.PermissionMapper;
 import com.transformuk.hee.tis.profile.web.rest.errors.ExceptionTranslator;
@@ -94,7 +94,7 @@ public class PermissionResourceIntTest {
 		int databaseSizeBeforeCreate = permissionRepository.findAll().size();
 
 		// Create the Permission
-		Permission permission = permissionMapper.permissionToPermissionDTO(this.permission);
+		PermissionDTO permission = permissionMapper.permissionToPermissionDTO(this.permission);
 		restPermissionMockMvc.perform(post("/api/permissions")
 				.contentType(TestUtil.APPLICATION_JSON_UTF8)
 				.content(TestUtil.convertObjectToJsonBytes(permission)))
@@ -114,7 +114,7 @@ public class PermissionResourceIntTest {
 
 		// Create the Permission with an existing ID
 		this.permission.setName("revalidation:data:sync");
-		Permission permission = permissionMapper.permissionToPermissionDTO(this.permission);
+		PermissionDTO permission = permissionMapper.permissionToPermissionDTO(this.permission);
 
 		// Creating a permission with the same name will do nothing but not fail
 		restPermissionMockMvc.perform(post("/api/permissions")
@@ -135,7 +135,7 @@ public class PermissionResourceIntTest {
 		this.permission.setName(null);
 
 		// Create the Permission, which fails.
-		Permission permission = permissionMapper.permissionToPermissionDTO(this.permission);
+		PermissionDTO permission = permissionMapper.permissionToPermissionDTO(this.permission);
 
 		restPermissionMockMvc.perform(post("/api/permissions")
 				.contentType(TestUtil.APPLICATION_JSON_UTF8)

@@ -2,9 +2,10 @@ package com.transformuk.hee.tis.profile.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import com.transformuk.hee.tis.profile.domain.Role;
+import com.transformuk.hee.tis.profile.dto.RoleDTO;
 import com.transformuk.hee.tis.profile.repository.RoleRepository;
-import com.transformuk.hee.tis.profile.service.dto.RoleDTO;
 import com.transformuk.hee.tis.profile.service.mapper.RoleMapper;
+import com.transformuk.hee.tis.profile.validators.RoleValidator;
 import com.transformuk.hee.tis.profile.web.rest.util.HeaderUtil;
 import com.transformuk.hee.tis.profile.web.rest.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
@@ -38,9 +39,12 @@ public class RoleResource {
 
 	private final RoleMapper roleMapper;
 
-	public RoleResource(RoleRepository roleRepository, RoleMapper roleMapper) {
+	private final RoleValidator roleValidator;
+
+	public RoleResource(RoleRepository roleRepository, RoleMapper roleMapper, RoleValidator roleValidator) {
 		this.roleRepository = roleRepository;
 		this.roleMapper = roleMapper;
+		this.roleValidator = roleValidator;
 	}
 
 	/**
@@ -56,6 +60,9 @@ public class RoleResource {
 	public ResponseEntity<RoleDTO> createRole(@Valid @RequestBody RoleDTO roleDTO) throws URISyntaxException {
 		log.debug("REST request to save Role : {}", roleDTO);
 		Role role = roleMapper.roleDTOToRole(roleDTO);
+		//Validate
+		validateRole(role);
+
 		role = roleRepository.save(role);
 		RoleDTO result = roleMapper.roleToRoleDTO(role);
 		return ResponseEntity.created(new URI("/api/roles/" + result.getName()))
@@ -79,7 +86,18 @@ public class RoleResource {
 	@PreAuthorize("hasAuthority('profile:add:modify:entities')")
 	public ResponseEntity<RoleDTO> updateRole(@Valid @RequestBody RoleDTO roleDTO) throws URISyntaxException {
 		log.debug("REST request to update Role : {}", roleDTO);
-		return createRole(roleDTO);
+		Role dbRole = roleRepository.findByName(roleDTO.getName());
+		if (dbRole == null || dbRole.getName() == null) {
+			return createRole(roleDTO);
+		}
+		Role role = roleMapper.roleDTOToRole(roleDTO);
+		//Validate
+		validateRole(role);
+		role = roleRepository.save(role);
+		RoleDTO result = roleMapper.roleToRoleDTO(role);
+		return ResponseEntity.ok()
+				.headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, roleDTO.getName().toString()))
+				.body(result);
 	}
 
 	/**
@@ -126,8 +144,17 @@ public class RoleResource {
 	@PreAuthorize("hasAuthority('profile:delete:entities')")
 	public ResponseEntity<Void> deleteRole(@PathVariable String name) {
 		log.debug("REST request to delete Role : {}", name);
+		//validate before delete
+		roleValidator.validateBeforeDelete(name);
+
 		roleRepository.delete(name);
 		return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, name)).build();
+	}
+
+	private void validateRole(Role role) {
+		//validate permissions
+		roleValidator.validatePermissions(role.getPermissions());
+
 	}
 
 }
