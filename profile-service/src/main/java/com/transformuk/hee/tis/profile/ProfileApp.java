@@ -26,7 +26,10 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Collection;
 
-@ComponentScan
+@ComponentScan({
+		"com.transformuk.hee.tis.profile",
+		"com.transformuk.hee.tis.reference.client"
+})
 @EnableAutoConfiguration(exclude = {MetricFilterAutoConfiguration.class, MetricRepositoryAutoConfiguration.class})
 @EnableConfigurationProperties({ApplicationProperties.class})
 public class ProfileApp {
