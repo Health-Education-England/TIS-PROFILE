@@ -11,6 +11,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -115,7 +117,44 @@ public class ProfileServiceImpl implements ProfileService {
 		return responseEntity.getBody();
 	}
 
+	/**
+	 * Post to the profile service to create new entities
+	 *
+	 * @param objectDTO   The data object representing the object to create in the service
+	 * @param endpointUrl The url endpoint to which to Post to
+	 * @param dtoClass    The class type of the objectDTO
+	 * @return The object that was created with any new IDs that were generated
+	 */
+	@Override
+	public <DTO> DTO createDto(DTO objectDTO, String endpointUrl, Class<DTO> dtoClass) {
+		HttpHeaders headers = new HttpHeaders();
+		HttpEntity<DTO> httpEntity = new HttpEntity<>(objectDTO, headers);
+
+		ResponseEntity<DTO> response = profileRestTemplate.exchange(
+				serviceUrl + endpointUrl, HttpMethod.POST, httpEntity, dtoClass);
+		return response.getBody();
+	}
+
+	/**
+	 * Update an existing entity record within the service
+	 *
+	 * @param objectDTO   The object with the updated values
+	 * @param endpointUrl The url endpoint to which to 'Put' to
+	 * @param dtoClass    The class type of the objectDTO
+	 * @return The object that was updated
+	 */
+	@Override
+	public <DTO> DTO updateDto(DTO objectDTO, String endpointUrl, Class<DTO> dtoClass) {
+		HttpHeaders headers = new HttpHeaders();
+		HttpEntity<DTO> httpEntity = new HttpEntity<>(objectDTO, headers);
+
+		ResponseEntity<DTO> response = profileRestTemplate.exchange(
+				serviceUrl + endpointUrl, HttpMethod.PUT, httpEntity, dtoClass);
+		return response.getBody();
+	}
+
 	public void setServiceUrl(String serviceUrl) {
 		this.serviceUrl = serviceUrl;
 	}
+
 }

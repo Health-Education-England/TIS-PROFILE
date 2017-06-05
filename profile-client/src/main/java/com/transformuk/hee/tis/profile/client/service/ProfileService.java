@@ -21,4 +21,8 @@ public interface ProfileService  {
 	void setServiceUrl(String serviceUrl);
 
 	List<TraineeProfileDto> getTraineeIdsForGmcNumbers(String designatedBodyCode, List<RegistrationRequest> registrationRequests);
+
+	<DTO> DTO createDto(DTO var1, String var2, Class<DTO> var3);
+
+	<DTO> DTO updateDto(DTO var1, String var2, Class<DTO> var3);
 }

@@ -7,12 +7,16 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -22,12 +26,15 @@ import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.HttpStatus.OK;
+
 
 @RunWith(MockitoJUnitRunner.class
 )
@@ -39,14 +46,24 @@ public class ProfileServiceImplTest {
 	private static final String GMC_NUMBER = "1234567";
 	private static final long TIS_ID = 999L;
 
-	@Mock
-	private RestTemplate profileRestTemplate;
 	@InjectMocks
 	private ProfileServiceImpl profileServiceImpl;
 
+	@Mock
+	private RestTemplate profileRestTemplate;
+
+	@Captor
+	private ArgumentCaptor<String> endpointCaptor;
+	@Captor
+	private ArgumentCaptor<HttpEntity> httpEntityArgumentCaptor;
+	@Captor
+	private ArgumentCaptor<HttpMethod> httpMethodArgumentCaptor;
+	@Captor
+	private ArgumentCaptor<Class> classArgumentCaptor;
+
 	@Before
 	public void setUp() throws Exception {
-		profileServiceImpl.setServiceUrl("http://localhost:8888/trainee-id");
+		profileServiceImpl.setServiceUrl(PROFILE_URL);
 	}
 
 
@@ -129,5 +146,55 @@ public class ProfileServiceImplTest {
 		// then
 		assertEquals(1, traineeProfileList.size());
 		assertEquals(traineeProfileDto, traineeProfileList.get(0));
+	}
+
+	@Test
+	public void createDTOShouldPostObjectToService() {
+
+		Object dataSent = new Object();
+		String createEndpointUrl = "create/endpoint";
+		Class<Object> objectClass = Object.class;
+		Object responseBody = new Object();
+		ResponseEntity<Object> responseEntity = new ResponseEntity<>(responseBody, null, HttpStatus.OK);
+
+		when(profileRestTemplate.exchange(endpointCaptor.capture(), httpMethodArgumentCaptor.capture(), httpEntityArgumentCaptor.capture(),
+				classArgumentCaptor.capture())).thenReturn(responseEntity);
+
+		final Object result = profileServiceImpl.createDto(dataSent, createEndpointUrl, objectClass);
+		assertTrue(result.equals(responseBody));
+
+		final String capturedEndpointUrl = endpointCaptor.getValue();
+		assertEquals(PROFILE_URL + createEndpointUrl, capturedEndpointUrl);
+
+		final HttpMethod capturedHttpMethod = httpMethodArgumentCaptor.getValue();
+		assertEquals(HttpMethod.POST, capturedHttpMethod);
+
+		final HttpEntity capturedHttpEntity = httpEntityArgumentCaptor.getValue();
+		assertEquals(dataSent, capturedHttpEntity.getBody());
+	}
+
+	@Test
+	public void updateDTOShouldPutObjectToService() {
+
+		Object dataSent = new Object();
+		String updateEndpointUrl = "update/endpoint";
+		Class<Object> objectClass = Object.class;
+		Object responseBody = new Object();
+		ResponseEntity<Object> responseEntity = new ResponseEntity<>(responseBody, null, HttpStatus.OK);
+
+		when(profileRestTemplate.exchange(endpointCaptor.capture(), httpMethodArgumentCaptor.capture(), httpEntityArgumentCaptor.capture(),
+				classArgumentCaptor.capture())).thenReturn(responseEntity);
+
+		final Object result = profileServiceImpl.updateDto(dataSent, updateEndpointUrl, objectClass);
+		assertTrue(result.equals(responseBody));
+
+		final String capturedEndpointUrl = endpointCaptor.getValue();
+		assertEquals(PROFILE_URL + updateEndpointUrl, capturedEndpointUrl);
+
+		final HttpMethod capturedHttpMethod = httpMethodArgumentCaptor.getValue();
+		assertEquals(HttpMethod.PUT, capturedHttpMethod);
+
+		final HttpEntity capturedHttpEntity = httpEntityArgumentCaptor.getValue();
+		assertEquals(dataSent, capturedHttpEntity.getBody());
 	}
 }
