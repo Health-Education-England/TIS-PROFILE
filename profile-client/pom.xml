@@ -21,8 +21,7 @@
 		<dependency>
 			<groupId>com.transformuk.hee</groupId>
 			<artifactId>tis-parent-client</artifactId>
-			<version>1.0.2</version>
-			<type>pom</type>
+			<version>1.2.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.transformuk.hee</groupId>
