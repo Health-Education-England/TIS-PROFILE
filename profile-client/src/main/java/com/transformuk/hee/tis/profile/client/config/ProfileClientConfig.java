@@ -1,34 +1,30 @@
 package com.transformuk.hee.tis.profile.client.config;
 
-import com.transformuk.hee.tis.profile.client.service.impl.JwtProfileServiceImpl;
-import com.transformuk.hee.tis.security.config.TisSecurityConfig;
-import com.transformuk.hee.tis.security.service.JwtProfileService;
-import org.springframework.beans.factory.annotation.Value;
+
+import com.transformuk.hee.tis.security.client.KeycloakClientRequestFactory;
+import com.transformuk.hee.tis.security.client.KeycloakRestTemplate;
+import com.transformuk.hee.tis.security.config.KeycloakClientConfig;
+import org.keycloak.admin.client.Keycloak;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
+/**
+ * Configuration class to define a rest template to be used by the Profile Client
+ * <p>
+ * This rest template is to only be used when a service needs to communicate with the profile service
+ * on behalf of itself, where there is no interaction if a browser or end client.
+ * e.g. during an ETL, some batch processing etc.
+ * <p>
+ * This rest template talks to keycloak directly to get a jwt key using the services credentials
+ */
 @Configuration
-@Import(TisSecurityConfig.class)
+@Import(KeycloakClientConfig.class)
 public class ProfileClientConfig {
-
-	@Value("${PROFILE_REST_TIMEOUT:30000}")
-	private int timeout;
-
 	@Bean
-	public RestTemplate profileClientRestTemplate(){
-		RestTemplate restTemplate = new RestTemplate();
-		HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
-		factory.setReadTimeout(timeout);
-		factory.setConnectTimeout(timeout);
-		restTemplate.setRequestFactory(factory);
-		return restTemplate;
-	}
-
-	@Bean
-	public JwtProfileService jwtProfileService(RestTemplate profileClientRestTemplate) {
-		return new JwtProfileServiceImpl(profileClientRestTemplate);
+	public RestTemplate profileRestTemplate(Keycloak keycloak) {
+		final KeycloakClientRequestFactory keycloakClientRequestFactory = new KeycloakClientRequestFactory(keycloak);
+		return new KeycloakRestTemplate(keycloakClientRequestFactory);
 	}
 }

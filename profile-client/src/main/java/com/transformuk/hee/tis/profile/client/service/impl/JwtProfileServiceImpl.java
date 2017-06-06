@@ -11,6 +11,11 @@ import org.springframework.web.client.RestTemplate;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ * Service that's used within the context of a microservices spring security.
+ * <p>
+ * Its used to retrieve the the users details from the profile service.
+ */
 public class JwtProfileServiceImpl implements JwtProfileService {
 
 	private static final String USER_INFO_ENDPOINT = "/api/userinfo";
