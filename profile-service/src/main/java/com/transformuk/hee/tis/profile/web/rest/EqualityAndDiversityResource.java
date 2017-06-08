@@ -8,7 +8,9 @@ import com.transformuk.hee.tis.profile.service.mapper.EqualityAndDiversityMapper
 import com.transformuk.hee.tis.profile.web.rest.util.HeaderUtil;
 import com.transformuk.hee.tis.profile.web.rest.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
+import io.jsonwebtoken.lang.Collections;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -24,6 +26,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * REST controller for managing EqualityAndDiversity.
@@ -139,4 +142,65 @@ public class EqualityAndDiversityResource {
 		return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
 	}
 
+
+	/**
+	 * POST  /bulk-equality-and-diversities : Bulk create a new equality-and-diversities.
+	 *
+	 * @param equalityAndDiversityDTOS List of the equalityAndDiversityDTOS to create
+	 * @return the ResponseEntity with status 200 (Created) and with body the new equalityAndDiversityDTOS, or with status 400 (Bad Request) if the EqualityAndDiversity has already an ID
+	 * @throws URISyntaxException if the Location URI syntax is incorrect
+	 */
+	@PostMapping("/bulk-equality-and-diversities")
+	@Timed
+	@PreAuthorize("hasAuthority('profile:add:modify:entities')")
+	public ResponseEntity<List<EqualityAndDiversityDTO>> bulkCreateEqualityAndDiversity(@Valid @RequestBody List<EqualityAndDiversityDTO> equalityAndDiversityDTOS) throws URISyntaxException {
+		log.debug("REST request to bulk save EqualityAndDiversity : {}", equalityAndDiversityDTOS);
+		if (!Collections.isEmpty(equalityAndDiversityDTOS)) {
+			List<Long> entityIds = equalityAndDiversityDTOS.stream()
+					.filter(ead -> ead.getId() != null)
+					.map(ead -> ead.getId())
+					.collect(Collectors.toList());
+			if (!Collections.isEmpty(entityIds)) {
+				return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(StringUtils.join(entityIds, ","), "ids.exist", "A new EqualityAndDiversity cannot already have an ID")).body(null);
+			}
+		}
+		List<EqualityAndDiversity> equalityAndDiversityList = equalityAndDiversityMapper.equalityAndDiversityDTOsToEqualityAndDiversities(equalityAndDiversityDTOS);
+		equalityAndDiversityList = equalityAndDiversityRepository.save(equalityAndDiversityList);
+		List<EqualityAndDiversityDTO> result = equalityAndDiversityMapper.equalityAndDiversitiesToEqualityAndDiversityDTOs(equalityAndDiversityList);
+		List<Long> ids = result.stream().map(at -> at.getId()).collect(Collectors.toList());
+		return ResponseEntity.ok()
+				.headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, StringUtils.join(ids, ",")))
+				.body(result);
+	}
+
+	/**
+	 * PUT  /bulk-equality-and-diversities : Updates an existing EqualityAndDiversity.
+	 *
+	 * @param equalityAndDiversityDTOS List of the equalityAndDiversityDTOS to update
+	 * @return the ResponseEntity with status 200 (OK) and with body the updated equalityAndDiversityDTOS,
+	 * or with status 400 (Bad Request) if the equalityAndDiversityDTOS is not valid,
+	 * or with status 500 (Internal Server Error) if the equalityAndDiversityDTOS couldnt be updated
+	 * @throws URISyntaxException if the Location URI syntax is incorrect
+	 */
+	@PutMapping("/bulk-equality-and-diversities")
+	@Timed
+	@PreAuthorize("hasAuthority('profile:add:modify:entities')")
+	public ResponseEntity<List<EqualityAndDiversityDTO>> bulkUpdateEqualityAndDiversity(@Valid @RequestBody List<EqualityAndDiversityDTO> equalityAndDiversityDTOS) throws URISyntaxException {
+		log.debug("REST request to bulk update EqualityAndDiversity : {}", equalityAndDiversityDTOS);
+		if (Collections.isEmpty(equalityAndDiversityDTOS)) {
+			return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "request.body.empty",
+					"The request body for this end point cannot be empty")).body(null);
+		} else if (!Collections.isEmpty(equalityAndDiversityDTOS)) {
+			List<EqualityAndDiversityDTO> entitiesWithNoId = equalityAndDiversityDTOS.stream().filter(at -> at.getId() == null).collect(Collectors.toList());
+			return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(StringUtils.join(entitiesWithNoId, ","),
+					"bulk.update.failed.noId", "The request body for this end point cannot be empty")).body(null);
+		}
+		List<EqualityAndDiversity> equalityAndDiversityList = equalityAndDiversityMapper.equalityAndDiversityDTOsToEqualityAndDiversities(equalityAndDiversityDTOS);
+		equalityAndDiversityList = equalityAndDiversityRepository.save(equalityAndDiversityList);
+		List<EqualityAndDiversityDTO> results = equalityAndDiversityMapper.equalityAndDiversitiesToEqualityAndDiversityDTOs(equalityAndDiversityList);
+		List<Long> ids = results.stream().map(at -> at.getId()).collect(Collectors.toList());
+		return ResponseEntity.ok()
+				.headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, StringUtils.join(ids, ",")))
+				.body(results);
+	}
 }

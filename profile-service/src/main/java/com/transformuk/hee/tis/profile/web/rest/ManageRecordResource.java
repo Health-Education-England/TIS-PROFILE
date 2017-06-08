@@ -8,7 +8,9 @@ import com.transformuk.hee.tis.profile.service.mapper.ManageRecordMapper;
 import com.transformuk.hee.tis.profile.web.rest.util.HeaderUtil;
 import com.transformuk.hee.tis.profile.web.rest.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
+import io.jsonwebtoken.lang.Collections;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -24,6 +26,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * REST controller for managing ManageRecord.
@@ -139,4 +142,65 @@ public class ManageRecordResource {
 		return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
 	}
 
+
+	/**
+	 * POST  /bulk-manage-records : Bulk create a new manage-records.
+	 *
+	 * @param manageRecordDTOS List of the manageRecordDTOS to create
+	 * @return the ResponseEntity with status 200 (Created) and with body the new manageRecordDTOS, or with status 400 (Bad Request) if the EqualityAndDiversity has already an ID
+	 * @throws URISyntaxException if the Location URI syntax is incorrect
+	 */
+	@PostMapping("/bulk-manage-records")
+	@Timed
+	@PreAuthorize("hasAuthority('profile:add:modify:entities')")
+	public ResponseEntity<List<ManageRecordDTO>> bulkCreateManageRecord(@Valid @RequestBody List<ManageRecordDTO> manageRecordDTOS) throws URISyntaxException {
+		log.debug("REST request to bulk save ManageRecord : {}", manageRecordDTOS);
+		if (!Collections.isEmpty(manageRecordDTOS)) {
+			List<Long> entityIds = manageRecordDTOS.stream()
+					.filter(mr -> mr.getId() != null)
+					.map(mr -> mr.getId())
+					.collect(Collectors.toList());
+			if (!Collections.isEmpty(entityIds)) {
+				return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(StringUtils.join(entityIds, ","), "ids.exist", "A new ManageRecord cannot already have an ID")).body(null);
+			}
+		}
+		List<ManageRecord> manageRecordList = manageRecordMapper.manageRecordDTOsToManageRecords(manageRecordDTOS);
+		manageRecordList = manageRecordRepository.save(manageRecordList);
+		List<ManageRecordDTO> result = manageRecordMapper.manageRecordsToManageRecordDTOs(manageRecordList);
+		List<Long> ids = result.stream().map(mr -> mr.getId()).collect(Collectors.toList());
+		return ResponseEntity.ok()
+				.headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, StringUtils.join(ids, ",")))
+				.body(result);
+	}
+
+	/**
+	 * PUT  /bulk-manage-records : Updates an existing manage-records.
+	 *
+	 * @param manageRecordDTOS List of the manageRecordDTOS to update
+	 * @return the ResponseEntity with status 200 (OK) and with body the updated manageRecordDTOS,
+	 * or with status 400 (Bad Request) if the manageRecordDTOS is not valid,
+	 * or with status 500 (Internal Server Error) if the manageRecordDTOS couldnt be updated
+	 * @throws URISyntaxException if the Location URI syntax is incorrect
+	 */
+	@PutMapping("/bulk-manage-records")
+	@Timed
+	@PreAuthorize("hasAuthority('profile:add:modify:entities')")
+	public ResponseEntity<List<ManageRecordDTO>> bulkUpdateManageRecord(@Valid @RequestBody List<ManageRecordDTO> manageRecordDTOS) throws URISyntaxException {
+		log.debug("REST request to bulk update ManageRecord : {}", manageRecordDTOS);
+		if (Collections.isEmpty(manageRecordDTOS)) {
+			return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "request.body.empty",
+					"The request body for this end point cannot be empty")).body(null);
+		} else if (!Collections.isEmpty(manageRecordDTOS)) {
+			List<ManageRecordDTO> entitiesWithNoId = manageRecordDTOS.stream().filter(mr -> mr.getId() == null).collect(Collectors.toList());
+			return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(StringUtils.join(entitiesWithNoId, ","),
+					"bulk.update.failed.noId", "The request body for this end point cannot be empty")).body(null);
+		}
+		List<ManageRecord> manageRecordList = manageRecordMapper.manageRecordDTOsToManageRecords(manageRecordDTOS);
+		manageRecordList = manageRecordRepository.save(manageRecordList);
+		List<ManageRecordDTO> results = manageRecordMapper.manageRecordsToManageRecordDTOs(manageRecordList);
+		List<Long> ids = results.stream().map(mr -> mr.getId()).collect(Collectors.toList());
+		return ResponseEntity.ok()
+				.headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, StringUtils.join(ids, ",")))
+				.body(results);
+	}
 }

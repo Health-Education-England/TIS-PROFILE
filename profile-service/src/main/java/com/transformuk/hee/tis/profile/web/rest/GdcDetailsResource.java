@@ -8,7 +8,9 @@ import com.transformuk.hee.tis.profile.service.mapper.GdcDetailsMapper;
 import com.transformuk.hee.tis.profile.web.rest.util.HeaderUtil;
 import com.transformuk.hee.tis.profile.web.rest.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
+import io.jsonwebtoken.lang.Collections;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -24,6 +26,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * REST controller for managing GdcDetails.
@@ -139,4 +142,65 @@ public class GdcDetailsResource {
 		return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
 	}
 
+
+	/**
+	 * POST  /bulk-gdc-details : Bulk create a new gdc-details.
+	 *
+	 * @param gdcDetailsDTOS List of the gdcDetailsDTOS to create
+	 * @return the ResponseEntity with status 200 (Created) and with body the new gdcDetailsDTOS, or with status 400 (Bad Request) if the GdcDetails has already an ID
+	 * @throws URISyntaxException if the Location URI syntax is incorrect
+	 */
+	@PostMapping("/bulk-gdc-details")
+	@Timed
+	@PreAuthorize("hasAuthority('profile:add:modify:entities')")
+	public ResponseEntity<List<GdcDetailsDTO>> bulkCreateGdcDetails(@Valid @RequestBody List<GdcDetailsDTO> gdcDetailsDTOS) throws URISyntaxException {
+		log.debug("REST request to bulk save GdcDetails : {}", gdcDetailsDTOS);
+		if (!Collections.isEmpty(gdcDetailsDTOS)) {
+			List<Long> entityIds = gdcDetailsDTOS.stream()
+					.filter(gdc -> gdc.getId() != null)
+					.map(gdc -> gdc.getId())
+					.collect(Collectors.toList());
+			if (!Collections.isEmpty(entityIds)) {
+				return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(StringUtils.join(entityIds, ","), "ids.exist", "A new GdcDetail cannot already have an ID")).body(null);
+			}
+		}
+		List<GdcDetails> gdcDetailsList = gdcDetailsMapper.gdcDetailsDTOsToGdcDetails(gdcDetailsDTOS);
+		gdcDetailsList = gdcDetailsRepository.save(gdcDetailsList);
+		List<GdcDetailsDTO> result = gdcDetailsMapper.gdcDetailsToGdcDetailsDTOs(gdcDetailsList);
+		List<Long> ids = result.stream().map(gdc -> gdc.getId()).collect(Collectors.toList());
+		return ResponseEntity.ok()
+				.headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, StringUtils.join(ids, ",")))
+				.body(result);
+	}
+
+	/**
+	 * PUT  /bulk-gdc-details : Updates an existing gdc-details.
+	 *
+	 * @param gdcDetailsDTOS List of the gdcDetailsDTOS to update
+	 * @return the ResponseEntity with status 200 (OK) and with body the updated gdcDetailsDTOS,
+	 * or with status 400 (Bad Request) if the gdcDetailsDTOS is not valid,
+	 * or with status 500 (Internal Server Error) if the gdcDetailsDTOS couldnt be updated
+	 * @throws URISyntaxException if the Location URI syntax is incorrect
+	 */
+	@PutMapping("/bulk-gdc-details")
+	@Timed
+	@PreAuthorize("hasAuthority('profile:add:modify:entities')")
+	public ResponseEntity<List<GdcDetailsDTO>> bulkUpdateGdcDetails(@Valid @RequestBody List<GdcDetailsDTO> gdcDetailsDTOS) throws URISyntaxException {
+		log.debug("REST request to bulk update GdcDetails : {}", gdcDetailsDTOS);
+		if (Collections.isEmpty(gdcDetailsDTOS)) {
+			return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "request.body.empty",
+					"The request body for this end point cannot be empty")).body(null);
+		} else if (!Collections.isEmpty(gdcDetailsDTOS)) {
+			List<GdcDetailsDTO> entitiesWithNoId = gdcDetailsDTOS.stream().filter(gdcDetailsDTO -> gdcDetailsDTO.getId() == null).collect(Collectors.toList());
+			return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(StringUtils.join(entitiesWithNoId, ","),
+					"bulk.update.failed.noId", "The request body for this end point cannot be empty")).body(null);
+		}
+		List<GdcDetails> gdcDetailsList = gdcDetailsMapper.gdcDetailsDTOsToGdcDetails(gdcDetailsDTOS);
+		gdcDetailsList = gdcDetailsRepository.save(gdcDetailsList);
+		List<GdcDetailsDTO> results = gdcDetailsMapper.gdcDetailsToGdcDetailsDTOs(gdcDetailsList);
+		List<Long> ids = results.stream().map(gdcDetailsDTO -> gdcDetailsDTO.getId()).collect(Collectors.toList());
+		return ResponseEntity.ok()
+				.headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, StringUtils.join(ids, ",")))
+				.body(results);
+	}
 }

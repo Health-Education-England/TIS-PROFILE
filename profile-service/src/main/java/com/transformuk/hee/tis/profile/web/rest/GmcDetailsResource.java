@@ -8,7 +8,9 @@ import com.transformuk.hee.tis.profile.service.mapper.GmcDetailsMapper;
 import com.transformuk.hee.tis.profile.web.rest.util.HeaderUtil;
 import com.transformuk.hee.tis.profile.web.rest.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
+import io.jsonwebtoken.lang.Collections;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -24,6 +26,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * REST controller for managing GmcDetails.
@@ -139,4 +142,65 @@ public class GmcDetailsResource {
 		return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
 	}
 
+
+	/**
+	 * POST  /bulk-gmc-details : Bulk create a new gmc-details.
+	 *
+	 * @param gmcDetailsDTOS List of the gmcDetailsDTOS to create
+	 * @return the ResponseEntity with status 200 (Created) and with body the new gmcDetailsDTOS, or with status 400 (Bad Request) if the GmcDetails has already an ID
+	 * @throws URISyntaxException if the Location URI syntax is incorrect
+	 */
+	@PostMapping("/bulk-gmc-details")
+	@Timed
+	@PreAuthorize("hasAuthority('profile:add:modify:entities')")
+	public ResponseEntity<List<GmcDetailsDTO>> bulkCreateGmcDetails(@Valid @RequestBody List<GmcDetailsDTO> gmcDetailsDTOS) throws URISyntaxException {
+		log.debug("REST request to bulk save GmcDetails : {}", gmcDetailsDTOS);
+		if (!Collections.isEmpty(gmcDetailsDTOS)) {
+			List<Long> entityIds = gmcDetailsDTOS.stream()
+					.filter(gmc -> gmc.getId() != null)
+					.map(gmc -> gmc.getId())
+					.collect(Collectors.toList());
+			if (!Collections.isEmpty(entityIds)) {
+				return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(StringUtils.join(entityIds, ","), "ids.exist", "A new GmcDetail cannot already have an ID")).body(null);
+			}
+		}
+		List<GmcDetails> gmcDetailsList = gmcDetailsMapper.gmcDetailsDTOsToGmcDetails(gmcDetailsDTOS);
+		gmcDetailsList = gmcDetailsRepository.save(gmcDetailsList);
+		List<GmcDetailsDTO> result = gmcDetailsMapper.gmcDetailsToGmcDetailsDTOs(gmcDetailsList);
+		List<Long> ids = result.stream().map(gmc -> gmc.getId()).collect(Collectors.toList());
+		return ResponseEntity.ok()
+				.headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, StringUtils.join(ids, ",")))
+				.body(result);
+	}
+
+	/**
+	 * PUT  /bulk-gmc-details : Updates an existing gmc-details.
+	 *
+	 * @param gmcDetailsDTOS List of the gmcDetailsDTOS to update
+	 * @return the ResponseEntity with status 200 (OK) and with body the updated gmcDetailsDTOS,
+	 * or with status 400 (Bad Request) if the gmcDetailsDTOS is not valid,
+	 * or with status 500 (Internal Server Error) if the gmcDetailsDTOS couldnt be updated
+	 * @throws URISyntaxException if the Location URI syntax is incorrect
+	 */
+	@PutMapping("/bulk-gmc-details")
+	@Timed
+	@PreAuthorize("hasAuthority('profile:add:modify:entities')")
+	public ResponseEntity<List<GmcDetailsDTO>> bulkUpdateGmcDetails(@Valid @RequestBody List<GmcDetailsDTO> gmcDetailsDTOS) throws URISyntaxException {
+		log.debug("REST request to bulk update GmcDetails : {}", gmcDetailsDTOS);
+		if (Collections.isEmpty(gmcDetailsDTOS)) {
+			return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "request.body.empty",
+					"The request body for this end point cannot be empty")).body(null);
+		} else if (!Collections.isEmpty(gmcDetailsDTOS)) {
+			List<GmcDetailsDTO> entitiesWithNoId = gmcDetailsDTOS.stream().filter(gmcDetailsDTO -> gmcDetailsDTO.getId() == null).collect(Collectors.toList());
+			return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(StringUtils.join(entitiesWithNoId, ","),
+					"bulk.update.failed.noId", "The request body for this end point cannot be empty")).body(null);
+		}
+		List<GmcDetails> gmcDetailsList = gmcDetailsMapper.gmcDetailsDTOsToGmcDetails(gmcDetailsDTOS);
+		gmcDetailsList = gmcDetailsRepository.save(gmcDetailsList);
+		List<GmcDetailsDTO> results = gmcDetailsMapper.gmcDetailsToGmcDetailsDTOs(gmcDetailsList);
+		List<Long> ids = results.stream().map(gmcDetailsDTO -> gmcDetailsDTO.getId()).collect(Collectors.toList());
+		return ResponseEntity.ok()
+				.headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, StringUtils.join(ids, ",")))
+				.body(results);
+	}
 }

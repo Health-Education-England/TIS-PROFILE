@@ -8,7 +8,9 @@ import com.transformuk.hee.tis.profile.service.mapper.PersonalDetailsMapper;
 import com.transformuk.hee.tis.profile.web.rest.util.HeaderUtil;
 import com.transformuk.hee.tis.profile.web.rest.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
+import io.jsonwebtoken.lang.Collections;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -24,6 +26,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * REST controller for managing PersonalDetails.
@@ -137,6 +140,68 @@ public class PersonalDetailsResource {
 		log.debug("REST request to delete PersonalDetails : {}", id);
 		personalDetailsRepository.delete(id);
 		return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
+	}
+
+
+	/**
+	 * POST  /bulk-personal-details : Bulk create a new personal-details.
+	 *
+	 * @param personalDetailsDTOS List of the personalDetailsDTOS to create
+	 * @return the ResponseEntity with status 200 (Created) and with body the new personalDetailsDTOS, or with status 400 (Bad Request) if the PersonalDetails has already an ID
+	 * @throws URISyntaxException if the Location URI syntax is incorrect
+	 */
+	@PostMapping("/bulk-personal-details")
+	@Timed
+	@PreAuthorize("hasAuthority('profile:add:modify:entities')")
+	public ResponseEntity<List<PersonalDetailsDTO>> bulkCreatePersonalDetails(@Valid @RequestBody List<PersonalDetailsDTO> personalDetailsDTOS) throws URISyntaxException {
+		log.debug("REST request to bulk save PersonalDetails : {}", personalDetailsDTOS);
+		if (!Collections.isEmpty(personalDetailsDTOS)) {
+			List<Long> entityIds = personalDetailsDTOS.stream()
+					.filter(pd -> pd.getId() != null)
+					.map(pd -> pd.getId())
+					.collect(Collectors.toList());
+			if (!Collections.isEmpty(entityIds)) {
+				return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(StringUtils.join(entityIds, ","), "ids.exist", "A new PersonalDetails cannot already have an ID")).body(null);
+			}
+		}
+		List<PersonalDetails> personalDetailsList = personalDetailsMapper.personalDetailsDTOsToPersonalDetails(personalDetailsDTOS);
+		personalDetailsList = personalDetailsRepository.save(personalDetailsList);
+		List<PersonalDetailsDTO> result = personalDetailsMapper.personalDetailsToPersonalDetailsDTOs(personalDetailsList);
+		List<Long> ids = result.stream().map(pd -> pd.getId()).collect(Collectors.toList());
+		return ResponseEntity.ok()
+				.headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, StringUtils.join(ids, ",")))
+				.body(result);
+	}
+
+	/**
+	 * PUT  /bulk-personal-details : Updates an existing personal-details.
+	 *
+	 * @param personalDetailsDTOS List of the personalDetailsDTOS to update
+	 * @return the ResponseEntity with status 200 (OK) and with body the updated personalDetailsDTOS,
+	 * or with status 400 (Bad Request) if the personalDetailsDTOS is not valid,
+	 * or with status 500 (Internal Server Error) if the personalDetailsDTOS couldnt be updated
+	 * @throws URISyntaxException if the Location URI syntax is incorrect
+	 */
+	@PutMapping("/bulk-personal-details")
+	@Timed
+	@PreAuthorize("hasAuthority('profile:add:modify:entities')")
+	public ResponseEntity<List<PersonalDetailsDTO>> bulkUpdatePersonalDetails(@Valid @RequestBody List<PersonalDetailsDTO> personalDetailsDTOS) throws URISyntaxException {
+		log.debug("REST request to bulk update PersonalDetails : {}", personalDetailsDTOS);
+		if (Collections.isEmpty(personalDetailsDTOS)) {
+			return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "request.body.empty",
+					"The request body for this end point cannot be empty")).body(null);
+		} else if (!Collections.isEmpty(personalDetailsDTOS)) {
+			List<PersonalDetailsDTO> entitiesWithNoId = personalDetailsDTOS.stream().filter(pd -> pd.getId() == null).collect(Collectors.toList());
+			return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(StringUtils.join(entitiesWithNoId, ","),
+					"bulk.update.failed.noId", "The request body for this end point cannot be empty")).body(null);
+		}
+		List<PersonalDetails> personalDetailsList = personalDetailsMapper.personalDetailsDTOsToPersonalDetails(personalDetailsDTOS);
+		personalDetailsList = personalDetailsRepository.save(personalDetailsList);
+		List<PersonalDetailsDTO> results = personalDetailsMapper.personalDetailsToPersonalDetailsDTOs(personalDetailsList);
+		List<Long> ids = results.stream().map(pd -> pd.getId()).collect(Collectors.toList());
+		return ResponseEntity.ok()
+				.headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, StringUtils.join(ids, ",")))
+				.body(results);
 	}
 
 }
