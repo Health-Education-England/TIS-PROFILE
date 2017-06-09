@@ -7,12 +7,16 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -22,12 +26,15 @@ import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.HttpStatus.OK;
+
 
 @RunWith(MockitoJUnitRunner.class
 )
@@ -39,14 +46,24 @@ public class ProfileServiceImplTest {
 	private static final String GMC_NUMBER = "1234567";
 	private static final long TIS_ID = 999L;
 
-	@Mock
-	private RestTemplate profileRestTemplate;
 	@InjectMocks
 	private ProfileServiceImpl profileServiceImpl;
 
+	@Mock
+	private RestTemplate profileRestTemplate;
+
+	@Captor
+	private ArgumentCaptor<String> endpointCaptor;
+	@Captor
+	private ArgumentCaptor<HttpEntity> httpEntityArgumentCaptor;
+	@Captor
+	private ArgumentCaptor<HttpMethod> httpMethodArgumentCaptor;
+	@Captor
+	private ArgumentCaptor<Class> classArgumentCaptor;
+
 	@Before
 	public void setUp() throws Exception {
-		profileServiceImpl.setServiceUrl("http://localhost:8888/trainee-id");
+		profileServiceImpl.setServiceUrl(PROFILE_URL);
 	}
 
 
@@ -130,4 +147,5 @@ public class ProfileServiceImplTest {
 		assertEquals(1, traineeProfileList.size());
 		assertEquals(traineeProfileDto, traineeProfileList.get(0));
 	}
+
 }

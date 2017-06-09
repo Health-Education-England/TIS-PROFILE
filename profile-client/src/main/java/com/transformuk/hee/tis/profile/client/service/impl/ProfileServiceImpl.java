@@ -1,16 +1,22 @@
 package com.transformuk.hee.tis.profile.client.service.impl;
 
+import com.google.common.collect.Maps;
+import com.transformuk.hee.tis.client.impl.AbstractClientService;
 import com.transformuk.hee.tis.profile.client.service.ProfileService;
 import com.transformuk.hee.tis.profile.dto.*;
+import com.transformuk.hee.tis.profile.service.dto.*;
 import com.transformuk.hee.tis.security.model.UserProfile;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -18,6 +24,7 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.web.util.UriComponentsBuilder.fromHttpUrl;
@@ -27,7 +34,7 @@ import static org.springframework.web.util.UriComponentsBuilder.fromHttpUrl;
  * Tis Profile Service
  */
 @Service
-public class ProfileServiceImpl implements ProfileService {
+public class ProfileServiceImpl extends AbstractClientService implements ProfileService {
 
 	private static final String PAGE_QUERY_PARAM = "page";
 	private static final String SIZE_QUERY_PARAM = "size";
@@ -35,7 +42,23 @@ public class ProfileServiceImpl implements ProfileService {
 	private static final String USERS_RO_USER_ENDPOINT = "/api/users/ro-user/";
 	private static final String USERS_ENDPOINT = "/api/users";
 	private static final String TRAINEE_DBC_REGISTER_ENDPOINT = "/api/trainee-id/{designatedBodyCode}/register";
+	private static final Map<Class, ParameterizedTypeReference> classToParamTypeRefMap;
 
+	static{
+		classToParamTypeRefMap = Maps.newHashMap();
+		classToParamTypeRefMap.put(EqualityAndDiversityDTO.class, new ParameterizedTypeReference<List<EqualityAndDiversityDTO>>() {});
+		classToParamTypeRefMap.put(GdcDetailsDTO.class, new ParameterizedTypeReference<List<GdcDetailsDTO>>() {});
+		classToParamTypeRefMap.put(GmcDetailsDTO.class, new ParameterizedTypeReference<List<GmcDetailsDTO>>() {});
+		classToParamTypeRefMap.put(HeeUserDTO.class, new ParameterizedTypeReference<List<HeeUserDTO>>() {});
+		classToParamTypeRefMap.put(ImmigrationDTO.class, new ParameterizedTypeReference<List<ImmigrationDTO>>() {});
+		classToParamTypeRefMap.put(ManageRecordDTO.class, new ParameterizedTypeReference<List<ManageRecordDTO>>() {});
+		classToParamTypeRefMap.put(PersonalDetailsDTO.class, new ParameterizedTypeReference<List<PersonalDetailsDTO>>() {});
+		classToParamTypeRefMap.put(PersonDTO.class, new ParameterizedTypeReference<List<PersonDTO>>() {});
+		classToParamTypeRefMap.put(QualificationDTO.class, new ParameterizedTypeReference<List<QualificationDTO>>() {});
+		classToParamTypeRefMap.put(PermissionDTO.class, new ParameterizedTypeReference<List<PermissionDTO>>() {});
+		classToParamTypeRefMap.put(RoleDTO.class, new ParameterizedTypeReference<List<RoleDTO>>() {});
+		classToParamTypeRefMap.put(TraineeProfileDto.class, new ParameterizedTypeReference<List<TraineeProfileDto>>() {});
+	}
 	private RestTemplate profileRestTemplate;
 
 	@Value("${profile.pagination.offset}")
@@ -117,5 +140,20 @@ public class ProfileServiceImpl implements ProfileService {
 
 	public void setServiceUrl(String serviceUrl) {
 		this.serviceUrl = serviceUrl;
+	}
+
+	@Override
+	public RestTemplate getRestTemplate() {
+		return profileRestTemplate;
+	}
+
+	@Override
+	public String getServiceUrl() {
+		return this.serviceUrl;
+	}
+
+	@Override
+	public Map<Class, ParameterizedTypeReference> getClassToParamTypeRefMap() {
+		return classToParamTypeRefMap;
 	}
 }

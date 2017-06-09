@@ -8,7 +8,9 @@ import com.transformuk.hee.tis.profile.service.mapper.QualificationMapper;
 import com.transformuk.hee.tis.profile.web.rest.util.HeaderUtil;
 import com.transformuk.hee.tis.profile.web.rest.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
+import io.jsonwebtoken.lang.Collections;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -24,6 +26,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * REST controller for managing Qualification.
@@ -139,4 +142,67 @@ public class QualificationResource {
 		return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
 	}
 
+
+	/**
+	 * POST  /bulk-qualifications : Bulk create a new qualifications.
+	 *
+	 * @param qualificationDTOS List of the qualificationDTOS to create
+	 * @return the ResponseEntity with status 200 (Created) and with body the new qualificationDTOS, or with status 400 (Bad Request) if the Qualification has already an ID
+	 * @throws URISyntaxException if the Location URI syntax is incorrect
+	 */
+	@PostMapping("/bulk-qualifications")
+	@Timed
+	@PreAuthorize("hasAuthority('profile:add:modify:entities')")
+	public ResponseEntity<List<QualificationDTO>> bulkCreateQualification(@Valid @RequestBody List<QualificationDTO> qualificationDTOS) throws URISyntaxException {
+		log.debug("REST request to bulk save Qualification : {}", qualificationDTOS);
+		if (!Collections.isEmpty(qualificationDTOS)) {
+			List<Long> entityIds = qualificationDTOS.stream()
+					.filter(q -> q.getId() != null)
+					.map(q -> q.getId())
+					.collect(Collectors.toList());
+			if (!Collections.isEmpty(entityIds)) {
+				return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(StringUtils.join(entityIds, ","), "ids.exist", "A new Qualification cannot already have an ID")).body(null);
+			}
+		}
+		List<Qualification> qualificationList = qualificationMapper.qualificationDTOsToQualifications(qualificationDTOS);
+		qualificationList = qualificationRepository.save(qualificationList);
+		List<QualificationDTO> result = qualificationMapper.qualificationsToQualificationDTOs(qualificationList);
+		List<Long> ids = result.stream().map(q -> q.getId()).collect(Collectors.toList());
+		return ResponseEntity.ok()
+				.headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, StringUtils.join(ids, ",")))
+				.body(result);
+	}
+
+	/**
+	 * PUT  /bulk-qualifications : Updates an existing qualifications.
+	 *
+	 * @param qualificationDTOS List of the qualificationDTOS to update
+	 * @return the ResponseEntity with status 200 (OK) and with body the updated qualificationDTOS,
+	 * or with status 400 (Bad Request) if the qualificationDTOS is not valid,
+	 * or with status 500 (Internal Server Error) if the qualificationDTOS couldnt be updated
+	 * @throws URISyntaxException if the Location URI syntax is incorrect
+	 */
+	@PutMapping("/bulk-qualifications")
+	@Timed
+	@PreAuthorize("hasAuthority('profile:add:modify:entities')")
+	public ResponseEntity<List<QualificationDTO>> bulkUpdateQualification(@Valid @RequestBody List<QualificationDTO> qualificationDTOS) throws URISyntaxException {
+		log.debug("REST request to bulk update Qualification : {}", qualificationDTOS);
+		if (Collections.isEmpty(qualificationDTOS)) {
+			return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "request.body.empty",
+					"The request body for this end point cannot be empty")).body(null);
+		} else if (!Collections.isEmpty(qualificationDTOS)) {
+			List<QualificationDTO> entitiesWithNoId = qualificationDTOS.stream().filter(q -> q.getId() == null).collect(Collectors.toList());
+			if (!Collections.isEmpty(entitiesWithNoId)) {
+				return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(StringUtils.join(entitiesWithNoId, ","),
+						"bulk.update.failed.noId", "Some DTOs you've provided have no Id, cannot update entities that dont exist")).body(entitiesWithNoId);
+			}
+		}
+		List<Qualification> qualificationList = qualificationMapper.qualificationDTOsToQualifications(qualificationDTOS);
+		qualificationList = qualificationRepository.save(qualificationList);
+		List<QualificationDTO> results = qualificationMapper.qualificationsToQualificationDTOs(qualificationList);
+		List<Long> ids = results.stream().map(q -> q.getId()).collect(Collectors.toList());
+		return ResponseEntity.ok()
+				.headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, StringUtils.join(ids, ",")))
+				.body(results);
+	}
 }

@@ -8,7 +8,9 @@ import com.transformuk.hee.tis.profile.service.mapper.ImmigrationMapper;
 import com.transformuk.hee.tis.profile.web.rest.util.HeaderUtil;
 import com.transformuk.hee.tis.profile.web.rest.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
+import io.jsonwebtoken.lang.Collections;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -24,6 +26,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * REST controller for managing Immigration.
@@ -139,4 +142,67 @@ public class ImmigrationResource {
 		return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
 	}
 
+
+	/**
+	 * POST  /bulk-immigrations : Bulk create a new immigrations.
+	 *
+	 * @param immigrationDTOS List of the immigrationDTOS to create
+	 * @return the ResponseEntity with status 200 (Created) and with body the new immigrationDTOS, or with status 400 (Bad Request) if the EqualityAndDiversity has already an ID
+	 * @throws URISyntaxException if the Location URI syntax is incorrect
+	 */
+	@PostMapping("/bulk-immigrations")
+	@Timed
+	@PreAuthorize("hasAuthority('profile:add:modify:entities')")
+	public ResponseEntity<List<ImmigrationDTO>> bulkCreateImmigration(@Valid @RequestBody List<ImmigrationDTO> immigrationDTOS) throws URISyntaxException {
+		log.debug("REST request to bulk save Immigration : {}", immigrationDTOS);
+		if (!Collections.isEmpty(immigrationDTOS)) {
+			List<Long> entityIds = immigrationDTOS.stream()
+					.filter(immigrationDTO -> immigrationDTO.getId() != null)
+					.map(immigrationDTO -> immigrationDTO.getId())
+					.collect(Collectors.toList());
+			if (!Collections.isEmpty(entityIds)) {
+				return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(StringUtils.join(entityIds, ","), "ids.exist", "A new Immigration cannot already have an ID")).body(null);
+			}
+		}
+		List<Immigration> immigrationList = immigrationMapper.immigrationDTOsToImmigrations(immigrationDTOS);
+		immigrationList = immigrationRepository.save(immigrationList);
+		List<ImmigrationDTO> result = immigrationMapper.immigrationsToImmigrationDTOs(immigrationList);
+		List<Long> ids = result.stream().map(immigration -> immigration.getId()).collect(Collectors.toList());
+		return ResponseEntity.ok()
+				.headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, StringUtils.join(ids, ",")))
+				.body(result);
+	}
+
+	/**
+	 * PUT  /bulk-immigrations : Updates an existing immigrations.
+	 *
+	 * @param immigrationDTOS List of the immigrationDTOS to update
+	 * @return the ResponseEntity with status 200 (OK) and with body the updated immigrationDTOS,
+	 * or with status 400 (Bad Request) if the immigrationDTOS is not valid,
+	 * or with status 500 (Internal Server Error) if the immigrationDTOS couldnt be updated
+	 * @throws URISyntaxException if the Location URI syntax is incorrect
+	 */
+	@PutMapping("/bulk-immigrations")
+	@Timed
+	@PreAuthorize("hasAuthority('profile:add:modify:entities')")
+	public ResponseEntity<List<ImmigrationDTO>> bulkUpdateImmigration(@Valid @RequestBody List<ImmigrationDTO> immigrationDTOS) throws URISyntaxException {
+		log.debug("REST request to bulk update Immigration : {}", immigrationDTOS);
+		if (Collections.isEmpty(immigrationDTOS)) {
+			return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "request.body.empty",
+					"The request body for this end point cannot be empty")).body(null);
+		} else if (!Collections.isEmpty(immigrationDTOS)) {
+			List<ImmigrationDTO> entitiesWithNoId = immigrationDTOS.stream().filter(i -> i.getId() == null).collect(Collectors.toList());
+			if (!Collections.isEmpty(entitiesWithNoId)) {
+				return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(StringUtils.join(entitiesWithNoId, ","),
+						"bulk.update.failed.noId", "Some DTOs you've provided have no Id, cannot update entities that dont exist")).body(entitiesWithNoId);
+			}
+		}
+		List<Immigration> immigrationList = immigrationMapper.immigrationDTOsToImmigrations(immigrationDTOS);
+		immigrationList = immigrationRepository.save(immigrationList);
+		List<ImmigrationDTO> results = immigrationMapper.immigrationsToImmigrationDTOs(immigrationList);
+		List<Long> ids = results.stream().map(i -> i.getId()).collect(Collectors.toList());
+		return ResponseEntity.ok()
+				.headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, StringUtils.join(ids, ",")))
+				.body(results);
+	}
 }
