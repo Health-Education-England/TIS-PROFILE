@@ -59,6 +59,8 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
 		classToParamTypeRefMap.put(RoleDTO.class, new ParameterizedTypeReference<List<RoleDTO>>() {});
 		classToParamTypeRefMap.put(TraineeProfileDto.class, new ParameterizedTypeReference<List<TraineeProfileDto>>() {});
 	}
+
+	@Autowired
 	private RestTemplate profileRestTemplate;
 
 	@Value("${profile.pagination.offset}")
@@ -69,12 +71,6 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
 
 	@Value("${profile.service.url}")
 	private String serviceUrl;
-
-
-	@Autowired
-	public ProfileServiceImpl(@Qualifier("profileRestTemplate") RestTemplate profileRestTemplate) {
-		this.profileRestTemplate = profileRestTemplate;
-	}
 
 	/**
 	 * Return a paginated result of trainee id's for a designated body code

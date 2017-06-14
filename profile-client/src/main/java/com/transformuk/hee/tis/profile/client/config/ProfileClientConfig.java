@@ -1,10 +1,12 @@
 package com.transformuk.hee.tis.profile.client.config;
 
 
+import com.transformuk.hee.tis.security.client.KeycloakClientRequestFactory;
+import com.transformuk.hee.tis.security.client.KeycloakRestTemplate;
+import com.transformuk.hee.tis.security.config.KeycloakClientConfig;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
+import org.keycloak.admin.client.Keycloak;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
@@ -16,11 +18,9 @@ import org.springframework.web.client.RestTemplate;
  * on behalf of itself, where there is no interaction if a browser or end client.
  * e.g. during an ETL, some batch processing etc.
  * <p>
- * This rest template talks does not talk to keycloak but instead hacks in a jwt manually
  */
-@Configuration
-@Profile("default")
-public class ProfileClientLocalConfig {
+@Import(KeycloakClientConfig.class)
+public class ProfileClientConfig {
 
 	private static class LocalClientRequestFactory extends HttpComponentsClientHttpRequestFactory implements ClientHttpRequestFactory {
 
@@ -36,8 +36,30 @@ public class ProfileClientLocalConfig {
 		}
 	}
 
-	@Bean
-	public RestTemplate profileRestTemplate(ClientHttpRequestFactory factory) {
+	/**
+	 * This rest template manually adds auth token headers via the LocalClientRequestFactory and
+	 * therefore does not communicate with keycloak.
+	 * <p>
+	 * This should be used in all environments with the exception of prod
+	 *
+	 * @return
+	 */
+	public RestTemplate defaultProfileRestTemplate() {
 		return new RestTemplate(new LocalClientRequestFactory());
+	}
+
+	/**
+	 * This rest template communicates with keycloak to get auth headers which are then added to the
+	 * request.
+	 * <p>
+	 * Use this rest template when you need to make a request from a backend service that has no interaction
+	 * with a browser. These are typically ETL's
+	 *
+	 * @param keycloak keycloak bean
+	 * @return
+	 */
+	public RestTemplate prodProfileRestTemplate(Keycloak keycloak) {
+		final KeycloakClientRequestFactory keycloakClientRequestFactory = new KeycloakClientRequestFactory(keycloak);
+		return new KeycloakRestTemplate(keycloakClientRequestFactory);
 	}
 }
