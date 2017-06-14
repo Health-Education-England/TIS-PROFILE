@@ -14,7 +14,7 @@ import org.springframework.web.client.RestTemplate;
  * Configuration class that must be imported if you wish your microservice to communicate to the profile service
  * during spring security checks
  * <p>
- * This class was called ProfileClientConfig but now renamed to be more informative
+ * This class was called ProfileClientProdConfig but now renamed to be more informative
  */
 @Configuration
 @Import(TisSecurityConfig.class)

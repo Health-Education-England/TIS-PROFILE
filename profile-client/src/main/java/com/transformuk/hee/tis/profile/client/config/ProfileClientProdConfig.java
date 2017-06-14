@@ -8,6 +8,7 @@ import org.keycloak.admin.client.Keycloak;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -20,8 +21,9 @@ import org.springframework.web.client.RestTemplate;
  * This rest template talks to keycloak directly to get a jwt key using the services credentials
  */
 @Configuration
+@Profile("prod")
 @Import(KeycloakClientConfig.class)
-public class ProfileClientConfig {
+public class ProfileClientProdConfig {
 	@Bean
 	public RestTemplate profileRestTemplate(Keycloak keycloak) {
 		final KeycloakClientRequestFactory keycloakClientRequestFactory = new KeycloakClientRequestFactory(keycloak);
