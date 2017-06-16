@@ -3,10 +3,8 @@ package com.transformuk.hee.tis.profile.client.config;
 
 import com.transformuk.hee.tis.security.client.KeycloakClientRequestFactory;
 import com.transformuk.hee.tis.security.client.KeycloakRestTemplate;
-import com.transformuk.hee.tis.security.config.KeycloakClientConfig;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.keycloak.admin.client.Keycloak;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
@@ -19,7 +17,6 @@ import org.springframework.web.client.RestTemplate;
  * e.g. during an ETL, some batch processing etc.
  * <p>
  */
-@Import(KeycloakClientConfig.class)
 public class ProfileClientConfig {
 
 	private static class LocalClientRequestFactory extends HttpComponentsClientHttpRequestFactory implements ClientHttpRequestFactory {
