@@ -1,16 +1,15 @@
 package com.transformuk.hee.tis.profile.config;
 
 import com.transformuk.hee.tis.reference.client.config.ReferenceClientConfig;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.context.annotation.Import;
 
 @Configuration
-public class ReferenceClientConfiguration extends ReferenceClientConfig {
+@Import(ReferenceClientConfig.class)
+public class ReferenceClientConfiguration{
 
-	@Bean
-	public RestTemplate referenceRestTemplate() {
-		return super.prodBrowserInitiatedReferenceRestTemplate();
-	}
+//	@Bean
+//	public RestTemplate referenceRestTemplate() {
+//		return super.prodBrowserInitiatedReferenceRestTemplate();
+//	}
 }
