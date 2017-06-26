@@ -39,7 +39,7 @@ public class AuditingAspect {
 	private final static String ID_KEY = "id";
 
 	@Autowired
-	private JsonPatchRepository rebaseTypeRepository;
+	private JsonPatchRepository jsonPatchRepository;
 
 	private final AuditEventRepository auditEventRepository;
 
@@ -111,7 +111,7 @@ public class AuditingAspect {
 				rebaseJson.setTableDtoName(className);
 				rebaseJson.setPatchId(String.valueOf(idFieldValue));
 				rebaseJson.setPatch(patch.toString());
-				rebaseTypeRepository.save(rebaseJson);
+				jsonPatchRepository.save(rebaseJson);
 			}
 		}
 
