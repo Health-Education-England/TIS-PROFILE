@@ -134,6 +134,19 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
 		return responseEntity.getBody();
 	}
 
+	@Override
+	public List<JsonPatchDTO> getJsonPathByTableDtoNameOrderByDateAddedAsc(String endpointUrl, Class objectDTO){
+		ParameterizedTypeReference<List<JsonPatchDTO>> typeReference = getJsonPatchDtoReference();
+		ResponseEntity<List<JsonPatchDTO>> response = profileRestTemplate.exchange(serviceUrl + endpointUrl + objectDTO.getSimpleName(),
+				HttpMethod.GET, null, typeReference);
+		return response.getBody();
+	}
+
+	private ParameterizedTypeReference<List<JsonPatchDTO>> getJsonPatchDtoReference() {
+		return new ParameterizedTypeReference<List<JsonPatchDTO>>() {
+		};
+	}
+
 	public void setServiceUrl(String serviceUrl) {
 		this.serviceUrl = serviceUrl;
 	}
