@@ -1,6 +1,7 @@
 package com.transformuk.hee.tis.profile.web.rest;
 
 import com.transformuk.hee.tis.profile.ProfileApp;
+import com.transformuk.hee.tis.profile.dto.PermissionType;
 import com.transformuk.hee.tis.profile.dto.PermissionDTO;
 import com.transformuk.hee.tis.profile.repository.PermissionRepository;
 import com.transformuk.hee.tis.profile.service.mapper.PermissionMapper;
@@ -19,7 +20,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,7 +37,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class PermissionResourceIntTest {
 
 	private static final String DEFAULT_NAME = "AAAAAAAAAA";
-	private static final String UPDATED_NAME = "BBBBBBBBBB";
+	private static final PermissionType DEFAULT_TYPE = PermissionType.CONCERN;
+	private static final String DEFAULT_DESC = "desc";
 
 	@Autowired
 	private PermissionRepository permissionRepository;
@@ -54,9 +55,6 @@ public class PermissionResourceIntTest {
 	@Autowired
 	private ExceptionTranslator exceptionTranslator;
 
-	@Autowired
-	private EntityManager em;
-
 	private MockMvc restPermissionMockMvc;
 
 	private com.transformuk.hee.tis.profile.domain.Permission permission;
@@ -67,9 +65,11 @@ public class PermissionResourceIntTest {
 	 * This is a static method, as tests for other entities might also need it,
 	 * if they test an entity which requires the current entity.
 	 */
-	public static com.transformuk.hee.tis.profile.domain.Permission createEntity(EntityManager em) {
+	public static com.transformuk.hee.tis.profile.domain.Permission createEntity() {
 		com.transformuk.hee.tis.profile.domain.Permission permission = new com.transformuk.hee.tis.profile.domain.Permission()
-				.name(DEFAULT_NAME);
+				.name(DEFAULT_NAME)
+				.type(DEFAULT_TYPE)
+				.description(DEFAULT_DESC);
 		return permission;
 	}
 
@@ -85,7 +85,7 @@ public class PermissionResourceIntTest {
 
 	@Before
 	public void initTest() {
-		permission = createEntity(em);
+		permission = createEntity();
 	}
 
 	@Test
@@ -105,6 +105,8 @@ public class PermissionResourceIntTest {
 		assertThat(permissionList).hasSize(databaseSizeBeforeCreate + 1);
 		com.transformuk.hee.tis.profile.domain.Permission testPermission = permissionRepository.findOne(this.permission.getName());
 		assertThat(testPermission.getName()).isEqualTo(DEFAULT_NAME);
+		assertThat(testPermission.getDescription()).isEqualTo(DEFAULT_DESC);
+		assertThat(testPermission.getType()).isEqualTo(DEFAULT_TYPE);
 	}
 
 	@Test
@@ -156,7 +158,9 @@ public class PermissionResourceIntTest {
 		restPermissionMockMvc.perform(get("/api/permissions?sort=name,asc"))
 				.andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-				.andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())));
+				.andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
+				.andExpect(jsonPath("$.[*].type").value(hasItem(DEFAULT_TYPE.toString())))
+				.andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESC.toString())));
 	}
 
 	@Test
@@ -169,7 +173,9 @@ public class PermissionResourceIntTest {
 		restPermissionMockMvc.perform(get("/api/permissions/{id}", permission.getName()))
 				.andExpect(status().isOk())
 				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-				.andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()));
+				.andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()))
+				.andExpect(jsonPath("$.type").value(DEFAULT_TYPE.toString()))
+				.andExpect(jsonPath("$.description").value(DEFAULT_DESC.toString()));
 	}
 
 	@Test

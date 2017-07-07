@@ -11,6 +11,10 @@ public class PermissionDTO implements Serializable{
 	@NotNull
 	private String name;
 
+	private PermissionType type;
+
+	private String description;
+
 	@ApiModelProperty(required = true, value = "Permission name")
 	public String getName() {
 		return name;
@@ -20,6 +24,22 @@ public class PermissionDTO implements Serializable{
 		this.name = name;
 	}
 
+	public PermissionType getType() {
+		return type;
+	}
+
+	public void setType(PermissionType type) {
+		this.type = type;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
@@ -27,18 +47,25 @@ public class PermissionDTO implements Serializable{
 
 		PermissionDTO that = (PermissionDTO) o;
 
-		return name != null ? name.equals(that.name) : that.name == null;
+		if (name != null ? !name.equals(that.name) : that.name != null) return false;
+		if (type != that.type) return false;
+		return description != null ? description.equals(that.description) : that.description == null;
 	}
 
 	@Override
 	public int hashCode() {
-		return name != null ? name.hashCode() : 0;
+		int result = name != null ? name.hashCode() : 0;
+		result = 31 * result + (type != null ? type.hashCode() : 0);
+		result = 31 * result + (description != null ? description.hashCode() : 0);
+		return result;
 	}
 
 	@Override
 	public String toString() {
-		return "Permission{" +
+		return "PermissionDTO{" +
 				"name='" + name + '\'' +
+				", type=" + type +
+				", description='" + description + '\'' +
 				'}';
 	}
 }
