@@ -1,5 +1,7 @@
 INSERT INTO `Permission` (`name`)
-VALUES ('tcs:bulk:view:entities');
+VALUES
+	('programme:bulk:add:modify');
 
 INSERT INTO `RolePermission` (`roleName`, `permissionName`)
-VALUES ('ETL', 'tcs:bulk:view:entities');
+VALUES
+('ETL', 'programme:bulk:add:modify');
