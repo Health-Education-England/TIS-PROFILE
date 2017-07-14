@@ -1,4 +1,4 @@
-INSERT INTO `Permission` (`name`)
+INSERT INTO `Permission` (`name`,`type`,`description`)
 VALUES
 ('specialty:add:modify','PCS','Can create and modify specialty'),
 ('specialty:view','PCS','Can view specialty'),
