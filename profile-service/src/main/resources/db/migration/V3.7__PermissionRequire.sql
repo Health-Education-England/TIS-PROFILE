@@ -8,6 +8,7 @@ CREATE TABLE `PermissionRequires` (
   CONSTRAINT `fk_permission_requires_requires` FOREIGN KEY (`requires`) REFERENCES `Permission` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+INSERT INTO Permission (name, type, description) VALUES ('revalidation:provide:recommendation', 'REVALIDATION', 'Can fill in and submit the provide recommendation form');
 
 INSERT INTO `PermissionRequires` (`id`, `permission`, `requires`, `reason`)
 VALUES
