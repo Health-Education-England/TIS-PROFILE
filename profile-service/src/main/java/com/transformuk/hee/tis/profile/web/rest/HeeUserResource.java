@@ -19,7 +19,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -34,142 +41,141 @@ import java.util.Optional;
 @RequestMapping("/api")
 public class HeeUserResource {
 
-	private static final String ENTITY_NAME = "heeUser";
-	private final Logger log = LoggerFactory.getLogger(HeeUserResource.class);
-	private final HeeUserRepository heeUserRepository;
-	private static final String REALM_LIN = "lin";
+  private static final String ENTITY_NAME = "heeUser";
+  private static final String REALM_LIN = "lin";
+  private final Logger log = LoggerFactory.getLogger(HeeUserResource.class);
+  private final HeeUserRepository heeUserRepository;
+  private final HeeUserMapper heeUserMapper;
 
-	private final HeeUserMapper heeUserMapper;
+  private KeyclockAdminClientService keyclockAdminClientService;
 
-	private KeyclockAdminClientService keyclockAdminClientService;
+  private HeeUserValidator heeUserValidator;
 
-	private HeeUserValidator heeUserValidator;
+  public HeeUserResource(HeeUserRepository heeUserRepository, HeeUserMapper heeUserMapper,
+                         KeyclockAdminClientService keyclockAdminClientService, HeeUserValidator heeUserValidator) {
+    this.heeUserRepository = heeUserRepository;
+    this.heeUserMapper = heeUserMapper;
+    this.keyclockAdminClientService = keyclockAdminClientService;
+    this.heeUserValidator = heeUserValidator;
+  }
 
-	public HeeUserResource(HeeUserRepository heeUserRepository, HeeUserMapper heeUserMapper,
-						   KeyclockAdminClientService keyclockAdminClientService, HeeUserValidator heeUserValidator) {
-		this.heeUserRepository = heeUserRepository;
-		this.heeUserMapper = heeUserMapper;
-		this.keyclockAdminClientService = keyclockAdminClientService;
-		this.heeUserValidator = heeUserValidator;
-	}
+  /**
+   * POST  /hee-users : Create a new heeUser.
+   *
+   * @param heeUserDTO the heeUserDTO to create
+   * @return the ResponseEntity with status 201 (Created) and with body the new heeUserDTO, or with status 400 (Bad Request) if the heeUser has already an ID
+   * @throws URISyntaxException if the Location URI syntax is incorrect
+   */
+  @PostMapping("/hee-users")
+  @Timed
+  @PreAuthorize("hasAuthority('profile:add:modify:entities')")
+  public ResponseEntity<HeeUserDTO> createHeeUser(@Valid @RequestBody HeeUserDTO heeUserDTO) throws URISyntaxException {
+    log.debug("REST request to save HeeUser : {}", heeUserDTO);
+    HeeUser heeUser = heeUserMapper.heeUserDTOToHeeUser(heeUserDTO);
+    heeUser.setPassword(heeUserDTO.getPassword());
+    //Validate password
+    heeUserValidator.validatePassword(heeUser.getPassword());
+    //Validate
+    validateHeeUser(heeUser);
 
-	/**
-	 * POST  /hee-users : Create a new heeUser.
-	 *
-	 * @param heeUserDTO the heeUserDTO to create
-	 * @return the ResponseEntity with status 201 (Created) and with body the new heeUserDTO, or with status 400 (Bad Request) if the heeUser has already an ID
-	 * @throws URISyntaxException if the Location URI syntax is incorrect
-	 */
-	@PostMapping("/hee-users")
-	@Timed
-	@PreAuthorize("hasAuthority('profile:add:modify:entities')")
-	public ResponseEntity<HeeUserDTO> createHeeUser(@Valid @RequestBody HeeUserDTO heeUserDTO) throws URISyntaxException {
-		log.debug("REST request to save HeeUser : {}", heeUserDTO);
-		HeeUser heeUser = heeUserMapper.heeUserDTOToHeeUser(heeUserDTO);
-		heeUser.setPassword(heeUserDTO.getPassword());
-		//Validate password
-		heeUserValidator.validatePassword(heeUser.getPassword());
-		//Validate
-		validateHeeUser(heeUser);
+    // First try to create user in KeyClock
+    keyclockAdminClientService.createUser(heeUser);
 
-		// First try to create user in KeyClock
-		keyclockAdminClientService.createUser(heeUser);
+    heeUser = heeUserRepository.save(heeUser);
+    HeeUserDTO result = heeUserMapper.heeUserToHeeUserDTO(heeUser);
+    return ResponseEntity.created(new URI("/api/hee-users/" + result.getName()))
+        .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getName()))
+        .body(result);
+  }
 
-		heeUser = heeUserRepository.save(heeUser);
-		HeeUserDTO result = heeUserMapper.heeUserToHeeUserDTO(heeUser);
-		return ResponseEntity.created(new URI("/api/hee-users/" + result.getName()))
-				.headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getName()))
-				.body(result);
-	}
+  /**
+   * PUT  /hee-users : Updates an existing heeUser.
+   *
+   * @param heeUserDTO the heeUserDTO to update
+   * @return the ResponseEntity with status 200 (OK) and with body the updated heeUserDTO,
+   * or with status 400 (Bad Request) if the heeUserDTO is not valid,
+   * or with status 500 (Internal Server Error) if the heeUserDTO couldnt be updated
+   * @throws URISyntaxException if the Location URI syntax is incorrect
+   */
+  @PutMapping("/hee-users")
+  @Timed
+  @PreAuthorize("hasAuthority('profile:add:modify:entities')")
+  public ResponseEntity<HeeUserDTO> updateHeeUser(@Valid @RequestBody HeeUserDTO heeUserDTO) throws URISyntaxException {
+    log.debug("REST request to update HeeUser : {}", heeUserDTO);
 
-	/**
-	 * PUT  /hee-users : Updates an existing heeUser.
-	 *
-	 * @param heeUserDTO the heeUserDTO to update
-	 * @return the ResponseEntity with status 200 (OK) and with body the updated heeUserDTO,
-	 * or with status 400 (Bad Request) if the heeUserDTO is not valid,
-	 * or with status 500 (Internal Server Error) if the heeUserDTO couldnt be updated
-	 * @throws URISyntaxException if the Location URI syntax is incorrect
-	 */
-	@PutMapping("/hee-users")
-	@Timed
-	@PreAuthorize("hasAuthority('profile:add:modify:entities')")
-	public ResponseEntity<HeeUserDTO> updateHeeUser(@Valid @RequestBody HeeUserDTO heeUserDTO) throws URISyntaxException {
-		log.debug("REST request to update HeeUser : {}", heeUserDTO);
+    HeeUser dbHeeUser = heeUserRepository.findOne(heeUserDTO.getName());
+    if (dbHeeUser == null || dbHeeUser.getName() == null) {
+      return createHeeUser(heeUserDTO);
+    }
+    HeeUser heeUser = heeUserMapper.heeUserDTOToHeeUser(heeUserDTO);
+    //Validate
+    validateHeeUser(heeUser);
 
-		HeeUser dbHeeUser = heeUserRepository.findOne(heeUserDTO.getName());
-		if (dbHeeUser == null || dbHeeUser.getName() == null) {
-			return createHeeUser(heeUserDTO);
-		}
-		HeeUser heeUser = heeUserMapper.heeUserDTOToHeeUser(heeUserDTO);
-		//Validate
-		validateHeeUser(heeUser);
+    // First try to update user in KeyClock
+    keyclockAdminClientService.updateUser(heeUser);
 
-		// First try to update user in KeyClock
-		keyclockAdminClientService.updateUser(heeUser);
+    heeUser = heeUserRepository.save(heeUser);
+    HeeUserDTO result = heeUserMapper.heeUserToHeeUserDTO(heeUser);
+    return ResponseEntity.ok()
+        .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, heeUserDTO.getName().toString()))
+        .body(result);
+  }
 
-		heeUser = heeUserRepository.save(heeUser);
-		HeeUserDTO result = heeUserMapper.heeUserToHeeUserDTO(heeUser);
-		return ResponseEntity.ok()
-				.headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, heeUserDTO.getName().toString()))
-				.body(result);
-	}
+  /**
+   * GET  /hee-users : get all the heeUsers.
+   *
+   * @param pageable the pagination information
+   * @return the ResponseEntity with status 200 (OK) and the list of heeUsers in body
+   * @throws URISyntaxException if there is an error to generate the pagination HTTP headers
+   */
+  @GetMapping("/hee-users")
+  @Timed
+  @PreAuthorize("hasAuthority('profile:view:entities')")
+  public ResponseEntity<List<HeeUserDTO>> getAllHeeUsers(@ApiParam Pageable pageable) {
+    log.debug("REST request to get a page of HeeUsers");
+    Page<HeeUser> page = heeUserRepository.findAll(pageable);
+    HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/hee-users");
+    return new ResponseEntity<>(heeUserMapper.heeUsersToHeeUserDTOs(page.getContent()), headers, HttpStatus.OK);
+  }
 
-	/**
-	 * GET  /hee-users : get all the heeUsers.
-	 *
-	 * @param pageable the pagination information
-	 * @return the ResponseEntity with status 200 (OK) and the list of heeUsers in body
-	 * @throws URISyntaxException if there is an error to generate the pagination HTTP headers
-	 */
-	@GetMapping("/hee-users")
-	@Timed
-	@PreAuthorize("hasAuthority('profile:view:entities')")
-	public ResponseEntity<List<HeeUserDTO>> getAllHeeUsers(@ApiParam Pageable pageable) {
-		log.debug("REST request to get a page of HeeUsers");
-		Page<HeeUser> page = heeUserRepository.findAll(pageable);
-		HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/hee-users");
-		return new ResponseEntity<>(heeUserMapper.heeUsersToHeeUserDTOs(page.getContent()), headers, HttpStatus.OK);
-	}
+  /**
+   * GET  /hee-users/:name : get the "name" heeUser.
+   *
+   * @param name the name of the heeUserDTO to retrieve
+   * @return the ResponseEntity with status 200 (OK) and with body the heeUserDTO, or with status 404 (Not Found)
+   */
+  @GetMapping("/hee-users/{name}")
+  @Timed
+  @PreAuthorize("hasAuthority('profile:view:entities')")
+  public ResponseEntity<HeeUserDTO> getHeeUser(@PathVariable String name) {
+    log.debug("REST request to get HeeUser : {}", name);
+    HeeUser heeUser = heeUserRepository.findOne(name);
+    HeeUserDTO heeUserDTO = heeUserMapper.heeUserToHeeUserDTO(heeUser);
+    return ResponseUtil.wrapOrNotFound(Optional.ofNullable(heeUserDTO));
+  }
 
-	/**
-	 * GET  /hee-users/:name : get the "name" heeUser.
-	 *
-	 * @param name the name of the heeUserDTO to retrieve
-	 * @return the ResponseEntity with status 200 (OK) and with body the heeUserDTO, or with status 404 (Not Found)
-	 */
-	@GetMapping("/hee-users/{name}")
-	@Timed
-	@PreAuthorize("hasAuthority('profile:view:entities')")
-	public ResponseEntity<HeeUserDTO> getHeeUser(@PathVariable String name) {
-		log.debug("REST request to get HeeUser : {}", name);
-		HeeUser heeUser = heeUserRepository.findOne(name);
-		HeeUserDTO heeUserDTO = heeUserMapper.heeUserToHeeUserDTO(heeUser);
-		return ResponseUtil.wrapOrNotFound(Optional.ofNullable(heeUserDTO));
-	}
+  /**
+   * DELETE  /hee-users/:name : delete the "name" heeUser.
+   *
+   * @param name the name of the heeUserDTO to delete
+   * @return the ResponseEntity with status 200 (OK)
+   */
+  @DeleteMapping("/hee-users/{name}")
+  @Timed
+  @PreAuthorize("hasAuthority('profile:delete:entities')")
+  public ResponseEntity<Void> deleteHeeUser(@PathVariable String name) {
+    log.debug("REST request to delete HeeUser : {}", name);
+    heeUserRepository.delete(name);
+    return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, name)).build();
+  }
 
-	/**
-	 * DELETE  /hee-users/:name : delete the "name" heeUser.
-	 *
-	 * @param name the name of the heeUserDTO to delete
-	 * @return the ResponseEntity with status 200 (OK)
-	 */
-	@DeleteMapping("/hee-users/{name}")
-	@Timed
-	@PreAuthorize("hasAuthority('profile:delete:entities')")
-	public ResponseEntity<Void> deleteHeeUser(@PathVariable String name) {
-		log.debug("REST request to delete HeeUser : {}", name);
-		heeUserRepository.delete(name);
-		return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, name)).build();
-	}
-
-	private void validateHeeUser(HeeUser heeUser) {
-		//validate GMC id
-		heeUserValidator.validateGmcId(heeUser.getGmcId());
-		//Validate DBC code
-		heeUserValidator.validateDBCIds(heeUser.getDesignatedBodyCodes());
-		//Validate Role name
-		heeUserValidator.validateRoles(heeUser.getRoles());
-	}
+  private void validateHeeUser(HeeUser heeUser) {
+    //validate GMC id
+    heeUserValidator.validateGmcId(heeUser.getGmcId());
+    //Validate DBC code
+    heeUserValidator.validateDBCIds(heeUser.getDesignatedBodyCodes());
+    //Validate Role name
+    heeUserValidator.validateRoles(heeUser.getRoles());
+  }
 
 }

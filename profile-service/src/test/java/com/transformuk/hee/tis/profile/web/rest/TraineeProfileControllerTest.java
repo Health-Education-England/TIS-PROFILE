@@ -37,78 +37,78 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = ProfileApp.class)
 public class TraineeProfileControllerTest {
 
-	private static final String DESIGNATED_BODY_CODE = "1-DGBODY";
-	private static final String GMC_NUMBER = "gmc123";
-	private static final Long TIS_ID = 1L;
-	private static final String REQUEST = "[ { \"gmcNumber\": \"gmc123\" } ]";
+  private static final String DESIGNATED_BODY_CODE = "1-DGBODY";
+  private static final String GMC_NUMBER = "gmc123";
+  private static final Long TIS_ID = 1L;
+  private static final String REQUEST = "[ { \"gmcNumber\": \"gmc123\" } ]";
 
-	@Autowired
-	private MappingJackson2HttpMessageConverter jacksonMessageConverter;
-	@Autowired
-	private PageableHandlerMethodArgumentResolver pageableArgumentResolver;
-	@Autowired
-	private ExceptionTranslator exceptionTranslator;
+  @Autowired
+  private MappingJackson2HttpMessageConverter jacksonMessageConverter;
+  @Autowired
+  private PageableHandlerMethodArgumentResolver pageableArgumentResolver;
+  @Autowired
+  private ExceptionTranslator exceptionTranslator;
 
-	@MockBean
-	private TraineeProfileService traineeProfileService;
+  @MockBean
+  private TraineeProfileService traineeProfileService;
 
-	private MockMvc mvc;
+  private MockMvc mvc;
 
-	@Before
-	public void setup() {
-		MockitoAnnotations.initMocks(this);
-		TraineeProfileController profileController = new TraineeProfileController(traineeProfileService);
-		this.mvc = MockMvcBuilders.standaloneSetup(profileController)
-				.setCustomArgumentResolvers(pageableArgumentResolver)
-				.setControllerAdvice(exceptionTranslator)
-				.setMessageConverters(jacksonMessageConverter).build();
-	}
+  @Before
+  public void setup() {
+    MockitoAnnotations.initMocks(this);
+    TraineeProfileController profileController = new TraineeProfileController(traineeProfileService);
+    this.mvc = MockMvcBuilders.standaloneSetup(profileController)
+        .setCustomArgumentResolvers(pageableArgumentResolver)
+        .setControllerAdvice(exceptionTranslator)
+        .setMessageConverters(jacksonMessageConverter).build();
+  }
 
-	@Test
-	public void shouldReturnTraineeIds() throws Exception {
-		//Given
-		TraineeProfile traineeProfile = new TraineeProfile(TIS_ID, GMC_NUMBER);
-		given(traineeProfileService.findOrCreate(eq(DESIGNATED_BODY_CODE), anyListOf(RegistrationRequest.class))).willReturn
-				(newArrayList(traineeProfile));
+  @Test
+  public void shouldReturnTraineeIds() throws Exception {
+    //Given
+    TraineeProfile traineeProfile = new TraineeProfile(TIS_ID, GMC_NUMBER);
+    given(traineeProfileService.findOrCreate(eq(DESIGNATED_BODY_CODE), anyListOf(RegistrationRequest.class))).willReturn
+        (newArrayList(traineeProfile));
 
-		// When & Then
-		this.mvc.perform(post("/api/trainee-id/1-DGBODY/register")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(REQUEST))
-				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.traineeIds").isArray())
-				.andExpect(jsonPath("$.traineeIds[0].tisId").value(TIS_ID.intValue()))
-				.andExpect(jsonPath("$.traineeIds[0].gmcNumber").value(GMC_NUMBER));
-	}
+    // When & Then
+    this.mvc.perform(post("/api/trainee-id/1-DGBODY/register")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(REQUEST))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.traineeIds").isArray())
+        .andExpect(jsonPath("$.traineeIds[0].tisId").value(TIS_ID.intValue()))
+        .andExpect(jsonPath("$.traineeIds[0].gmcNumber").value(GMC_NUMBER));
+  }
 
-	@Test
-	public void shouldReturn500ForInternException() throws Exception {
-		//Given
-		given(traineeProfileService.findOrCreate(eq(DESIGNATED_BODY_CODE), anyListOf(RegistrationRequest.class))).willThrow(RuntimeException.class);
+  @Test
+  public void shouldReturn500ForInternException() throws Exception {
+    //Given
+    given(traineeProfileService.findOrCreate(eq(DESIGNATED_BODY_CODE), anyListOf(RegistrationRequest.class))).willThrow(RuntimeException.class);
 
-		// When & Then
-		this.mvc.perform(post("/api/trainee-id/1-DGBODY/register")
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(REQUEST))
-				.andExpect(status().isInternalServerError());
-	}
+    // When & Then
+    this.mvc.perform(post("/api/trainee-id/1-DGBODY/register")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(REQUEST))
+        .andExpect(status().isInternalServerError());
+  }
 
-	@Test
-	public void shouldReturnExistingTraineeIds() throws Exception {
-		//Given
-		Pageable pageable = new PageRequest(0, 10);
-		TraineeProfile existingTraineeProfile = new TraineeProfile(1L, GMC_NUMBER);
-		Page<TraineeProfile> page = new PageImpl<>(newArrayList(existingTraineeProfile));
+  @Test
+  public void shouldReturnExistingTraineeIds() throws Exception {
+    //Given
+    Pageable pageable = new PageRequest(0, 10);
+    TraineeProfile existingTraineeProfile = new TraineeProfile(1L, GMC_NUMBER);
+    Page<TraineeProfile> page = new PageImpl<>(newArrayList(existingTraineeProfile));
 
-		given(traineeProfileService.findAll(DESIGNATED_BODY_CODE, pageable)).willReturn(page);
+    given(traineeProfileService.findAll(DESIGNATED_BODY_CODE, pageable)).willReturn(page);
 
-		// When & Then
-		this.mvc.perform(get("/api/trainee-id/1-DGBODY/mappings?page=0&size=10"))
-				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.totalElements").value(1))
-				.andExpect(jsonPath("$.totalPages").value(1))
-				.andExpect(jsonPath("$.content[0].tisId").value(TIS_ID.intValue()))
-				.andExpect(jsonPath("$.content[0].gmcNumber").value(GMC_NUMBER));
-	}
+    // When & Then
+    this.mvc.perform(get("/api/trainee-id/1-DGBODY/mappings?page=0&size=10"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.totalElements").value(1))
+        .andExpect(jsonPath("$.totalPages").value(1))
+        .andExpect(jsonPath("$.content[0].tisId").value(TIS_ID.intValue()))
+        .andExpect(jsonPath("$.content[0].gmcNumber").value(GMC_NUMBER));
+  }
 
 }

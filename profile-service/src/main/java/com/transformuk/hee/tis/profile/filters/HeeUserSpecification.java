@@ -11,15 +11,15 @@ import java.util.Set;
  */
 public class HeeUserSpecification {
 
-	public static Specification<HeeUser> active() {
-		return (root, query, cb) -> cb.equal(root.get("active"), true);
-	}
+  public static Specification<HeeUser> active() {
+    return (root, query, cb) -> cb.equal(root.get("active"), true);
+  }
 
-	public static Specification<HeeUser> withDBCs(Set<String> designatedBodyCodes) {
-		return (root, query, cb) -> root.joinSet("designatedBodyCodes").in(designatedBodyCodes);
-	}
+  public static Specification<HeeUser> withDBCs(Set<String> designatedBodyCodes) {
+    return (root, query, cb) -> root.joinSet("designatedBodyCodes").in(designatedBodyCodes);
+  }
 
-	public static Specification<HeeUser> withPermissions(List<String> permissions) {
-		return (root, query, cb) -> root.join("roles").join("permissions").get("name").in(permissions);
-	}
+  public static Specification<HeeUser> withPermissions(List<String> permissions) {
+    return (root, query, cb) -> root.join("roles").join("permissions").get("name").in(permissions);
+  }
 }

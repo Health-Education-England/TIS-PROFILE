@@ -11,37 +11,37 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class KeyclockAdminClientService {
-	private static final String REALM_LIN = "lin";
+  private static final String REALM_LIN = "lin";
 
-	@Autowired
-	public KeyclockAdminClient keyclockAdminClient;
+  @Autowired
+  public KeyclockAdminClient keyclockAdminClient;
 
-	/**
-	 * Create user in Keyclock
-	 *
-	 * @param heeUser
-	 */
-	public void createUser(HeeUser heeUser) {
-		// create user in KeyClock
-		User userToCreate = heeUserToKeyclockUser(heeUser);
-		keyclockAdminClient.createUser(REALM_LIN, userToCreate);
-	}
+  /**
+   * Create user in Keyclock
+   *
+   * @param heeUser
+   */
+  public void createUser(HeeUser heeUser) {
+    // create user in KeyClock
+    User userToCreate = heeUserToKeyclockUser(heeUser);
+    keyclockAdminClient.createUser(REALM_LIN, userToCreate);
+  }
 
-	/**
-	 * Update user in Keyclock
-	 *
-	 * @param heeUser
-	 */
-	public void updateUser(HeeUser heeUser) {
-		// First try to create convert user in KeyClock
-		User existingUser = keyclockAdminClient.findByUsername(REALM_LIN, heeUser.getName());
-		User userToUpdate = heeUserToKeyclockUser(heeUser);
-		keyclockAdminClient.updateUser(REALM_LIN, existingUser.getId(), userToUpdate);
-	}
+  /**
+   * Update user in Keyclock
+   *
+   * @param heeUser
+   */
+  public void updateUser(HeeUser heeUser) {
+    // First try to create convert user in KeyClock
+    User existingUser = keyclockAdminClient.findByUsername(REALM_LIN, heeUser.getName());
+    User userToUpdate = heeUserToKeyclockUser(heeUser);
+    keyclockAdminClient.updateUser(REALM_LIN, existingUser.getId(), userToUpdate);
+  }
 
-	private User heeUserToKeyclockUser(HeeUser heeUser) {
-		return User.create(heeUser.getFirstName(), heeUser.getLastName(), heeUser.getName(),
-				heeUser.getEmailAddress(), heeUser.getPassword());
-	}
+  private User heeUserToKeyclockUser(HeeUser heeUser) {
+    return User.create(heeUser.getFirstName(), heeUser.getLastName(), heeUser.getName(),
+        heeUser.getEmailAddress(), heeUser.getPassword());
+  }
 
 }

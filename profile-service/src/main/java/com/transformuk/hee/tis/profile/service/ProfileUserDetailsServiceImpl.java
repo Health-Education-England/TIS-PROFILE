@@ -12,17 +12,17 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class ProfileUserDetailsServiceImpl implements UserDetailsService {
 
-	private final LoginService loginService;
-	private final UserProfileAssembler userProfileAssembler;
+  private final LoginService loginService;
+  private final UserProfileAssembler userProfileAssembler;
 
-	public ProfileUserDetailsServiceImpl(LoginService loginService, UserProfileAssembler userProfileAssembler) {
-		this.loginService = loginService;
-		this.userProfileAssembler = userProfileAssembler;
-	}
+  public ProfileUserDetailsServiceImpl(LoginService loginService, UserProfileAssembler userProfileAssembler) {
+    this.loginService = loginService;
+    this.userProfileAssembler = userProfileAssembler;
+  }
 
-	@Override
-	public UserProfile getProfile(String token) {
-		HeeUser user = loginService.getUserByToken(token);
-		return userProfileAssembler.toUserProfile(user);
-	}
+  @Override
+  public UserProfile getProfile(String token) {
+    HeeUser user = loginService.getUserByToken(token);
+    return userProfileAssembler.toUserProfile(user);
+  }
 }

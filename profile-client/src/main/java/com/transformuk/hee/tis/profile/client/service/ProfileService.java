@@ -13,14 +13,14 @@ import java.util.List;
 
 public interface ProfileService extends ClientService {
 
-	Page<TraineeId> getPagedTraineeIds(String dbc, Pageable pageable);
+  Page<TraineeId> getPagedTraineeIds(String dbc, Pageable pageable);
 
-	UserProfile getRODetails(String designatedBodyCode);
+  UserProfile getRODetails(String designatedBodyCode);
 
-	JSONObject getAllUsers(String permissions, String... designatedBodyCodes);
+  JSONObject getAllUsers(String permissions, String... designatedBodyCodes);
 
-	void setServiceUrl(String serviceUrl);
+  void setServiceUrl(String serviceUrl);
 
-	List<TraineeProfileDto> getTraineeIdsForGmcNumbers(String designatedBodyCode, List<RegistrationRequest> registrationRequests);
+  List<TraineeProfileDto> getTraineeIdsForGmcNumbers(String designatedBodyCode, List<RegistrationRequest> registrationRequests);
 
 }

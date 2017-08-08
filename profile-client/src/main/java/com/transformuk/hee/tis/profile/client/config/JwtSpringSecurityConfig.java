@@ -20,17 +20,17 @@ import org.springframework.web.client.RestTemplate;
 @Import(TisSecurityConfig.class)
 public class JwtSpringSecurityConfig {
 
-	@Value("${PROFILE_REST_TIMEOUT:30000}")
-	private int timeout;
+  @Value("${PROFILE_REST_TIMEOUT:30000}")
+  private int timeout;
 
-	@Bean
-	public JwtProfileService jwtProfileService() {
-		RestTemplate restTemplate = new RestTemplate();
-		HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
-		factory.setReadTimeout(timeout);
-		factory.setConnectTimeout(timeout);
-		restTemplate.setRequestFactory(factory);
+  @Bean
+  public JwtProfileService jwtProfileService() {
+    RestTemplate restTemplate = new RestTemplate();
+    HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
+    factory.setReadTimeout(timeout);
+    factory.setConnectTimeout(timeout);
+    restTemplate.setRequestFactory(factory);
 
-		return new JwtProfileServiceImpl(restTemplate);
-	}
+    return new JwtProfileServiceImpl(restTemplate);
+  }
 }

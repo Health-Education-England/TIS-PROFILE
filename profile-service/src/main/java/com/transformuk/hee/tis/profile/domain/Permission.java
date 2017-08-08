@@ -4,10 +4,13 @@ import com.transformuk.hee.tis.profile.dto.PermissionType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.util.Objects;
 
 /**
  * A Permission.
@@ -16,95 +19,92 @@ import java.util.Objects;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Permission implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
+  @Id
+  @NotNull
+  @Column(name = "name", nullable = false)
+  private String name;
+  @Column(name = "type")
+  @Enumerated(EnumType.STRING)
+  private PermissionType type;
+  @Column(name = "description")
+  private String description;
 
-	public Permission(String name) {
-		this.name = name;
-	}
+  public Permission(String name) {
+    this.name = name;
+  }
 
-	public Permission() {
-		super();
-	}
+  public Permission() {
+    super();
+  }
 
-	@Id
-	@NotNull
-	@Column(name = "name", nullable = false)
-	private String name;
+  public String getName() {
+    return name;
+  }
 
-	@Column(name = "type")
-	@Enumerated(EnumType.STRING)
-	private PermissionType type;
+  public void setName(String name) {
+    this.name = name;
+  }
 
-	@Column(name = "description")
-	private String description;
+  public PermissionType getType() {
+    return type;
+  }
 
-	public String getName() {
-		return name;
-	}
+  public void setType(PermissionType type) {
+    this.type = type;
+  }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+  public String getDescription() {
+    return description;
+  }
 
-	public PermissionType getType() {
-		return type;
-	}
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
-	public void setType(PermissionType type) {
-		this.type = type;
-	}
+  public Permission name(String name) {
+    this.name = name;
+    return this;
+  }
 
-	public String getDescription() {
-		return description;
-	}
+  public Permission type(PermissionType type) {
+    this.type = type;
+    return this;
+  }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+  public Permission description(String description) {
+    this.description = description;
+    return this;
+  }
 
-	public Permission name(String name) {
-		this.name = name;
-		return this;
-	}
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
 
-	public Permission type(PermissionType type) {
-		this.type = type;
-		return this;
-	}
+    Permission that = (Permission) o;
+    if (that.name == null || name == null) {
+      return false;
+    }
+    if (name != null ? !name.equals(that.name) : that.name != null) return false;
+    if (type != that.type) return false;
+    return description != null ? description.equals(that.description) : that.description == null;
+  }
 
-	public Permission description(String description) {
-		this.description = description;
-		return this;
-	}
+  @Override
+  public int hashCode() {
+    int result = name != null ? name.hashCode() : 0;
+    result = 31 * result + (type != null ? type.hashCode() : 0);
+    result = 31 * result + (description != null ? description.hashCode() : 0);
+    return result;
+  }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-
-		Permission that = (Permission) o;
-		if (that.name == null || name == null) {
-			return false;
-		}
-		if (name != null ? !name.equals(that.name) : that.name != null) return false;
-		if (type != that.type) return false;
-		return description != null ? description.equals(that.description) : that.description == null;
-	}
-
-	@Override
-	public int hashCode() {
-		int result = name != null ? name.hashCode() : 0;
-		result = 31 * result + (type != null ? type.hashCode() : 0);
-		result = 31 * result + (description != null ? description.hashCode() : 0);
-		return result;
-	}
-
-	@Override
-	public String toString() {
-		return "Permission{" +
-				"name='" + name + '\'' +
-				", type=" + type +
-				", description='" + description + '\'' +
-				'}';
-	}
+  @Override
+  public String toString() {
+    return "Permission{" +
+        "name='" + name + '\'' +
+        ", type=" + type +
+        ", description='" + description + '\'' +
+        '}';
+  }
 }

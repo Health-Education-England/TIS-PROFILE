@@ -12,11 +12,11 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = {})
 public interface PersonalDetailsMapper {
 
-	PersonalDetailsDTO personalDetailsToPersonalDetailsDTO(PersonalDetails personalDetails);
+  PersonalDetailsDTO personalDetailsToPersonalDetailsDTO(PersonalDetails personalDetails);
 
-	List<PersonalDetailsDTO> personalDetailsToPersonalDetailsDTOs(List<PersonalDetails> personalDetails);
+  List<PersonalDetailsDTO> personalDetailsToPersonalDetailsDTOs(List<PersonalDetails> personalDetails);
 
-	PersonalDetails personalDetailsDTOToPersonalDetails(PersonalDetailsDTO personalDetailsDTO);
+  PersonalDetails personalDetailsDTOToPersonalDetails(PersonalDetailsDTO personalDetailsDTO);
 
-	List<PersonalDetails> personalDetailsDTOsToPersonalDetails(List<PersonalDetailsDTO> personalDetailsDTOs);
+  List<PersonalDetails> personalDetailsDTOsToPersonalDetails(List<PersonalDetailsDTO> personalDetailsDTOs);
 }

@@ -11,88 +11,88 @@ import java.util.Objects;
  */
 public class GdcDetailsDTO implements Serializable {
 
-	private Long id;
+  private Long id;
 
-	@NotNull
-	private BigDecimal tisId;
+  @NotNull
+  private BigDecimal tisId;
 
-	private String gdcNumber;
+  private String gdcNumber;
 
-	private String gdcStatus;
+  private String gdcStatus;
 
-	private LocalDate gdcStartDate;
+  private LocalDate gdcStartDate;
 
-	public Long getId() {
-		return id;
-	}
+  public Long getId() {
+    return id;
+  }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-	public BigDecimal getTisId() {
-		return tisId;
-	}
+  public BigDecimal getTisId() {
+    return tisId;
+  }
 
-	public void setTisId(BigDecimal tisId) {
-		this.tisId = tisId;
-	}
+  public void setTisId(BigDecimal tisId) {
+    this.tisId = tisId;
+  }
 
-	public String getGdcNumber() {
-		return gdcNumber;
-	}
+  public String getGdcNumber() {
+    return gdcNumber;
+  }
 
-	public void setGdcNumber(String gdcNumber) {
-		this.gdcNumber = gdcNumber;
-	}
+  public void setGdcNumber(String gdcNumber) {
+    this.gdcNumber = gdcNumber;
+  }
 
-	public String getGdcStatus() {
-		return gdcStatus;
-	}
+  public String getGdcStatus() {
+    return gdcStatus;
+  }
 
-	public void setGdcStatus(String gdcStatus) {
-		this.gdcStatus = gdcStatus;
-	}
+  public void setGdcStatus(String gdcStatus) {
+    this.gdcStatus = gdcStatus;
+  }
 
-	public LocalDate getGdcStartDate() {
-		return gdcStartDate;
-	}
+  public LocalDate getGdcStartDate() {
+    return gdcStartDate;
+  }
 
-	public void setGdcStartDate(LocalDate gdcStartDate) {
-		this.gdcStartDate = gdcStartDate;
-	}
+  public void setGdcStartDate(LocalDate gdcStartDate) {
+    this.gdcStartDate = gdcStartDate;
+  }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
 
-		GdcDetailsDTO gdcDetailsDTO = (GdcDetailsDTO) o;
+    GdcDetailsDTO gdcDetailsDTO = (GdcDetailsDTO) o;
 
-		if (!Objects.equals(id, gdcDetailsDTO.id)) {
-			return false;
-		}
+    if (!Objects.equals(id, gdcDetailsDTO.id)) {
+      return false;
+    }
 
-		return true;
-	}
+    return true;
+  }
 
-	@Override
-	public int hashCode() {
-		return Objects.hashCode(id);
-	}
+  @Override
+  public int hashCode() {
+    return Objects.hashCode(id);
+  }
 
-	@Override
-	public String toString() {
-		return "GdcDetailsDTO{" +
-				"id=" + id +
-				", tisId='" + tisId + "'" +
-				", gdcNumber='" + gdcNumber + "'" +
-				", gdcStatus='" + gdcStatus + "'" +
-				", gdcStartDate='" + gdcStartDate + "'" +
-				'}';
-	}
+  @Override
+  public String toString() {
+    return "GdcDetailsDTO{" +
+        "id=" + id +
+        ", tisId='" + tisId + "'" +
+        ", gdcNumber='" + gdcNumber + "'" +
+        ", gdcStatus='" + gdcStatus + "'" +
+        ", gdcStartDate='" + gdcStartDate + "'" +
+        '}';
+  }
 }

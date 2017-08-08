@@ -12,11 +12,11 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = {})
 public interface EqualityAndDiversityMapper {
 
-	EqualityAndDiversityDTO equalityAndDiversityToEqualityAndDiversityDTO(EqualityAndDiversity equalityAndDiversity);
+  EqualityAndDiversityDTO equalityAndDiversityToEqualityAndDiversityDTO(EqualityAndDiversity equalityAndDiversity);
 
-	List<EqualityAndDiversityDTO> equalityAndDiversitiesToEqualityAndDiversityDTOs(List<EqualityAndDiversity> equalityAndDiversities);
+  List<EqualityAndDiversityDTO> equalityAndDiversitiesToEqualityAndDiversityDTOs(List<EqualityAndDiversity> equalityAndDiversities);
 
-	EqualityAndDiversity equalityAndDiversityDTOToEqualityAndDiversity(EqualityAndDiversityDTO equalityAndDiversityDTO);
+  EqualityAndDiversity equalityAndDiversityDTOToEqualityAndDiversity(EqualityAndDiversityDTO equalityAndDiversityDTO);
 
-	List<EqualityAndDiversity> equalityAndDiversityDTOsToEqualityAndDiversities(List<EqualityAndDiversityDTO> equalityAndDiversityDTOs);
+  List<EqualityAndDiversity> equalityAndDiversityDTOsToEqualityAndDiversities(List<EqualityAndDiversityDTO> equalityAndDiversityDTOs);
 }

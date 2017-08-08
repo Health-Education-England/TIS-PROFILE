@@ -11,165 +11,165 @@ import java.util.Objects;
  */
 public class EqualityAndDiversityDTO implements Serializable {
 
-	private Long id;
+  private Long id;
 
-	@NotNull
-	private BigDecimal tisId;
+  @NotNull
+  private BigDecimal tisId;
 
-	private String maritalStatus;
+  private String maritalStatus;
 
-	private LocalDate dateOfBirth;
+  private LocalDate dateOfBirth;
 
-	private String gender;
+  private String gender;
 
-	private String nationality;
+  private String nationality;
 
-	private String dualNationality;
+  private String dualNationality;
 
-	private String sexualOrientation;
+  private String sexualOrientation;
 
-	private String religiousBelief;
+  private String religiousBelief;
 
-	private String ethnicOrigin;
+  private String ethnicOrigin;
 
-	private Boolean disability;
+  private Boolean disability;
 
-	private String disabilityDetails;
+  private String disabilityDetails;
 
-	public Long getId() {
-		return id;
-	}
+  public Long getId() {
+    return id;
+  }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-	public BigDecimal getTisId() {
-		return tisId;
-	}
+  public BigDecimal getTisId() {
+    return tisId;
+  }
 
-	public void setTisId(BigDecimal tisId) {
-		this.tisId = tisId;
-	}
+  public void setTisId(BigDecimal tisId) {
+    this.tisId = tisId;
+  }
 
-	public String getMaritalStatus() {
-		return maritalStatus;
-	}
+  public String getMaritalStatus() {
+    return maritalStatus;
+  }
 
-	public void setMaritalStatus(String maritalStatus) {
-		this.maritalStatus = maritalStatus;
-	}
+  public void setMaritalStatus(String maritalStatus) {
+    this.maritalStatus = maritalStatus;
+  }
 
-	public LocalDate getDateOfBirth() {
-		return dateOfBirth;
-	}
+  public LocalDate getDateOfBirth() {
+    return dateOfBirth;
+  }
 
-	public void setDateOfBirth(LocalDate dateOfBirth) {
-		this.dateOfBirth = dateOfBirth;
-	}
+  public void setDateOfBirth(LocalDate dateOfBirth) {
+    this.dateOfBirth = dateOfBirth;
+  }
 
-	public String getGender() {
-		return gender;
-	}
+  public String getGender() {
+    return gender;
+  }
 
-	public void setGender(String gender) {
-		this.gender = gender;
-	}
+  public void setGender(String gender) {
+    this.gender = gender;
+  }
 
-	public String getNationality() {
-		return nationality;
-	}
+  public String getNationality() {
+    return nationality;
+  }
 
-	public void setNationality(String nationality) {
-		this.nationality = nationality;
-	}
+  public void setNationality(String nationality) {
+    this.nationality = nationality;
+  }
 
-	public String getDualNationality() {
-		return dualNationality;
-	}
+  public String getDualNationality() {
+    return dualNationality;
+  }
 
-	public void setDualNationality(String dualNationality) {
-		this.dualNationality = dualNationality;
-	}
+  public void setDualNationality(String dualNationality) {
+    this.dualNationality = dualNationality;
+  }
 
-	public String getSexualOrientation() {
-		return sexualOrientation;
-	}
+  public String getSexualOrientation() {
+    return sexualOrientation;
+  }
 
-	public void setSexualOrientation(String sexualOrientation) {
-		this.sexualOrientation = sexualOrientation;
-	}
+  public void setSexualOrientation(String sexualOrientation) {
+    this.sexualOrientation = sexualOrientation;
+  }
 
-	public String getReligiousBelief() {
-		return religiousBelief;
-	}
+  public String getReligiousBelief() {
+    return religiousBelief;
+  }
 
-	public void setReligiousBelief(String religiousBelief) {
-		this.religiousBelief = religiousBelief;
-	}
+  public void setReligiousBelief(String religiousBelief) {
+    this.religiousBelief = religiousBelief;
+  }
 
-	public String getEthnicOrigin() {
-		return ethnicOrigin;
-	}
+  public String getEthnicOrigin() {
+    return ethnicOrigin;
+  }
 
-	public void setEthnicOrigin(String ethnicOrigin) {
-		this.ethnicOrigin = ethnicOrigin;
-	}
+  public void setEthnicOrigin(String ethnicOrigin) {
+    this.ethnicOrigin = ethnicOrigin;
+  }
 
-	public Boolean getDisability() {
-		return disability;
-	}
+  public Boolean getDisability() {
+    return disability;
+  }
 
-	public void setDisability(Boolean disability) {
-		this.disability = disability;
-	}
+  public void setDisability(Boolean disability) {
+    this.disability = disability;
+  }
 
-	public String getDisabilityDetails() {
-		return disabilityDetails;
-	}
+  public String getDisabilityDetails() {
+    return disabilityDetails;
+  }
 
-	public void setDisabilityDetails(String disabilityDetails) {
-		this.disabilityDetails = disabilityDetails;
-	}
+  public void setDisabilityDetails(String disabilityDetails) {
+    this.disabilityDetails = disabilityDetails;
+  }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
 
-		EqualityAndDiversityDTO equalityAndDiversityDTO = (EqualityAndDiversityDTO) o;
+    EqualityAndDiversityDTO equalityAndDiversityDTO = (EqualityAndDiversityDTO) o;
 
-		if (!Objects.equals(id, equalityAndDiversityDTO.id)) {
-			return false;
-		}
+    if (!Objects.equals(id, equalityAndDiversityDTO.id)) {
+      return false;
+    }
 
-		return true;
-	}
+    return true;
+  }
 
-	@Override
-	public int hashCode() {
-		return Objects.hashCode(id);
-	}
+  @Override
+  public int hashCode() {
+    return Objects.hashCode(id);
+  }
 
-	@Override
-	public String toString() {
-		return "EqualityAndDiversityDTO{" +
-				"id=" + id +
-				", tisId='" + tisId + "'" +
-				", maritalStatus='" + maritalStatus + "'" +
-				", dateOfBirth='" + dateOfBirth + "'" +
-				", gender='" + gender + "'" +
-				", nationality='" + nationality + "'" +
-				", dualNationality='" + dualNationality + "'" +
-				", sexualOrientation='" + sexualOrientation + "'" +
-				", religiousBelief='" + religiousBelief + "'" +
-				", ethnicOrigin='" + ethnicOrigin + "'" +
-				", disability='" + disability + "'" +
-				", disabilityDetails='" + disabilityDetails + "'" +
-				'}';
-	}
+  @Override
+  public String toString() {
+    return "EqualityAndDiversityDTO{" +
+        "id=" + id +
+        ", tisId='" + tisId + "'" +
+        ", maritalStatus='" + maritalStatus + "'" +
+        ", dateOfBirth='" + dateOfBirth + "'" +
+        ", gender='" + gender + "'" +
+        ", nationality='" + nationality + "'" +
+        ", dualNationality='" + dualNationality + "'" +
+        ", sexualOrientation='" + sexualOrientation + "'" +
+        ", religiousBelief='" + religiousBelief + "'" +
+        ", ethnicOrigin='" + ethnicOrigin + "'" +
+        ", disability='" + disability + "'" +
+        ", disabilityDetails='" + disabilityDetails + "'" +
+        '}';
+  }
 }

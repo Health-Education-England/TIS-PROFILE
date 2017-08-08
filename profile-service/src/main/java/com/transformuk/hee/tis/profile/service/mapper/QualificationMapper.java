@@ -12,11 +12,11 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = {})
 public interface QualificationMapper {
 
-	QualificationDTO qualificationToQualificationDTO(Qualification qualification);
+  QualificationDTO qualificationToQualificationDTO(Qualification qualification);
 
-	List<QualificationDTO> qualificationsToQualificationDTOs(List<Qualification> qualifications);
+  List<QualificationDTO> qualificationsToQualificationDTOs(List<Qualification> qualifications);
 
-	Qualification qualificationDTOToQualification(QualificationDTO qualificationDTO);
+  Qualification qualificationDTOToQualification(QualificationDTO qualificationDTO);
 
-	List<Qualification> qualificationDTOsToQualifications(List<QualificationDTO> qualificationDTOs);
+  List<Qualification> qualificationDTOsToQualifications(List<QualificationDTO> qualificationDTOs);
 }

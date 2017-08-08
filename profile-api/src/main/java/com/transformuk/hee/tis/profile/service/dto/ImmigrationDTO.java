@@ -11,121 +11,121 @@ import java.util.Objects;
  */
 public class ImmigrationDTO implements Serializable {
 
-	private Long id;
+  private Long id;
 
-	@NotNull
-	private BigDecimal tisId;
+  @NotNull
+  private BigDecimal tisId;
 
-	private Boolean eeaResident;
+  private Boolean eeaResident;
 
-	private String permitToWork;
+  private String permitToWork;
 
-	private String settled;
+  private String settled;
 
-	private LocalDate visaIssued;
+  private LocalDate visaIssued;
 
-	private LocalDate visaValidTo;
+  private LocalDate visaValidTo;
 
-	private String visaDetailsNumber;
+  private String visaDetailsNumber;
 
-	public Long getId() {
-		return id;
-	}
+  public Long getId() {
+    return id;
+  }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-	public BigDecimal getTisId() {
-		return tisId;
-	}
+  public BigDecimal getTisId() {
+    return tisId;
+  }
 
-	public void setTisId(BigDecimal tisId) {
-		this.tisId = tisId;
-	}
+  public void setTisId(BigDecimal tisId) {
+    this.tisId = tisId;
+  }
 
-	public Boolean getEeaResident() {
-		return eeaResident;
-	}
+  public Boolean getEeaResident() {
+    return eeaResident;
+  }
 
-	public void setEeaResident(Boolean eeaResident) {
-		this.eeaResident = eeaResident;
-	}
+  public void setEeaResident(Boolean eeaResident) {
+    this.eeaResident = eeaResident;
+  }
 
-	public String getPermitToWork() {
-		return permitToWork;
-	}
+  public String getPermitToWork() {
+    return permitToWork;
+  }
 
-	public void setPermitToWork(String permitToWork) {
-		this.permitToWork = permitToWork;
-	}
+  public void setPermitToWork(String permitToWork) {
+    this.permitToWork = permitToWork;
+  }
 
-	public String getSettled() {
-		return settled;
-	}
+  public String getSettled() {
+    return settled;
+  }
 
-	public void setSettled(String settled) {
-		this.settled = settled;
-	}
+  public void setSettled(String settled) {
+    this.settled = settled;
+  }
 
-	public LocalDate getVisaIssued() {
-		return visaIssued;
-	}
+  public LocalDate getVisaIssued() {
+    return visaIssued;
+  }
 
-	public void setVisaIssued(LocalDate visaIssued) {
-		this.visaIssued = visaIssued;
-	}
+  public void setVisaIssued(LocalDate visaIssued) {
+    this.visaIssued = visaIssued;
+  }
 
-	public LocalDate getVisaValidTo() {
-		return visaValidTo;
-	}
+  public LocalDate getVisaValidTo() {
+    return visaValidTo;
+  }
 
-	public void setVisaValidTo(LocalDate visaValidTo) {
-		this.visaValidTo = visaValidTo;
-	}
+  public void setVisaValidTo(LocalDate visaValidTo) {
+    this.visaValidTo = visaValidTo;
+  }
 
-	public String getVisaDetailsNumber() {
-		return visaDetailsNumber;
-	}
+  public String getVisaDetailsNumber() {
+    return visaDetailsNumber;
+  }
 
-	public void setVisaDetailsNumber(String visaDetailsNumber) {
-		this.visaDetailsNumber = visaDetailsNumber;
-	}
+  public void setVisaDetailsNumber(String visaDetailsNumber) {
+    this.visaDetailsNumber = visaDetailsNumber;
+  }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
 
-		ImmigrationDTO immigrationDTO = (ImmigrationDTO) o;
+    ImmigrationDTO immigrationDTO = (ImmigrationDTO) o;
 
-		if (!Objects.equals(id, immigrationDTO.id)) {
-			return false;
-		}
+    if (!Objects.equals(id, immigrationDTO.id)) {
+      return false;
+    }
 
-		return true;
-	}
+    return true;
+  }
 
-	@Override
-	public int hashCode() {
-		return Objects.hashCode(id);
-	}
+  @Override
+  public int hashCode() {
+    return Objects.hashCode(id);
+  }
 
-	@Override
-	public String toString() {
-		return "ImmigrationDTO{" +
-				"id=" + id +
-				", tisId='" + tisId + "'" +
-				", eeaResident='" + eeaResident + "'" +
-				", permitToWork='" + permitToWork + "'" +
-				", settled='" + settled + "'" +
-				", visaIssued='" + visaIssued + "'" +
-				", visaValidTo='" + visaValidTo + "'" +
-				", visaDetailsNumber='" + visaDetailsNumber + "'" +
-				'}';
-	}
+  @Override
+  public String toString() {
+    return "ImmigrationDTO{" +
+        "id=" + id +
+        ", tisId='" + tisId + "'" +
+        ", eeaResident='" + eeaResident + "'" +
+        ", permitToWork='" + permitToWork + "'" +
+        ", settled='" + settled + "'" +
+        ", visaIssued='" + visaIssued + "'" +
+        ", visaValidTo='" + visaValidTo + "'" +
+        ", visaDetailsNumber='" + visaDetailsNumber + "'" +
+        '}';
+  }
 }

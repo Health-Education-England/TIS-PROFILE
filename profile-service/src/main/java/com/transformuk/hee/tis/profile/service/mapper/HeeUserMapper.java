@@ -4,8 +4,8 @@ import com.transformuk.hee.tis.profile.domain.HeeUser;
 import com.transformuk.hee.tis.profile.domain.Permission;
 import com.transformuk.hee.tis.profile.domain.Role;
 import com.transformuk.hee.tis.profile.dto.PermissionDTO;
-import com.transformuk.hee.tis.profile.service.dto.HeeUserDTO;
 import com.transformuk.hee.tis.profile.dto.RoleDTO;
+import com.transformuk.hee.tis.profile.service.dto.HeeUserDTO;
 import org.mapstruct.Mapper;
 
 import java.util.List;
@@ -16,21 +16,21 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = {})
 public interface HeeUserMapper {
 
-	HeeUserDTO heeUserToHeeUserDTO(HeeUser heeUser);
+  HeeUserDTO heeUserToHeeUserDTO(HeeUser heeUser);
 
-	List<HeeUserDTO> heeUsersToHeeUserDTOs(List<HeeUser> heeUsers);
+  List<HeeUserDTO> heeUsersToHeeUserDTOs(List<HeeUser> heeUsers);
 
-	HeeUser heeUserDTOToHeeUser(HeeUserDTO heeUserDTO);
+  HeeUser heeUserDTOToHeeUser(HeeUserDTO heeUserDTO);
 
-	List<HeeUser> heeUserDTOsToHeeUsers(List<HeeUserDTO> heeUserDTOs);
+  List<HeeUser> heeUserDTOsToHeeUsers(List<HeeUserDTO> heeUserDTOs);
 
-	RoleDTO map(Role role);
+  RoleDTO map(Role role);
 
-	Role map(RoleDTO roleDTO);
+  Role map(RoleDTO roleDTO);
 
-	PermissionDTO map(Permission permission);
+  PermissionDTO map(Permission permission);
 
-	Permission map(PermissionDTO permissionDTO);
+  Permission map(PermissionDTO permissionDTO);
 
 
 }

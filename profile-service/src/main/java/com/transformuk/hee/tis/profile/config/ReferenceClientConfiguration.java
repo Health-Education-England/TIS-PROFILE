@@ -6,10 +6,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
-public class ReferenceClientConfiguration extends ReferenceClientConfig{
+public class ReferenceClientConfiguration extends ReferenceClientConfig {
 
-	@Bean
-	public RestTemplate referenceRestTemplate() {
-		return super.prodBrowserInitiatedReferenceRestTemplate();
-	}
+  @Bean
+  public RestTemplate referenceRestTemplate() {
+    return super.prodBrowserInitiatedReferenceRestTemplate();
+  }
 }

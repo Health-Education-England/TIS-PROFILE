@@ -12,11 +12,11 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = {})
 public interface ManageRecordMapper {
 
-	ManageRecordDTO manageRecordToManageRecordDTO(ManageRecord manageRecord);
+  ManageRecordDTO manageRecordToManageRecordDTO(ManageRecord manageRecord);
 
-	List<ManageRecordDTO> manageRecordsToManageRecordDTOs(List<ManageRecord> manageRecords);
+  List<ManageRecordDTO> manageRecordsToManageRecordDTOs(List<ManageRecord> manageRecords);
 
-	ManageRecord manageRecordDTOToManageRecord(ManageRecordDTO manageRecordDTO);
+  ManageRecord manageRecordDTOToManageRecord(ManageRecordDTO manageRecordDTO);
 
-	List<ManageRecord> manageRecordDTOsToManageRecords(List<ManageRecordDTO> manageRecordDTOs);
+  List<ManageRecord> manageRecordDTOsToManageRecords(List<ManageRecordDTO> manageRecordDTOs);
 }

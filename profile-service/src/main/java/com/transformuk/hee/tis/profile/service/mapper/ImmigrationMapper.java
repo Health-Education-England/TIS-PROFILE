@@ -12,11 +12,11 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = {})
 public interface ImmigrationMapper {
 
-	ImmigrationDTO immigrationToImmigrationDTO(Immigration immigration);
+  ImmigrationDTO immigrationToImmigrationDTO(Immigration immigration);
 
-	List<ImmigrationDTO> immigrationsToImmigrationDTOs(List<Immigration> immigrations);
+  List<ImmigrationDTO> immigrationsToImmigrationDTOs(List<Immigration> immigrations);
 
-	Immigration immigrationDTOToImmigration(ImmigrationDTO immigrationDTO);
+  Immigration immigrationDTOToImmigration(ImmigrationDTO immigrationDTO);
 
-	List<Immigration> immigrationDTOsToImmigrations(List<ImmigrationDTO> immigrationDTOs);
+  List<Immigration> immigrationDTOsToImmigrations(List<ImmigrationDTO> immigrationDTOs);
 }

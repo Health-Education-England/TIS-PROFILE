@@ -14,15 +14,15 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = {})
 public interface RoleMapper {
 
-	RoleDTO roleToRoleDTO(Role role);
+  RoleDTO roleToRoleDTO(Role role);
 
-	List<RoleDTO> rolesToRoleDTOs(List<Role> roles);
+  List<RoleDTO> rolesToRoleDTOs(List<Role> roles);
 
-	Role roleDTOToRole(RoleDTO roleDTO);
+  Role roleDTOToRole(RoleDTO roleDTO);
 
-	List<Role> roleDTOsToRoles(List<RoleDTO> roleDTOs);
+  List<Role> roleDTOsToRoles(List<RoleDTO> roleDTOs);
 
-	PermissionDTO map(Permission permission);
+  PermissionDTO map(Permission permission);
 
-	Permission map(PermissionDTO permissionDTO);
+  Permission map(PermissionDTO permissionDTO);
 }

@@ -22,75 +22,75 @@ import java.util.Set;
 @Component
 public class HeeUserValidator {
 
-	private static final String DESIGNATED_BODY_CODE = "Designated Body Code: ";
-	private static final String ROLE_NAME = "Role name: ";
+  private static final String DESIGNATED_BODY_CODE = "Designated Body Code: ";
+  private static final String ROLE_NAME = "Role name: ";
 
-	@Autowired
-	private ReferenceService referenceService;
+  @Autowired
+  private ReferenceService referenceService;
 
-	@Autowired
-	private RoleRepository roleRepository;
+  @Autowired
+  private RoleRepository roleRepository;
 
-	/**
-	 * Validates given dbc codes are exists and matches.
-	 *
-	 * @param dbcCodes
-	 * @throws CustomParameterizedException if any errors
-	 */
-	public void validateDBCIds(Set<String> dbcCodes) {
+  /**
+   * Validates given dbc codes are exists and matches.
+   *
+   * @param dbcCodes
+   * @throws CustomParameterizedException if any errors
+   */
+  public void validateDBCIds(Set<String> dbcCodes) {
 
-		if (!CollectionUtils.isEmpty(dbcCodes)) {
-			dbcCodes.forEach(dbcCode -> {
-				try {
-					// if designated body is None then don't validate
-					if (!dbcCode.equalsIgnoreCase(HeeUser.NONE)) {
-						ResponseEntity<DBCDTO> dbcdto = referenceService.getDBCByCode(dbcCode);
-					}
-				} catch (HttpClientErrorException ex) {
-					throw new CustomParameterizedException("Invalid " + DESIGNATED_BODY_CODE + dbcCode, ErrorConstants.ERR_VALIDATION);
-				}
-			});
-		}
+    if (!CollectionUtils.isEmpty(dbcCodes)) {
+      dbcCodes.forEach(dbcCode -> {
+        try {
+          // if designated body is None then don't validate
+          if (!dbcCode.equalsIgnoreCase(HeeUser.NONE)) {
+            ResponseEntity<DBCDTO> dbcdto = referenceService.getDBCByCode(dbcCode);
+          }
+        } catch (HttpClientErrorException ex) {
+          throw new CustomParameterizedException("Invalid " + DESIGNATED_BODY_CODE + dbcCode, ErrorConstants.ERR_VALIDATION);
+        }
+      });
+    }
 
-	}
+  }
 
-	/**
-	 * Validates given role name are exists and matches
-	 *
-	 * @param roles
-	 * @throws CustomParameterizedException if any errors
-	 */
-	public void validateRoles(Set<Role> roles) {
-		if (!CollectionUtils.isEmpty(roles)) {
-			roles.forEach(role -> {
-				Role dbRole = roleRepository.findByName(role.getName());
-				if (dbRole == null) {
-					throw new CustomParameterizedException("Invalid " + ROLE_NAME + role.getName(), ErrorConstants.ERR_VALIDATION);
-				}
-			});
-		}
-	}
+  /**
+   * Validates given role name are exists and matches
+   *
+   * @param roles
+   * @throws CustomParameterizedException if any errors
+   */
+  public void validateRoles(Set<Role> roles) {
+    if (!CollectionUtils.isEmpty(roles)) {
+      roles.forEach(role -> {
+        Role dbRole = roleRepository.findByName(role.getName());
+        if (dbRole == null) {
+          throw new CustomParameterizedException("Invalid " + ROLE_NAME + role.getName(), ErrorConstants.ERR_VALIDATION);
+        }
+      });
+    }
+  }
 
-	/**
-	 * Validates given password for new users and it should be atleast 8 chars long
-	 *
-	 * @param password
-	 */
-	public void validatePassword(String password) {
-		if (StringUtils.isEmpty(password) || password.length() < 8) {
-			throw new CustomParameterizedException("Password should be minimum 8 chars long", ErrorConstants.ERR_VALIDATION);
-		}
-	}
+  /**
+   * Validates given password for new users and it should be atleast 8 chars long
+   *
+   * @param password
+   */
+  public void validatePassword(String password) {
+    if (StringUtils.isEmpty(password) || password.length() < 8) {
+      throw new CustomParameterizedException("Password should be minimum 8 chars long", ErrorConstants.ERR_VALIDATION);
+    }
+  }
 
-	/**
-	 * Validates given gmc id for users and it shouldn't be greater than 7 chars long
-	 *
-	 * @param gmcId
-	 */
-	public void validateGmcId(String gmcId) {
-		if (StringUtils.isEmpty(gmcId) || gmcId.length() > 7) {
-			throw new CustomParameterizedException("GMC Id shouldn't be greater than 7 chars long", ErrorConstants.ERR_VALIDATION);
-		}
-	}
+  /**
+   * Validates given gmc id for users and it shouldn't be greater than 7 chars long
+   *
+   * @param gmcId
+   */
+  public void validateGmcId(String gmcId) {
+    if (StringUtils.isEmpty(gmcId) || gmcId.length() > 7) {
+      throw new CustomParameterizedException("GMC Id shouldn't be greater than 7 chars long", ErrorConstants.ERR_VALIDATION);
+    }
+  }
 
 }

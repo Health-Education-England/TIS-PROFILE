@@ -23,66 +23,66 @@ import java.util.List;
 @ControllerAdvice
 public class ExceptionTranslator {
 
-	@ExceptionHandler(ConcurrencyFailureException.class)
-	@ResponseStatus(HttpStatus.CONFLICT)
-	@ResponseBody
-	public ErrorVM processConcurrencyError(ConcurrencyFailureException ex) {
-		return new ErrorVM(ErrorConstants.ERR_CONCURRENCY_FAILURE);
-	}
+  @ExceptionHandler(ConcurrencyFailureException.class)
+  @ResponseStatus(HttpStatus.CONFLICT)
+  @ResponseBody
+  public ErrorVM processConcurrencyError(ConcurrencyFailureException ex) {
+    return new ErrorVM(ErrorConstants.ERR_CONCURRENCY_FAILURE);
+  }
 
-	@ExceptionHandler(MethodArgumentNotValidException.class)
-	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	@ResponseBody
-	public ErrorVM processValidationError(MethodArgumentNotValidException ex) {
-		BindingResult result = ex.getBindingResult();
-		List<FieldError> fieldErrors = result.getFieldErrors();
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ResponseBody
+  public ErrorVM processValidationError(MethodArgumentNotValidException ex) {
+    BindingResult result = ex.getBindingResult();
+    List<FieldError> fieldErrors = result.getFieldErrors();
 
-		return processFieldErrors(fieldErrors);
-	}
+    return processFieldErrors(fieldErrors);
+  }
 
-	@ExceptionHandler(CustomParameterizedException.class)
-	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	@ResponseBody
-	public ParameterizedErrorVM processParameterizedValidationError(CustomParameterizedException ex) {
-		return ex.getErrorVM();
-	}
+  @ExceptionHandler(CustomParameterizedException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ResponseBody
+  public ParameterizedErrorVM processParameterizedValidationError(CustomParameterizedException ex) {
+    return ex.getErrorVM();
+  }
 
-	@ExceptionHandler(AccessDeniedException.class)
-	@ResponseStatus(HttpStatus.FORBIDDEN)
-	@ResponseBody
-	public ErrorVM processAccessDeniedException(AccessDeniedException e) {
-		return new ErrorVM(ErrorConstants.ERR_ACCESS_DENIED, e.getMessage());
-	}
+  @ExceptionHandler(AccessDeniedException.class)
+  @ResponseStatus(HttpStatus.FORBIDDEN)
+  @ResponseBody
+  public ErrorVM processAccessDeniedException(AccessDeniedException e) {
+    return new ErrorVM(ErrorConstants.ERR_ACCESS_DENIED, e.getMessage());
+  }
 
-	private ErrorVM processFieldErrors(List<FieldError> fieldErrors) {
-		ErrorVM dto = new ErrorVM(ErrorConstants.ERR_VALIDATION);
+  private ErrorVM processFieldErrors(List<FieldError> fieldErrors) {
+    ErrorVM dto = new ErrorVM(ErrorConstants.ERR_VALIDATION);
 
-		for (FieldError fieldError : fieldErrors) {
-			dto.add(fieldError.getObjectName(), fieldError.getField(), fieldError.getCode());
-		}
+    for (FieldError fieldError : fieldErrors) {
+      dto.add(fieldError.getObjectName(), fieldError.getField(), fieldError.getCode());
+    }
 
-		return dto;
-	}
+    return dto;
+  }
 
-	@ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-	@ResponseBody
-	@ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
-	public ErrorVM processMethodNotSupportedException(HttpRequestMethodNotSupportedException exception) {
-		return new ErrorVM(ErrorConstants.ERR_METHOD_NOT_SUPPORTED, exception.getMessage());
-	}
+  @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+  @ResponseBody
+  @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
+  public ErrorVM processMethodNotSupportedException(HttpRequestMethodNotSupportedException exception) {
+    return new ErrorVM(ErrorConstants.ERR_METHOD_NOT_SUPPORTED, exception.getMessage());
+  }
 
-	@ExceptionHandler(Exception.class)
-	public ResponseEntity<ErrorVM> processRuntimeException(Exception ex) {
-		BodyBuilder builder;
-		ErrorVM errorVM;
-		ResponseStatus responseStatus = AnnotationUtils.findAnnotation(ex.getClass(), ResponseStatus.class);
-		if (responseStatus != null) {
-			builder = ResponseEntity.status(responseStatus.value());
-			errorVM = new ErrorVM("error." + responseStatus.value().value(), responseStatus.reason());
-		} else {
-			builder = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR);
-			errorVM = new ErrorVM(ErrorConstants.ERR_INTERNAL_SERVER_ERROR, "Internal server error");
-		}
-		return builder.body(errorVM);
-	}
+  @ExceptionHandler(Exception.class)
+  public ResponseEntity<ErrorVM> processRuntimeException(Exception ex) {
+    BodyBuilder builder;
+    ErrorVM errorVM;
+    ResponseStatus responseStatus = AnnotationUtils.findAnnotation(ex.getClass(), ResponseStatus.class);
+    if (responseStatus != null) {
+      builder = ResponseEntity.status(responseStatus.value());
+      errorVM = new ErrorVM("error." + responseStatus.value().value(), responseStatus.reason());
+    } else {
+      builder = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR);
+      errorVM = new ErrorVM(ErrorConstants.ERR_INTERNAL_SERVER_ERROR, "Internal server error");
+    }
+    return builder.body(errorVM);
+  }
 }

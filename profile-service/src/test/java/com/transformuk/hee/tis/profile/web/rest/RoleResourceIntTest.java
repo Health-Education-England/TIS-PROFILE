@@ -32,8 +32,13 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Test class for the RoleResource REST controller.
@@ -44,254 +49,254 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = ProfileApp.class)
 public class RoleResourceIntTest {
 
-	private static final String DEFAULT_NAME = "AAAAAAAAAA";
-	private static final String UPDATED_NAME = "BBBBBBBBBB";
-	private static final String DEFAULT_PERMISSION_NAME = "default:view";
+  private static final String DEFAULT_NAME = "AAAAAAAAAA";
+  private static final String UPDATED_NAME = "BBBBBBBBBB";
+  private static final String DEFAULT_PERMISSION_NAME = "default:view";
 
-	@Autowired
-	private RoleRepository roleRepository;
+  @Autowired
+  private RoleRepository roleRepository;
 
-	@Autowired
-	private RoleMapper roleMapper;
+  @Autowired
+  private RoleMapper roleMapper;
 
-	@Autowired
-	private MappingJackson2HttpMessageConverter jacksonMessageConverter;
+  @Autowired
+  private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
-	@Autowired
-	private PageableHandlerMethodArgumentResolver pageableArgumentResolver;
+  @Autowired
+  private PageableHandlerMethodArgumentResolver pageableArgumentResolver;
 
-	@Autowired
-	private ExceptionTranslator exceptionTranslator;
+  @Autowired
+  private ExceptionTranslator exceptionTranslator;
 
-	@Autowired
-	private RoleValidator roleValidator;
+  @Autowired
+  private RoleValidator roleValidator;
 
-	@Autowired
-	private PermissionRepository permissionRepository;
+  @Autowired
+  private PermissionRepository permissionRepository;
 
-	@Autowired
-	private HeeUserRepository heeUserRepository;
+  @Autowired
+  private HeeUserRepository heeUserRepository;
 
-	@Autowired
-	private EntityManager em;
+  @Autowired
+  private EntityManager em;
 
-	private MockMvc restRoleMockMvc;
+  private MockMvc restRoleMockMvc;
 
-	private Role role;
+  private Role role;
 
-	/**
-	 * Create an entity for this test.
-	 * <p>
-	 * This is a static method, as tests for other entities might also need it,
-	 * if they test an entity which requires the current entity.
-	 */
-	public static Role createEntity(EntityManager em) {
-		Role role = new Role()
-				.name(DEFAULT_NAME);
-		return role;
-	}
+  /**
+   * Create an entity for this test.
+   * <p>
+   * This is a static method, as tests for other entities might also need it,
+   * if they test an entity which requires the current entity.
+   */
+  public static Role createEntity(EntityManager em) {
+    Role role = new Role()
+        .name(DEFAULT_NAME);
+    return role;
+  }
 
-	@Before
-	public void setup() {
-		MockitoAnnotations.initMocks(this);
-		RoleResource roleResource = new RoleResource(roleRepository, roleMapper,roleValidator);
-		this.restRoleMockMvc = MockMvcBuilders.standaloneSetup(roleResource)
-				.setCustomArgumentResolvers(pageableArgumentResolver)
-				.setControllerAdvice(exceptionTranslator)
-				.setMessageConverters(jacksonMessageConverter).build();
-	}
+  @Before
+  public void setup() {
+    MockitoAnnotations.initMocks(this);
+    RoleResource roleResource = new RoleResource(roleRepository, roleMapper, roleValidator);
+    this.restRoleMockMvc = MockMvcBuilders.standaloneSetup(roleResource)
+        .setCustomArgumentResolvers(pageableArgumentResolver)
+        .setControllerAdvice(exceptionTranslator)
+        .setMessageConverters(jacksonMessageConverter).build();
+  }
 
-	@Before
-	public void initTest() {
-		role = createEntity(em);
-	}
+  @Before
+  public void initTest() {
+    role = createEntity(em);
+  }
 
-	@Test
-	@Transactional
-	public void createRole() throws Exception {
-		int databaseSizeBeforeCreate = roleRepository.findAll().size();
-		int dbPermissionSizeBeforeCreate = permissionRepository.findAll().size();
+  @Test
+  @Transactional
+  public void createRole() throws Exception {
+    int databaseSizeBeforeCreate = roleRepository.findAll().size();
+    int dbPermissionSizeBeforeCreate = permissionRepository.findAll().size();
 
-		// Create the Role
-		RoleDTO roleDTO = roleMapper.roleToRoleDTO(role);
-		restRoleMockMvc.perform(post("/api/roles")
-				.contentType(TestUtil.APPLICATION_JSON_UTF8)
-				.content(TestUtil.convertObjectToJsonBytes(roleDTO)))
-				.andExpect(status().isCreated());
+    // Create the Role
+    RoleDTO roleDTO = roleMapper.roleToRoleDTO(role);
+    restRoleMockMvc.perform(post("/api/roles")
+        .contentType(TestUtil.APPLICATION_JSON_UTF8)
+        .content(TestUtil.convertObjectToJsonBytes(roleDTO)))
+        .andExpect(status().isCreated());
 
-		// Validate the Role in the database
-		List<Role> roleList = roleRepository.findAll();
-		assertThat(roleList).hasSize(databaseSizeBeforeCreate + 1);
-		Role testRole = roleRepository.findOne(role.getName());
-		assertThat(testRole.getName()).isEqualTo(DEFAULT_NAME);
-		assertThat(permissionRepository.findAll().size()).isEqualTo(dbPermissionSizeBeforeCreate);
-	}
+    // Validate the Role in the database
+    List<Role> roleList = roleRepository.findAll();
+    assertThat(roleList).hasSize(databaseSizeBeforeCreate + 1);
+    Role testRole = roleRepository.findOne(role.getName());
+    assertThat(testRole.getName()).isEqualTo(DEFAULT_NAME);
+    assertThat(permissionRepository.findAll().size()).isEqualTo(dbPermissionSizeBeforeCreate);
+  }
 
-	@Test
-	@Transactional
-	public void shouldThrowExceptionInvalidPermissionRole() throws Exception{
-		int databaseSizeBeforeCreate = roleRepository.findAll().size();
-		// Given Create the Role
-		Permission permission = new Permission();
-		permission.setName(DEFAULT_PERMISSION_NAME);
-		role.setPermissions(Sets.newHashSet(Arrays.asList(permission)));
+  @Test
+  @Transactional
+  public void shouldThrowExceptionInvalidPermissionRole() throws Exception {
+    int databaseSizeBeforeCreate = roleRepository.findAll().size();
+    // Given Create the Role
+    Permission permission = new Permission();
+    permission.setName(DEFAULT_PERMISSION_NAME);
+    role.setPermissions(Sets.newHashSet(Arrays.asList(permission)));
 
-		RoleDTO roleDTO = roleMapper.roleToRoleDTO(role);
-		restRoleMockMvc.perform(post("/api/roles")
-				.contentType(TestUtil.APPLICATION_JSON_UTF8)
-				.content(TestUtil.convertObjectToJsonBytes(roleDTO)))
-				.andExpect(status().is4xxClientError());
+    RoleDTO roleDTO = roleMapper.roleToRoleDTO(role);
+    restRoleMockMvc.perform(post("/api/roles")
+        .contentType(TestUtil.APPLICATION_JSON_UTF8)
+        .content(TestUtil.convertObjectToJsonBytes(roleDTO)))
+        .andExpect(status().is4xxClientError());
 
-		// Validate the Role in the database
-		List<Role> roleList = roleRepository.findAll();
-		assertThat(roleList).hasSize(databaseSizeBeforeCreate);
-		Role testRole = roleRepository.findOne(role.getName());
-		assertThat(testRole).isNull();
-	}
+    // Validate the Role in the database
+    List<Role> roleList = roleRepository.findAll();
+    assertThat(roleList).hasSize(databaseSizeBeforeCreate);
+    Role testRole = roleRepository.findOne(role.getName());
+    assertThat(testRole).isNull();
+  }
 
-	@Test
-	@Transactional
-	public void createRoleWithExistingId() throws Exception {
-		int databaseSizeBeforeCreate = roleRepository.findAll().size();
-		int dbPermissionSizeBeforeCreate = permissionRepository.findAll().size();
+  @Test
+  @Transactional
+  public void createRoleWithExistingId() throws Exception {
+    int databaseSizeBeforeCreate = roleRepository.findAll().size();
+    int dbPermissionSizeBeforeCreate = permissionRepository.findAll().size();
 
-		// Create the Role with an existing ID
-		role.setName("RVAdmin");
-		RoleDTO roleDTO = roleMapper.roleToRoleDTO(role);
+    // Create the Role with an existing ID
+    role.setName("RVAdmin");
+    RoleDTO roleDTO = roleMapper.roleToRoleDTO(role);
 
-		// Creating a role with the same name will do nothing but not fail
-		restRoleMockMvc.perform(post("/api/roles")
-				.contentType(TestUtil.APPLICATION_JSON_UTF8)
-				.content(TestUtil.convertObjectToJsonBytes(roleDTO)))
-				.andExpect(status().isCreated());
+    // Creating a role with the same name will do nothing but not fail
+    restRoleMockMvc.perform(post("/api/roles")
+        .contentType(TestUtil.APPLICATION_JSON_UTF8)
+        .content(TestUtil.convertObjectToJsonBytes(roleDTO)))
+        .andExpect(status().isCreated());
 
-		// Validate the Alice in the database
-		List<Role> roleList = roleRepository.findAll();
-		assertThat(roleList).hasSize(databaseSizeBeforeCreate);
-		assertThat(permissionRepository.findAll().size()).isEqualTo(dbPermissionSizeBeforeCreate);
-	}
+    // Validate the Alice in the database
+    List<Role> roleList = roleRepository.findAll();
+    assertThat(roleList).hasSize(databaseSizeBeforeCreate);
+    assertThat(permissionRepository.findAll().size()).isEqualTo(dbPermissionSizeBeforeCreate);
+  }
 
-	@Test
-	@Transactional
-	public void checkNameIsRequired() throws Exception {
-		int databaseSizeBeforeTest = roleRepository.findAll().size();
-		// set the field null
-		role.setName(null);
+  @Test
+  @Transactional
+  public void checkNameIsRequired() throws Exception {
+    int databaseSizeBeforeTest = roleRepository.findAll().size();
+    // set the field null
+    role.setName(null);
 
-		// Create the Role, which fails.
-		RoleDTO roleDTO = roleMapper.roleToRoleDTO(role);
+    // Create the Role, which fails.
+    RoleDTO roleDTO = roleMapper.roleToRoleDTO(role);
 
-		restRoleMockMvc.perform(post("/api/roles")
-				.contentType(TestUtil.APPLICATION_JSON_UTF8)
-				.content(TestUtil.convertObjectToJsonBytes(roleDTO)))
-				.andExpect(status().isBadRequest());
+    restRoleMockMvc.perform(post("/api/roles")
+        .contentType(TestUtil.APPLICATION_JSON_UTF8)
+        .content(TestUtil.convertObjectToJsonBytes(roleDTO)))
+        .andExpect(status().isBadRequest());
 
-		List<Role> roleList = roleRepository.findAll();
-		assertThat(roleList).hasSize(databaseSizeBeforeTest);
-	}
+    List<Role> roleList = roleRepository.findAll();
+    assertThat(roleList).hasSize(databaseSizeBeforeTest);
+  }
 
-	@Test
-	@Transactional
-	public void getAllRoles() throws Exception {
-		// Initialize the database
-		roleRepository.saveAndFlush(role);
+  @Test
+  @Transactional
+  public void getAllRoles() throws Exception {
+    // Initialize the database
+    roleRepository.saveAndFlush(role);
 
-		// Get all the roleList
-		restRoleMockMvc.perform(get("/api/roles?sort=name,desc"))
-				.andExpect(status().isOk())
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-				.andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())));
-	}
+    // Get all the roleList
+    restRoleMockMvc.perform(get("/api/roles?sort=name,desc"))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+        .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())));
+  }
 
-	@Test
-	@Transactional
-	public void getRole() throws Exception {
-		// Initialize the database
-		roleRepository.saveAndFlush(role);
+  @Test
+  @Transactional
+  public void getRole() throws Exception {
+    // Initialize the database
+    roleRepository.saveAndFlush(role);
 
-		// Get the role
-		restRoleMockMvc.perform(get("/api/roles/{id}", role.getName()))
-				.andExpect(status().isOk())
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-				.andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()));
-	}
+    // Get the role
+    restRoleMockMvc.perform(get("/api/roles/{id}", role.getName()))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+        .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()));
+  }
 
-	@Test
-	@Transactional
-	public void getNonExistingRole() throws Exception {
-		// Get the role
-		restRoleMockMvc.perform(get("/api/roles/{id}", Long.MAX_VALUE))
-				.andExpect(status().isNotFound());
-	}
+  @Test
+  @Transactional
+  public void getNonExistingRole() throws Exception {
+    // Get the role
+    restRoleMockMvc.perform(get("/api/roles/{id}", Long.MAX_VALUE))
+        .andExpect(status().isNotFound());
+  }
 
-	@Test
-	@Transactional
-	public void updateNonExistingRole() throws Exception {
-		int databaseSizeBeforeUpdate = roleRepository.findAll().size();
-		int dbPermissionSizeBeforeCreate = permissionRepository.findAll().size();
+  @Test
+  @Transactional
+  public void updateNonExistingRole() throws Exception {
+    int databaseSizeBeforeUpdate = roleRepository.findAll().size();
+    int dbPermissionSizeBeforeCreate = permissionRepository.findAll().size();
 
-		// Create the Role
-		RoleDTO roleDTO = roleMapper.roleToRoleDTO(role);
+    // Create the Role
+    RoleDTO roleDTO = roleMapper.roleToRoleDTO(role);
 
-		// If the entity doesn't have an ID, it will be created instead of just being updated
-		restRoleMockMvc.perform(put("/api/roles")
-				.contentType(TestUtil.APPLICATION_JSON_UTF8)
-				.content(TestUtil.convertObjectToJsonBytes(roleDTO)))
-				.andExpect(status().isCreated());
+    // If the entity doesn't have an ID, it will be created instead of just being updated
+    restRoleMockMvc.perform(put("/api/roles")
+        .contentType(TestUtil.APPLICATION_JSON_UTF8)
+        .content(TestUtil.convertObjectToJsonBytes(roleDTO)))
+        .andExpect(status().isCreated());
 
-		// Validate the Role in the database
-		List<Role> roleList = roleRepository.findAll();
-		assertThat(roleList).hasSize(databaseSizeBeforeUpdate + 1);
-		assertThat(permissionRepository.findAll().size()).isEqualTo(dbPermissionSizeBeforeCreate);
-	}
+    // Validate the Role in the database
+    List<Role> roleList = roleRepository.findAll();
+    assertThat(roleList).hasSize(databaseSizeBeforeUpdate + 1);
+    assertThat(permissionRepository.findAll().size()).isEqualTo(dbPermissionSizeBeforeCreate);
+  }
 
-	@Test
-	@Transactional
-	public void deleteRole() throws Exception {
-		// Initialize the database
-		roleRepository.saveAndFlush(role);
-		int databaseSizeBeforeDelete = roleRepository.findAll().size();
-		int dbPermissionSizeBeforeCreate = permissionRepository.findAll().size();
+  @Test
+  @Transactional
+  public void deleteRole() throws Exception {
+    // Initialize the database
+    roleRepository.saveAndFlush(role);
+    int databaseSizeBeforeDelete = roleRepository.findAll().size();
+    int dbPermissionSizeBeforeCreate = permissionRepository.findAll().size();
 
-		// Get the role
-		restRoleMockMvc.perform(delete("/api/roles/{id}", role.getName())
-				.accept(TestUtil.APPLICATION_JSON_UTF8))
-				.andExpect(status().isOk());
+    // Get the role
+    restRoleMockMvc.perform(delete("/api/roles/{id}", role.getName())
+        .accept(TestUtil.APPLICATION_JSON_UTF8))
+        .andExpect(status().isOk());
 
-		// Validate the database is empty
-		List<Role> roleList = roleRepository.findAll();
-		assertThat(roleList).hasSize(databaseSizeBeforeDelete - 1);
-		assertThat(permissionRepository.findAll().size()).isEqualTo(dbPermissionSizeBeforeCreate);
-	}
+    // Validate the database is empty
+    List<Role> roleList = roleRepository.findAll();
+    assertThat(roleList).hasSize(databaseSizeBeforeDelete - 1);
+    assertThat(permissionRepository.findAll().size()).isEqualTo(dbPermissionSizeBeforeCreate);
+  }
 
-	@Test
-	@Transactional
-	public void shouldThrowErrorRoleAssociatedWithUser() throws Exception{
-		// Initialize the database
-		roleRepository.saveAndFlush(role);
-		//create User with same role associated with it
-		HeeUser heeUser = TestUtil.createEntityHeeUser(em);
-		heeUser.setRoles(Sets.newHashSet(Arrays.asList(role)));
-		heeUser.setActive(TestUtil.UPDATED_ACTIVE);
-		heeUserRepository.saveAndFlush(heeUser);
+  @Test
+  @Transactional
+  public void shouldThrowErrorRoleAssociatedWithUser() throws Exception {
+    // Initialize the database
+    roleRepository.saveAndFlush(role);
+    //create User with same role associated with it
+    HeeUser heeUser = TestUtil.createEntityHeeUser(em);
+    heeUser.setRoles(Sets.newHashSet(Arrays.asList(role)));
+    heeUser.setActive(TestUtil.UPDATED_ACTIVE);
+    heeUserRepository.saveAndFlush(heeUser);
 
-		int databaseSizeBeforeDelete = roleRepository.findAll().size();
+    int databaseSizeBeforeDelete = roleRepository.findAll().size();
 
-		// Get the role
-		restRoleMockMvc.perform(delete("/api/roles/{id}", role.getName())
-				.accept(TestUtil.APPLICATION_JSON_UTF8))
-				.andExpect(status().is4xxClientError());
+    // Get the role
+    restRoleMockMvc.perform(delete("/api/roles/{id}", role.getName())
+        .accept(TestUtil.APPLICATION_JSON_UTF8))
+        .andExpect(status().is4xxClientError());
 
-		// Validate the database is empty
-		List<Role> roleList = roleRepository.findAll();
-		assertThat(roleList).hasSize(databaseSizeBeforeDelete);
+    // Validate the database is empty
+    List<Role> roleList = roleRepository.findAll();
+    assertThat(roleList).hasSize(databaseSizeBeforeDelete);
 
-	}
+  }
 
 
-	@Test
-	@Transactional
-	public void equalsVerifier() throws Exception {
-		TestUtil.equalsVerifier(Role.class);
-	}
+  @Test
+  @Transactional
+  public void equalsVerifier() throws Exception {
+    TestUtil.equalsVerifier(Role.class);
+  }
 }

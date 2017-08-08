@@ -33,79 +33,79 @@ import static org.slf4j.LoggerFactory.getLogger;
 @Transactional(readOnly = true)
 public class LoginService {
 
-	private static final Logger LOG = getLogger(LoginService.class);
-	private final HeeUserRepository userRepository;
-	private JsonParser jsonParser = JsonParserFactory.getJsonParser();
+  private static final Logger LOG = getLogger(LoginService.class);
+  private final HeeUserRepository userRepository;
+  private JsonParser jsonParser = JsonParserFactory.getJsonParser();
 
-	public LoginService(HeeUserRepository userRepository) {
-		this.userRepository = userRepository;
-	}
+  public LoginService(HeeUserRepository userRepository) {
+    this.userRepository = userRepository;
+  }
 
-	/**
-	 * @param token jwtAuthToken
-	 * @return {@link HeeUser} User associated with given unique user name
-	 */
-	public HeeUser getUserByToken(String token) {
-		JwtAuthToken jwtAuthToken = decode(token);
-		HeeUser user = userRepository.findByActive(jwtAuthToken.getUsername());
-		if (user == null) {
-			throw new EntityNotFoundException(format("User with username %s either not found or not active",
-					jwtAuthToken.getUsername()));
-		}
-		return user;
-	}
+  /**
+   * @param token jwtAuthToken
+   * @return {@link HeeUser} User associated with given unique user name
+   */
+  public HeeUser getUserByToken(String token) {
+    JwtAuthToken jwtAuthToken = decode(token);
+    HeeUser user = userRepository.findByActive(jwtAuthToken.getUsername());
+    if (user == null) {
+      throw new EntityNotFoundException(format("User with username %s either not found or not active",
+          jwtAuthToken.getUsername()));
+    }
+    return user;
+  }
 
-	/**
-	 * Returns all active users by exact matching with given designatedBodyCodes and permissions if any
-	 *
-	 * @param designatedBodyCodes the designatedBodyCode to use
-	 * @param designatedBodyCodes
-	 * @param permissions         the permissions to use  @return {@link List<HeeUser>} list of users
-	 */
-	public List<HeeUser> getUsers(Set<String> designatedBodyCodes, String permissions) {
-		List<String> sortedDesignatedBodyCodes = Lists.newArrayList(designatedBodyCodes);
-		Collections.sort(sortedDesignatedBodyCodes);
-		String designatedBodyCodesValue = StringUtils.join(sortedDesignatedBodyCodes, ",");
-		List<String> permissionList = Lists.newArrayList();
-		if (permissions != null) {
-			permissionList.addAll(asList(permissions.split(",")));
-			return userRepository.findDistinctByExactDesignatedBodyCodesAndPermissions(designatedBodyCodesValue, permissionList);
-		}
-		return userRepository.findDistinctByExactDesignatedBodyCodes(
-				designatedBodyCodesValue);
-	}
+  /**
+   * Returns all active users by exact matching with given designatedBodyCodes and permissions if any
+   *
+   * @param designatedBodyCodes the designatedBodyCode to use
+   * @param designatedBodyCodes
+   * @param permissions         the permissions to use  @return {@link List<HeeUser>} list of users
+   */
+  public List<HeeUser> getUsers(Set<String> designatedBodyCodes, String permissions) {
+    List<String> sortedDesignatedBodyCodes = Lists.newArrayList(designatedBodyCodes);
+    Collections.sort(sortedDesignatedBodyCodes);
+    String designatedBodyCodesValue = StringUtils.join(sortedDesignatedBodyCodes, ",");
+    List<String> permissionList = Lists.newArrayList();
+    if (permissions != null) {
+      permissionList.addAll(asList(permissions.split(",")));
+      return userRepository.findDistinctByExactDesignatedBodyCodesAndPermissions(designatedBodyCodesValue, permissionList);
+    }
+    return userRepository.findDistinctByExactDesignatedBodyCodes(
+        designatedBodyCodesValue);
+  }
 
-	/**
-	 * Gets RevalidationOfficer details by designatedBodyCode
-	 *
-	 * @param designatedBodyCode
-	 * @return {@link HeeUser}
-	 */
-	public HeeUser getRVOfficer(String designatedBodyCode) {
-		return userRepository.findRVOfficerByDesignatedBodyCode(designatedBodyCode);
-	}
+  /**
+   * Gets RevalidationOfficer details by designatedBodyCode
+   *
+   * @param designatedBodyCode
+   * @return {@link HeeUser}
+   */
+  public HeeUser getRVOfficer(String designatedBodyCode) {
+    return userRepository.findRVOfficerByDesignatedBodyCode(designatedBodyCode);
+  }
 
-	private JwtAuthToken decode(String token) {
-		Jwt jwt = JwtHelper.decode(token);
-		Map<String, Object> claims = jsonParser.parseMap(jwt.getClaims());
-		String userName = getString(claims, "preferred_username");
-		String cn = getString(claims, "name");
-		Map<String, Object> accessMap = (Map<String, Object>) claims.get("realm_access");
-		String rawRolesString = getString(accessMap, "roles");
-		String rolesString = CharMatcher.anyOf("[]").removeFrom(rawRolesString);
-		Set<String> roles = Pattern.compile(",").splitAsStream(rolesString)
-				.map(s -> s.trim())
-				.collect(toSet());
+  private JwtAuthToken decode(String token) {
+    Jwt jwt = JwtHelper.decode(token);
+    Map<String, Object> claims = jsonParser.parseMap(jwt.getClaims());
+    String userName = getString(claims, "preferred_username");
+    String cn = getString(claims, "name");
+    Map<String, Object> accessMap = (Map<String, Object>) claims.get("realm_access");
+    String rawRolesString = getString(accessMap, "roles");
+    String rolesString = CharMatcher.anyOf("[]").removeFrom(rawRolesString);
+    Set<String> roles = Pattern.compile(",").splitAsStream(rolesString)
+        .map(s -> s.trim())
+        .collect(toSet());
 
-		JwtAuthToken profile = new JwtAuthToken();
-		profile.setUsername(userName);
-		profile.setCn(asList(cn));
-		profile.setRoles(roles);
-		return profile;
-	}
+    JwtAuthToken profile = new JwtAuthToken();
+    profile.setUsername(userName);
+    profile.setCn(asList(cn));
+    profile.setRoles(roles);
+    return profile;
+  }
 
-	private String getString(Map<String, Object> claims, String name) {
-		Object v = claims.get(name);
-		return v != null ? String.valueOf(v) : null;
-	}
+  private String getString(Map<String, Object> claims, String name) {
+    Object v = claims.get(name);
+    return v != null ? String.valueOf(v) : null;
+  }
 }

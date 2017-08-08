@@ -12,11 +12,11 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = {})
 public interface PermissionMapper {
 
-	PermissionDTO permissionToPermissionDTO(Permission permission);
+  PermissionDTO permissionToPermissionDTO(Permission permission);
 
-	List<PermissionDTO> permissionsToPermissionDTOs(List<Permission> permissions);
+  List<PermissionDTO> permissionsToPermissionDTOs(List<Permission> permissions);
 
-	Permission permissionDTOToPermission(PermissionDTO permission);
+  Permission permissionDTOToPermission(PermissionDTO permission);
 
-	List<Permission> permissionDTOsToPermissions(List<PermissionDTO> permissions);
+  List<Permission> permissionDTOsToPermissions(List<PermissionDTO> permissions);
 }

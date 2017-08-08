@@ -12,19 +12,19 @@ import java.util.Set;
 @SuppressWarnings("unused")
 public interface RoleRepository extends JpaRepository<Role, String> {
 
-	/**
-	 * Returns a role with given name
-	 *
-	 * @param roleName Name of the role
-	 * @return {@link Role} Role associated with the given role name
-	 */
-	Role findByName(String roleName);
+  /**
+   * Returns a role with given name
+   *
+   * @param roleName Name of the role
+   * @return {@link Role} Role associated with the given role name
+   */
+  Role findByName(String roleName);
 
-	/**
-	 * Finds the roles with the given names
-	 *
-	 * @param roleNames the list of role names
-	 * @return the roels found
-	 */
-	List<Role> findByNameIn(Set<String> roleNames);
+  /**
+   * Finds the roles with the given names
+   *
+   * @param roleNames the list of role names
+   * @return the roels found
+   */
+  List<Role> findByNameIn(Set<String> roleNames);
 }

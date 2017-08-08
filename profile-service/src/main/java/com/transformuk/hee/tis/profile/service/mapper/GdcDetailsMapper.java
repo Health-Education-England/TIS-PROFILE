@@ -12,11 +12,11 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = {})
 public interface GdcDetailsMapper {
 
-	GdcDetailsDTO gdcDetailsToGdcDetailsDTO(GdcDetails gdcDetails);
+  GdcDetailsDTO gdcDetailsToGdcDetailsDTO(GdcDetails gdcDetails);
 
-	List<GdcDetailsDTO> gdcDetailsToGdcDetailsDTOs(List<GdcDetails> gdcDetails);
+  List<GdcDetailsDTO> gdcDetailsToGdcDetailsDTOs(List<GdcDetails> gdcDetails);
 
-	GdcDetails gdcDetailsDTOToGdcDetails(GdcDetailsDTO gdcDetailsDTO);
+  GdcDetails gdcDetailsDTOToGdcDetails(GdcDetailsDTO gdcDetailsDTO);
 
-	List<GdcDetails> gdcDetailsDTOsToGdcDetails(List<GdcDetailsDTO> gdcDetailsDTOs);
+  List<GdcDetails> gdcDetailsDTOsToGdcDetails(List<GdcDetailsDTO> gdcDetailsDTOs);
 }

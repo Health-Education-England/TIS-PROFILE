@@ -10,30 +10,30 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PagedTraineeIdResponse {
 
-	private long totalElements;
-	private List<TraineeId> content;
+  private long totalElements;
+  private List<TraineeId> content;
 
-	public PagedTraineeIdResponse() {
-	}
+  public PagedTraineeIdResponse() {
+  }
 
-	public PagedTraineeIdResponse(List<TraineeId> content, long totalElements) {
-		this.content = content;
-		this.totalElements = totalElements;
-	}
+  public PagedTraineeIdResponse(List<TraineeId> content, long totalElements) {
+    this.content = content;
+    this.totalElements = totalElements;
+  }
 
-	public void setContent(List<TraineeId> content) {
-		this.content = content;
-	}
+  public List<TraineeId> getContent() {
+    return content;
+  }
 
-	public void setTotalElements(long totalElements) {
-		this.totalElements = totalElements;
-	}
+  public void setContent(List<TraineeId> content) {
+    this.content = content;
+  }
 
-	public List<TraineeId> getContent() {
-		return content;
-	}
+  public long getTotalElements() {
+    return totalElements;
+  }
 
-	public long getTotalElements() {
-		return totalElements;
-	}
+  public void setTotalElements(long totalElements) {
+    this.totalElements = totalElements;
+  }
 }

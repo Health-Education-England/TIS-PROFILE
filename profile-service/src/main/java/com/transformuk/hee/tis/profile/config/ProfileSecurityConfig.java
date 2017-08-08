@@ -20,35 +20,35 @@ import org.springframework.context.annotation.FilterType;
  */
 @Configuration
 @ComponentScan(value = "com.transformuk.hee.tis.security",
-		excludeFilters = {@ComponentScan.Filter(
-				type = FilterType.ASSIGNABLE_TYPE,
-				value = {TisSecurityConfig.class})
-		})
+    excludeFilters = {@ComponentScan.Filter(
+        type = FilterType.ASSIGNABLE_TYPE,
+        value = {TisSecurityConfig.class})
+    })
 public class ProfileSecurityConfig {
 
-	@Autowired
-	private LoginService loginService;
-	@Autowired
-	private UserProfileAssembler userProfileAssembler;
+  @Autowired
+  private LoginService loginService;
+  @Autowired
+  private UserProfileAssembler userProfileAssembler;
 
-	@Bean
-	public UserDetailsService userDetailsService() {
-		return new ProfileUserDetailsServiceImpl(loginService, userProfileAssembler);
-	}
+  @Bean
+  public UserDetailsService userDetailsService() {
+    return new ProfileUserDetailsServiceImpl(loginService, userProfileAssembler);
+  }
 
-	@Bean
-	public JwtAuthenticationProvider authenticationProvider(UserDetailsService userDetailsService) {
-		return new JwtAuthenticationProvider(userDetailsService);
-	}
+  @Bean
+  public JwtAuthenticationProvider authenticationProvider(UserDetailsService userDetailsService) {
+    return new JwtAuthenticationProvider(userDetailsService);
+  }
 
-	@Bean
-	public JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint() {
-		return new JwtAuthenticationEntryPoint();
-	}
+  @Bean
+  public JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint() {
+    return new JwtAuthenticationEntryPoint();
+  }
 
-	@Bean
-	public RestAccessDeniedHandler accessDeniedHandler(AuditEventRepository auditEventRepository) {
-		return new RestAccessDeniedHandler(auditEventRepository);
-	}
+  @Bean
+  public RestAccessDeniedHandler accessDeniedHandler(AuditEventRepository auditEventRepository) {
+    return new RestAccessDeniedHandler(auditEventRepository);
+  }
 
 }

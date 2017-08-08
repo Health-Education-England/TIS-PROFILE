@@ -11,19 +11,19 @@ import java.util.Set;
  */
 @SuppressWarnings("unused")
 public interface PermissionRepository extends JpaRepository<Permission, String> {
-	/**
-	 * Returns a permission with given name
-	 *
-	 * @param permissionName Name of the permission
-	 * @return {@link Permission} Permission associated with the given permission name
-	 */
-	Permission findByName(String permissionName);
+  /**
+   * Returns a permission with given name
+   *
+   * @param permissionName Name of the permission
+   * @return {@link Permission} Permission associated with the given permission name
+   */
+  Permission findByName(String permissionName);
 
-	/**
-	 * Finds the permissions with the given names
-	 *
-	 * @param permissionNames the list of permission names
-	 * @return the permission found
-	 */
-	List<Permission> findByNameIn(Set<String> permissionNames);
+  /**
+   * Finds the permissions with the given names
+   *
+   * @param permissionNames the list of permission names
+   * @return the permission found
+   */
+  List<Permission> findByNameIn(Set<String> permissionNames);
 }

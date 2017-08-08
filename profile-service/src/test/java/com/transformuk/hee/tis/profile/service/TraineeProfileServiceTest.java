@@ -1,7 +1,7 @@
 package com.transformuk.hee.tis.profile.service;
 
-import com.transformuk.hee.tis.profile.dto.RegistrationRequest;
 import com.transformuk.hee.tis.profile.domain.TraineeProfile;
+import com.transformuk.hee.tis.profile.dto.RegistrationRequest;
 import com.transformuk.hee.tis.profile.repository.TraineeProfileRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,71 +27,71 @@ import static org.mockito.internal.util.collections.Sets.newSet;
 @RunWith(MockitoJUnitRunner.class)
 public class TraineeProfileServiceTest {
 
-    private static final String EXISTING_GMC_NUMBER = "gmcOld";
-    private static final String NEW_GMC_NUMBER = "gmcNew";
-    private static final String DBC = "adbc";
-    
-    @Mock
-    private TraineeProfileRepository traineeProfileRepository;
-    @InjectMocks
-    private TraineeProfileService service;
+  private static final String EXISTING_GMC_NUMBER = "gmcOld";
+  private static final String NEW_GMC_NUMBER = "gmcNew";
+  private static final String DBC = "adbc";
 
-    @Test
-    public void shouldReturnExistingIds() {
-        RegistrationRequest request = new RegistrationRequest();
-        request.setGmcNumber(EXISTING_GMC_NUMBER);
-        
-        Set<String> gmcNumbers = newSet(EXISTING_GMC_NUMBER);
-        TraineeProfile existingTraineeProfile = new TraineeProfile(1L, EXISTING_GMC_NUMBER);
-        existingTraineeProfile.setActive(true);
-        existingTraineeProfile.setDesignatedBodyCode(DBC);
+  @Mock
+  private TraineeProfileRepository traineeProfileRepository;
+  @InjectMocks
+  private TraineeProfileService service;
 
-        // given
-        given(traineeProfileRepository.findByDesignatedBodyCode(DBC)).willReturn(newArrayList(existingTraineeProfile));
-        given(traineeProfileRepository.findByGmcNumberIn(gmcNumbers)).willReturn(newArrayList(existingTraineeProfile));
+  @Test
+  public void shouldReturnExistingIds() {
+    RegistrationRequest request = new RegistrationRequest();
+    request.setGmcNumber(EXISTING_GMC_NUMBER);
 
-        // when
-        List<TraineeProfile> traineeProfiles = service.findOrCreate(DBC, newArrayList(request));
+    Set<String> gmcNumbers = newSet(EXISTING_GMC_NUMBER);
+    TraineeProfile existingTraineeProfile = new TraineeProfile(1L, EXISTING_GMC_NUMBER);
+    existingTraineeProfile.setActive(true);
+    existingTraineeProfile.setDesignatedBodyCode(DBC);
 
-        // then
-        assertThat(traineeProfiles).isEqualTo(newArrayList(existingTraineeProfile));
-        verify(traineeProfileRepository, times(1)).findByGmcNumberIn(gmcNumbers);
-    }
+    // given
+    given(traineeProfileRepository.findByDesignatedBodyCode(DBC)).willReturn(newArrayList(existingTraineeProfile));
+    given(traineeProfileRepository.findByGmcNumberIn(gmcNumbers)).willReturn(newArrayList(existingTraineeProfile));
 
-    @Test
-    public void shouldCreateIfNotExists() {
-        RegistrationRequest request = new RegistrationRequest();
-        request.setGmcNumber(EXISTING_GMC_NUMBER);
-        
-        List<String> gmcNumbers = newArrayList(EXISTING_GMC_NUMBER, NEW_GMC_NUMBER);
-        TraineeProfile existingTraineeProfile = new TraineeProfile(1L, EXISTING_GMC_NUMBER);
+    // when
+    List<TraineeProfile> traineeProfiles = service.findOrCreate(DBC, newArrayList(request));
 
-        TraineeProfile newTraineeProfile = new TraineeProfile(null, NEW_GMC_NUMBER);
-        // given
-        given(traineeProfileRepository.findByGmcNumberIn(gmcNumbers)).willReturn(newArrayList(existingTraineeProfile));
-        given(traineeProfileRepository.save(anyListOf(TraineeProfile.class))).willReturn(newArrayList
-                (existingTraineeProfile, newTraineeProfile));
+    // then
+    assertThat(traineeProfiles).isEqualTo(newArrayList(existingTraineeProfile));
+    verify(traineeProfileRepository, times(1)).findByGmcNumberIn(gmcNumbers);
+  }
 
-        // when
-        List<TraineeProfile> traineeProfiles = service.findOrCreate(DBC, newArrayList(request));
+  @Test
+  public void shouldCreateIfNotExists() {
+    RegistrationRequest request = new RegistrationRequest();
+    request.setGmcNumber(EXISTING_GMC_NUMBER);
 
-        // then
-        assertThat(traineeProfiles).isEqualTo(newArrayList(existingTraineeProfile, newTraineeProfile));
-    }
+    List<String> gmcNumbers = newArrayList(EXISTING_GMC_NUMBER, NEW_GMC_NUMBER);
+    TraineeProfile existingTraineeProfile = new TraineeProfile(1L, EXISTING_GMC_NUMBER);
 
-    @Test
-    public void shouldReturnMappings() {
-        Pageable pageable = new PageRequest(0, 100);
-        TraineeProfile existingTraineeProfile = new TraineeProfile(1L, EXISTING_GMC_NUMBER);
-        Page<TraineeProfile> page = new PageImpl<>(newArrayList(existingTraineeProfile));
-        // given
-        given(traineeProfileRepository.findByDesignatedBodyCode(DBC, pageable)).willReturn(page);
+    TraineeProfile newTraineeProfile = new TraineeProfile(null, NEW_GMC_NUMBER);
+    // given
+    given(traineeProfileRepository.findByGmcNumberIn(gmcNumbers)).willReturn(newArrayList(existingTraineeProfile));
+    given(traineeProfileRepository.save(anyListOf(TraineeProfile.class))).willReturn(newArrayList
+        (existingTraineeProfile, newTraineeProfile));
 
-        // when
-        Page<TraineeProfile> actualPage = service.findAll(DBC, pageable);
+    // when
+    List<TraineeProfile> traineeProfiles = service.findOrCreate(DBC, newArrayList(request));
 
-        // then
-        assertThat(actualPage).isSameAs(page);
-    }
-    
+    // then
+    assertThat(traineeProfiles).isEqualTo(newArrayList(existingTraineeProfile, newTraineeProfile));
+  }
+
+  @Test
+  public void shouldReturnMappings() {
+    Pageable pageable = new PageRequest(0, 100);
+    TraineeProfile existingTraineeProfile = new TraineeProfile(1L, EXISTING_GMC_NUMBER);
+    Page<TraineeProfile> page = new PageImpl<>(newArrayList(existingTraineeProfile));
+    // given
+    given(traineeProfileRepository.findByDesignatedBodyCode(DBC, pageable)).willReturn(page);
+
+    // when
+    Page<TraineeProfile> actualPage = service.findAll(DBC, pageable);
+
+    // then
+    assertThat(actualPage).isSameAs(page);
+  }
+
 }

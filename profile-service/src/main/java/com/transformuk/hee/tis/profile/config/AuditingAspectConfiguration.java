@@ -11,10 +11,9 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 @EnableAspectJAutoProxy
 public class AuditingAspectConfiguration {
 
-	@Bean
-	@Autowired
-	public AuditingAspect auditingAspect(AuditEventRepository auditEventRepository)
-	{
-		return new AuditingAspect(auditEventRepository);
-	}
+  @Bean
+  @Autowired
+  public AuditingAspect auditingAspect(AuditEventRepository auditEventRepository) {
+    return new AuditingAspect(auditEventRepository);
+  }
 }

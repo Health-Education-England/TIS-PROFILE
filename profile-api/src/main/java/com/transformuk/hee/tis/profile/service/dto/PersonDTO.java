@@ -11,77 +11,77 @@ import java.util.Objects;
  */
 public class PersonDTO implements Serializable {
 
-	private Long id;
+  private Long id;
 
-	@NotNull
-	private BigDecimal tisId;
+  @NotNull
+  private BigDecimal tisId;
 
-	private String publicHealthId;
+  private String publicHealthId;
 
-	private Boolean active;
+  private Boolean active;
 
-	public Long getId() {
-		return id;
-	}
+  public Long getId() {
+    return id;
+  }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-	public BigDecimal getTisId() {
-		return tisId;
-	}
+  public BigDecimal getTisId() {
+    return tisId;
+  }
 
-	public void setTisId(BigDecimal tisId) {
-		this.tisId = tisId;
-	}
+  public void setTisId(BigDecimal tisId) {
+    this.tisId = tisId;
+  }
 
-	public String getPublicHealthId() {
-		return publicHealthId;
-	}
+  public String getPublicHealthId() {
+    return publicHealthId;
+  }
 
-	public void setPublicHealthId(String publicHealthId) {
-		this.publicHealthId = publicHealthId;
-	}
+  public void setPublicHealthId(String publicHealthId) {
+    this.publicHealthId = publicHealthId;
+  }
 
-	public Boolean getActive() {
-		return active;
-	}
+  public Boolean getActive() {
+    return active;
+  }
 
-	public void setActive(Boolean active) {
-		this.active = active;
-	}
+  public void setActive(Boolean active) {
+    this.active = active;
+  }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
 
-		PersonDTO personDTO = (PersonDTO) o;
+    PersonDTO personDTO = (PersonDTO) o;
 
-		if (!Objects.equals(id, personDTO.id)) {
-			return false;
-		}
+    if (!Objects.equals(id, personDTO.id)) {
+      return false;
+    }
 
-		return true;
-	}
+    return true;
+  }
 
-	@Override
-	public int hashCode() {
-		return Objects.hashCode(id);
-	}
+  @Override
+  public int hashCode() {
+    return Objects.hashCode(id);
+  }
 
-	@Override
-	public String toString() {
-		return "PersonDTO{" +
-				"id=" + id +
-				", tisId='" + tisId + "'" +
-				", publicHealthId='" + publicHealthId + "'" +
-				", active='" + active + "'" +
-				'}';
-	}
+  @Override
+  public String toString() {
+    return "PersonDTO{" +
+        "id=" + id +
+        ", tisId='" + tisId + "'" +
+        ", publicHealthId='" + publicHealthId + "'" +
+        ", active='" + active + "'" +
+        '}';
+  }
 }
