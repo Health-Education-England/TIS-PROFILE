@@ -56,7 +56,7 @@ public class TraineeProfileController {
   @CrossOrigin
   @RequestMapping(path = "/{designatedBodyCode}/register", method = POST, produces = APPLICATION_JSON_VALUE,
       consumes = APPLICATION_JSON_VALUE)
-  @PreAuthorize("hasAuthority('trainee-id:register:trainee')")
+  @PreAuthorize("hasAuthority('profile:register:trainee')")
   public TraineeIdListResponse getOrCreateTraineeIds(@PathVariable(value = "designatedBodyCode") String designatedBodyCode,
                                                      @RequestBody List<RegistrationRequest> requests) {
     List<TraineeProfile> traineeProfiles = traineeProfileService.findOrCreate(designatedBodyCode, requests);
@@ -72,7 +72,7 @@ public class TraineeProfileController {
   })
   @CrossOrigin
   @RequestMapping(path = "/{designatedBodyCode}/mappings", method = GET, produces = APPLICATION_JSON_VALUE)
-  @PreAuthorize("hasAuthority('trainee-id:view:all:mappings')")
+  @PreAuthorize("hasAuthority('profile:view:all:mappings')")
   public PagedResponse<TraineeProfileDto> getTraineeIds(@PathVariable(value = "designatedBodyCode") String
                                                             designatedBodyCode, Pageable pageable) {
     Page<TraineeProfile> page = traineeProfileService.findAll(designatedBodyCode, pageable);
