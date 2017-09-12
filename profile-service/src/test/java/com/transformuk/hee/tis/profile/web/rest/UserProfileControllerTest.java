@@ -6,6 +6,7 @@ import com.transformuk.hee.tis.profile.assembler.UserProfileAssembler;
 import com.transformuk.hee.tis.profile.domain.HeeUser;
 import com.transformuk.hee.tis.profile.domain.Permission;
 import com.transformuk.hee.tis.profile.domain.Role;
+import com.transformuk.hee.tis.profile.dto.PermissionType;
 import com.transformuk.hee.tis.profile.service.LoginService;
 import com.transformuk.hee.tis.profile.web.rest.errors.ExceptionTranslator;
 import org.junit.Before;
@@ -44,7 +45,11 @@ public class UserProfileControllerTest {
 
   private static final String GMC_ID = "123";
   private static final String DESIGNATED_BODY_CODE = "1-DGBODY";
-  private static final String PERMISSION = "Perm1";
+  private static final String PERMISSION_NAME = "Perm1";
+  private static final String PERMISSION_PRINCIPAL = "Principal";
+  private static final String PERMISSION_RESOURCE = "Resource";
+  private static final String PERMISSION_ACTIONS = "Create,Update";
+  private static final String PERMISSION_EFFECT = "Allow";
   private static final String RV_ADMIN = "RVAdmin";
 
   private static final String[] ROLES = {RV_ADMIN};
@@ -161,7 +166,12 @@ public class UserProfileControllerTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.userName").value(USER_NAME))
         .andExpect(jsonPath("$.roles").value(hasItems(ROLES)))
-        .andExpect(jsonPath("$.permissions").value(hasItems("Perm1")));
+        .andExpect(jsonPath("$.permissions").value(hasItems("Perm1")))
+        .andExpect(jsonPath("$.permissionPolicies[0].name").value(PERMISSION_NAME))
+        .andExpect(jsonPath("$.permissionPolicies[0].principal").value(PERMISSION_PRINCIPAL))
+        .andExpect(jsonPath("$.permissionPolicies[0].resource").value(PERMISSION_RESOURCE))
+        .andExpect(jsonPath("$.permissionPolicies[0].actions").value(hasItems("Create", "Update")))
+        .andExpect(jsonPath("$.permissionPolicies[0].effect").value(PERMISSION_EFFECT));
   }
 
   @Test
@@ -175,7 +185,10 @@ public class UserProfileControllerTest {
     HeeUser user = new HeeUser(USER_NAME);
     user.setGmcId(GMC_ID);
     user.setDesignatedBodyCodes(newSet(DESIGNATED_BODY_CODE));
-    Set<Permission> permissions = newSet(new Permission(PERMISSION));
+    Set<Permission> permissions = newSet(new Permission(
+        PERMISSION_NAME, PermissionType.CONCERN, "Description",
+        PERMISSION_PRINCIPAL, PERMISSION_RESOURCE, PERMISSION_ACTIONS, PERMISSION_EFFECT)
+    );
     user.setRoles(newSet(new Role(RV_ADMIN, permissions)));
     return user;
   }

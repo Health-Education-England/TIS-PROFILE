@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.List;
 
 @ApiModel(description = "Permission given to a role")
 public class PermissionDTO implements Serializable {
@@ -14,6 +15,18 @@ public class PermissionDTO implements Serializable {
   private PermissionType type;
 
   private String description;
+
+  @NotNull
+  private String principal;
+
+  @NotNull
+  private String resource;
+
+  @NotNull
+  private List<String> actions;
+
+  @NotNull
+  private String effect;
 
   @ApiModelProperty(required = true, value = "Permission name")
   public String getName() {
@@ -40,6 +53,42 @@ public class PermissionDTO implements Serializable {
     this.description = description;
   }
 
+  @ApiModelProperty(required = true, value = "Principal")
+  public String getPrincipal() {
+    return principal;
+  }
+
+  public void setPrincipal(String principal) {
+    this.principal = principal;
+  }
+
+  @ApiModelProperty(required = true, value = "Resource")
+  public String getResource() {
+    return resource;
+  }
+
+  public void setResource(String resource) {
+    this.resource = resource;
+  }
+
+  @ApiModelProperty(required = true, value = "Actions (Create, Update, View, Delete, Submit)")
+  public List<String> getActions() {
+    return actions;
+  }
+
+  public void setActions(List<String> actions) {
+    this.actions = actions;
+  }
+
+  @ApiModelProperty(required = true, value = "Effect (Allow or Deny)")
+  public String getEffect() {
+    return effect;
+  }
+
+  public void setEffect(String effect) {
+    this.effect = effect;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -49,7 +98,12 @@ public class PermissionDTO implements Serializable {
 
     if (name != null ? !name.equals(that.name) : that.name != null) return false;
     if (type != that.type) return false;
-    return description != null ? description.equals(that.description) : that.description == null;
+    if (description != null ? !description.equals(that.description) : that.description != null) return false;
+    if (principal != null ? !principal.equals(that.principal) : that.principal != null) return false;
+    if (resource != null ? !resource.equals(that.resource) : that.resource != null) return false;
+    if (actions != null ? !actions.equals(that.actions) : that.actions != null) return false;
+    return effect != null ? effect.equals(that.effect) : that.effect != null;
+
   }
 
   @Override
@@ -57,6 +111,10 @@ public class PermissionDTO implements Serializable {
     int result = name != null ? name.hashCode() : 0;
     result = 31 * result + (type != null ? type.hashCode() : 0);
     result = 31 * result + (description != null ? description.hashCode() : 0);
+    result = 31 * result + (principal != null ? principal.hashCode() : 0);
+    result = 31 * result + (resource != null ? resource.hashCode() : 0);
+    result = 31 * result + (actions != null ? actions.hashCode() : 0);
+    result = 31 * result + (effect != null ? effect.hashCode() : 0);
     return result;
   }
 
@@ -66,6 +124,10 @@ public class PermissionDTO implements Serializable {
         "name='" + name + '\'' +
         ", type=" + type +
         ", description='" + description + '\'' +
+        ", principal='" + principal + '\'' +
+        ", resource='" + resource + '\'' +
+        ", actions=" + actions +
+        ", effect='" + effect + '\'' +
         '}';
   }
 }
