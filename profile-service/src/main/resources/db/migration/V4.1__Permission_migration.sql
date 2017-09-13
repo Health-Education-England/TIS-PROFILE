@@ -208,10 +208,10 @@ UPDATE `Permission` SET `principal` = 'tis:profile::user:consolidated_etl',
 `actions` = 'Create,Update', `effect` = 'Allow'
 WHERE `name` = 'specialty:bulk:add:modify';
 
-UPDATE `Permission` SET `principal` = 'tis:profile::user:consolidated_etl',
-`resource` = 'tis:specialties::specialty:',
-`actions` = 'Create,Update', `effect` = 'Allow'
-WHERE `name` = 'specialty:bulk:add:modify';
+UPDATE `Permission` SET `principal` = 'tis:profile::user:',
+`resource` = 'tis:specialties:-:specialty:',
+`actions` = 'View', `effect` = 'Allow'
+WHERE `name` = 'specialty:view';
 
 UPDATE `Permission` SET `principal` = 'tis:profile::user:',
 `resource` = 'tis:tcs::entity:',
