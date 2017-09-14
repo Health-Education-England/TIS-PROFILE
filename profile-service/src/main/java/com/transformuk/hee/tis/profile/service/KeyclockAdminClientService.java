@@ -41,7 +41,7 @@ public class KeyclockAdminClientService {
 
   private User heeUserToKeyclockUser(HeeUser heeUser) {
     return User.create(heeUser.getFirstName(), heeUser.getLastName(), heeUser.getName(),
-        heeUser.getEmailAddress(), heeUser.getPassword());
+        heeUser.getEmailAddress(), heeUser.getPassword(),heeUser.getTemporaryPassword());
   }
 
 }
