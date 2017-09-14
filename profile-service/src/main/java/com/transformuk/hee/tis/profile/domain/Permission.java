@@ -24,18 +24,38 @@ public class Permission implements Serializable {
   @NotNull
   @Column(name = "name", nullable = false)
   private String name;
+
   @Column(name = "type")
   @Enumerated(EnumType.STRING)
   private PermissionType type;
+
   @Column(name = "description")
   private String description;
 
-  public Permission(String name) {
-    this.name = name;
-  }
+  @Column(name = "principal")
+  private String principal;
+
+  @Column(name = "resource")
+  private String resource;
+
+  @Column(name = "actions")
+  private String actions;
+
+  @Column(name = "effect")
+  private String effect;
 
   public Permission() {
-    super();
+  }
+
+  public Permission(String name, PermissionType type, String description,
+                    String principal, String resource, String actions, String effect) {
+    this.name = name;
+    this.type = type;
+    this.description = description;
+    this.principal = principal;
+    this.resource = resource;
+    this.actions = actions;
+    this.effect = effect;
   }
 
   public String getName() {
@@ -62,19 +82,36 @@ public class Permission implements Serializable {
     this.description = description;
   }
 
-  public Permission name(String name) {
-    this.name = name;
-    return this;
+  public String getPrincipal() {
+    return principal;
   }
 
-  public Permission type(PermissionType type) {
-    this.type = type;
-    return this;
+  public void setPrincipal(String principal) {
+    this.principal = principal;
   }
 
-  public Permission description(String description) {
-    this.description = description;
-    return this;
+  public String getResource() {
+    return resource;
+  }
+
+  public void setResource(String resource) {
+    this.resource = resource;
+  }
+
+  public String getActions() {
+    return actions;
+  }
+
+  public void setActions(String actions) {
+    this.actions = actions;
+  }
+
+  public String getEffect() {
+    return effect;
+  }
+
+  public void setEffect(String effect) {
+    this.effect = effect;
   }
 
   @Override
@@ -88,7 +125,12 @@ public class Permission implements Serializable {
     }
     if (name != null ? !name.equals(that.name) : that.name != null) return false;
     if (type != that.type) return false;
-    return description != null ? description.equals(that.description) : that.description == null;
+    if (description != null ? !description.equals(that.description) : that.description != null) return false;
+    if (principal != null ? !principal.equals(that.principal) : that.principal != null) return false;
+    if (resource != null ? !resource.equals(that.resource) : that.resource != null) return false;
+    if (actions != null ? !actions.equals(that.actions) : that.actions != null) return false;
+    return effect != null ? effect.equals(that.effect) : that.effect == null;
+
   }
 
   @Override
@@ -96,6 +138,10 @@ public class Permission implements Serializable {
     int result = name != null ? name.hashCode() : 0;
     result = 31 * result + (type != null ? type.hashCode() : 0);
     result = 31 * result + (description != null ? description.hashCode() : 0);
+    result = 31 * result + (principal != null ? principal.hashCode() : 0);
+    result = 31 * result + (resource != null ? resource.hashCode() : 0);
+    result = 31 * result + (actions != null ? actions.hashCode() : 0);
+    result = 31 * result + (effect != null ? effect.hashCode() : 0);
     return result;
   }
 
@@ -105,6 +151,10 @@ public class Permission implements Serializable {
         "name='" + name + '\'' +
         ", type=" + type +
         ", description='" + description + '\'' +
+        ", principal='" + principal + '\'' +
+        ", resource='" + resource + '\'' +
+        ", actions='" + actions + '\'' +
+        ", effect='" + effect + '\'' +
         '}';
   }
 }

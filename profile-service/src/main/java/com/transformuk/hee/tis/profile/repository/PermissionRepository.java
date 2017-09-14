@@ -26,4 +26,12 @@ public interface PermissionRepository extends JpaRepository<Permission, String> 
    * @return the permission found
    */
   List<Permission> findByNameIn(Set<String> permissionNames);
+
+  /**
+   * Finds specific permissions for a user determined by the Principal ending in their user ID
+   *
+   * @param userId The Id of the user
+   * @return a list of permissions
+   */
+  List<Permission> findByPrincipalEndsWith(String userId);
 }

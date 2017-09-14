@@ -43,6 +43,10 @@ public class PermissionResourceIntTest {
   private static final String DEFAULT_NAME = "AAAAAAAAAA";
   private static final PermissionType DEFAULT_TYPE = PermissionType.CONCERN;
   private static final String DEFAULT_DESC = "desc";
+  private static final String DEFAULT_PRINCIPAL = "PRI";
+  private static final String DEFAULT_RESOURCE = "RES";
+  private static final String DEFAULT_ACTIONS = "View";
+  private static final String DEFAULT_EFFECT = "Allow";
 
   @Autowired
   private PermissionRepository permissionRepository;
@@ -70,10 +74,9 @@ public class PermissionResourceIntTest {
    * if they test an entity which requires the current entity.
    */
   public static com.transformuk.hee.tis.profile.domain.Permission createEntity() {
-    com.transformuk.hee.tis.profile.domain.Permission permission = new com.transformuk.hee.tis.profile.domain.Permission()
-        .name(DEFAULT_NAME)
-        .type(DEFAULT_TYPE)
-        .description(DEFAULT_DESC);
+    com.transformuk.hee.tis.profile.domain.Permission permission = new com.transformuk.hee.tis.profile.domain.Permission(
+        DEFAULT_NAME, DEFAULT_TYPE, DEFAULT_DESC, DEFAULT_PRINCIPAL, DEFAULT_RESOURCE, DEFAULT_ACTIONS, DEFAULT_EFFECT
+    );
     return permission;
   }
 
@@ -111,6 +114,10 @@ public class PermissionResourceIntTest {
     assertThat(testPermission.getName()).isEqualTo(DEFAULT_NAME);
     assertThat(testPermission.getDescription()).isEqualTo(DEFAULT_DESC);
     assertThat(testPermission.getType()).isEqualTo(DEFAULT_TYPE);
+    assertThat(testPermission.getPrincipal()).isEqualTo(DEFAULT_PRINCIPAL);
+    assertThat(testPermission.getResource()).isEqualTo(DEFAULT_RESOURCE);
+    assertThat(testPermission.getActions()).isEqualTo(DEFAULT_ACTIONS);
+    assertThat(testPermission.getEffect()).isEqualTo(DEFAULT_EFFECT);
   }
 
   @Test
@@ -162,9 +169,13 @@ public class PermissionResourceIntTest {
     restPermissionMockMvc.perform(get("/api/permissions?sort=name,asc"))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-        .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
+        .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
         .andExpect(jsonPath("$.[*].type").value(hasItem(DEFAULT_TYPE.toString())))
-        .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESC.toString())));
+        .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESC)))
+        .andExpect(jsonPath("$.[*].principal").value(hasItem(DEFAULT_PRINCIPAL)))
+        .andExpect(jsonPath("$.[*].resource").value(hasItem(DEFAULT_RESOURCE)))
+        .andExpect(jsonPath("$.[*].actions.[*]").value(hasItem(DEFAULT_ACTIONS)))
+        .andExpect(jsonPath("$.[*].effect").value(hasItem(DEFAULT_EFFECT)));
   }
 
   @Test
@@ -177,9 +188,13 @@ public class PermissionResourceIntTest {
     restPermissionMockMvc.perform(get("/api/permissions/{id}", permission.getName()))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-        .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()))
+        .andExpect(jsonPath("$.name").value(DEFAULT_NAME))
         .andExpect(jsonPath("$.type").value(DEFAULT_TYPE.toString()))
-        .andExpect(jsonPath("$.description").value(DEFAULT_DESC.toString()));
+        .andExpect(jsonPath("$.description").value(DEFAULT_DESC))
+        .andExpect(jsonPath("$.principal").value(DEFAULT_PRINCIPAL))
+        .andExpect(jsonPath("$.resource").value(DEFAULT_RESOURCE))
+        .andExpect(jsonPath("$.actions").value(DEFAULT_ACTIONS))
+        .andExpect(jsonPath("$.effect").value(DEFAULT_EFFECT));
   }
 
   @Test

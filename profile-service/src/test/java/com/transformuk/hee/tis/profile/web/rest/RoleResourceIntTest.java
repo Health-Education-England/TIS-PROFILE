@@ -52,6 +52,10 @@ public class RoleResourceIntTest {
   private static final String DEFAULT_NAME = "AAAAAAAAAA";
   private static final String UPDATED_NAME = "BBBBBBBBBB";
   private static final String DEFAULT_PERMISSION_NAME = "default:view";
+  private static final String DEFAULT_PERMISSION_PRINCIPAL = "principal";
+  private static final String DEFAULT_PERMISSION_RESOURCE = "resource";
+  private static final String DEFAULT_PERMISSION_ACTIONS = "View";
+  private static final String DEFAULT_PERMISSION_EFFECT = "Allow";
 
   @Autowired
   private RoleRepository roleRepository;
@@ -139,6 +143,10 @@ public class RoleResourceIntTest {
     // Given Create the Role
     Permission permission = new Permission();
     permission.setName(DEFAULT_PERMISSION_NAME);
+    permission.setPrincipal(DEFAULT_PERMISSION_PRINCIPAL);
+    permission.setResource(DEFAULT_PERMISSION_RESOURCE);
+    permission.setActions(DEFAULT_PERMISSION_ACTIONS);
+    permission.setEffect(DEFAULT_PERMISSION_EFFECT);
     role.setPermissions(Sets.newHashSet(Arrays.asList(permission)));
 
     RoleDTO roleDTO = roleMapper.roleToRoleDTO(role);
