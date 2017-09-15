@@ -75,6 +75,8 @@ public class HeeUserResource {
     heeUser.setPassword(heeUserDTO.getPassword());
     //Validate password
     heeUserValidator.validatePassword(heeUser.getPassword());
+    //Validate isTemporaryPassword
+    heeUserValidator.validateIsTemporary(heeUser.getTemporaryPassword());
     //Validate
     validateHeeUser(heeUser);
 

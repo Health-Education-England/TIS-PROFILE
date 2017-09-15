@@ -83,6 +83,17 @@ public class HeeUserValidator {
   }
 
   /**
+   * Validates given password is Temporary for new users and it should be atleast 8 chars long
+   *
+   * @param isTemporaryPassword
+   */
+  public void validateIsTemporary(Boolean isTemporaryPassword) {
+    if (isTemporaryPassword == null) {
+      throw new CustomParameterizedException("isTemporaryPassword should be true or false", ErrorConstants.ERR_VALIDATION);
+    }
+  }
+
+  /**
    * Validates given gmc id for users and it shouldn't be greater than 7 chars long
    *
    * @param gmcId
