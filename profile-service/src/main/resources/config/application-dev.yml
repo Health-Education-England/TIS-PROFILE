@@ -83,9 +83,9 @@ kc:
     realm: ${KC_REALM:lin}
     master.realm: ${KC_MASTER_REALM:master}
     client.id: ${KC_CLIENT_ID:admin-cli}
-    server.url: ${KC_SERVER_URL:https://dev-apps.lin.nhs.uk/auth/}
+    server.url: ${KC_SERVER_URL:https://dev-apps.tis.nhs.uk/auth/}
     username: ${KC_USERNAME:admin}
-    password: ${KC_PASSWORD:}
+    password: ${KC_PASSWORD:vp689ygIM563Tb67971L02FZU}
     timeout: ${KC_TIMEOUT:10000}
 
 reference.service.url: ${REFERENCE_SERVER_URL:http://local.alxd.com/reference}
