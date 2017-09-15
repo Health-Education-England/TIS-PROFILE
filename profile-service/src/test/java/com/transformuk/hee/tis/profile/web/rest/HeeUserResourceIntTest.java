@@ -1,5 +1,6 @@
 package com.transformuk.hee.tis.profile.web.rest;
 
+import com.google.common.collect.Sets;
 import com.transformuk.hee.tis.profile.ProfileApp;
 import com.transformuk.hee.tis.profile.domain.HeeUser;
 import com.transformuk.hee.tis.profile.repository.HeeUserRepository;
@@ -43,6 +44,7 @@ import static com.transformuk.hee.tis.profile.web.rest.TestUtil.UPDATED_NAME;
 import static com.transformuk.hee.tis.profile.web.rest.TestUtil.UPDATED_PHONE_NUMBER;
 import static com.transformuk.hee.tis.profile.web.rest.TestUtil.createEntityHeeUser;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -61,6 +63,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = ProfileApp.class)
 public class HeeUserResourceIntTest {
 
+  private static final String DEFAULT_PASSWORD = "AAAAAAAAAA";
 
   @Autowired
   private HeeUserRepository heeUserRepository;
@@ -83,7 +86,7 @@ public class HeeUserResourceIntTest {
   @Mock
   private KeyclockAdminClientService keyclockAdminClientService;
 
-  @Mock
+  @Autowired
   private HeeUserValidator heeUserValidator;
 
   @Autowired
@@ -108,6 +111,7 @@ public class HeeUserResourceIntTest {
   @Before
   public void initTest() {
     heeUser = createEntityHeeUser(em);
+    heeUser.setDesignatedBodyCodes(Sets.newHashSet("NONE"));
   }
 
   @Test
@@ -116,6 +120,8 @@ public class HeeUserResourceIntTest {
     int databaseSizeBeforeCreate = heeUserRepository.findAll().size();
     int databasePermissionSizeBeforeCreate = permissionRepository.findAll().size();
 
+    heeUser.setPassword(DEFAULT_PASSWORD);
+    heeUser.setTemporaryPassword(true);
     // Create the HeeUser
     HeeUserDTO heeUserDTO = heeUserMapper.heeUserToHeeUserDTO(heeUser);
     restHeeUserMockMvc.perform(post("/api/hee-users")
@@ -140,12 +146,58 @@ public class HeeUserResourceIntTest {
 
   @Test
   @Transactional
+  public void shouldValidateTemporaryPassword() throws Exception {
+    int databaseSizeBeforeCreate = heeUserRepository.findAll().size();
+    int databasePermissionSizeBeforeCreate = permissionRepository.findAll().size();
+
+    heeUser.setPassword(DEFAULT_PASSWORD);
+    // Create the HeeUser
+    HeeUserDTO heeUserDTO = heeUserMapper.heeUserToHeeUserDTO(heeUser);
+    restHeeUserMockMvc.perform(post("/api/hee-users")
+        .contentType(TestUtil.APPLICATION_JSON_UTF8)
+        .content(TestUtil.convertObjectToJsonBytes(heeUserDTO)))
+        .andExpect(status().is4xxClientError())
+        .andExpect(jsonPath("$.message").value("isTemporaryPassword should be true or false"));
+
+    // Validate the HeeUser in the database
+    List<HeeUser> heeUserList = heeUserRepository.findAll();
+    assertThat(heeUserList).hasSize(databaseSizeBeforeCreate);
+    assertThat(permissionRepository.findAll().size()).isEqualTo(databasePermissionSizeBeforeCreate);
+
+  }
+
+  @Test
+  @Transactional
+  public void shouldValidatePassword() throws Exception {
+    int databaseSizeBeforeCreate = heeUserRepository.findAll().size();
+    int databasePermissionSizeBeforeCreate = permissionRepository.findAll().size();
+
+    heeUser.setPassword(null);
+    // Create the HeeUser
+    HeeUserDTO heeUserDTO = heeUserMapper.heeUserToHeeUserDTO(heeUser);
+    restHeeUserMockMvc.perform(post("/api/hee-users")
+        .contentType(TestUtil.APPLICATION_JSON_UTF8)
+        .content(TestUtil.convertObjectToJsonBytes(heeUserDTO)))
+        .andExpect(status().is4xxClientError())
+        .andExpect(jsonPath("$.message").value("Password should be minimum 8 chars long"));
+
+    // Validate the HeeUser in the database
+    List<HeeUser> heeUserList = heeUserRepository.findAll();
+    assertThat(heeUserList).hasSize(databaseSizeBeforeCreate);
+    assertThat(permissionRepository.findAll().size()).isEqualTo(databasePermissionSizeBeforeCreate);
+
+  }
+
+  @Test
+  @Transactional
   public void createHeeUserWithExistingId() throws Exception {
     int databaseSizeBeforeCreate = heeUserRepository.findAll().size();
 
     // Create the HeeUser with an existing name
     heeUser.setName(DEFAULT_NAME);
     HeeUserDTO heeUserDTO = heeUserMapper.heeUserToHeeUserDTO(heeUser);
+    heeUserDTO.setPassword(DEFAULT_PASSWORD);
+    heeUserDTO.setTemporaryPassword(false);
 
     // A user with the same name will update the existing user
     restHeeUserMockMvc.perform(post("/api/hee-users")
@@ -270,6 +322,8 @@ public class HeeUserResourceIntTest {
     // Create the HeeUser
     HeeUserDTO heeUserDTO = heeUserMapper.heeUserToHeeUserDTO(heeUser);
     heeUserDTO.setName(UPDATED_NAME);
+    heeUserDTO.setPassword(DEFAULT_PASSWORD);
+    heeUserDTO.setTemporaryPassword(true);
 
     // If the entity doesn't have an ID, it will be created instead of just being updated
     restHeeUserMockMvc.perform(put("/api/hee-users")

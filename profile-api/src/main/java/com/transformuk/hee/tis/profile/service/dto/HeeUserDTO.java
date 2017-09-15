@@ -30,6 +30,8 @@ public class HeeUserDTO implements Serializable {
 
   private String password;
 
+  private Boolean isTemporaryPassword;
+
   private Set<RoleDTO> roles;
   private Set<String> designatedBodyCodes;
 
@@ -38,7 +40,7 @@ public class HeeUserDTO implements Serializable {
 
   public HeeUserDTO(String name, String firstName, String lastName, String gmcId,
                     String phoneNumber, String emailAddress, Boolean active,
-                    String password, Set<RoleDTO> roles, Set<String> designatedBodyCodes) {
+                    String password,Boolean isTemporaryPassword, Set<RoleDTO> roles, Set<String> designatedBodyCodes) {
     this.name = name;
     this.firstName = firstName;
     this.lastName = lastName;
@@ -47,6 +49,7 @@ public class HeeUserDTO implements Serializable {
     this.emailAddress = emailAddress;
     this.active = active;
     this.password = password;
+    this.isTemporaryPassword = isTemporaryPassword;
     this.roles = roles;
     this.designatedBodyCodes = designatedBodyCodes;
   }
@@ -113,6 +116,14 @@ public class HeeUserDTO implements Serializable {
 
   public void setPassword(String password) {
     this.password = password;
+  }
+
+  public Boolean getTemporaryPassword() {
+    return isTemporaryPassword;
+  }
+
+  public void setTemporaryPassword(Boolean temporaryPassword) {
+    isTemporaryPassword = temporaryPassword;
   }
 
   public Set<RoleDTO> getRoles() {

@@ -42,6 +42,8 @@ public class HeeUser implements Serializable {
 
   private String password;
 
+  private Boolean isTemporaryPassword;
+
   private Set<Role> roles;
   private Set<String> designatedBodyCodes;
 
@@ -155,6 +157,15 @@ public class HeeUser implements Serializable {
 
   public void setPassword(String password) {
     this.password = password;
+  }
+
+  @Transient
+  public Boolean getTemporaryPassword() {
+    return isTemporaryPassword;
+  }
+
+  public void setTemporaryPassword(Boolean temporaryPassword) {
+    isTemporaryPassword = temporaryPassword;
   }
 
   @ManyToMany(cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
