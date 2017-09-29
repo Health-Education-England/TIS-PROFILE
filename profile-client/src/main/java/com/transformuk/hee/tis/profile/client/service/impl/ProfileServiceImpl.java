@@ -11,15 +11,7 @@ import com.transformuk.hee.tis.profile.dto.RoleDTO;
 import com.transformuk.hee.tis.profile.dto.TraineeId;
 import com.transformuk.hee.tis.profile.dto.TraineeIdListResponse;
 import com.transformuk.hee.tis.profile.dto.TraineeProfileDto;
-import com.transformuk.hee.tis.profile.service.dto.EqualityAndDiversityDTO;
-import com.transformuk.hee.tis.profile.service.dto.GdcDetailsDTO;
-import com.transformuk.hee.tis.profile.service.dto.GmcDetailsDTO;
 import com.transformuk.hee.tis.profile.service.dto.HeeUserDTO;
-import com.transformuk.hee.tis.profile.service.dto.ImmigrationDTO;
-import com.transformuk.hee.tis.profile.service.dto.ManageRecordDTO;
-import com.transformuk.hee.tis.profile.service.dto.PersonDTO;
-import com.transformuk.hee.tis.profile.service.dto.PersonalDetailsDTO;
-import com.transformuk.hee.tis.profile.service.dto.QualificationDTO;
 import com.transformuk.hee.tis.security.model.UserProfile;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,23 +51,7 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
 
   static {
     classToParamTypeRefMap = Maps.newHashMap();
-    classToParamTypeRefMap.put(EqualityAndDiversityDTO.class, new ParameterizedTypeReference<List<EqualityAndDiversityDTO>>() {
-    });
-    classToParamTypeRefMap.put(GdcDetailsDTO.class, new ParameterizedTypeReference<List<GdcDetailsDTO>>() {
-    });
-    classToParamTypeRefMap.put(GmcDetailsDTO.class, new ParameterizedTypeReference<List<GmcDetailsDTO>>() {
-    });
     classToParamTypeRefMap.put(HeeUserDTO.class, new ParameterizedTypeReference<List<HeeUserDTO>>() {
-    });
-    classToParamTypeRefMap.put(ImmigrationDTO.class, new ParameterizedTypeReference<List<ImmigrationDTO>>() {
-    });
-    classToParamTypeRefMap.put(ManageRecordDTO.class, new ParameterizedTypeReference<List<ManageRecordDTO>>() {
-    });
-    classToParamTypeRefMap.put(PersonalDetailsDTO.class, new ParameterizedTypeReference<List<PersonalDetailsDTO>>() {
-    });
-    classToParamTypeRefMap.put(PersonDTO.class, new ParameterizedTypeReference<List<PersonDTO>>() {
-    });
-    classToParamTypeRefMap.put(QualificationDTO.class, new ParameterizedTypeReference<List<QualificationDTO>>() {
     });
     classToParamTypeRefMap.put(PermissionDTO.class, new ParameterizedTypeReference<List<PermissionDTO>>() {
     });
