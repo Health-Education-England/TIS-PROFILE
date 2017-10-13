@@ -1,6 +1,6 @@
 package com.transformuk.hee.tis.profile.service;
 
-import com.transform.hee.tis.keycloak.KeyclockAdminClient;
+import com.transform.hee.tis.keycloak.KeycloakAdminClient;
 import com.transform.hee.tis.keycloak.User;
 import com.transformuk.hee.tis.profile.domain.HeeUser;
 import org.junit.Before;
@@ -21,19 +21,19 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
-public class KeyclockAdminClientServiceTest {
+public class KeycloakAdminClientServiceTest {
 
   private static final String REALM_LIN = "lin";
 
   @Mock
-  private KeyclockAdminClient keyclockAdminClient;
+  private KeycloakAdminClient keycloakAdminClient;
 
   private EntityManager em;
 
   private HeeUser heeUser;
 
   @InjectMocks
-  private KeyclockAdminClientService keyclockAdminClientService;
+  private KeycloakAdminClientService keyclockAdminClientService;
 
   @Before
   public void initTest() {
@@ -48,7 +48,7 @@ public class KeyclockAdminClientServiceTest {
     //then
     ArgumentCaptor<String> relmArg = ArgumentCaptor.forClass(String.class);
     ArgumentCaptor<User> userArg = ArgumentCaptor.forClass(User.class);
-    verify(keyclockAdminClient).createUser(relmArg.capture(), userArg.capture());
+    verify(keycloakAdminClient).createUser(relmArg.capture(), userArg.capture());
 
     assertThat(relmArg.getValue()).isEqualTo(REALM_LIN);
     assertThat(userArg.getValue().getFirstname()).isEqualTo(heeUser.getFirstName());
@@ -64,7 +64,7 @@ public class KeyclockAdminClientServiceTest {
     String existingUserId = "111";
     User mockUser = mock(User.class);
     given(mockUser.getId()).willReturn(existingUserId);
-    given(keyclockAdminClient.findByUsername(REALM_LIN, heeUser.getName())).willReturn(mockUser);
+    given(keycloakAdminClient.findByUsername(REALM_LIN, heeUser.getName())).willReturn(mockUser);
 
     //When
     keyclockAdminClientService.updateUser(heeUser);
@@ -72,7 +72,7 @@ public class KeyclockAdminClientServiceTest {
     //then
     ArgumentCaptor<String> relmArg = ArgumentCaptor.forClass(String.class);
     ArgumentCaptor<User> userArg = ArgumentCaptor.forClass(User.class);
-    verify(keyclockAdminClient).updateUser(relmArg.capture(), any(), userArg.capture());
+    verify(keycloakAdminClient).updateUser(relmArg.capture(), any(), userArg.capture());
 
     assertThat(relmArg.getValue()).isEqualTo(REALM_LIN);
     assertThat(userArg.getValue().getFirstname()).isEqualTo(heeUser.getFirstName());

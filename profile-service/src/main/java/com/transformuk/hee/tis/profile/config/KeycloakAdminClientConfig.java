@@ -1,12 +1,12 @@
 package com.transformuk.hee.tis.profile.config;
 
-import com.transform.hee.tis.keycloak.KeyclockAdminClient;
+import com.transform.hee.tis.keycloak.KeycloakAdminClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class KeyclockAdminClientConfig {
+public class KeycloakAdminClientConfig {
 
   @Value("${kc.master.realm}")
   private String masterRealm;
@@ -27,8 +27,8 @@ public class KeyclockAdminClientConfig {
   private String password;
 
   @Bean
-  public KeyclockAdminClient keyclockAdminClient() {
-    KeyclockAdminClient client = new KeyclockAdminClient();
+  public KeycloakAdminClient keycloakAdminClient() {
+    KeycloakAdminClient client = new KeycloakAdminClient();
     client.init(serverUrl, masterRealm, clientId, userName, password);
     return client;
   }

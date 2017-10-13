@@ -5,7 +5,7 @@ import com.transformuk.hee.tis.profile.ProfileApp;
 import com.transformuk.hee.tis.profile.domain.HeeUser;
 import com.transformuk.hee.tis.profile.repository.HeeUserRepository;
 import com.transformuk.hee.tis.profile.repository.PermissionRepository;
-import com.transformuk.hee.tis.profile.service.KeyclockAdminClientService;
+import com.transformuk.hee.tis.profile.service.KeycloakAdminClientService;
 import com.transformuk.hee.tis.profile.service.dto.HeeUserDTO;
 import com.transformuk.hee.tis.profile.service.mapper.HeeUserMapper;
 import com.transformuk.hee.tis.profile.validators.HeeUserValidator;
@@ -84,7 +84,7 @@ public class HeeUserResourceIntTest {
   private ExceptionTranslator exceptionTranslator;
 
   @Mock
-  private KeyclockAdminClientService keyclockAdminClientService;
+  private KeycloakAdminClientService keyclockAdminClientService;
 
   @Autowired
   private HeeUserValidator heeUserValidator;

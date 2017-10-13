@@ -3,7 +3,7 @@ package com.transformuk.hee.tis.profile.web.rest;
 import com.codahale.metrics.annotation.Timed;
 import com.transformuk.hee.tis.profile.domain.HeeUser;
 import com.transformuk.hee.tis.profile.repository.HeeUserRepository;
-import com.transformuk.hee.tis.profile.service.KeyclockAdminClientService;
+import com.transformuk.hee.tis.profile.service.KeycloakAdminClientService;
 import com.transformuk.hee.tis.profile.service.dto.HeeUserDTO;
 import com.transformuk.hee.tis.profile.service.mapper.HeeUserMapper;
 import com.transformuk.hee.tis.profile.validators.HeeUserValidator;
@@ -47,12 +47,12 @@ public class HeeUserResource {
   private final HeeUserRepository heeUserRepository;
   private final HeeUserMapper heeUserMapper;
 
-  private KeyclockAdminClientService keyclockAdminClientService;
+  private KeycloakAdminClientService keyclockAdminClientService;
 
   private HeeUserValidator heeUserValidator;
 
   public HeeUserResource(HeeUserRepository heeUserRepository, HeeUserMapper heeUserMapper,
-                         KeyclockAdminClientService keyclockAdminClientService, HeeUserValidator heeUserValidator) {
+                         KeycloakAdminClientService keyclockAdminClientService, HeeUserValidator heeUserValidator) {
     this.heeUserRepository = heeUserRepository;
     this.heeUserMapper = heeUserMapper;
     this.keyclockAdminClientService = keyclockAdminClientService;
