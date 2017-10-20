@@ -90,17 +90,9 @@ public class LoginService {
     Map<String, Object> claims = jsonParser.parseMap(jwt.getClaims());
     String userName = getString(claims, "preferred_username");
     String cn = getString(claims, "name");
-    Map<String, Object> accessMap = (Map<String, Object>) claims.get("realm_access");
-    String rawRolesString = getString(accessMap, "roles");
-    String rolesString = CharMatcher.anyOf("[]").removeFrom(rawRolesString);
-    Set<String> roles = Pattern.compile(",").splitAsStream(rolesString)
-        .map(s -> s.trim())
-        .collect(toSet());
-
     JwtAuthToken profile = new JwtAuthToken();
     profile.setUsername(userName);
     profile.setCn(asList(cn));
-    profile.setRoles(roles);
     return profile;
   }
 
