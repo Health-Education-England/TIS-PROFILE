@@ -1,13 +1,18 @@
 package com.transformuk.hee.tis.profile.client.service.impl;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.transformuk.hee.tis.profile.client.command.GetUserProfileCommand;
 import com.transformuk.hee.tis.security.model.UserProfile;
 import com.transformuk.hee.tis.security.service.JwtProfileService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.method.P;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import static java.util.Objects.requireNonNull;
 
@@ -18,34 +23,53 @@ import static java.util.Objects.requireNonNull;
  */
 public class JwtProfileServiceImpl implements JwtProfileService {
 
+  private static final Logger LOG = LoggerFactory.getLogger(JwtProfileServiceImpl.class);
   private static final String USER_INFO_ENDPOINT = "/api/userinfo";
-  private static final String OIDC_TOKEN_HEADER = "OIDC_access_token";
-  private static final String AUTH_TOKEN_HEADER = "Authorization";
-  private static final String AUTH_TOKEN_BEARER = "Bearer ";
+  private static final long MAX_CACHE_SIZE = 10_000L;
+  private static final int TTL_DURATION = 5;
 
   @Value("${profile.service.url}")
   private String serviceUrl;
 
   private RestTemplate restTemplate;
+  private Cache<String, Optional<UserProfile>> userProfileCache;
 
   public JwtProfileServiceImpl(RestTemplate restTemplate) {
     this.restTemplate = restTemplate;
+    userProfileCache = CacheBuilder.newBuilder()
+        .maximumSize(MAX_CACHE_SIZE)
+        .expireAfterWrite(TTL_DURATION, TimeUnit.SECONDS)
+        .removalListener((value) -> LOG.debug("{} was just removed from the cache", value.getKey()))
+        .build();
   }
 
   /**
    * Get a UserProfile using the provided security token. This method should only be used during authenticating the user
    * in Spring Security
    *
+   * This method uses both caching and hystrix to reduce the amount of calls to the service, so if the services is down
+   * or slow, we can fallback gracefully
+   *
    * @return UserProfile containing information of the current authenticated user
    */
-  public UserProfile getProfile(String securityToken) {
+  public Optional<UserProfile> getProfile(String securityToken) {
     requireNonNull(securityToken, "securityToken must not be null");
-    HttpHeaders headers = new HttpHeaders();
-    headers.set(OIDC_TOKEN_HEADER, securityToken);
-    headers.set(AUTH_TOKEN_HEADER, AUTH_TOKEN_BEARER + securityToken);
-    HttpEntity<?> entity = new HttpEntity<String>(headers);
-    ResponseEntity<UserProfile> responseEntity = restTemplate.exchange(serviceUrl + USER_INFO_ENDPOINT, HttpMethod.GET, entity,
-        UserProfile.class);
-    return responseEntity.getBody();
+
+    Optional<UserProfile> optionalUserProfile = userProfileCache.getIfPresent(securityToken);
+    if(optionalUserProfile != null) {
+      return optionalUserProfile;
+    } else {
+      optionalUserProfile = getUserProfile(securityToken);
+      userProfileCache.put(securityToken, optionalUserProfile);
+      return optionalUserProfile;
+    }
+  }
+
+  protected Optional<UserProfile> getUserProfile(String securityToken) {
+    return new GetUserProfileCommand(restTemplate, serviceUrl + USER_INFO_ENDPOINT, securityToken).execute();
+  }
+
+  public void setUserProfileCache(Cache<String, Optional<UserProfile>> userProfileCache) {
+    this.userProfileCache = userProfileCache;
   }
 }
