@@ -15,6 +15,11 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Optional;
 
+/**
+ * Hystrix command that makes a request to the profile service.
+ *
+ * For more information on hystrix see: https://github.com/Netflix/Hystrix
+ */
 public class GetUserProfileCommand extends HystrixCommand<Optional<UserProfile>> {
 
   private static final Logger LOG = LoggerFactory.getLogger(GetUserProfileCommand.class);
@@ -56,7 +61,8 @@ public class GetUserProfileCommand extends HystrixCommand<Optional<UserProfile>>
 
   /**
    * If an exception occurs that wasn't handled in the try catch block use the following fallback
-   * @return
+   *
+   * @return An empty optional denoting no user profile available
    */
   @Override
   protected Optional<UserProfile> getFallback() {
