@@ -11,11 +11,12 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.BlockJUnit4ClassRunner;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -38,10 +39,11 @@ import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.HttpStatus.OK;
 
 
-@RunWith(MockitoJUnitRunner.class
-)
+@RunWith(BlockJUnit4ClassRunner.class)
 public class ProfileServiceImplTest {
 
+  private static final double RATE_LIMIT = 100d;
+  private static final double BULK_RATE_LIMIT = 10d;
   private static final String DBC = "1-DGBODY";
   private static final String PROFILE_URL = "http://localhost:8888/trainee-id";
   private static final String PERMISSIONS = "revalidation:submit:on:behalf:of:ro";
@@ -65,7 +67,9 @@ public class ProfileServiceImplTest {
 
   @Before
   public void setUp() throws Exception {
+    profileServiceImpl = new ProfileServiceImpl(RATE_LIMIT, BULK_RATE_LIMIT);
     profileServiceImpl.setServiceUrl(PROFILE_URL);
+    MockitoAnnotations.initMocks(this);
   }
 
 

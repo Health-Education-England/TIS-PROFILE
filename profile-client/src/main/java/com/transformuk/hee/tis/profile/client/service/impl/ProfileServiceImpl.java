@@ -73,6 +73,11 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
   @Value("${profile.service.url}")
   private String serviceUrl;
 
+  public ProfileServiceImpl(@Value("${profile.client.rate.limit}") double standardRequestsPerSecondLimit,
+                            @Value("${profile.client.bulk.rate.limit}") double bulkRequestsPerSecondLimit) {
+    super(standardRequestsPerSecondLimit, bulkRequestsPerSecondLimit);
+  }
+
   /**
    * Return a paginated result of trainee id's for a designated body code
    *
