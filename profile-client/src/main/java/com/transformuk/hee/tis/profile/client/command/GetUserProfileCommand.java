@@ -10,14 +10,14 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Optional;
 
 /**
  * Hystrix command that makes a request to the profile service.
- *
+ * <p>
  * For more information on hystrix see: https://github.com/Netflix/Hystrix
  */
 public class GetUserProfileCommand extends HystrixCommand<Optional<UserProfile>> {
@@ -42,6 +42,15 @@ public class GetUserProfileCommand extends HystrixCommand<Optional<UserProfile>>
     this.securityToken = securityToken;
   }
 
+  /**
+   * Make the get user info rest call to the profile service
+   * <p>
+   * Do NOT catch all errors as we need the HTTP 5xx errors to contribute to the error count for the circuit breaker
+   * client errors should not contribute to the error count
+   *
+   * @return Optional user profile if its there
+   * @throws Exception HTTP 5xx or other exceptions that can occur during th rest call
+   */
   @Override
   protected Optional<UserProfile> run() throws Exception {
     HttpHeaders headers = new HttpHeaders();
@@ -52,8 +61,8 @@ public class GetUserProfileCommand extends HystrixCommand<Optional<UserProfile>>
       ResponseEntity<UserProfile> responseEntity = restTemplate.exchange(urlEndpoint, HttpMethod.GET, entity,
           UserProfile.class);
       return Optional.of(responseEntity.getBody());
-    } catch (HttpStatusCodeException e) {
-      LOG.debug("An error occurred during a rest call to [{}]", urlEndpoint);
+    } catch (HttpClientErrorException e) {
+      LOG.debug("A client error occurred during a rest call to [{}]", urlEndpoint);
       LOG.debug("HTTP Status and body [{},{}]", e.getStatusCode(), e.getResponseBodyAsString());
     }
     return Optional.empty();

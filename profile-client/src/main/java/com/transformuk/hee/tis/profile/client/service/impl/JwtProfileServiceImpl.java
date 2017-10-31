@@ -25,11 +25,15 @@ public class JwtProfileServiceImpl implements JwtProfileService {
 
   private static final Logger LOG = LoggerFactory.getLogger(JwtProfileServiceImpl.class);
   private static final String USER_INFO_ENDPOINT = "/api/userinfo";
-  private static final long MAX_CACHE_SIZE = 10_000L;
-  private static final int TTL_DURATION = 5;
 
   @Value("${profile.service.url}")
   private String serviceUrl;
+
+  @Value("${profile.service.jwt.cache.size}")
+  private long maxCacheSize;
+
+  @Value("${profile.service.jwt.cache.ttl}")
+  private int ttlDuration;
 
   private RestTemplate restTemplate;
   private Cache<String, Optional<UserProfile>> userProfileCache;
@@ -37,8 +41,8 @@ public class JwtProfileServiceImpl implements JwtProfileService {
   public JwtProfileServiceImpl(RestTemplate restTemplate) {
     this.restTemplate = restTemplate;
     userProfileCache = CacheBuilder.newBuilder()
-        .maximumSize(MAX_CACHE_SIZE)
-        .expireAfterWrite(TTL_DURATION, TimeUnit.SECONDS)
+        .maximumSize(maxCacheSize)
+        .expireAfterWrite(ttlDuration, TimeUnit.SECONDS)
         .removalListener((value) -> LOG.debug("{} was just removed from the cache", value.getKey()))
         .build();
   }
