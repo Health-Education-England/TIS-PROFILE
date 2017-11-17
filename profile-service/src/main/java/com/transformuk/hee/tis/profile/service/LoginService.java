@@ -7,6 +7,8 @@ import com.transformuk.hee.tis.profile.domain.Role;
 import com.transformuk.hee.tis.profile.dto.JwtAuthToken;
 import com.transformuk.hee.tis.profile.repository.HeeUserRepository;
 import com.transformuk.hee.tis.profile.repository.RoleRepository;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.springframework.boot.json.JsonParser;
@@ -41,15 +43,20 @@ public class LoginService {
   private static final String GMC_ID_FIELD = "gmc_id";
   private static final String REALM_ACCESS_FIELD = "realm_access";
   private static final String ROLES_FIELD = "roles";
+  private static final String DBC_ATTRIBUTE = "DBC";
+  private static final String GMC_ID_ATTRIBUTE = "GMC_ID";
 
   private final HeeUserRepository userRepository;
   private final RoleRepository roleRepository;
+  private final KeycloakAdminClientService keycloakAdminClientService;
 
   private JsonParser jsonParser = JsonParserFactory.getJsonParser();
 
-  public LoginService(HeeUserRepository userRepository, RoleRepository roleRepository) {
+  public LoginService(HeeUserRepository userRepository, RoleRepository roleRepository,
+                      KeycloakAdminClientService keycloakAdminClientService) {
     this.userRepository = userRepository;
     this.roleRepository = roleRepository;
+    this.keycloakAdminClientService = keycloakAdminClientService;
   }
 
   /**
@@ -110,23 +117,39 @@ public class LoginService {
     String surname = getString(claims, FAMILY_NAME_FIELD);
     String username = getString(claims, PREFERRED_USERNAME_FIELD);
     String email = getString(claims, EMAIL_FIELD);
-    String gmcId = getString(claims, GMC_ID_FIELD);
 
     Map<String, Map> realmAccessMap = (Map<String, Map>) claims.get(REALM_ACCESS_FIELD);
-    List<String> roles = (List<String>) realmAccessMap.get(ROLES_FIELD);
-    List<Role> foundRoles = roleRepository.findByNameIn(Sets.newHashSet(roles));
+    List<Role> foundRoles = null;
+    if(MapUtils.isNotEmpty(realmAccessMap)){
+      List<String> roles = (List<String>) realmAccessMap.get(ROLES_FIELD);
+      foundRoles = roleRepository.findByNameIn(Sets.newHashSet(roles));
+    }
 
     HeeUser newUser = new HeeUser()
         .active(true)
         .emailAddress(StringUtils.defaultString(email, StringUtils.EMPTY))
         .firstName(firstName)
         .lastName(StringUtils.defaultString(surname, StringUtils.EMPTY))
-        .name(StringUtils.defaultString(username, StringUtils.EMPTY))
-        .gmcId(gmcId);
-
+        .name(StringUtils.defaultString(username, StringUtils.EMPTY));
     newUser.setRoles(Sets.newHashSet(foundRoles));
-    //    newUser.setDesignatedBodyCodes();
 
+    Map<String, List<String>> userAttributes = keycloakAdminClientService.getUserAttributes(newUser);
+    List<String> dbcList = null;
+    String gmcId = null;
+
+    if(MapUtils.isNotEmpty(userAttributes)){
+      List<String> dbcAttribute = userAttributes.get(DBC_ATTRIBUTE);
+      if(CollectionUtils.isNotEmpty(dbcAttribute)){
+        dbcList = Lists.newArrayList(StringUtils.split(dbcAttribute.get(0), ","));
+      }
+      List<String> gmcIdList = userAttributes.get(GMC_ID_ATTRIBUTE);
+      if(CollectionUtils.isNotEmpty(gmcIdList)){
+        gmcId = gmcIdList.get(0);
+      }
+    }
+
+    newUser.gmcId(gmcId)
+    .setDesignatedBodyCodes(Sets.newHashSet(dbcList));
 
     newUser = userRepository.save(newUser);
 
