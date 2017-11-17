@@ -12,7 +12,7 @@ import java.util.List;
  * Spring Data JPA repository for the HeeUser entity.
  */
 @SuppressWarnings("unused")
-public interface  HeeUserRepository extends JpaRepository<HeeUser, String>, JpaSpecificationExecutor<HeeUser> {
+public interface HeeUserRepository extends JpaRepository<HeeUser, String>, JpaSpecificationExecutor<HeeUser> {
 
   /**
    * Gets RO by designatedBodyCode
