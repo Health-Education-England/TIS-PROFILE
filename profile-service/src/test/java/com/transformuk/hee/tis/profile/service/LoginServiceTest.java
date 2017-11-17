@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.transformuk.hee.tis.profile.domain.HeeUser;
 import com.transformuk.hee.tis.profile.repository.HeeUserRepository;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -21,6 +22,7 @@ import static org.junit.Assert.assertSame;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyListOf;
+import static org.mockito.Mockito.when;
 import static org.mockito.internal.util.collections.Sets.newSet;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -187,6 +189,21 @@ public class LoginServiceTest {
     // then
     assertThat(user).isSameAs(aUser);
   }
+
+//  @Test
+//  public void createUserByTokenShouldCreateNewUserWithRolesAndDbcs() {
+//
+////    when()
+//
+//    HeeUser result = service.createUserByToken(TOKEN);
+//
+//    Assert.assertEquals("", result.getName());
+//    Assert.assertEquals("", result.getFirstName());
+//    Assert.assertEquals("", result.getLastName());
+//    Assert.assertEquals("", result.getGmcId());
+//    Assert.assertEquals("", result.getLastName());
+//  }
+
 
   @Test(expected = EntityNotFoundException.class)
   public void shouldThrowExceptionWhenUserNameNotFound() {

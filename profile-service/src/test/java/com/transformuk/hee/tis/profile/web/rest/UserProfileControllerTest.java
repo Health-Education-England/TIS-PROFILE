@@ -26,12 +26,17 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.mockito.internal.util.collections.Sets.newSet;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -179,6 +184,29 @@ public class UserProfileControllerTest {
     this.mvc.perform(get("/api/userinfo"))
         .andExpect(status().is5xxServerError()).andExpect(jsonPath("$.message")
         .value(containsString("error")));
+  }
+
+  @Test
+  public void shouldCreateNewUserAndReturnUserProfileDetailsWhenNewUser() throws Exception {
+
+    HeeUser user = getUser();
+
+    doThrow(EntityNotFoundException.class).when(loginService).getUserByToken(TOKEN);
+    when(loginService.createUserByToken(TOKEN)).thenReturn(user);
+
+    // When & then
+    this.mvc.perform(get("/api/userinfo")
+        .header("OIDC_access_token", TOKEN))
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.userName").value(USER_NAME))
+        .andExpect(jsonPath("$.gmcId").value(GMC_ID))
+        .andExpect(jsonPath("$.designatedBodyCodes[0]").value(DESIGNATED_BODY_CODE))
+        .andExpect(jsonPath("$.roles").isNotEmpty())
+        .andExpect(jsonPath("$.roles").value(hasItems(ROLES)));
+
+    verify(loginService).getUserByToken(TOKEN);
+    verify(loginService).createUserByToken(TOKEN);
+
   }
 
   private HeeUser getUser() {

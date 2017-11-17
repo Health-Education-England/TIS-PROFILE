@@ -1,10 +1,12 @@
 package com.transformuk.hee.tis.profile.service;
 
-import com.google.common.base.CharMatcher;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.transformuk.hee.tis.profile.domain.HeeUser;
+import com.transformuk.hee.tis.profile.domain.Role;
 import com.transformuk.hee.tis.profile.dto.JwtAuthToken;
 import com.transformuk.hee.tis.profile.repository.HeeUserRepository;
+import com.transformuk.hee.tis.profile.repository.RoleRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.springframework.boot.json.JsonParser;
@@ -19,11 +21,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.toSet;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
@@ -34,11 +34,22 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class LoginService {
 
   private static final Logger LOG = getLogger(LoginService.class);
+  private static final String GIVEN_NAME_FIELD = "given_name";
+  private static final String FAMILY_NAME_FIELD = "family_name";
+  private static final String PREFERRED_USERNAME_FIELD = "preferred_username";
+  private static final String EMAIL_FIELD = "email";
+  private static final String GMC_ID_FIELD = "gmc_id";
+  private static final String REALM_ACCESS_FIELD = "realm_access";
+  private static final String ROLES_FIELD = "roles";
+
   private final HeeUserRepository userRepository;
+  private final RoleRepository roleRepository;
+
   private JsonParser jsonParser = JsonParserFactory.getJsonParser();
 
-  public LoginService(HeeUserRepository userRepository) {
+  public LoginService(HeeUserRepository userRepository, RoleRepository roleRepository) {
     this.userRepository = userRepository;
+    this.roleRepository = roleRepository;
   }
 
   /**
@@ -83,6 +94,44 @@ public class LoginService {
    */
   public HeeUser getRVOfficer(String designatedBodyCode) {
     return userRepository.findRVOfficerByDesignatedBodyCode(designatedBodyCode);
+  }
+
+  /**
+   * Create a new user in the system using all the details available from the token
+   *
+   * @param token The OIDC token received from the browser
+   * @return
+   */
+  @Transactional
+  public HeeUser createUserByToken(String token) {
+    Jwt jwt = JwtHelper.decode(token);
+    Map<String, Object> claims = jsonParser.parseMap(jwt.getClaims());
+    String firstName = getString(claims, GIVEN_NAME_FIELD);
+    String surname = getString(claims, FAMILY_NAME_FIELD);
+    String username = getString(claims, PREFERRED_USERNAME_FIELD);
+    String email = getString(claims, EMAIL_FIELD);
+    String gmcId = getString(claims, GMC_ID_FIELD);
+
+    Map<String, Map> realmAccessMap = (Map<String, Map>) claims.get(REALM_ACCESS_FIELD);
+    List<String> roles = (List<String>) realmAccessMap.get(ROLES_FIELD);
+    List<Role> foundRoles = roleRepository.findByNameIn(Sets.newHashSet(roles));
+
+    HeeUser newUser = new HeeUser()
+        .active(true)
+        .emailAddress(email)
+        .firstName(StringUtils.defaultString(firstName, StringUtils.EMPTY))
+        .lastName(StringUtils.defaultString(surname, StringUtils.EMPTY))
+        .name(StringUtils.defaultString(username, StringUtils.EMPTY))
+        .gmcId(StringUtils.defaultString(gmcId, StringUtils.EMPTY))
+        .phoneNumber(StringUtils.EMPTY);
+
+    newUser.setRoles(Sets.newHashSet(foundRoles));
+    //    newUser.setDesignatedBodyCodes();
+
+
+    newUser = userRepository.save(newUser);
+
+    return newUser;
   }
 
   private JwtAuthToken decode(String token) {
