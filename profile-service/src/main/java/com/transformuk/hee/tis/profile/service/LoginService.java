@@ -118,12 +118,11 @@ public class LoginService {
 
     HeeUser newUser = new HeeUser()
         .active(true)
-        .emailAddress(email)
-        .firstName(StringUtils.defaultString(firstName, StringUtils.EMPTY))
+        .emailAddress(StringUtils.defaultString(email, StringUtils.EMPTY))
+        .firstName(firstName)
         .lastName(StringUtils.defaultString(surname, StringUtils.EMPTY))
         .name(StringUtils.defaultString(username, StringUtils.EMPTY))
-        .gmcId(StringUtils.defaultString(gmcId, StringUtils.EMPTY))
-        .phoneNumber(StringUtils.EMPTY);
+        .gmcId(gmcId);
 
     newUser.setRoles(Sets.newHashSet(foundRoles));
     //    newUser.setDesignatedBodyCodes();

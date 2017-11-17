@@ -3,16 +3,22 @@ package com.transformuk.hee.tis.profile.service;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.transformuk.hee.tis.profile.domain.HeeUser;
+import com.transformuk.hee.tis.profile.domain.Role;
 import com.transformuk.hee.tis.profile.repository.HeeUserRepository;
+import com.transformuk.hee.tis.profile.repository.RoleRepository;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.boot.actuate.audit.AuditEventRepository;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -22,6 +28,7 @@ import static org.junit.Assert.assertSame;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyListOf;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.util.collections.Sets.newSet;
 
@@ -38,9 +45,10 @@ public class LoginServiceTest {
 
   @Mock
   private HeeUserRepository userRepository;
-
   @Mock
-  private AuditEventRepository auditEventRepository;
+  private RoleRepository roleRepositoryMock;
+  @Mock
+  private Role rvAdminRoleMock;
 
   @InjectMocks
   private LoginService service;
@@ -190,19 +198,31 @@ public class LoginServiceTest {
     assertThat(user).isSameAs(aUser);
   }
 
-//  @Test
-//  public void createUserByTokenShouldCreateNewUserWithRolesAndDbcs() {
-//
-////    when()
-//
-//    HeeUser result = service.createUserByToken(TOKEN);
-//
-//    Assert.assertEquals("", result.getName());
-//    Assert.assertEquals("", result.getFirstName());
-//    Assert.assertEquals("", result.getLastName());
-//    Assert.assertEquals("", result.getGmcId());
-//    Assert.assertEquals("", result.getLastName());
-//  }
+  @Test
+  public void createUserByTokenShouldCreateNewUserWithRolesAndDbcs() {
+    HashSet<String> roleNames = Sets.newHashSet("RVAdmin",
+        "uma_authorization");
+    List<Role> foundRoles = Lists.newArrayList(rvAdminRoleMock);
+    HeeUser createdUser = new HeeUser();
+
+    when(roleRepositoryMock.findByNameIn(roleNames)).thenReturn(foundRoles);
+    when(userRepository.save(any(HeeUser.class))).thenReturn(createdUser);
+
+    HeeUser result = service.createUserByToken(TOKEN);
+    Assert.assertEquals(createdUser, result);
+
+    ArgumentCaptor<HeeUser> heeUserArgumentCaptor = ArgumentCaptor.forClass(HeeUser.class);
+    verify(userRepository).save(heeUserArgumentCaptor.capture());
+
+    HeeUser capturedHeeUser = heeUserArgumentCaptor.getValue();
+
+    Assert.assertEquals("jamesh", capturedHeeUser.getName());
+    Assert.assertEquals("James", capturedHeeUser.getFirstName());
+    Assert.assertEquals("Hudson", capturedHeeUser.getLastName());
+//    Assert.assertEquals("", capturedHeeUser.getGmcId());
+    Assert.assertEquals(StringUtils.EMPTY, capturedHeeUser.getEmailAddress());
+    Assert.assertTrue(capturedHeeUser.isActive());
+  }
 
 
   @Test(expected = EntityNotFoundException.class)
