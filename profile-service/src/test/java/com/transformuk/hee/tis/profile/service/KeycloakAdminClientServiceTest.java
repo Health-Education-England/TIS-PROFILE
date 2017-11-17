@@ -98,7 +98,7 @@ public class KeycloakAdminClientServiceTest {
     Map<String, List<String>> attributes = Maps.newHashMap();
     when(keycloakAdminClient.getAttributesForUser(anyString(), eq(heeUser.getName()))).thenReturn(attributes);
 
-    Map<String, List<String>> result = keyclockAdminClientService.getUserAttributes(heeUser);
+    Map<String, List<String>> result = keyclockAdminClientService.getUserAttributes("AAAAAAAAAA");
 
     verify(keycloakAdminClient).getAttributesForUser("lin", "AAAAAAAAAA");
 

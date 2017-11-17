@@ -42,8 +42,8 @@ public class KeycloakAdminClientService {
     keycloakAdminClient.updateUser(REALM_LIN, existingUser.getId(), userToUpdate);
   }
 
-  public Map<String, List<String>> getUserAttributes(HeeUser heeUser) {
-    return keycloakAdminClient.getAttributesForUser(REALM_LIN, heeUser.getName());
+  public Map<String, List<String>> getUserAttributes(String username) {
+    return keycloakAdminClient.getAttributesForUser(REALM_LIN, username);
   }
 
   private User heeUserToKeyclockUser(HeeUser heeUser) {

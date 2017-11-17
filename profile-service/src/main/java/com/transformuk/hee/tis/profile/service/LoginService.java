@@ -118,22 +118,7 @@ public class LoginService {
     String username = getString(claims, PREFERRED_USERNAME_FIELD);
     String email = getString(claims, EMAIL_FIELD);
 
-    Map<String, Map> realmAccessMap = (Map<String, Map>) claims.get(REALM_ACCESS_FIELD);
-    List<Role> foundRoles = null;
-    if(MapUtils.isNotEmpty(realmAccessMap)){
-      List<String> roles = (List<String>) realmAccessMap.get(ROLES_FIELD);
-      foundRoles = roleRepository.findByNameIn(Sets.newHashSet(roles));
-    }
-
-    HeeUser newUser = new HeeUser()
-        .active(true)
-        .emailAddress(StringUtils.defaultString(email, StringUtils.EMPTY))
-        .firstName(firstName)
-        .lastName(StringUtils.defaultString(surname, StringUtils.EMPTY))
-        .name(StringUtils.defaultString(username, StringUtils.EMPTY));
-    newUser.setRoles(Sets.newHashSet(foundRoles));
-
-    Map<String, List<String>> userAttributes = keycloakAdminClientService.getUserAttributes(newUser);
+    Map<String, List<String>> userAttributes = keycloakAdminClientService.getUserAttributes(username);
     List<String> dbcList = null;
     String gmcId = null;
 
@@ -148,11 +133,30 @@ public class LoginService {
       }
     }
 
-    newUser.gmcId(gmcId)
-    .setDesignatedBodyCodes(Sets.newHashSet(dbcList));
+    Map<String, Map> realmAccessMap = (Map<String, Map>) claims.get(REALM_ACCESS_FIELD);
+    List<Role> foundRoles = null;
+    if(MapUtils.isNotEmpty(realmAccessMap)){
+      List<String> roles = (List<String>) realmAccessMap.get(ROLES_FIELD);
+      foundRoles = roleRepository.findByNameIn(Sets.newHashSet(roles));
+    }
 
+    HeeUser newUser = createUser(firstName, surname, username, email, dbcList, gmcId, foundRoles);
     newUser = userRepository.save(newUser);
 
+    return newUser;
+  }
+
+  private HeeUser createUser(String firstName, String surname, String username, String email, List<String> dbcList, String gmcId, List<Role> foundRoles) {
+    HeeUser newUser = new HeeUser()
+        .active(true)
+        .emailAddress(StringUtils.defaultString(email, StringUtils.EMPTY))
+        .firstName(firstName)
+        .lastName(StringUtils.defaultString(surname, StringUtils.EMPTY))
+        .name(StringUtils.defaultString(username, StringUtils.EMPTY))
+        .gmcId(gmcId);
+
+    newUser.setRoles(Sets.newHashSet(foundRoles));
+    newUser.setDesignatedBodyCodes(Sets.newHashSet(dbcList));
     return newUser;
   }
 
