@@ -6,6 +6,9 @@ import com.transformuk.hee.tis.profile.domain.HeeUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * Wrapper service class for Keyclock admin client to create/update User
  */
@@ -37,6 +40,10 @@ public class KeycloakAdminClientService {
     User existingUser = keycloakAdminClient.findByUsername(REALM_LIN, heeUser.getName());
     User userToUpdate = heeUserToKeyclockUser(heeUser);
     keycloakAdminClient.updateUser(REALM_LIN, existingUser.getId(), userToUpdate);
+  }
+
+  public Map<String, List<String>> getUserAttributes(String username) {
+    return keycloakAdminClient.getAttributesForUser(REALM_LIN, username);
   }
 
   private User heeUserToKeyclockUser(HeeUser heeUser) {

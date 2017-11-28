@@ -15,6 +15,8 @@ import org.slf4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Resource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Set;
 
@@ -55,9 +58,19 @@ public class UserProfileController {
   })
   @CrossOrigin
   @RequestMapping(path = "/userinfo", method = GET, produces = APPLICATION_JSON_VALUE)
-  public UserProfile profile(@RequestHeader(value = "OIDC_access_token") String token) {
-    HeeUser user = loginService.getUserByToken(token);
-    return assembler.toUserProfile(user);
+  public ResponseEntity<UserProfile> profile(@RequestHeader(value = "OIDC_access_token") String token) {
+    HeeUser user;
+    HttpStatus httpStatus;
+    try {
+      user = loginService.getUserByToken(token);
+      httpStatus = HttpStatus.OK;
+    } catch (EntityNotFoundException enfe) {
+      LOG.debug("User not found using token, creating new user");
+      user = loginService.createUserByToken(token);
+      httpStatus = HttpStatus.CREATED;
+    }
+    UserProfile userProfile = assembler.toUserProfile(user);
+    return new ResponseEntity<>(userProfile, httpStatus);
   }
 
   @ApiOperation(value = "Returns list of users by exact matching of given designatedBodyCodes",
