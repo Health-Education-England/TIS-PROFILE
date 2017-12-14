@@ -146,6 +146,24 @@ public class LoginService {
     return newUser;
   }
 
+  @Transactional
+  public HeeUser updateUserRolesByToken(String token) {
+    Jwt jwt = JwtHelper.decode(token);
+    Map<String, Object> claims = jsonParser.parseMap(jwt.getClaims());
+    String username = getString(claims, PREFERRED_USERNAME_FIELD);
+    Map<String, Map> realmAccessMap = (Map<String, Map>) claims.get(REALM_ACCESS_FIELD);
+    List<Role> foundRoles = null;
+    if(MapUtils.isNotEmpty(realmAccessMap)){
+      List<String> roles = (List<String>) realmAccessMap.get(ROLES_FIELD);
+      foundRoles = roleRepository.findByNameIn(Sets.newHashSet(roles));
+    }
+    HeeUser updatedUser = updateUserRoles(username,foundRoles);
+    updatedUser = userRepository.save(updatedUser);
+
+    return updatedUser;
+  }
+
+
   private HeeUser createUser(String firstName, String surname, String username, String email, List<String> dbcList, String gmcId, List<Role> foundRoles) {
     HeeUser newUser = new HeeUser()
         .active(true)
@@ -158,6 +176,12 @@ public class LoginService {
     newUser.setRoles(Sets.newHashSet(foundRoles));
     newUser.setDesignatedBodyCodes(Sets.newHashSet(dbcList));
     return newUser;
+  }
+
+  private HeeUser updateUserRoles(String username, List<Role> roles) {
+    HeeUser updateUser = userRepository.findByActive(username);
+    updateUser.setRoles(Sets.newHashSet(roles));
+    return updateUser;
   }
 
   private JwtAuthToken decode(String token) {
