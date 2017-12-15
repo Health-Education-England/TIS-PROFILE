@@ -236,8 +236,6 @@ public class UserProfileControllerTest {
     given(loginService.getUserByToken(UPDATED_TOKEN)).willReturn(user);
     given(loginService.updateUserRolesByToken(UPDATED_TOKEN)).willReturn(updatedUser);
 
-    //when(loginService.updateUserRolesByToken(UPDATED_TOKEN)).thenReturn(updatedUser);
-
     // When & then
     this.mvc.perform(get("/api/userinfo")
         .header("OIDC_access_token", TOKEN))

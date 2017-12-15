@@ -14,11 +14,9 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -211,6 +209,7 @@ public class LoginServiceTest {
 
   @Test
   public void createUserByTokenShouldCreateNewUserWithRolesAndDbcs() {
+    // given
     HashSet<String> roleNames = Sets.newHashSet("RVAdmin",
         "uma_authorization");
     List<Role> foundRoles = Lists.newArrayList(rvAdminRoleMock);
@@ -219,13 +218,14 @@ public class LoginServiceTest {
     userAttributes.put(DBC_ATTRIBUTE, Lists.newArrayList("DBC1,DBC2"));
     userAttributes.put(GMC_ID_ATTRIBUTE, Lists.newArrayList("GMC123"));
 
+    // when
     when(roleRepositoryMock.findByNameIn(roleNames)).thenReturn(foundRoles);
     when(userRepository.save(any(HeeUser.class))).thenReturn(createdUser);
     when(keycloakAdminClientServiceMock.getUserAttributes(any())).thenReturn(userAttributes);
 
+    // then
     HeeUser result = service.createUserByToken(TOKEN);
     Assert.assertEquals(createdUser, result);
-
 
     ArgumentCaptor<HeeUser> heeUserArgumentCaptor = ArgumentCaptor.forClass(HeeUser.class);
     verify(userRepository).save(heeUserArgumentCaptor.capture());
@@ -243,12 +243,15 @@ public class LoginServiceTest {
   }
 
   @Test
-  public void shouldUpdateUserRolesByToken() throws Exception {
+  public void shouldAddUserRolesByToken() throws Exception {
+    //given
     HeeUser user = new HeeUser();
+    user.setName(USER_NAME_JAMESH);
     List<Role> foundUserRoles = Lists.newArrayList(rvAdminRoleMock);
     user.setRoles(Sets.newHashSet(foundUserRoles));
 
     HeeUser updatedUser = new HeeUser();
+    updatedUser.setName(USER_NAME_JAMESH);
     HashSet<String> roleNames = Sets.newHashSet("RVAdmin",
         "ProfileAdmin");
     List<Role> foundRoles = Lists.newArrayList(rvAdminRoleMock,profileAdminRoleMock);
@@ -258,15 +261,50 @@ public class LoginServiceTest {
     userAttributes.put(DBC_ATTRIBUTE, Lists.newArrayList("DBC1,DBC2"));
     userAttributes.put(GMC_ID_ATTRIBUTE, Lists.newArrayList("GMC123"));
 
+    // when
     when(roleRepositoryMock.findByNameIn(roleNames)).thenReturn(foundRoles);
     when(userRepository.findByActive(USER_NAME_JAMESH)).thenReturn(user);
     when(userRepository.save(any(HeeUser.class))).thenReturn(updatedUser);
     when(keycloakAdminClientServiceMock.getUserAttributes(any())).thenReturn(userAttributes);
 
+    // then
     HeeUser originalUser = service.getUserByToken(UPDATED_TOKEN);
     Assert.assertEquals(user, originalUser);
 
     HeeUser result = service.updateUserRolesByToken(UPDATED_TOKEN);
+    Assert.assertEquals(updatedUser, result);
+  }
+
+  @Test
+  public void shouldRemoveUserRolesByToken() {
+    // given
+    HeeUser user = new HeeUser();
+    user.setName(USER_NAME_JAMESH);
+    List<Role> foundUserRoles = Lists.newArrayList(rvAdminRoleMock, profileAdminRoleMock);
+    user.setRoles(Sets.newHashSet(foundUserRoles));
+
+    HeeUser updatedUser = new HeeUser();
+    updatedUser.setName(USER_NAME_JAMESH);
+    HashSet<String> roleNames = Sets.newHashSet("RVAdmin",
+        "uma_authorization");
+    List<Role> foundRoles = Lists.newArrayList(rvAdminRoleMock);
+    updatedUser.setRoles(Sets.newHashSet(foundRoles));
+
+    Map<String, List<String>> userAttributes = Maps.newHashMap();
+    userAttributes.put(DBC_ATTRIBUTE, Lists.newArrayList("DBC1,DBC2"));
+    userAttributes.put(GMC_ID_ATTRIBUTE, Lists.newArrayList("GMC123"));
+
+    // when
+    when(roleRepositoryMock.findByNameIn(roleNames)).thenReturn(foundRoles);
+    when(userRepository.findByActive(USER_NAME_JAMESH)).thenReturn(user);
+    when(userRepository.save(any(HeeUser.class))).thenReturn(user);
+    when(keycloakAdminClientServiceMock.getUserAttributes(any())).thenReturn(userAttributes);
+
+    // then
+    HeeUser originalUser = service.getUserByToken(UPDATED_TOKEN);
+    Assert.assertEquals(user, originalUser);
+
+    HeeUser result = service.updateUserRolesByToken(TOKEN);
     Assert.assertEquals(updatedUser, result);
   }
 
