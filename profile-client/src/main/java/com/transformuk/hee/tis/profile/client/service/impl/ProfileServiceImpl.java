@@ -46,6 +46,7 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
   private static final String TRAINEE_MAPPINGS_ENDPOINT = "/api/trainee-id/{dbc}/mappings";
   private static final String USERS_RO_USER_ENDPOINT = "/api/users/ro-user/";
   private static final String USERS_ENDPOINT = "/api/users";
+  private static final String CREATE_HEE_USER_ENDPOINT = "/api/hee-users-db";
   private static final String TRAINEE_DBC_REGISTER_ENDPOINT = "/api/trainee-id/{designatedBodyCode}/register";
   private static final Map<Class, ParameterizedTypeReference> classToParamTypeRefMap;
 
@@ -108,6 +109,14 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
         requestEntity, TraineeIdListResponse.class);
     return response.getBody().getTraineeIds();
   }
+//
+//    NEED TO ADD END POINTS FOR CREATING USERS IN DB
+//  ********************************************************
+//  public HeeUserDTO createHeeUser(HeeUserDTO) {
+//    String url = serviceUrl + CREATE_HEE_USER_ENDPOINT;
+//
+//    return null;
+//  }
 
 
   /**

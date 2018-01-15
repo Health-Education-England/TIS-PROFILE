@@ -154,6 +154,7 @@ public class LoginService {
     Map<String, Map> realmAccessMap = (Map<String, Map>) claims.get(REALM_ACCESS_FIELD);
     List<Role> foundRoles = null;
     if(MapUtils.isNotEmpty(realmAccessMap)){
+
       List<String> roles = (List<String>) realmAccessMap.get(ROLES_FIELD);
       foundRoles = roleRepository.findByNameIn(Sets.newHashSet(roles));
     }
