@@ -319,6 +319,7 @@ public class LoginServiceTest {
 
   @Test
   public void shouldAddDbcFromGroups() {
+    // Given
     HeeUser heeUser = new HeeUser();
     heeUser.setName(USER_NAME_JAMESH);
     Set<Role> roles = Sets.newHashSet(profileAdminRoleMock, rvAdminRoleMock);
@@ -333,25 +334,16 @@ public class LoginServiceTest {
     kssGroup.setName(LO_KSS);
     List<GroupRepresentation> userGroups = Lists.newArrayList(eoeGroup, kssGroup);
 
+    // When
     when(keycloakAdminClientServiceMock.getUserGroups(USER_NAME_JAMESH)).thenReturn(userGroups);
     when(roleRepositoryMock.findByNameIn(roleNames)).thenReturn(foundRoles);
     when(userRepository.findByActive(USER_NAME_JAMESH)).thenReturn(heeUser);
     when(userRepository.save(any(HeeUser.class))).thenReturn(heeUser);
 
+    // Then
     HeeUser result = service.updateUserByToken(TOKEN);
     Assert.assertEquals(heeUser, result);
   }
-//
-//  @Test
-//  public void shouldRemoveDbcIfNotInGroups() {
-//
-//  }
-//
-//  @Test
-//  public void shouldDealWithKeyCloakUserWithNoRolesGroupsOrAttributes() {
-//    HeeUser newUser = service.createUserByToken(TOKEN_NO_GROUPS_NO_ROLES_NO_ATTR);
-//    String test = "fdafdass";
-//  }
 
   @Test(expected = EntityNotFoundException.class)
   public void shouldThrowExceptionWhenUserNameNotFound() {
