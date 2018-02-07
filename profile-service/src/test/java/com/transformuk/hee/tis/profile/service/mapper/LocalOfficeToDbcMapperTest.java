@@ -1,0 +1,45 @@
+package com.transformuk.hee.tis.profile.service.mapper;
+
+import com.google.common.collect.Sets;
+import org.junit.Test;
+
+import java.util.Set;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+public class LocalOfficeToDbcMapperTest {
+
+  private static final String NE_LO = "North East";
+  private static final String NW_LO = "North West";
+  private static final String YH_LO = "Yorkshire and the Humber";
+  private static final String LONDON_LO = "LaSE";
+
+  @Test
+  public void shouldMapLocalOffices() {
+    //Given
+    Set<String> localOffices = Sets.newHashSet(NE_LO, NW_LO, YH_LO, LONDON_LO);
+    //When
+    Set<String> response = LocalOfficeToDbcMapper.map(localOffices);
+
+    //Then
+    assertThat(response).hasSize(7);
+    assertThat(response).contains("1-AIIDSI","1-AIIDNQ","1-AIIDQQ","1-AIIDR8","1-AIIDWA","1-AIIDVS","1-AIIDWI");
+  }
+
+  @Test
+  public void shouldHandleUnknownLocalOffices() {
+    //Given
+    Set<String> localOffices = Sets.newHashSet("unknown");
+    //When
+    Set<String> response = LocalOfficeToDbcMapper.map(localOffices);
+
+    //Then
+    assertThat(response).hasSize(0);
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void shouldHandleNull() {
+    //When
+    LocalOfficeToDbcMapper.map(null);
+  }
+}
