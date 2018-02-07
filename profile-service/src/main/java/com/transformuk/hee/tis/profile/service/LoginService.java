@@ -59,13 +59,6 @@ public class LoginService {
 
   private JsonParser jsonParser = JsonParserFactory.getJsonParser();
 
-//  public LoginService(HeeUserRepository userRepository, RoleRepository roleRepository,
-//                      KeycloakAdminClientService keycloakAdminClientService) {
-//    this.userRepository = userRepository;
-//    this.roleRepository = roleRepository;
-//    this.keycloakAdminClientService = keycloakAdminClientService;
-//  }
-
   /**
    * @param token jwtAuthToken
    * @return {@link HeeUser} User associated with given unique user name
