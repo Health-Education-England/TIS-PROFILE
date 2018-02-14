@@ -113,7 +113,7 @@ public class HeeUserResource {
 
     heeUser = heeUserRepository.save(heeUser);
     HeeUserDTO result = heeUserMapper.heeUserToHeeUserDTO(heeUser);
-    return ResponseEntity.created(new URI("/api/hee-users/" + result.getName()))
+    return ResponseEntity.created(new URI("/api/hee-users-db/" + result.getName()))
         .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getName()))
         .body(result);
   }
