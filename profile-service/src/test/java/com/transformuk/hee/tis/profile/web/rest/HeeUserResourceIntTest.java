@@ -146,6 +146,36 @@ public class HeeUserResourceIntTest {
 
   @Test
   @Transactional
+  public void createHeeUserDbOnly() throws Exception {
+    int databaseSizeBeforeCreate = heeUserRepository.findAll().size();
+    int databasePermissionSizeBeforeCreate = permissionRepository.findAll().size();
+
+    heeUser.setPassword(DEFAULT_PASSWORD);
+    heeUser.setTemporaryPassword(true);
+    // Create the HeeUser
+    HeeUserDTO heeUserDTO = heeUserMapper.heeUserToHeeUserDTO(heeUser);
+    restHeeUserMockMvc.perform(post("/api/hee-users-db")
+        .contentType(TestUtil.APPLICATION_JSON_UTF8)
+        .content(TestUtil.convertObjectToJsonBytes(heeUserDTO)))
+        .andExpect(status().isCreated());
+
+    // Validate the HeeUser in the database
+    List<HeeUser> heeUserList = heeUserRepository.findAll();
+    assertThat(heeUserList).hasSize(databaseSizeBeforeCreate + 1);
+    HeeUser testHeeUser = heeUserRepository.findOne(DEFAULT_NAME);
+    assertThat(testHeeUser.getName()).isEqualTo(DEFAULT_NAME);
+    assertThat(testHeeUser.getFirstName()).isEqualTo(DEFAULT_FIRST_NAME);
+    assertThat(testHeeUser.getLastName()).isEqualTo(DEFAULT_LAST_NAME);
+    assertThat(testHeeUser.getGmcId()).isEqualTo(DEFAULT_GMC_ID);
+    assertThat(testHeeUser.getPhoneNumber()).isEqualTo(DEFAULT_PHONE_NUMBER);
+    assertThat(testHeeUser.getEmailAddress()).isEqualTo(DEFAULT_EMAIL_ADDRESS);
+    assertThat(testHeeUser.isActive()).isEqualTo(DEFAULT_ACTIVE);
+    assertThat(permissionRepository.findAll().size()).isEqualTo(databasePermissionSizeBeforeCreate);
+
+  }
+
+  @Test
+  @Transactional
   public void shouldValidateTemporaryPassword() throws Exception {
     int databaseSizeBeforeCreate = heeUserRepository.findAll().size();
     int databasePermissionSizeBeforeCreate = permissionRepository.findAll().size();

@@ -91,6 +91,35 @@ public class HeeUserResource {
   }
 
   /**
+   * POST  /hee-user-db : Create a new heeUser in the DB only.
+   *
+   * @param heeUserDTO the heeUserDTO to create
+   * @return the ResponseEntity with status 201 (Created) and with body the new heeUserDTO, or with status 400 (Bad Request) if the heeUser has already an ID
+   * @throws URISyntaxException if the Location URI syntax is incorrect
+   */
+  @PostMapping("/hee-users-db")
+  @Timed
+  @PreAuthorize("hasAuthority('profile:add:modify:entities')")
+  public ResponseEntity<HeeUserDTO> createHeeUserDb(@Valid @RequestBody HeeUserDTO heeUserDTO) throws URISyntaxException {
+    log.debug("REST request to save HeeUser : {}", heeUserDTO);
+    HeeUser heeUser = heeUserMapper.heeUserDTOToHeeUser(heeUserDTO);
+    heeUser.setPassword(heeUserDTO.getPassword());
+    //Validate password
+    heeUserValidator.validatePassword(heeUser.getPassword());
+    //Validate isTemporaryPassword
+    heeUserValidator.validateIsTemporary(heeUser.getTemporaryPassword());
+    //Validate
+    validateHeeUser(heeUser);
+
+    heeUser = heeUserRepository.save(heeUser);
+    HeeUserDTO result = heeUserMapper.heeUserToHeeUserDTO(heeUser);
+    return ResponseEntity.created(new URI("/api/hee-users-db/" + result.getName()))
+        .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getName()))
+        .body(result);
+  }
+
+
+  /**
    * PUT  /hee-users : Updates an existing heeUser.
    *
    * @param heeUserDTO the heeUserDTO to update
