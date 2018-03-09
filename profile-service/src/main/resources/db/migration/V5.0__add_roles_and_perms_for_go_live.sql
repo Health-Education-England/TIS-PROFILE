@@ -112,7 +112,5 @@ VALUES
 ('HEE Admin Reval','revalidation:provide:recommendation'),
 ('HEE Admin Reval','revalidation:see:dbc:report'),
 ('HEE Admin Reval','revalidation:see:dbc:trainees'),
-('HEE Admin Reval','revalidation:submit:on:behalf:of:ro'),
-('HEE Admin Reval','revalidation:submit:to:gmc'),
-('HEE Admin Reval','revalidation:submit:to:ro:review')
+('HEE Admin Reval','revalidation:submit:on:behalf:of:ro')
 ON DUPLICATE KEY UPDATE `roleName` = `roleName`,`permissionName` = `permissionName`;
