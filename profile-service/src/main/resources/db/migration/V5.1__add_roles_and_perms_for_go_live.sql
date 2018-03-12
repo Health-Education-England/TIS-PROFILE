@@ -80,7 +80,9 @@ VALUES
 ('HEE Admin Sensitive','specialty:add:modify'),
 ('HEE Admin Sensitive','specialty:view'),
 ('HEE Admin Sensitive','tcs:add:modify:entities'),
-('HEE Admin Sensitive','tcs:view:entities')
+('HEE Admin Sensitive','tcs:view:entities'),
+('HEE Admin Sensitive','personsensitive:view:entities'),
+('HEE Admin Sensitive','personsensitive:add:modify:entities')
 
 ON DUPLICATE KEY UPDATE `roleName` = `roleName`,`permissionName` = `permissionName`;
 
