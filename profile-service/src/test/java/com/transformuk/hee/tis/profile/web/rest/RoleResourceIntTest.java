@@ -206,11 +206,16 @@ public class RoleResourceIntTest {
   @Test
   @Transactional
   public void getAllRoles() throws Exception {
+    // Given
     // Initialize the database
     roleRepository.saveAndFlush(role);
 
+    // Need to override default page size (20) as number of Roles increases
+    String resultSize = Integer.toString(roleRepository.findAll().size());
+
+    // When and Then
     // Get all the roleList
-    restRoleMockMvc.perform(get("/api/roles?sort=name,desc"))
+    restRoleMockMvc.perform(get("/api/roles?size=" + resultSize))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
         .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())));
