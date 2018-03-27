@@ -33,7 +33,7 @@ ON DUPLICATE KEY UPDATE `roleName` = `roleName`,`permissionName` = `permissionNa
 INSERT INTO `RolePermission` (`roleName`,`permissionName`)
 VALUES
 ('TIS Admin','assessment:add:modify:entities'),
-('TIS Admin','assessment:view:entities'),
+('TIS Admin','assessment:view:entities'),t
 ('TIS Admin','curriculum:add:modify'),
 ('TIS Admin','curriculum:view'),
 ('TIS Admin','person:add:modify'),
