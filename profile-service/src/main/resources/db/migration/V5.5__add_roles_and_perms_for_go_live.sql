@@ -3,6 +3,12 @@ INSERT INTO `Role` VALUES('HEE Admin Sensitive') ON DUPLICATE KEY UPDATE `name` 
 INSERT INTO `Role` VALUES('HEE Admin Revalidation') ON DUPLICATE KEY UPDATE `name` = `name`;
 INSERT INTO `Role` VALUES('TIS Admin') ON DUPLICATE KEY UPDATE `name` = `name`;
 
+INSERT INTO `Permission` (`name`,`type`,`description`,`principal`,`resource`,`actions`,`effect`)
+VALUES
+  ('adminmenu:view:entities','REFERENCE','Can view admin menu data','tis:profile::user:','tis:reference::reference:','View','Allow'),
+  ('adminmenu:add:modify:entities','REFERENCE','Can add or modify admin menu data','tis:profile::user:','tis:reference::reference:','Create,Update','Allow')
+ON DUPLICATE KEY UPDATE `name` = `name`;
+
 INSERT INTO `RolePermission` (`roleName`,`permissionName`)
 VALUES
 ('HEE Admin','assessment:add:modify:entities'),
@@ -58,7 +64,9 @@ VALUES
 ('TIS Admin','revalidation:see:dbc:trainees'),
 ('TIS Admin','revalidation:submit:on:behalf:of:ro'),
 ('TIS Admin','revalidation:submit:to:gmc'),
-('TIS Admin','revalidation:submit:to:ro:review')
+('TIS Admin','revalidation:submit:to:ro:review'),
+('TIS Admin','adminmenu:view:entities'),
+('TIS Admin','adminmenu:add:modify:entities')
 
 ON DUPLICATE KEY UPDATE `roleName` = `roleName`,`permissionName` = `permissionName`;
 
