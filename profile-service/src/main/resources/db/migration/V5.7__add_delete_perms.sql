@@ -14,12 +14,12 @@ ON DUPLICATE KEY UPDATE `roleName` = `roleName`;
 
 INSERT INTO `RolePermission` (`roleName`,`permissionName`)
 VALUES
-  ('Hee Admin','assessment:delete:entities'),
-  ('Hee Admin','tcs:delete:entities')
+  ('HEE Admin Sensitive','assessment:delete:entities'),
+  ('HEE Admin Sensitive','tcs:delete:entities')
 ON DUPLICATE KEY UPDATE `roleName` = `roleName`;
 
 INSERT INTO `RolePermission` (`roleName`,`permissionName`)
 VALUES
-  ('Hee Admin','assessment:delete:entities'),
-  ('Hee Admin','tcs:delete:entities')
+  ('HEE Admin Revalidation','assessment:delete:entities'),
+  ('HEE Admin Revalidation','tcs:delete:entities')
 ON DUPLICATE KEY UPDATE `roleName` = `roleName`;
