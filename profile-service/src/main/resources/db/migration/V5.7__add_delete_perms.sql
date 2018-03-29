@@ -23,3 +23,8 @@ VALUES
   ('HEE Admin Revalidation','assessment:delete:entities'),
   ('HEE Admin Revalidation','tcs:delete:entities')
 ON DUPLICATE KEY UPDATE `roleName` = `roleName`;
+
+INSERT INTO `RolePermission` (`roleName`,`permissionName`)
+VALUES
+  ('PPAdmin','tcs:delete:entities')
+ON DUPLICATE KEY UPDATE `roleName` = `roleName`;
