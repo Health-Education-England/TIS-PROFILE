@@ -17,7 +17,7 @@ WHERE `roleName` = 'TisAdmin';
 
 INSERT INTO `RolePermission`
 VALUES
-('Hee TIS Admin','notification:change:add:notification')
+('HEE TIS Admin','notification:change:add:notification')
 ON DUPLICATE KEY UPDATE `roleName` = `roleName`;
 
 DELETE FROM `RolePermission` WHERE `roleName` = 'TisAdmin';
