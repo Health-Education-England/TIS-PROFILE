@@ -47,6 +47,9 @@ public class LoginServiceTest {
   public static final String TOKEN =
       "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJrcEk5UC1hQ3JaTXJ4cG5aeWNnNnlISk9VZ3g0a2hUYS04TlJyMkRhY0g0In0.eyJqdGkiOiI3ZjJiNzA4MC1lYjYxLTQ1YTgtYmUwNS0xYWFjODNkMTY3ZjciLCJleHAiOjE0Nzc1ODA5ODQsIm5iZiI6MCwiaWF0IjoxNDc3NTgwNjg0LCJpc3MiOiJodHRwczovL2Rldi1hcGkudHJhbnNmb3JtY2xvdWQubmV0L2F1dGgvcmVhbG1zL2xpbiIsImF1ZCI6ImFwaS1nYXRld2F5Iiwic3ViIjoiNGY5YWRhY2MtZjEyNC00M2FmLTkyZDMtYjVlZDc3NjhlYTU0IiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiYXBpLWdhdGV3YXkiLCJub25jZSI6IlA2NnVVT2JJTVBtY19Wb1RudmlYdk1KWE0zYks0RUo3WHJUeHpRbTN0ZUkiLCJhdXRoX3RpbWUiOjE0Nzc1ODA2ODQsInNlc3Npb25fc3RhdGUiOiIyNzg1NDE2Ny1hNWY0LTRkNTItOGQ3OC02OTY3M2ZmZTMwODgiLCJhY3IiOiIxIiwiY2xpZW50X3Nlc3Npb24iOiIyNjNmZDg1Ni02YmZjLTQ4ZWQtODZlNC1jMzFkOTdmYmNlZGMiLCJhbGxvd2VkLW9yaWdpbnMiOlsiaHR0cHM6Ly9kZXYtYXBpLnRyYW5zZm9ybWNsb3VkLm5ldCIsImh0dHBzOi8vYXBwcy5saW4ubmhzLnVrIiwiaHR0cDovL2xvY2FsaG9zdDo4MDg3IiwiaHR0cHM6Ly9zdGFnZS1hcHBzLmxpbi5uaHMudWsiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbIlJWQWRtaW4iLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJ2aWV3LXByb2ZpbGUiXX19LCJuYW1lIjoiSmFtZXMgSHVkc29uIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiamFtZXNoIiwiZ2l2ZW5fbmFtZSI6IkphbWVzIiwiZmFtaWx5X25hbWUiOiJIdWRzb24ifQ.VJ_8MDyM-1_MMlmhl4N-ZXHyq0G8AlaSLBR4eqlrXLD5CC29dW807WARalNGDqwlNSUuvK6tDiGRt5XKYWo6HDNBL-7Sp3QT2FXew6dD8zJwN8iR34aJGDGg94Kd0PkFESybqQFb4-sntCfKHQ3aRZkpD2WkyNZXEQEuDURYuqyJulqmKXqZxfnYWkd8JgSN1oTyUc4sFPWHjzI9A_y_0Tb13hAvFlPFWwKhCSSZqjRtC65JADOYMeIbyPCsSCKq0DqY2DCZpBivp5Wp0sZu0SSkww_rkwV5tql4gXV5kYmHWJa1rx_OmTAv6UKWYG4aFaqGmvcNhXkZGrweSCEmUw";
 
+  private static final String UPDATED_TOKEN =
+      "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJrcEk5UC1hQ3JaTXJ4cG5aeWNnNnlISk9VZ3g0a2hUYS04TlJyMkRhY0g0In0.eyJqdGkiOiI4ZGI4NWY1NC0zMmQ3LTRiYWItOWJhMi05ZjJmODhiYTk4ODQiLCJleHAiOjE1MTMyNDM1MzcsIm5iZiI6MCwiaWF0IjoxNTEzMjQzNDE3LCJpc3MiOiJodHRwczovL2Rldi1hcHBzLnRpcy5uaHMudWsvYXV0aC9yZWFsbXMvbGluIiwiYXVkIjoiYXBpLXRva2VucyIsInN1YiI6IjRmOWFkYWNjLWYxMjQtNDNhZi05MmQzLWI1ZWQ3NzY4ZWE1NCIsInR5cCI6IkJlYXJlciIsImF6cCI6ImFwaS10b2tlbnMiLCJhdXRoX3RpbWUiOjAsInNlc3Npb25fc3RhdGUiOiI5YTk2ZWRhNy1mZmM5LTRlZTktYmZkYy02OTkxYTkyOTI0M2MiLCJhY3IiOiIxIiwiYWxsb3dlZC1vcmlnaW5zIjpbXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbIlByb2ZpbGVBZG1pbiIsIlJWQWRtaW4iXX0sInJlc291cmNlX2FjY2VzcyI6eyJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJuYW1lIjoiSmFtZXMgSHVkc29uIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiamFtZXNoIiwiZ2l2ZW5fbmFtZSI6IkphbWVzIiwiZmFtaWx5X25hbWUiOiJIdWRzb24ifQ.DbAn_sTwlATr2OGiULK1043pwiGfgH3H6uiqyDMZ7Nh-FxZ0ds9m7SyqWFYkGXkHWX1SURTs36Wvi8WzEMfzR283h2S2lC_a8AfGtd0gYKKTgyWgyOoOqvOnvntE47L0U3-ICfQZ8NFfspGvBY0NnSeTlUjLHdlZWH7iQKgSccnnHM31Uu_rnfQRQoF16BRojIs5kT6fPLN8J69YlFQELyKuQ9-Zb4K_q_hXoOVFkikogTNEnD9OpdpauICICTp9Jyo3em1aGwcvlt36zhvSEZDeIrTo5fVmcRxEpwwubDAcgVkO7zvZVAGlTjI2IJLLKH_N8PhLOs-YWO2NM2zxXg";
+
   @Mock
   private HeeUserRepository userRepository;
   @Mock
@@ -55,6 +58,8 @@ public class LoginServiceTest {
   private KeycloakAdminClientService keycloakAdminClientServiceMock;
   @Mock
   private Role rvAdminRoleMock;
+  @Mock
+  private Role profileAdminRoleMock;
 
   @InjectMocks
   private LoginService service;
@@ -237,6 +242,99 @@ public class LoginServiceTest {
     Assert.assertTrue(capturedHeeUser.isActive());
   }
 
+  @Test
+  public void shouldUpdateUserRolesByToken() throws Exception {
+    HeeUser user = new HeeUser();
+    List<Role> foundUserRoles = Lists.newArrayList(rvAdminRoleMock);
+    user.setRoles(Sets.newHashSet(foundUserRoles));
+
+    HeeUser updatedUser = new HeeUser();
+    HashSet<String> roleNames = Sets.newHashSet("RVAdmin",
+        "ProfileAdmin");
+    List<Role> foundRoles = Lists.newArrayList(rvAdminRoleMock,profileAdminRoleMock);
+    updatedUser.setRoles(Sets.newHashSet(foundRoles));
+
+    Map<String, List<String>> userAttributes = Maps.newHashMap();
+    userAttributes.put(DBC_ATTRIBUTE, Lists.newArrayList("DBC1,DBC2"));
+    userAttributes.put(GMC_ID_ATTRIBUTE, Lists.newArrayList("GMC123"));
+
+    when(roleRepositoryMock.findByNameIn(roleNames)).thenReturn(foundRoles);
+    when(userRepository.findByActive(USER_NAME_JAMESH)).thenReturn(user);
+    when(userRepository.save(any(HeeUser.class))).thenReturn(updatedUser);
+    when(keycloakAdminClientServiceMock.getUserAttributes(any())).thenReturn(userAttributes);
+
+    HeeUser originalUser = service.getUserByToken(UPDATED_TOKEN);
+    Assert.assertEquals(user, originalUser);
+
+    HeeUser result = service.updateUserRolesByToken(UPDATED_TOKEN);
+    Assert.assertEquals(updatedUser, result);
+  }
+
+  @Test
+  public void shouldAddUserRolesByToken() throws Exception {
+    //given
+    HeeUser user = new HeeUser();
+    user.setName(USER_NAME_JAMESH);
+    List<Role> foundUserRoles = Lists.newArrayList(rvAdminRoleMock);
+    user.setRoles(Sets.newHashSet(foundUserRoles));
+
+    HeeUser updatedUser = new HeeUser();
+    updatedUser.setName(USER_NAME_JAMESH);
+    HashSet<String> roleNames = Sets.newHashSet("RVAdmin",
+        "ProfileAdmin");
+    List<Role> foundRoles = Lists.newArrayList(rvAdminRoleMock,profileAdminRoleMock);
+    updatedUser.setRoles(Sets.newHashSet(foundRoles));
+
+    Map<String, List<String>> userAttributes = Maps.newHashMap();
+    userAttributes.put(DBC_ATTRIBUTE, Lists.newArrayList("DBC1,DBC2"));
+    userAttributes.put(GMC_ID_ATTRIBUTE, Lists.newArrayList("GMC123"));
+
+    // when
+    when(roleRepositoryMock.findByNameIn(roleNames)).thenReturn(foundRoles);
+    when(userRepository.findByActive(USER_NAME_JAMESH)).thenReturn(user);
+    when(userRepository.save(any(HeeUser.class))).thenReturn(updatedUser);
+    when(keycloakAdminClientServiceMock.getUserAttributes(any())).thenReturn(userAttributes);
+
+    // then
+    HeeUser originalUser = service.getUserByToken(UPDATED_TOKEN);
+    Assert.assertEquals(user, originalUser);
+
+    HeeUser result = service.updateUserRolesByToken(UPDATED_TOKEN);
+    Assert.assertEquals(updatedUser, result);
+  }
+
+  @Test
+  public void shouldRemoveUserRolesByToken() {
+    // given
+    HeeUser user = new HeeUser();
+    user.setName(USER_NAME_JAMESH);
+    List<Role> foundUserRoles = Lists.newArrayList(rvAdminRoleMock, profileAdminRoleMock);
+    user.setRoles(Sets.newHashSet(foundUserRoles));
+
+    HeeUser updatedUser = new HeeUser();
+    updatedUser.setName(USER_NAME_JAMESH);
+    HashSet<String> roleNames = Sets.newHashSet("RVAdmin",
+        "uma_authorization");
+    List<Role> foundRoles = Lists.newArrayList(rvAdminRoleMock);
+    updatedUser.setRoles(Sets.newHashSet(foundRoles));
+
+    Map<String, List<String>> userAttributes = Maps.newHashMap();
+    userAttributes.put(DBC_ATTRIBUTE, Lists.newArrayList("DBC1,DBC2"));
+    userAttributes.put(GMC_ID_ATTRIBUTE, Lists.newArrayList("GMC123"));
+
+    // when
+    when(roleRepositoryMock.findByNameIn(roleNames)).thenReturn(foundRoles);
+    when(userRepository.findByActive(USER_NAME_JAMESH)).thenReturn(user);
+    when(userRepository.save(any(HeeUser.class))).thenReturn(user);
+    when(keycloakAdminClientServiceMock.getUserAttributes(any())).thenReturn(userAttributes);
+
+    // then
+    HeeUser originalUser = service.getUserByToken(UPDATED_TOKEN);
+    Assert.assertEquals(user, originalUser);
+
+    HeeUser result = service.updateUserRolesByToken(TOKEN);
+    Assert.assertEquals(updatedUser, result);
+  }
 
   @Test(expected = EntityNotFoundException.class)
   public void shouldThrowExceptionWhenUserNameNotFound() {
