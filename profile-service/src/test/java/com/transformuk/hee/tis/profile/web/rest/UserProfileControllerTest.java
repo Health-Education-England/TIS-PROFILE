@@ -45,8 +45,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@Ignore("Ignored for testing profile changes via hard-coded token")
-
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ProfileApp.class)
 @ComponentScan("com.transformuk.hee.tis.profile.assembler")
