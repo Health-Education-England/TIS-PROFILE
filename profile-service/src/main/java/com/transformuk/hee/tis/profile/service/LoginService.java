@@ -122,7 +122,6 @@ public class LoginService {
     String email = getString(claims, EMAIL_FIELD);
 
     Map<String, List<String>> userAttributes = keycloakAdminClientService.getUserAttributes(username);
-    List<String> dbcList = null;
     String gmcId = null;
 
     if(MapUtils.isNotEmpty(userAttributes)){
