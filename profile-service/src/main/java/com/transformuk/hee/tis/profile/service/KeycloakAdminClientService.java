@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Wrapper service class for Keyclock admin client to create/update User
+ * Wrapper service class for Keycloak admin client to create/update User
  */
 @Service
 public class KeycloakAdminClientService {
@@ -28,7 +28,7 @@ public class KeycloakAdminClientService {
    * @param heeUser
    */
   public void createUser(HeeUser heeUser) {
-    // create user in KeyClock
+    // create user in KeyCloak
     User userToCreate = heeUserToKeycloakUser(heeUser);
     keycloakAdminClient.createUser(REALM_LIN, userToCreate);
   }
@@ -39,7 +39,7 @@ public class KeycloakAdminClientService {
    * @param heeUser
    */
   public void updateUser(HeeUser heeUser) {
-    // First try to create convert user in KeyClock
+    // First try to create convert user in KeyCloak
     User existingUser = keycloakAdminClient.findByUsername(REALM_LIN, heeUser.getName());
     User userToUpdate = heeUserToKeycloakUser(heeUser);
     keycloakAdminClient.updateUser(REALM_LIN, existingUser.getId(), userToUpdate);
