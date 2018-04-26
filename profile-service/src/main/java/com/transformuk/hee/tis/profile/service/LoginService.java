@@ -131,7 +131,6 @@ public class LoginService {
       }
     }
 
-    
     List<String> dbcs = getUserDbcs(username);
 
     Map<String, Map> realmAccessMap = (Map<String, Map>) claims.get(REALM_ACCESS_FIELD);
