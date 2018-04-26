@@ -164,6 +164,7 @@ public class LoginService {
     return updatedUser;
   }
 
+  
   private HeeUser createUser(String firstName, String surname, String username, String email, List<String> dbcList, String gmcId, List<Role> foundRoles) {
     HeeUser newUser = new HeeUser()
         .active(true)
