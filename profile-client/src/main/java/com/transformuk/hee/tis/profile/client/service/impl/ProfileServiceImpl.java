@@ -109,7 +109,6 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
     return response.getBody().getTraineeIds();
   }
 
-
   /**
    * Get the user profile of revalidation officer for a designated body code
    *
