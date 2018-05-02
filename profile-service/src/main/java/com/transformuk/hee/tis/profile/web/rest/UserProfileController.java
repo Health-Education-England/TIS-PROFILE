@@ -63,12 +63,33 @@ public class UserProfileController {
     HttpStatus httpStatus;
     try {
       user = loginService.getUserByToken(token);
-      user = loginService.updateUserByToken(token);
       httpStatus = HttpStatus.OK;
     } catch (EntityNotFoundException enfe) {
       LOG.debug("User not found using token, creating new user");
       user = loginService.createUserByToken(token);
       httpStatus = HttpStatus.CREATED;
+    }
+    UserProfile userProfile = assembler.toUserProfile(user);
+    return new ResponseEntity<>(userProfile, httpStatus);
+  }
+
+  @ApiOperation(value = "Gets updated user", notes = "updates user roles and groups in auth db and returns updated user"
+      , response = UserProfile.class)
+  @ApiResponses(value = {
+      @ApiResponse(code = 200, message = "Returns updated user profile successfully", response = UserProfile.class)
+  })
+  @CrossOrigin
+  @RequestMapping(path = "/userupdate", method = GET, produces = APPLICATION_JSON_VALUE)
+  public ResponseEntity<UserProfile> amendUser(@RequestHeader(value = "OIDC_access_token") String token) {
+    HeeUser user;
+    HttpStatus httpStatus;
+    try {
+      user = loginService.updateUserByToken(token);
+      httpStatus = HttpStatus.OK;
+    } catch (EntityNotFoundException enfe) {
+      LOG.debug("User not updated using token");
+      user = loginService.getUserByToken(token);
+      httpStatus = HttpStatus.BAD_REQUEST;
     }
     UserProfile userProfile = assembler.toUserProfile(user);
     return new ResponseEntity<>(userProfile, httpStatus);

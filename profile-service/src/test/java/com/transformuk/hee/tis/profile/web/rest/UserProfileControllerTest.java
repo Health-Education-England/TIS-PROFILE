@@ -236,8 +236,6 @@ public class UserProfileControllerTest {
     given(loginService.getUserByToken(UPDATED_TOKEN)).willReturn(user);
     given(loginService.updateUserByToken(UPDATED_TOKEN)).willReturn(updatedUser);
 
-    //when(loginService.updateUserRolesByToken(UPDATED_TOKEN)).thenReturn(updatedUser);
-
     // When & then
     this.mvc.perform(get("/api/userinfo")
         .header("OIDC_access_token", TOKEN))
@@ -249,9 +247,8 @@ public class UserProfileControllerTest {
         .andExpect(jsonPath("$.roles").value(hasItems(ROLES)));
 
     verify(loginService).getUserByToken(TOKEN);
-    verify(loginService).updateUserByToken(TOKEN);
 
-    this.mvc.perform(get("/api/userinfo")
+    this.mvc.perform(get("/api/userupdate")
         .header("OIDC_access_token", UPDATED_TOKEN))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.userName").value(USER_NAME))
@@ -260,7 +257,6 @@ public class UserProfileControllerTest {
         .andExpect(jsonPath("$.roles").isNotEmpty())
         .andExpect(jsonPath("$.roles").value(hasItems(UPDATED_ROLES)));
 
-    verify(loginService).getUserByToken(UPDATED_TOKEN);
     verify(loginService).updateUserByToken(UPDATED_TOKEN);
 
   }
