@@ -73,7 +73,8 @@ public class UserProfileController {
     return new ResponseEntity<>(userProfile, httpStatus);
   }
 
-  @ApiOperation(value = "Gets updated user", notes = "updates user roles and groups in auth db and returns updated user"
+  @ApiOperation(value = "Creates or Updates user", notes = "updates user roles and groups in auth db and returns " +
+      "updated user. Creates if it doesn't yet exist"
       , response = UserProfile.class)
   @ApiResponses(value = {
       @ApiResponse(code = 200, message = "Returns updated user profile successfully", response = UserProfile.class)
@@ -84,12 +85,13 @@ public class UserProfileController {
     HeeUser user;
     HttpStatus httpStatus;
     try {
-      user = loginService.updateUserByToken(token);
+      loginService.getUserByToken(token);
+      user= loginService.updateUserByToken(token);
       httpStatus = HttpStatus.OK;
     } catch (EntityNotFoundException enfe) {
-      LOG.debug("User not updated using token");
-      user = loginService.getUserByToken(token);
-      httpStatus = HttpStatus.BAD_REQUEST;
+      LOG.debug("User not found using token, creating new user");
+      user = loginService.createUserByToken(token);
+      httpStatus = HttpStatus.CREATED;
     }
     UserProfile userProfile = assembler.toUserProfile(user);
     return new ResponseEntity<>(userProfile, httpStatus);
