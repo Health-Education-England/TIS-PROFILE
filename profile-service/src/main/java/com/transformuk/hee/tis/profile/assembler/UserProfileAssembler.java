@@ -4,7 +4,9 @@ import com.google.common.collect.Sets;
 import com.transformuk.hee.tis.profile.domain.HeeUser;
 import com.transformuk.hee.tis.profile.domain.Permission;
 import com.transformuk.hee.tis.profile.domain.Role;
+import com.transformuk.hee.tis.profile.domain.UserTrust;
 import com.transformuk.hee.tis.profile.repository.PermissionRepository;
+import com.transformuk.hee.tis.security.model.Trust;
 import com.transformuk.hee.tis.security.model.UserProfile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -13,6 +15,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.stream.Collectors.toSet;
@@ -22,6 +25,8 @@ import static java.util.stream.Collectors.toSet;
  */
 @Component
 public class UserProfileAssembler {
+
+  static final String PRINCIPLE_SEPARATOR = ":";
 
   @Autowired
   private PermissionRepository permissionRepository;
@@ -43,10 +48,23 @@ public class UserProfileAssembler {
     //Set user permission policies, a combination of policies attached to the user Roles, and
     //policies specific to the user
     Set<com.transformuk.hee.tis.iam.Permission> policies = Sets.newHashSet();
-    policies.addAll(permissionRepository.findByPrincipalEndsWith(":" + user.getName()).stream().map(p -> toPermissionPolicy(p)).collect(toSet()));
+    policies.addAll(permissionRepository.findByPrincipalEndsWith(PRINCIPLE_SEPARATOR + user.getName())
+        .stream()
+        .map(this::toPermissionPolicy)
+        .collect(toSet()));
+
     policies.addAll(getPermissionPolicies(roles));
     userProfile.setPermissionPolicies(policies);
+
+    //get user trust info
+    Set<UserTrust> associatedTrusts = user.getAssociatedTrusts();
+    Set<Trust> trusts = associatedTrusts.stream().map(this::getTrust).collect(Collectors.toSet());
+    userProfile.setAssignedTrusts(trusts);
     return userProfile;
+  }
+
+  private Trust getTrust(UserTrust userTrust) {
+    return new Trust(userTrust.getTrustId(), userTrust.getTrustCode(), userTrust.getTrustName());
   }
 
   private Set<String> getPermissions(Set<Role> roles) {
