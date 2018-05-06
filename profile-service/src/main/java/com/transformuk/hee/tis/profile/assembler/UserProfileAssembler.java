@@ -8,6 +8,7 @@ import com.transformuk.hee.tis.profile.domain.UserTrust;
 import com.transformuk.hee.tis.profile.repository.PermissionRepository;
 import com.transformuk.hee.tis.security.model.Trust;
 import com.transformuk.hee.tis.security.model.UserProfile;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -58,8 +59,10 @@ public class UserProfileAssembler {
 
     //get user trust info
     Set<UserTrust> associatedTrusts = user.getAssociatedTrusts();
-    Set<Trust> trusts = associatedTrusts.stream().map(this::getTrust).collect(Collectors.toSet());
-    userProfile.setAssignedTrusts(trusts);
+    if(CollectionUtils.isNotEmpty(associatedTrusts)) {
+      Set<Trust> trusts = associatedTrusts.stream().map(this::getTrust).collect(Collectors.toSet());
+      userProfile.setAssignedTrusts(trusts);
+    }
     return userProfile;
   }
 
