@@ -6,6 +6,8 @@ import com.transformuk.hee.tis.security.model.UserProfile;
 import com.transformuk.hee.tis.security.service.UserDetailsService;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 /**
  * Class to retrieve user profile details from profile store.
  */
@@ -21,8 +23,11 @@ public class ProfileUserDetailsServiceImpl implements UserDetailsService {
   }
 
   @Override
-  public UserProfile getProfile(String token) {
+  public Optional<UserProfile> getProfile(String token) {
     HeeUser user = loginService.getUserByToken(token);
-    return userProfileAssembler.toUserProfile(user);
+    if(user == null) {
+      return Optional.empty();
+    }
+    return Optional.of(userProfileAssembler.toUserProfile(user));
   }
 }

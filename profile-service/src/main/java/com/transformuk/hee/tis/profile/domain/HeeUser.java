@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -22,6 +23,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import static javax.persistence.FetchType.EAGER;
+import static javax.persistence.FetchType.LAZY;
 
 /**
  * A HeeUser.
@@ -46,6 +48,7 @@ public class HeeUser implements Serializable {
 
   private Set<Role> roles;
   private Set<String> designatedBodyCodes;
+  private Set<UserTrust> associatedTrusts;
 
   public HeeUser() {
     super();
@@ -193,6 +196,14 @@ public class HeeUser implements Serializable {
     this.designatedBodyCodes = designatedBodyCodes;
   }
 
+  @OneToMany(fetch = LAZY, mappedBy = "heeUser")
+  public Set<UserTrust> getAssociatedTrusts() {
+    return associatedTrusts;
+  }
+
+  public void setAssociatedTrusts(Set<UserTrust> associatedTrusts) {
+    this.associatedTrusts = associatedTrusts;
+  }
 
   @Override
   public boolean equals(Object o) {

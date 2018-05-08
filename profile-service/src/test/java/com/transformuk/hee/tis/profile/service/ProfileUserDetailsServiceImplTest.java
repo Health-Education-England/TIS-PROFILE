@@ -3,11 +3,14 @@ package com.transformuk.hee.tis.profile.service;
 import com.transformuk.hee.tis.profile.assembler.UserProfileAssembler;
 import com.transformuk.hee.tis.profile.domain.HeeUser;
 import com.transformuk.hee.tis.security.model.UserProfile;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -35,8 +38,9 @@ public class ProfileUserDetailsServiceImplTest {
     given(loginService.getUserByToken(TOKEN)).willReturn(aUser);
     given(userProfileAssembler.toUserProfile(aUser)).willReturn(aProfile);
     // when
-    UserProfile profile = service.getProfile(TOKEN);
+    Optional<UserProfile> profile = service.getProfile(TOKEN);
     // then
-    assertThat(profile).isSameAs(aProfile);
+    Assert.assertTrue(profile.isPresent());
+    assertThat(profile.get()).isSameAs(aProfile);
   }
 }

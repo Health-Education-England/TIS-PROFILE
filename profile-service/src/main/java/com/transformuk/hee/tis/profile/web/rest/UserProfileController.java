@@ -86,7 +86,7 @@ public class UserProfileController {
     HttpStatus httpStatus;
     try {
       loginService.getUserByToken(token);
-      user= loginService.updateUserByToken(token);
+      user = loginService.updateUserByToken(token);
       httpStatus = HttpStatus.OK;
     } catch (EntityNotFoundException enfe) {
       LOG.debug("User not found using token, creating new user");
