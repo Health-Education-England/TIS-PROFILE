@@ -22,8 +22,8 @@ public class LocalOfficeToDbcMapperTest {
     Set<String> response = LocalOfficeToDbcMapper.map(localOffices);
 
     //Then
-    assertThat(response).hasSize(7);
-    assertThat(response).contains("1-AIIDSI","1-AIIDNQ","1-AIIDQQ","1-AIIDR8","1-AIIDWA","1-AIIDVS","1-AIIDWI");
+    assertThat(response).hasSize(8);
+    assertThat(response).contains("1-AIIDSI","1-AIIDNQ","1-AIIDQQ","1-AIIDR8","1-AIIDWA","1-AIIDVS","1-AIIDWI","LDN-MOCK-DBC");
   }
 
   @Test

@@ -14,7 +14,9 @@ public class LocalOfficeToDbcMapper {
    *
    */
   private static final Map<String, List<String>> localOfficeToDbcMap = ImmutableMap.<String, List<String>>builder()
-      .put("LaSE", Lists.newArrayList("1-AIIDR8","1-AIIDWA","1-AIIDVS","1-AIIDWI"))
+      .put("LaSE", Lists.newArrayList("1-AIIDR8","1-AIIDWA","1-AIIDVS","1-AIIDWI","LDN-MOCK-DBC"))
+      .put("London LETBs", Lists.newArrayList("1-AIIDR8","1-AIIDWA","1-AIIDVS","1-AIIDWI","LDN-MOCK-DBC"))
+      .put("London (NWL, NCEL, SL)", Lists.newArrayList("1-AIIDWA","1-AIIDVS","1-AIIDWI","LDN-MOCK-DBC"))
       .put("Kent Surrey and Sussex",Lists.newArrayList("1-AIIDR8"))
       .put("North West London",Lists.newArrayList("1-AIIDWA"))
       .put("North Central and East London",Lists.newArrayList("1-AIIDVS"))
