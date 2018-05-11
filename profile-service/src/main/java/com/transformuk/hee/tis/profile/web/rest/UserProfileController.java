@@ -122,7 +122,7 @@ public class UserProfileController {
   })
   @CrossOrigin
   @RequestMapping(path = "/users/ro-user/{designatedBodyCode}", method = GET, produces = APPLICATION_JSON_VALUE)
-  //@PreAuthorize("hasAuthority('profile:get:ro:user')")
+  @PreAuthorize("hasAuthority('profile:get:ro:user')")
   public UserProfile getROByDesignatedBodyCode(@PathVariable(value = "designatedBodyCode") String designatedBodyCode) {
     HeeUser user = loginService.getRVOfficer(designatedBodyCode);
     return assembler.toUserProfile(user);
