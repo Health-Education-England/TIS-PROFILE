@@ -1,7 +1,6 @@
 package com.transformuk.hee.tis.profile.client.service.impl;
 
 import com.google.common.collect.Maps;
-import com.oracle.tools.packager.Log;
 import com.transformuk.hee.tis.client.impl.AbstractClientService;
 import com.transformuk.hee.tis.profile.client.service.ProfileService;
 import com.transformuk.hee.tis.profile.dto.JsonPatchDTO;
