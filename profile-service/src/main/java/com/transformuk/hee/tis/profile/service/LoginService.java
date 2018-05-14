@@ -103,6 +103,7 @@ public class LoginService {
    * @return {@link HeeUser}
    */
   public HeeUser getRVOfficer(String designatedBodyCode) {
+    LOG.info("getRVOfficer()-> {}", designatedBodyCode);
     return userRepository.findRVOfficerByDesignatedBodyCode(designatedBodyCode);
   }
 

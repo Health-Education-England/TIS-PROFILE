@@ -1,6 +1,7 @@
 package com.transformuk.hee.tis.profile.client.service.impl;
 
 import com.google.common.collect.Maps;
+import com.oracle.tools.packager.Log;
 import com.transformuk.hee.tis.client.impl.AbstractClientService;
 import com.transformuk.hee.tis.profile.client.service.ProfileService;
 import com.transformuk.hee.tis.profile.dto.JsonPatchDTO;
@@ -14,6 +15,7 @@ import com.transformuk.hee.tis.profile.dto.TraineeProfileDto;
 import com.transformuk.hee.tis.profile.service.dto.HeeUserDTO;
 import com.transformuk.hee.tis.security.model.UserProfile;
 import org.json.simple.JSONObject;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -31,6 +33,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.util.List;
 import java.util.Map;
 
+import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.web.util.UriComponentsBuilder.fromHttpUrl;
 
@@ -40,6 +43,8 @@ import static org.springframework.web.util.UriComponentsBuilder.fromHttpUrl;
  */
 @Service
 public class ProfileServiceImpl extends AbstractClientService implements ProfileService {
+
+  private static final Logger LOG = getLogger(ProfileServiceImpl.class);
 
   private static final String PAGE_QUERY_PARAM = "page";
   private static final String SIZE_QUERY_PARAM = "size";
@@ -117,7 +122,9 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
    */
   public UserProfile getRODetails(String designatedBodyCode) {
     String url = serviceUrl + USERS_RO_USER_ENDPOINT + designatedBodyCode;
+    LOG.info("GetRODetails --> {}" , url);
     ResponseEntity<UserProfile> responseEntity = profileRestTemplate.getForEntity(url, UserProfile.class);
+    LOG.info("After GetRODetails call");
     return responseEntity.getBody();
   }
 
