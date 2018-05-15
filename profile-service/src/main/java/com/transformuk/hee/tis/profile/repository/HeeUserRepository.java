@@ -20,7 +20,11 @@ public interface HeeUserRepository extends JpaRepository<HeeUser, String>, JpaSp
    * @param designatedBodyCodes
    * @return RO user details
    */
-  @Query("select u from HeeUser u join u.roles r join u.designatedBodyCodes dbc where r.name='RVOfficer' and dbc = :dbc")
+  @Query("select u from HeeUser u " +
+          " join u.roles r " +
+          " left outer join fetch u.associatedTrusts " +
+          " join u.designatedBodyCodes dbc " +
+          " where r.name='RVOfficer' and dbc = :dbc")
   HeeUser findRVOfficerByDesignatedBodyCode(@Param("dbc") String designatedBodyCodes);
 
   @Query("select u from HeeUser u " +
