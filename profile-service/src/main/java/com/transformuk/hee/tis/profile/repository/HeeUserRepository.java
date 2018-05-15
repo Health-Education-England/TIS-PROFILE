@@ -25,7 +25,7 @@ public interface HeeUserRepository extends JpaRepository<HeeUser, String>, JpaSp
           " left outer join fetch u.associatedTrusts " +
           " join u.designatedBodyCodes dbc " +
           " where r.name='RVOfficer' and dbc = :dbc")
-  HeeUser findRVOfficerByDesignatedBodyCode(@Param("dbc") String designatedBodyCodes);
+  List<HeeUser> findRVOfficerByDesignatedBodyCode(@Param("dbc") String designatedBodyCodes);
 
   @Query("select u from HeeUser u " +
       "left outer join fetch u.designatedBodyCodes " +

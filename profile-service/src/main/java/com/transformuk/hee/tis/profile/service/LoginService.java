@@ -104,7 +104,14 @@ public class LoginService {
    */
   public HeeUser getRVOfficer(String designatedBodyCode) {
     LOG.info("getRVOfficer()-> {}", designatedBodyCode);
-    return userRepository.findRVOfficerByDesignatedBodyCode(designatedBodyCode);
+    HeeUser rvOfficer = new HeeUser();
+    List<HeeUser> heeUsers = userRepository.findRVOfficerByDesignatedBodyCode(designatedBodyCode);
+    LOG.info("Found list in getRVOfficer()-> {}", heeUsers.size());
+    if(CollectionUtils.isNotEmpty(heeUsers)){
+      rvOfficer = heeUsers.iterator().next();
+    }
+    LOG.info("Found user in getRVOfficer()-> {}", rvOfficer);
+    return rvOfficer;
   }
 
   /**
