@@ -3,5 +3,5 @@
   <property name="LOG_FILE_NAME" value="auth.log"/>
   <include resource="org/springframework/boot/logging/logback/base.xml"/>
   <include resource="audit-logback.xml"/>
-  <logger name="com.transformuk.hee.tis" level="INFO"/>
+  <logger name="com.transformuk.hee.tis" level="DEBUG"/>
 </configuration>
