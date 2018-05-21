@@ -2,7 +2,9 @@ package com.transformuk.hee.tis.profile.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import com.transformuk.hee.tis.profile.domain.HeeUser;
+import com.transformuk.hee.tis.profile.domain.UserTrust;
 import com.transformuk.hee.tis.profile.repository.HeeUserRepository;
+import com.transformuk.hee.tis.profile.repository.UserTrustRepository;
 import com.transformuk.hee.tis.profile.service.KeycloakAdminClientService;
 import com.transformuk.hee.tis.profile.service.dto.HeeUserDTO;
 import com.transformuk.hee.tis.profile.service.mapper.HeeUserMapper;
@@ -11,6 +13,7 @@ import com.transformuk.hee.tis.profile.web.rest.util.HeaderUtil;
 import com.transformuk.hee.tis.profile.web.rest.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -33,6 +36,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * REST controller for managing HeeUser.
@@ -46,17 +50,20 @@ public class HeeUserResource {
   private final Logger log = LoggerFactory.getLogger(HeeUserResource.class);
   private final HeeUserRepository heeUserRepository;
   private final HeeUserMapper heeUserMapper;
+  private final UserTrustRepository userTrustRepository;
 
   private KeycloakAdminClientService keyclockAdminClientService;
 
   private HeeUserValidator heeUserValidator;
 
   public HeeUserResource(HeeUserRepository heeUserRepository, HeeUserMapper heeUserMapper,
-                         KeycloakAdminClientService keyclockAdminClientService, HeeUserValidator heeUserValidator) {
+                         KeycloakAdminClientService keyclockAdminClientService, HeeUserValidator heeUserValidator,
+                         UserTrustRepository userTrustRepository) {
     this.heeUserRepository = heeUserRepository;
     this.heeUserMapper = heeUserMapper;
     this.keyclockAdminClientService = keyclockAdminClientService;
     this.heeUserValidator = heeUserValidator;
+    this.userTrustRepository = userTrustRepository;
   }
 
   /**
@@ -83,7 +90,14 @@ public class HeeUserResource {
     // First try to create user in KeyClock
     keyclockAdminClientService.createUser(heeUser);
 
+    Set<UserTrust> associatedTrusts = heeUser.getAssociatedTrusts();
+    if(CollectionUtils.isNotEmpty(associatedTrusts)){
+      for (UserTrust userTrust : associatedTrusts) {
+        userTrust.setHeeUser(heeUser);
+      }
+    }
     heeUser = heeUserRepository.save(heeUser);
+    userTrustRepository.save(associatedTrusts);
     HeeUserDTO result = heeUserMapper.heeUserToHeeUserDTO(heeUser);
     return ResponseEntity.created(new URI("/api/hee-users/" + result.getName()))
         .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getName()))

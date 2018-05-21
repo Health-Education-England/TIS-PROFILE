@@ -3,9 +3,11 @@ package com.transformuk.hee.tis.profile.service.mapper;
 import com.transformuk.hee.tis.profile.domain.HeeUser;
 import com.transformuk.hee.tis.profile.domain.Permission;
 import com.transformuk.hee.tis.profile.domain.Role;
+import com.transformuk.hee.tis.profile.domain.UserTrust;
 import com.transformuk.hee.tis.profile.dto.PermissionDTO;
 import com.transformuk.hee.tis.profile.dto.RoleDTO;
 import com.transformuk.hee.tis.profile.service.dto.HeeUserDTO;
+import com.transformuk.hee.tis.profile.service.dto.UserTrustDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -29,6 +31,11 @@ public interface HeeUserMapper {
   RoleDTO map(Role role);
 
   Role map(RoleDTO roleDTO);
+
+  UserTrust map(UserTrustDTO userTrustDTO);
+
+  UserTrustDTO map(UserTrust userTrust);
+
 
   @Mapping(target = "actions",
       expression = "java(Arrays.asList(permission.getActions().split(\",\")))")

@@ -3,6 +3,7 @@ package com.transformuk.hee.tis.profile.service;
 import com.transform.hee.tis.keycloak.KeycloakAdminClient;
 import com.transform.hee.tis.keycloak.User;
 import com.transformuk.hee.tis.profile.domain.HeeUser;
+import org.apache.commons.collections4.CollectionUtils;
 import org.keycloak.representations.idm.GroupRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -57,8 +58,10 @@ public class KeycloakAdminClientService {
 
   private User heeUserToKeycloakUser(HeeUser heeUser) {
     Map<String,List<String>> attributes = new HashMap<>();
-    List dbcs = new ArrayList();
-    dbcs.add(heeUser.getDesignatedBodyCodes());
+    List<String> dbcs = new ArrayList<>();
+    if(CollectionUtils.isNotEmpty(heeUser.getDesignatedBodyCodes())) {
+      dbcs.addAll(heeUser.getDesignatedBodyCodes());
+    }
     attributes.put("DBC",dbcs);
     return User.create(heeUser.getFirstName(), heeUser.getLastName(), heeUser.getName(),
         heeUser.getEmailAddress(), heeUser.getPassword(),heeUser.getTemporaryPassword(),attributes);
