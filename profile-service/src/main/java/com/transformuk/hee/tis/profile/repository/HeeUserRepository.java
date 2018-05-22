@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Spring Data JPA repository for the HeeUser entity.
@@ -80,4 +81,6 @@ public interface HeeUserRepository extends JpaRepository<HeeUser, String>, JpaSp
    */
   long countByRolesNameAndActive(@Param("roleName") String roleName, @Param("active") Boolean active);
 
+  @Query(value = "SELECT u FROM HeeUser u LEFT JOIN FETCH u.associatedTrusts where u.name = :name")
+  Optional<HeeUser> findByNameWithTrusts(@Param("name") String name);
 }

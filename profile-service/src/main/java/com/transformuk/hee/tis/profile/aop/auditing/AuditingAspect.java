@@ -7,6 +7,7 @@ import com.flipkart.zjsonpatch.JsonDiff;
 import com.transformuk.hee.tis.audit.enumeration.GenericAuditEventType;
 import com.transformuk.hee.tis.profile.domain.JsonPatch;
 import com.transformuk.hee.tis.profile.repository.JsonPatchRepository;
+import com.transformuk.hee.tis.profile.service.dto.HeeUserDTO;
 import com.transformuk.hee.tis.security.model.UserProfile;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.JoinPoint;
@@ -19,6 +20,7 @@ import org.springframework.boot.actuate.audit.AuditEvent;
 import org.springframework.boot.actuate.audit.AuditEventRepository;
 import org.springframework.http.ResponseEntity;
 
+import javax.annotation.PostConstruct;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.concurrent.ConcurrentHashMap;
@@ -41,11 +43,17 @@ public class AuditingAspect {
   @Autowired
   private JsonPatchRepository jsonPatchRepository;
   private ConcurrentHashMap<String, String> classToPrimaryKeyMap = new ConcurrentHashMap<>();
+  private ConcurrentHashMap<String, Class> classToPrimaryKeyType = new ConcurrentHashMap<>();
 
   public AuditingAspect(AuditEventRepository auditEventRepository) {
     this.auditEventRepository = auditEventRepository;
   }
 
+  @PostConstruct
+  public void postConstruct() {
+    classToPrimaryKeyMap.put(HeeUserDTO.class.getSimpleName(), "name");
+    classToPrimaryKeyType.put(HeeUserDTO.class.getSimpleName(), String.class);
+  }
 
   /**
    * Pointcut that matches all rest call for create method.
@@ -97,7 +105,9 @@ public class AuditingAspect {
         JsonNode oldJsonNode = NullNode.getInstance();
         // if the idFieldValue is null means it's new record so don't fetch old value from db
         if (idFieldValue != null) {
-          final Method method = joinPoint.getTarget().getClass().getDeclaredMethod(GET_PREFIX + entityName, new Class[]{Long.class});
+          final Method method =
+            joinPoint.getTarget().getClass().getDeclaredMethod(GET_PREFIX + entityName,
+                new Class[]{classToPrimaryKeyType.containsKey(className)? classToPrimaryKeyType.get(className) : Long.class});
           final Object responseEntity = method.invoke(joinPoint.getTarget(), idField.get(newValue));
           oldValue = ((ResponseEntity) responseEntity).getBody();
           oldJsonNode = mapper.convertValue(oldValue, JsonNode.class);

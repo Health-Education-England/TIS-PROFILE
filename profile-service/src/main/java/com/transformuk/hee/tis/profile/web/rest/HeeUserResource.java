@@ -6,6 +6,7 @@ import com.transformuk.hee.tis.profile.domain.UserTrust;
 import com.transformuk.hee.tis.profile.repository.HeeUserRepository;
 import com.transformuk.hee.tis.profile.repository.UserTrustRepository;
 import com.transformuk.hee.tis.profile.service.KeycloakAdminClientService;
+import com.transformuk.hee.tis.profile.service.UserTrustService;
 import com.transformuk.hee.tis.profile.service.dto.HeeUserDTO;
 import com.transformuk.hee.tis.profile.service.mapper.HeeUserMapper;
 import com.transformuk.hee.tis.profile.validators.HeeUserValidator;
@@ -34,6 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -51,6 +53,7 @@ public class HeeUserResource {
   private final HeeUserRepository heeUserRepository;
   private final HeeUserMapper heeUserMapper;
   private final UserTrustRepository userTrustRepository;
+  private final UserTrustService userTrustService;
 
   private KeycloakAdminClientService keyclockAdminClientService;
 
@@ -58,12 +61,13 @@ public class HeeUserResource {
 
   public HeeUserResource(HeeUserRepository heeUserRepository, HeeUserMapper heeUserMapper,
                          KeycloakAdminClientService keyclockAdminClientService, HeeUserValidator heeUserValidator,
-                         UserTrustRepository userTrustRepository) {
+                         UserTrustRepository userTrustRepository, UserTrustService userTrustService) {
     this.heeUserRepository = heeUserRepository;
     this.heeUserMapper = heeUserMapper;
     this.keyclockAdminClientService = keyclockAdminClientService;
     this.heeUserValidator = heeUserValidator;
     this.userTrustRepository = userTrustRepository;
+    this.userTrustService = userTrustService;
   }
 
   /**
@@ -129,9 +133,9 @@ public class HeeUserResource {
 
     // First try to update user in KeyClock
     keyclockAdminClientService.updateUser(heeUser);
-
-    heeUser = heeUserRepository.save(heeUser);
-    HeeUserDTO result = heeUserMapper.heeUserToHeeUserDTO(heeUser);
+    heeUserRepository.save(heeUser);
+    userTrustService.assignTrustsToUser(heeUserDTO);
+    HeeUserDTO result = heeUserMapper.heeUserToHeeUserDTO(heeUserRepository.findByNameWithTrusts(heeUserDTO.getName()).orElse(null));
     return ResponseEntity.ok()
         .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, heeUserDTO.getName().toString()))
         .body(result);
@@ -165,8 +169,8 @@ public class HeeUserResource {
   @PreAuthorize("hasAuthority('profile:view:entities')")
   public ResponseEntity<HeeUserDTO> getHeeUser(@PathVariable String name) {
     log.debug("REST request to get HeeUser : {}", name);
-    HeeUser heeUser = heeUserRepository.findOne(name);
-    HeeUserDTO heeUserDTO = heeUserMapper.heeUserToHeeUserDTO(heeUser);
+    Optional<HeeUser> heeUser = heeUserRepository.findByNameWithTrusts(name);
+    HeeUserDTO heeUserDTO = heeUserMapper.heeUserToHeeUserDTO(heeUser.orElse(null));
     return ResponseUtil.wrapOrNotFound(Optional.ofNullable(heeUserDTO));
   }
 
