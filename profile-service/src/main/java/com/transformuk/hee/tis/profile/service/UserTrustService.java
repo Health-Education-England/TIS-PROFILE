@@ -24,7 +24,7 @@ public class UserTrustService {
   public void assignTrustsToUser(HeeUserDTO heeUserDTO) {
     HeeUser heeUser = heeUserMapper.heeUserDTOToHeeUser(heeUserDTO);
 
-    Set<UserTrust> associatedTrusts = new HashSet<>(heeUser.getAssociatedTrusts());
+    Set<UserTrust> associatedTrusts = heeUser.getAssociatedTrusts();
     if (CollectionUtils.isNotEmpty(associatedTrusts)) {
       for (UserTrust userTrust : associatedTrusts) {
         userTrust.setHeeUser(heeUser);
@@ -34,6 +34,9 @@ public class UserTrustService {
     if (CollectionUtils.isNotEmpty(userTrusts)) {
       userTrustRepository.delete(userTrusts);
     }
-    userTrustRepository.save(associatedTrusts);
+
+    if (CollectionUtils.isNotEmpty(associatedTrusts)) {
+      userTrustRepository.save(associatedTrusts);
+    }
   }
 }

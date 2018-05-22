@@ -1,4 +1,4 @@
-INSERT INTO `RolePermission` (`userName`, `persmissionName`)
+INSERT INTO `RolePermission` (`roleName`, `permissionName`)
 VALUES
 ('HEE Trust Admin','person:add:modify'),
 ('HEE Trust Admin','person:view'),
