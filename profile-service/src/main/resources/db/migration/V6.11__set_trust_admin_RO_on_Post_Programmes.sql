@@ -1,0 +1,2 @@
+DELETE FROM `RolePermission` WHERE `roleName` = 'HEE Trust Admin' AND `permissionName` = 'post:add:modify';
+DELETE FROM `RolePermission` WHERE `roleName` = 'HEE Trust Admin' AND `permissionName` = 'programme:add:modify';
