@@ -4,7 +4,7 @@ VALUES
        ('qualification:add:modify', 'PERSON', 'Can create and edit qualifications', 'tis:profile::user:', 'tis:tcs::qualification:', 'Create,Update', 'Allow')
 ON DUPLICATE KEY UPDATE `name` = `name`;
 
-# assign the current roles that have person view/edit the new qualification permission except the trust admin role
+-- assign the current roles that have person view/edit the new qualification permission except the trust admin role
 INSERT INTO `RolePermission` (`roleName`,`permissionName`)
 VALUES
        ('BulkUploadAdmin','qualification:view'),
