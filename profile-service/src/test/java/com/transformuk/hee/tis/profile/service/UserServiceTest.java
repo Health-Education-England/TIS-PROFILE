@@ -110,7 +110,7 @@ public class UserServiceTest {
   }
 
   @Test
-  private void findAllUsersWithTrustShouldReturnHeeUserDTOWithTrustData() {
+  public void findAllUsersWithTrustShouldReturnHeeUserDTOWithTrustData() {
     Page<HeeUser> foundUsersMock = mock(Page.class);
 
 
