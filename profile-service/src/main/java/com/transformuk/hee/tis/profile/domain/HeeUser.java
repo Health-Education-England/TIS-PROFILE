@@ -48,6 +48,8 @@ public class HeeUser implements Serializable {
 
   private Set<Role> roles;
   private Set<String> designatedBodyCodes;
+
+  @OneToMany(fetch = LAZY, mappedBy = "heeUser")
   private Set<UserTrust> associatedTrusts;
 
   public HeeUser() {
