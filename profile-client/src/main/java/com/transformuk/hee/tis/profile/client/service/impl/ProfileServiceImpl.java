@@ -49,6 +49,7 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
   private static final String SIZE_QUERY_PARAM = "size";
   private static final String TRAINEE_MAPPINGS_ENDPOINT = "/api/trainee-id/{dbc}/mappings";
   private static final String USERS_RO_USER_ENDPOINT = "/api/users/ro-user/";
+  private static final String ALL_HEE_USERS_ENDPOINT = "/api/hee-users";
   private static final String USERS_ENDPOINT = "/api/users";
   private static final String TRAINEE_DBC_REGISTER_ENDPOINT = "/api/trainee-id/{designatedBodyCode}/register";
   private static final Map<Class, ParameterizedTypeReference> classToParamTypeRefMap;
@@ -145,6 +146,14 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
     return responseEntity.getBody();
   }
 
+//  public List<HeeUserDTO> getAllAdminUsers1() {
+//    ParameterizedTypeReference<List<HeeUserDTO>> typeReference = getHeeUserDtoReference();
+//    ResponseEntity<List<HeeUserDTO>> responseEntity = profileRestTemplate.exchange(serviceUrl + ALL_HEE_USERS_ENDPOINT,
+//        HttpMethod.GET, null, typeReference);
+//    return responseEntity.getBody();
+//  }
+
+
   @Override
   public List<JsonPatchDTO> getJsonPathByTableDtoNameOrderByDateAddedAsc(String endpointUrl, Class objectDTO) {
     ParameterizedTypeReference<List<JsonPatchDTO>> typeReference = getJsonPatchDtoReference();
@@ -157,6 +166,11 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
     return new ParameterizedTypeReference<List<JsonPatchDTO>>() {
     };
   }
+//
+//  private ParameterizedTypeReference<List<HeeUserDTO>> getHeeUserDtoReference() {
+//    return new ParameterizedTypeReference<List<HeeUserDTO>>() {
+//    };
+//  }
 
   @Override
   public RestTemplate getRestTemplate() {
