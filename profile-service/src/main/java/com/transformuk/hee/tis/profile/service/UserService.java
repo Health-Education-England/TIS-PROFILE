@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -20,9 +21,11 @@ public class UserService {
   @Autowired
   HeeUserMapper heeUserMapper;
 
-  public Page<HeeUserDTO> findAllUsersWithTrust (Pageable pageable) {
+  @Transactional
+  public List<HeeUserDTO> findAllUsersWithTrust (Pageable pageable) {
     Page<HeeUser> heeUsers = heeUserRepository.findAll(pageable);
-    Page<HeeUserDTO> heeUserDTOS = heeUserMapper.heeUsersToHeeUserDTOs(heeUsers);
-    return heeUsers;
+    List<HeeUser> heeUserList = heeUsers.getContent();
+    List<HeeUserDTO> heeUserDTOS = heeUserMapper.heeUsersToHeeUserDTOs(heeUserList);
+    return heeUserDTOS;
   }
 }

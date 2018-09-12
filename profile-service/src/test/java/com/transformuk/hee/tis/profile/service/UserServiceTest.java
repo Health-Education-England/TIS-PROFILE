@@ -80,7 +80,7 @@ public class UserServiceTest {
     heeUser2EmptyTrusts.setAssociatedTrusts(userTrusts2);
     heeUser3NullTrusts.setAssociatedTrusts(userTrusts3);
 
-    //dtos
+    // DTOs
     heeUser1WithTrustsDTO.setFirstName(FIRST_NAME_1);
     heeUser1WithTrustsDTO.setActive(USER_ACTIVE);
 
@@ -105,17 +105,13 @@ public class UserServiceTest {
     heeUser1WithTrustsDTO.setAssociatedTrusts(userTrusts1DTO);
     heeUser2EmptyTrustsDTO.setAssociatedTrusts(userTrusts2DTO);
     heeUser3NullTrustsDTO.setAssociatedTrusts(userTrusts3DTO);
-
-
   }
 
   @Test
   public void findAllUsersWithTrustShouldReturnHeeUserDTOWithTrustData() {
     Page<HeeUser> foundUsersMock = mock(Page.class);
-
-
     List<HeeUser> usersFromPage = Lists.newArrayList(heeUser1WithTrusts, heeUser2EmptyTrusts, heeUser3NullTrusts);
-    List<HeeUserDTO> mappedUsers = Lists.newArrayList();
+    List<HeeUserDTO> mappedUsers = Lists.newArrayList(heeUser1WithTrustsDTO, heeUser2EmptyTrustsDTO, heeUser3NullTrustsDTO);
     when(heeUserRepositoryMock.findAll(pageMock)).thenReturn(foundUsersMock);
     when(foundUsersMock.getContent()).thenReturn(usersFromPage);
     when(heeUserMapperMock.heeUsersToHeeUserDTOs(usersFromPage)).thenReturn(mappedUsers);
@@ -135,8 +131,6 @@ public class UserServiceTest {
     //verify
     verify(heeUserRepositoryMock).findAll(pageMock);
     verify(foundUsersMock).getContent();
-    verify(heeUserMapperMock.heeUsersToHeeUserDTOs(usersFromPage));
+    verify(heeUserMapperMock).heeUsersToHeeUserDTOs(usersFromPage);
   }
-
-
 }
