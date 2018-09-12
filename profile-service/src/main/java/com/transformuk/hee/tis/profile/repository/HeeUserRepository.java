@@ -75,13 +75,6 @@ public interface HeeUserRepository extends JpaRepository<HeeUser, String>, JpaSp
   List<HeeUser> findDistinctByExactDesignatedBodyCodes(@Param("designatedBodyCodes") String designatedBodyCodes);
 
   /**
-   * Gets all HeeUsers with trust detail
-   * @Return HeeUser list
-   */
-  @Query(value = "select u from HeeUser u LEFT JOIN FETCH u.associatedTrusts")
-  List<HeeUser> findAllWithTrusts();
-
-  /**
    * Gets counts of users by roles
    *
    * @param roleName
