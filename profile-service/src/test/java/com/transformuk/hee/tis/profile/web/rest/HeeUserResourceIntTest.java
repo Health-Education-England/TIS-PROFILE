@@ -7,6 +7,7 @@ import com.transformuk.hee.tis.profile.repository.HeeUserRepository;
 import com.transformuk.hee.tis.profile.repository.PermissionRepository;
 import com.transformuk.hee.tis.profile.repository.UserTrustRepository;
 import com.transformuk.hee.tis.profile.service.KeycloakAdminClientService;
+import com.transformuk.hee.tis.profile.service.UserService;
 import com.transformuk.hee.tis.profile.service.UserTrustService;
 import com.transformuk.hee.tis.profile.service.dto.HeeUserDTO;
 import com.transformuk.hee.tis.profile.service.mapper.HeeUserMapper;
@@ -100,6 +101,9 @@ public class HeeUserResourceIntTest {
   @Autowired
   private EntityManager em;
 
+  @Autowired
+  private UserService userService;
+
   private MockMvc restHeeUserMockMvc;
 
   private HeeUser heeUser;
@@ -109,7 +113,8 @@ public class HeeUserResourceIntTest {
   public void setup() {
     MockitoAnnotations.initMocks(this);
     HeeUserResource heeUserResource = new HeeUserResource(heeUserRepository, heeUserMapper,
-        keyclockAdminClientService, heeUserValidator,userTrustRepository, userTrustService);
+        keyclockAdminClientService, heeUserValidator,userTrustRepository, userTrustService,
+        userService);
     this.restHeeUserMockMvc = MockMvcBuilders.standaloneSetup(heeUserResource)
         .setCustomArgumentResolvers(pageableArgumentResolver)
         .setControllerAdvice(exceptionTranslator)

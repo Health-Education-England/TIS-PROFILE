@@ -111,8 +111,8 @@ jhipster:
             port: 2003
             prefix: profile
         prometheus:
-            enabled: false
-            endpoint: /prometheusMetrics
+            enabled: true
+            endpoint: /management/prometheus
         logs: # Reports Dropwizard metrics in the logs
             enabled: false
             reportFrequency: 60 # in seconds
@@ -133,3 +133,6 @@ jhipster:
 # ===================================================================
 
 application:
+
+endpoints:
+    enabled: false # disable all monitoring endpoints

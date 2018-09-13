@@ -20,6 +20,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -50,7 +51,8 @@ public class HeeUser implements Serializable {
 
   private Set<Role> roles;
   private Set<String> designatedBodyCodes;
-  private Set<UserTrust> associatedTrusts;
+
+  private Set<UserTrust> associatedTrusts = new HashSet<>();
 
   public HeeUser() {
     super();
@@ -198,7 +200,7 @@ public class HeeUser implements Serializable {
     this.designatedBodyCodes = designatedBodyCodes;
   }
 
-  @OneToMany(fetch = LAZY, mappedBy = "heeUser")
+  @OneToMany(fetch = LAZY, mappedBy = "heeUser", cascade = CascadeType.ALL)
   public Set<UserTrust> getAssociatedTrusts() {
 //    if (CollectionUtils.isEmpty(this.associatedTrusts)) {
 //      this.associatedTrusts = Sets.newHashSet(HeeUser.NULL_TRUST);
@@ -208,6 +210,16 @@ public class HeeUser implements Serializable {
 
   public void setAssociatedTrusts(Set<UserTrust> associatedTrusts) {
     this.associatedTrusts = associatedTrusts;
+  }
+
+  public void addAssociatedTrust(UserTrust userTrust) {
+    this.associatedTrusts.add(userTrust);
+    userTrust.setHeeUser(this);
+  }
+
+  public void removeAssociatedTrust(UserTrust userTrust) {
+    userTrust.setHeeUser(null);
+    this.associatedTrusts.remove(userTrust);
   }
 
   @Override
