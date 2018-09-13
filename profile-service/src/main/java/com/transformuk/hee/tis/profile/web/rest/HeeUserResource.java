@@ -6,6 +6,7 @@ import com.transformuk.hee.tis.profile.domain.UserTrust;
 import com.transformuk.hee.tis.profile.repository.HeeUserRepository;
 import com.transformuk.hee.tis.profile.repository.UserTrustRepository;
 import com.transformuk.hee.tis.profile.service.KeycloakAdminClientService;
+import com.transformuk.hee.tis.profile.service.UserService;
 import com.transformuk.hee.tis.profile.service.UserTrustService;
 import com.transformuk.hee.tis.profile.service.dto.HeeUserDTO;
 import com.transformuk.hee.tis.profile.service.mapper.HeeUserMapper;
@@ -54,6 +55,7 @@ public class HeeUserResource {
   private final HeeUserMapper heeUserMapper;
   private final UserTrustRepository userTrustRepository;
   private final UserTrustService userTrustService;
+  private final UserService userService;
 
   private KeycloakAdminClientService keyclockAdminClientService;
 
@@ -61,13 +63,15 @@ public class HeeUserResource {
 
   public HeeUserResource(HeeUserRepository heeUserRepository, HeeUserMapper heeUserMapper,
                          KeycloakAdminClientService keyclockAdminClientService, HeeUserValidator heeUserValidator,
-                         UserTrustRepository userTrustRepository, UserTrustService userTrustService) {
+                         UserTrustRepository userTrustRepository, UserTrustService userTrustService,
+                         UserService userService) {
     this.heeUserRepository = heeUserRepository;
     this.heeUserMapper = heeUserMapper;
     this.keyclockAdminClientService = keyclockAdminClientService;
     this.heeUserValidator = heeUserValidator;
     this.userTrustRepository = userTrustRepository;
     this.userTrustService = userTrustService;
+    this.userService = userService;
   }
 
   /**
@@ -153,9 +157,8 @@ public class HeeUserResource {
   @PreAuthorize("hasAuthority('profile:view:entities')")
   public ResponseEntity<List<HeeUserDTO>> getAllHeeUsers(@ApiParam Pageable pageable) {
     log.debug("REST request to get a page of HeeUsers");
-    Page<HeeUser> page = heeUserRepository.findAll(pageable);
-    HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/hee-users");
-    return new ResponseEntity<>(heeUserMapper.heeUsersToHeeUserDTOs(page.getContent()), headers, HttpStatus.OK);
+    List<HeeUserDTO> heeUserDTOS = userService.findAllUsersWithTrust(pageable);
+    return new ResponseEntity<>(heeUserDTOS, HttpStatus.OK);
   }
 
   /**
