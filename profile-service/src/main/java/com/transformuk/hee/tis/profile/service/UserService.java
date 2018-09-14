@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -27,5 +28,12 @@ public class UserService {
     List<HeeUser> heeUserList = heeUsers.getContent();
     List<HeeUserDTO> heeUserDTOS = heeUserMapper.heeUsersToHeeUserDTOs(heeUserList);
     return heeUserDTOS;
+  }
+
+  @Transactional
+  public HeeUserDTO findSingleUserWithTrust (String username) {
+    Optional<HeeUser> heeUser = heeUserRepository.findByNameWithTrusts(username);
+    HeeUserDTO heeUserDTO = heeUserMapper.heeUserToHeeUserDTO(heeUser.orElse(null));
+    return heeUserDTO;
   }
 }

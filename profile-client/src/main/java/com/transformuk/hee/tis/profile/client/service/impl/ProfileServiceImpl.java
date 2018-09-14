@@ -53,6 +53,7 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
   private static final String USERS_ENDPOINT = "/api/users";
   private static final String TRAINEE_DBC_REGISTER_ENDPOINT = "/api/trainee-id/{designatedBodyCode}/register";
   private static final Map<Class, ParameterizedTypeReference> classToParamTypeRefMap;
+  private static final String SINGLE_USER_ENDPOINT = "/hee-users/{name}";
 
   static {
     classToParamTypeRefMap = Maps.newHashMap();
@@ -146,12 +147,19 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
     return responseEntity.getBody();
   }
 
-//  public List<HeeUserDTO> getAllAdminUsers1() {
-//    ParameterizedTypeReference<List<HeeUserDTO>> typeReference = getHeeUserDtoReference();
-//    ResponseEntity<List<HeeUserDTO>> responseEntity = profileRestTemplate.exchange(serviceUrl + ALL_HEE_USERS_ENDPOINT,
-//        HttpMethod.GET, null, typeReference);
-//    return responseEntity.getBody();
-//  }
+  public List<HeeUserDTO> getAllAdminUsers() {
+    ParameterizedTypeReference<List<HeeUserDTO>> typeReference = getHeeUserDtoListReference();
+    ResponseEntity<List<HeeUserDTO>> responseEntity = profileRestTemplate.exchange(serviceUrl + ALL_HEE_USERS_ENDPOINT,
+        HttpMethod.GET, null, typeReference);
+    return responseEntity.getBody();
+  }
+
+  public HeeUserDTO getSingleAdminUser(String username) {
+    ParameterizedTypeReference<HeeUserDTO> typeReference = getHeeUserDtoReference();
+    ResponseEntity<HeeUserDTO> responseEntity = profileRestTemplate.exchange(serviceUrl + SINGLE_USER_ENDPOINT,
+        HttpMethod.GET, null, typeReference);
+    return responseEntity.getBody();
+  }
 
 
   @Override
@@ -166,11 +174,16 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
     return new ParameterizedTypeReference<List<JsonPatchDTO>>() {
     };
   }
-//
-//  private ParameterizedTypeReference<List<HeeUserDTO>> getHeeUserDtoReference() {
-//    return new ParameterizedTypeReference<List<HeeUserDTO>>() {
-//    };
-//  }
+
+  private ParameterizedTypeReference<List<HeeUserDTO>> getHeeUserDtoListReference() {
+    return new ParameterizedTypeReference<List<HeeUserDTO>>() {
+    };
+  }
+
+  private ParameterizedTypeReference<HeeUserDTO> getHeeUserDtoReference() {
+    return new ParameterizedTypeReference<HeeUserDTO>() {
+    };
+  }
 
   @Override
   public RestTemplate getRestTemplate() {

@@ -20,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.Assert.*;
@@ -36,6 +37,7 @@ public class UserServiceTest {
   private static final String FIRST_NAME_3 = "first name 3";
   private static final boolean USER_ACTIVE = true;
   private static final boolean USER_NOT_ACTIVE = false;
+  private static final String USERNAME = "Username";
 
   @InjectMocks
   private UserService testObj;
@@ -132,5 +134,20 @@ public class UserServiceTest {
     verify(heeUserRepositoryMock).findAll(pageMock);
     verify(foundUsersMock).getContent();
     verify(heeUserMapperMock).heeUsersToHeeUserDTOs(usersFromPage);
+  }
+
+  @Test
+  public void findSingleUserWithTrustShouldReturnHeeUserDTOWithTrustData() {
+    Optional<HeeUser> foundUserMock = Optional.of(heeUser1WithTrusts);
+    when(heeUserRepositoryMock.findByNameWithTrusts(USERNAME)).thenReturn(foundUserMock);
+    when(heeUserMapperMock.heeUserToHeeUserDTO(foundUserMock.orElse(null))).thenReturn(heeUser1WithTrustsDTO);
+
+    HeeUserDTO result = testObj.findSingleUserWithTrust(USERNAME);
+
+    Assert.assertEquals(FIRST_NAME_1, result.getFirstName());
+    Assert.assertSame(userTrusts1DTO, result.getAssociatedTrusts());
+
+    verify(heeUserMapperMock).heeUserToHeeUserDTO(foundUserMock.orElse(null));
+    verify(heeUserRepositoryMock).findByNameWithTrusts(USERNAME);
   }
 }

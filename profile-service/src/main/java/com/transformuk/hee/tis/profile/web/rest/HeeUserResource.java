@@ -172,8 +172,7 @@ public class HeeUserResource {
   @PreAuthorize("hasAuthority('profile:view:entities')")
   public ResponseEntity<HeeUserDTO> getHeeUser(@PathVariable String name) {
     log.debug("REST request to get HeeUser : {}", name);
-    Optional<HeeUser> heeUser = heeUserRepository.findByNameWithTrusts(name);
-    HeeUserDTO heeUserDTO = heeUserMapper.heeUserToHeeUserDTO(heeUser.orElse(null));
+    HeeUserDTO heeUserDTO = userService.findSingleUserWithTrust(name);
     return ResponseUtil.wrapOrNotFound(Optional.ofNullable(heeUserDTO));
   }
 
