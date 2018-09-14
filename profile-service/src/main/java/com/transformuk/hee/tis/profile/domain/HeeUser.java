@@ -3,6 +3,7 @@ package com.transformuk.hee.tis.profile.domain;
 import com.google.common.collect.Sets;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.persistence.CascadeType;
@@ -34,6 +35,7 @@ import static javax.persistence.FetchType.LAZY;
 public class HeeUser implements Serializable {
 
   public static final String NONE = "None";
+  private static final UserTrust NULL_TRUST = null;
   private static final long serialVersionUID = 1L;
   private String name;
   private String firstName;

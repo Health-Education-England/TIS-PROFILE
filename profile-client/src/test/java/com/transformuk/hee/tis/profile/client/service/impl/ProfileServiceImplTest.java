@@ -5,6 +5,7 @@ import com.transformuk.hee.tis.profile.dto.RegistrationRequest;
 import com.transformuk.hee.tis.profile.dto.TraineeId;
 import com.transformuk.hee.tis.profile.dto.TraineeIdListResponse;
 import com.transformuk.hee.tis.profile.dto.TraineeProfileDto;
+import com.transformuk.hee.tis.profile.service.dto.HeeUserDTO;
 import com.transformuk.hee.tis.security.model.UserProfile;
 import org.json.simple.JSONObject;
 import org.junit.Assert;
@@ -17,6 +18,7 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -49,6 +51,7 @@ public class ProfileServiceImplTest {
   private static final String PERMISSIONS = "revalidation:submit:on:behalf:of:ro";
   private static final String GMC_NUMBER = "1234567";
   private static final long TIS_ID = 999L;
+  private static final String FIRSTNAME = "Firstname";
 
   @InjectMocks
   private ProfileServiceImpl profileServiceImpl;
@@ -132,6 +135,18 @@ public class ProfileServiceImplTest {
     // then
     verify(profileRestTemplate).getForEntity(eq(PROFILE_URL + "/api/users?offset&limit&designatedBodyCode=" + DBC +
         "&permissions=" + PERMISSIONS), eq(JSONObject.class));
+  }
+
+  @Test
+  public void getSingleAdminUserShouldReturnHeeUserDTO() {
+    HeeUserDTO heeUserDTO = new HeeUserDTO();
+    heeUserDTO.setFirstName(FIRSTNAME);
+    given(profileRestTemplate.exchange(any(String.class),eq(HttpMethod.GET), eq(null), any(ParameterizedTypeReference.class)))
+        .willReturn(new ResponseEntity<>(heeUserDTO, OK));
+
+    HeeUserDTO result = profileServiceImpl.getSingleAdminUser("Username");
+
+    assertEquals(result, heeUserDTO);
   }
 
   @Test
