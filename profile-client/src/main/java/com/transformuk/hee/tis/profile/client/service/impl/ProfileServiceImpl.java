@@ -154,9 +154,9 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
     return responseEntity.getBody();
   }
 
-  public HeeUserDTO getSingleAdminUser(String name) {
+  public HeeUserDTO getSingleAdminUser(String username) {
     ParameterizedTypeReference<HeeUserDTO> typeReference = getHeeUserDtoReference();
-    String url = serviceUrl + SINGLE_USER_ENDPOINT + name;
+    String url = serviceUrl + SINGLE_USER_ENDPOINT + username;
     ResponseEntity<HeeUserDTO> responseEntity = profileRestTemplate.exchange(url,
         HttpMethod.GET, null, typeReference);
     return responseEntity.getBody();
