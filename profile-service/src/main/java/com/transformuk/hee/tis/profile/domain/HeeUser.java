@@ -202,9 +202,6 @@ public class HeeUser implements Serializable {
 
   @OneToMany(fetch = LAZY, mappedBy = "heeUser", cascade = CascadeType.ALL)
   public Set<UserTrust> getAssociatedTrusts() {
-//    if (CollectionUtils.isEmpty(this.associatedTrusts)) {
-//      this.associatedTrusts = Sets.newHashSet(HeeUser.NULL_TRUST);
-//    }
     return associatedTrusts;
   }
 
