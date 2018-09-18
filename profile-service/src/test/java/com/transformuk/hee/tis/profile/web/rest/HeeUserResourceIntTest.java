@@ -252,13 +252,15 @@ public class HeeUserResourceIntTest {
     restHeeUserMockMvc.perform(get("/api/hee-users?sort=name,desc"))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-        .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
-        .andExpect(jsonPath("$.[*].firstName").value(hasItem(DEFAULT_FIRST_NAME.toString())))
-        .andExpect(jsonPath("$.[*].lastName").value(hasItem(DEFAULT_LAST_NAME.toString())))
-        .andExpect(jsonPath("$.[*].gmcId").value(hasItem(DEFAULT_GMC_ID.toString())))
-        .andExpect(jsonPath("$.[*].phoneNumber").value(hasItem(DEFAULT_PHONE_NUMBER.toString())))
-        .andExpect(jsonPath("$.[*].emailAddress").value(hasItem(DEFAULT_EMAIL_ADDRESS.toString())))
-        .andExpect(jsonPath("$.[*].active").value(hasItem(DEFAULT_ACTIVE.booleanValue())));
+        .andExpect(jsonPath("$.content.[*].name").value(hasItem(DEFAULT_NAME.toString())))
+        .andExpect(jsonPath("$.content.[*].firstName").value(hasItem(DEFAULT_FIRST_NAME.toString())))
+        .andExpect(jsonPath("$.content.[*].lastName").value(hasItem(DEFAULT_LAST_NAME.toString())))
+        .andExpect(jsonPath("$.content.[*].gmcId").value(hasItem(DEFAULT_GMC_ID.toString())))
+        .andExpect(jsonPath("$.content.[*].phoneNumber").value(hasItem(DEFAULT_PHONE_NUMBER.toString())))
+        .andExpect(jsonPath("$.content.[*].emailAddress").value(hasItem(DEFAULT_EMAIL_ADDRESS.toString())))
+        .andExpect(jsonPath("$.content.[*].active").value(hasItem(DEFAULT_ACTIVE.booleanValue())))
+        .andExpect(jsonPath("$.size").value(20))
+        .andExpect(jsonPath("$.totalPages").value(1));
   }
 
   @Test

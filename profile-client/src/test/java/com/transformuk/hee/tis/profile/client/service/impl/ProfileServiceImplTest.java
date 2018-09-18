@@ -1,5 +1,6 @@
 package com.transformuk.hee.tis.profile.client.service.impl;
 
+import com.google.common.collect.Lists;
 import com.transformuk.hee.tis.profile.dto.PagedTraineeIdResponse;
 import com.transformuk.hee.tis.profile.dto.RegistrationRequest;
 import com.transformuk.hee.tis.profile.dto.TraineeId;
@@ -20,6 +21,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
@@ -33,6 +35,7 @@ import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -52,6 +55,7 @@ public class ProfileServiceImplTest {
   private static final String GMC_NUMBER = "1234567";
   private static final long TIS_ID = 999L;
   private static final String FIRSTNAME = "Firstname";
+  private static final String FIRSTNAME1 = "ARRRRGGHH";
 
   @InjectMocks
   private ProfileServiceImpl profileServiceImpl;
@@ -67,6 +71,10 @@ public class ProfileServiceImplTest {
   private ArgumentCaptor<HttpMethod> httpMethodArgumentCaptor;
   @Captor
   private ArgumentCaptor<Class> classArgumentCaptor;
+  @Captor
+  private ArgumentCaptor<ParameterizedTypeReference<Page<HeeUserDTO>>> parameterizedTypeReferenceArgumentCaptor;
+  @Captor
+  private ArgumentCaptor<ParameterizedTypeReference<HeeUserDTO>> parameterizedTypeReferenceArgumentCaptorSingleDTO;
 
   @Before
   public void setUp() throws Exception {
@@ -141,12 +149,112 @@ public class ProfileServiceImplTest {
   public void getSingleAdminUserShouldReturnHeeUserDTO() {
     HeeUserDTO heeUserDTO = new HeeUserDTO();
     heeUserDTO.setFirstName(FIRSTNAME);
-    given(profileRestTemplate.exchange(any(String.class),eq(HttpMethod.GET), eq(null), any(ParameterizedTypeReference.class)))
+    given(profileRestTemplate.exchange(eq(PROFILE_URL + "/api/hee-users/Username"),eq(HttpMethod.GET),eq(null),
+        parameterizedTypeReferenceArgumentCaptorSingleDTO.capture()))
         .willReturn(new ResponseEntity<>(heeUserDTO, OK));
 
     HeeUserDTO result = profileServiceImpl.getSingleAdminUser("Username");
+    ParameterizedTypeReference<HeeUserDTO> parameterizedTypeReferenceArgumentCaptorSingleDTOValue =
+        parameterizedTypeReferenceArgumentCaptorSingleDTO.getValue();
 
     assertEquals(result, heeUserDTO);
+    verify(profileRestTemplate).exchange(PROFILE_URL + "/api/hee-users/Username",HttpMethod.GET,null,
+        parameterizedTypeReferenceArgumentCaptorSingleDTOValue);
+  }
+
+  @Test
+  public void getAllAdminUsersShouldReturnFoundAdminUsersWithSearchParamAndNoPageable() {
+    HeeUserDTO heeUserDTO = new HeeUserDTO();
+    HeeUserDTO heeUserDTO1 = new HeeUserDTO();
+    heeUserDTO.setFirstName(FIRSTNAME);
+    heeUserDTO1.setFirstName(FIRSTNAME1);
+    List<HeeUserDTO> heeUserDTOS = Lists.newArrayList(heeUserDTO,heeUserDTO1);
+    Page<HeeUserDTO> heeUserDTOSPage = new PageImpl<>(heeUserDTOS);
+    PageRequest pageRequest = new PageRequest(0,11);
+
+
+    given(profileRestTemplate.exchange(eq(PROFILE_URL + "/api/hee-users?search=Username"),eq(HttpMethod.GET),eq(null), parameterizedTypeReferenceArgumentCaptor.capture()))
+        .willReturn(new ResponseEntity<>(heeUserDTOSPage, HttpStatus.OK));
+
+    Page<HeeUserDTO> result = profileServiceImpl.getAllAdminUsers(null, "Username");
+
+    ParameterizedTypeReference<Page<HeeUserDTO>> capturedParamValue = parameterizedTypeReferenceArgumentCaptor.getValue();
+    assertEquals(result, heeUserDTOSPage);
+    assertEquals(2, result.getContent().size());
+    assertEquals(2, result.getTotalElements());
+    assertEquals(0, result.getNumber());
+    verify(profileRestTemplate).exchange(PROFILE_URL + "/api/hee-users?search=Username", HttpMethod.GET,null, capturedParamValue);
+  }
+
+  @Test
+  public void getAllAdminUsersShouldReturnFoundPagedAdminUsersWithSearchParam() {
+    HeeUserDTO heeUserDTO = new HeeUserDTO();
+    HeeUserDTO heeUserDTO1 = new HeeUserDTO();
+    heeUserDTO.setFirstName(FIRSTNAME);
+    heeUserDTO1.setFirstName(FIRSTNAME1);
+    List<HeeUserDTO> heeUserDTOS = Lists.newArrayList(heeUserDTO,heeUserDTO1);
+    Page<HeeUserDTO> heeUserDTOSPage = new PageImpl<>(heeUserDTOS);
+    PageRequest pageRequest = new PageRequest(0,11);
+
+
+    given(profileRestTemplate.exchange(eq(PROFILE_URL + "/api/hee-users?search=Username&page=0&size=11"),eq(HttpMethod.GET),eq(null), parameterizedTypeReferenceArgumentCaptor.capture()))
+        .willReturn(new ResponseEntity<>(heeUserDTOSPage, HttpStatus.OK));
+
+    Page<HeeUserDTO> result = profileServiceImpl.getAllAdminUsers(pageRequest, "Username");
+
+    ParameterizedTypeReference<Page<HeeUserDTO>> capturedParamValue = parameterizedTypeReferenceArgumentCaptor.getValue();
+    assertEquals(result, heeUserDTOSPage);
+    assertEquals(2, result.getContent().size());
+    assertEquals(2, result.getTotalElements());
+    assertEquals(0, result.getNumber());
+    verify(profileRestTemplate).exchange(PROFILE_URL + "/api/hee-users?search=Username&page=0&size=11", HttpMethod.GET,null, capturedParamValue);
+  }
+
+  @Test
+  public void getAllAdminUsersShouldReturnPagedAdminUsers() {
+    HeeUserDTO heeUserDTO = new HeeUserDTO();
+    HeeUserDTO heeUserDTO1 = new HeeUserDTO();
+    heeUserDTO.setFirstName(FIRSTNAME);
+    heeUserDTO1.setFirstName(FIRSTNAME1);
+    List<HeeUserDTO> heeUserDTOS = Lists.newArrayList(heeUserDTO,heeUserDTO1);
+    Page<HeeUserDTO> heeUserDTOSPage = new PageImpl<>(heeUserDTOS);
+    PageRequest pageRequest = new PageRequest(0,11);
+
+
+    given(profileRestTemplate.exchange(eq(PROFILE_URL + "/api/hee-users?page=0&size=11"),eq(HttpMethod.GET),eq(null), parameterizedTypeReferenceArgumentCaptor.capture()))
+        .willReturn(new ResponseEntity<>(heeUserDTOSPage, HttpStatus.OK));
+
+    Page<HeeUserDTO> result = profileServiceImpl.getAllAdminUsers(pageRequest, null);
+
+    ParameterizedTypeReference<Page<HeeUserDTO>> capturedParamValue = parameterizedTypeReferenceArgumentCaptor.getValue();
+    assertEquals(result, heeUserDTOSPage);
+    assertEquals(2, result.getContent().size());
+    assertEquals(2, result.getTotalElements());
+    assertEquals(0, result.getNumber());
+    verify(profileRestTemplate).exchange(PROFILE_URL + "/api/hee-users?page=0&size=11", HttpMethod.GET,null, capturedParamValue);
+  }
+
+  @Test
+  public void getAllAdminUsersShouldReturnAllAdminUsersWithNoSearchParam() {
+    HeeUserDTO heeUserDTO = new HeeUserDTO();
+    HeeUserDTO heeUserDTO1 = new HeeUserDTO();
+    heeUserDTO.setFirstName(FIRSTNAME);
+    heeUserDTO1.setFirstName(FIRSTNAME1);
+    List<HeeUserDTO> heeUserDTOS = Lists.newArrayList(heeUserDTO,heeUserDTO1);
+    Page<HeeUserDTO> heeUserDTOSPage = new PageImpl<>(heeUserDTOS);
+
+
+    given(profileRestTemplate.exchange(eq(PROFILE_URL + "/api/hee-users"),eq(HttpMethod.GET),eq(null), parameterizedTypeReferenceArgumentCaptor.capture()))
+        .willReturn(new ResponseEntity<>(heeUserDTOSPage, HttpStatus.OK));
+
+    Page<HeeUserDTO> result = profileServiceImpl.getAllAdminUsers(null, null);
+
+    ParameterizedTypeReference<Page<HeeUserDTO>> capturedParamValue = parameterizedTypeReferenceArgumentCaptor.getValue();
+    assertEquals(result, heeUserDTOSPage);
+    assertEquals(2, result.getContent().size());
+    assertEquals(2, result.getTotalElements());
+    assertEquals(0, result.getNumber());
+    verify(profileRestTemplate).exchange(PROFILE_URL + "/api/hee-users", HttpMethod.GET,null, capturedParamValue);
   }
 
   @Test

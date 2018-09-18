@@ -13,6 +13,7 @@ import com.transformuk.hee.tis.profile.dto.TraineeIdListResponse;
 import com.transformuk.hee.tis.profile.dto.TraineeProfileDto;
 import com.transformuk.hee.tis.profile.service.dto.HeeUserDTO;
 import com.transformuk.hee.tis.security.model.UserProfile;
+import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -147,9 +148,25 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
     return responseEntity.getBody();
   }
 
-  public List<HeeUserDTO> getAllAdminUsers() {
-    ParameterizedTypeReference<List<HeeUserDTO>> typeReference = getHeeUserDtoListReference();
-    ResponseEntity<List<HeeUserDTO>> responseEntity = profileRestTemplate.exchange(serviceUrl + ALL_HEE_USERS_ENDPOINT,
+  public Page<HeeUserDTO> getAllAdminUsers(Pageable pageable, String username) {
+    ParameterizedTypeReference<Page<HeeUserDTO>> typeReference = getHeeUserDtoListReference();
+    String searchParam = StringUtils.EMPTY;
+    if (StringUtils.isNotEmpty(username)) {
+      searchParam = "?search=" + username;
+    }
+
+    String pageParam = StringUtils.EMPTY;
+    if(pageable != null) {
+      if(StringUtils.isNotEmpty(username)) {
+        pageParam = pageParam + "&";
+      } else {
+        pageParam = "?";
+      }
+
+      pageParam = pageParam + "page=" + pageable.getPageNumber() + "&size=" + pageable.getPageSize();
+    }
+
+    ResponseEntity<Page<HeeUserDTO>> responseEntity = profileRestTemplate.exchange(serviceUrl + ALL_HEE_USERS_ENDPOINT + searchParam + pageParam,
         HttpMethod.GET, null, typeReference);
     return responseEntity.getBody();
   }
@@ -176,8 +193,8 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
     };
   }
 
-  private ParameterizedTypeReference<List<HeeUserDTO>> getHeeUserDtoListReference() {
-    return new ParameterizedTypeReference<List<HeeUserDTO>>() {
+  private ParameterizedTypeReference<Page<HeeUserDTO>> getHeeUserDtoListReference() {
+    return new ParameterizedTypeReference<Page<HeeUserDTO>>() {
     };
   }
 

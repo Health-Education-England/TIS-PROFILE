@@ -18,6 +18,8 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableArgumentResolver;
@@ -26,8 +28,6 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import java.util.List;
 
 import static org.hamcrest.Matchers.hasItems;
 import static org.mockito.Mockito.when;
@@ -90,14 +90,14 @@ public class HeeUserResourceIntTest2 {
     HeeUserDTO heeUserDTO2 = new HeeUserDTO();
     heeUserDTO1.setFirstName(TESTNAME_1);
     heeUserDTO2.setFirstName(TESTNAME_2);
-    List<HeeUserDTO> heeUserList = Lists.newArrayList(heeUserDTO1, heeUserDTO2);
+    Page<HeeUserDTO> heeUserList = new PageImpl<>(Lists.newArrayList(heeUserDTO1, heeUserDTO2));
 
-    when(userServiceMock.findAllUsersWithTrust(page)).thenReturn(heeUserList);
+    when(userServiceMock.findAllUsersWithTrust(page, null)).thenReturn(heeUserList);
 
     restHeeUserMockMvc.perform(get("/api/hee-users?size=10&page=0").contentType(MediaType.APPLICATION_JSON_UTF8))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-        .andExpect(jsonPath("$.[*].firstName").value(hasItems(TESTNAME_1, TESTNAME_2)));
+        .andExpect(jsonPath("$.content.[*].firstName").value(hasItems(TESTNAME_1, TESTNAME_2)));
   }
 
   @Test

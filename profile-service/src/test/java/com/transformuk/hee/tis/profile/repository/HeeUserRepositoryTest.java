@@ -3,6 +3,7 @@ package com.transformuk.hee.tis.profile.repository;
 import com.transformuk.hee.tis.profile.ProfileApp;
 import com.transformuk.hee.tis.profile.domain.HeeUser;
 import com.transformuk.hee.tis.profile.domain.UserTrust;
+import org.assertj.core.util.Lists;
 import org.h2.util.StringUtils;
 import org.junit.After;
 import org.junit.Assert;
@@ -49,6 +50,7 @@ public class HeeUserRepositoryTest {
   public static final long TRUST_ID_1 = 12345L;
   public static final long TRUST_ID_2 = 6789L;
   public static final String TRUST_NAME_2 = "St Pauls";
+  private static final String NAME_SEARCH_STRING = "Bo";
 
   @Autowired
   private HeeUserRepository heeUserRepository;
@@ -156,6 +158,29 @@ public class HeeUserRepositoryTest {
     Assert.assertTrue(optionalUserWithTrusts3.isPresent());
     Assert.assertNull(optionalUserWithTrusts3.get().getAssociatedTrusts());
   }
+
+  @Transactional
+  @Test
+  public void findByNameLikeShouldReturnAllUsersWhereNameIsLike() {
+
+    HeeUser user1 = new HeeUser(), user2 = new HeeUser(), user3 = new HeeUser();
+    user1.setName("Bob");
+    user2.setName("James");
+    user3.setName("aBo");
+    heeUserRepository.save(Lists.newArrayList(user1, user2, user3));
+    heeUserRepository.flush();
+
+    Pageable page = new PageRequest(0, 100);
+
+    Page<HeeUser> results = heeUserRepository.findByNameIgnoreCaseContaining(page, NAME_SEARCH_STRING);
+
+    Assert.assertEquals(2, results.getTotalElements());
+    Optional<HeeUser> foundBobOptional = results.getContent().stream().filter(user -> StringUtils.equals("Bob", user.getName())).findAny();
+    Assert.assertTrue(foundBobOptional.isPresent());
+    Optional<HeeUser> foundBoOptional = results.getContent().stream().filter(user -> StringUtils.equals("aBo", user.getName())).findAny();
+    Assert.assertTrue(foundBoOptional.isPresent());
+  }
+
 
   private Optional<HeeUser> findUserWithGMCId(String gmcId1, List<HeeUser> result) {
     return result.stream()

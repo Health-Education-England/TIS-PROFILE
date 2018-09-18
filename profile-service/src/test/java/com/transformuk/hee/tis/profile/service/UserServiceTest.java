@@ -17,17 +17,17 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.client.ExpectedCount.once;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserServiceTest {
@@ -116,24 +116,50 @@ public class UserServiceTest {
     List<HeeUserDTO> mappedUsers = Lists.newArrayList(heeUser1WithTrustsDTO, heeUser2EmptyTrustsDTO, heeUser3NullTrustsDTO);
     when(heeUserRepositoryMock.findAll(pageMock)).thenReturn(foundUsersMock);
     when(foundUsersMock.getContent()).thenReturn(usersFromPage);
+    when(foundUsersMock.getTotalElements()).thenReturn(3L);
     when(heeUserMapperMock.heeUsersToHeeUserDTOs(usersFromPage)).thenReturn(mappedUsers);
 
-    List<HeeUserDTO> result = testObj.findAllUsersWithTrust(pageMock);
+    Page<HeeUserDTO> result = testObj.findAllUsersWithTrust(pageMock, null);
 
     //asserts
-    Assert.assertEquals(3, result.size());
-    Assert.assertEquals(FIRST_NAME_1, result.get(0).getFirstName());
-    Assert.assertEquals(FIRST_NAME_2, result.get(1).getFirstName());
-    Assert.assertEquals(FIRST_NAME_3, result.get(2).getFirstName());
+    Assert.assertEquals(3, result.getTotalElements());
+    Assert.assertEquals(FIRST_NAME_1, result.getContent().get(0).getFirstName());
+    Assert.assertEquals(FIRST_NAME_2, result.getContent().get(1).getFirstName());
+    Assert.assertEquals(FIRST_NAME_3, result.getContent().get(2).getFirstName());
 
-    Assert.assertSame(userTrusts1DTO, result.get(0).getAssociatedTrusts());
-    Assert.assertSame(userTrusts2DTO, result.get(1).getAssociatedTrusts());
-    Assert.assertSame(userTrusts3DTO, result.get(2).getAssociatedTrusts());
+    Assert.assertSame(userTrusts1DTO, result.getContent().get(0).getAssociatedTrusts());
+    Assert.assertSame(userTrusts2DTO, result.getContent().get(1).getAssociatedTrusts());
+    Assert.assertSame(userTrusts3DTO, result.getContent().get(2).getAssociatedTrusts());
 
     //verify
     verify(heeUserRepositoryMock).findAll(pageMock);
     verify(foundUsersMock).getContent();
     verify(heeUserMapperMock).heeUsersToHeeUserDTOs(usersFromPage);
+    verify(heeUserRepositoryMock, never()).findByNameIgnoreCaseContaining(any(Pageable.class), anyString());
+  }
+
+  @Test
+  public void findAllUsersWithTrustAndSearchShouldReturnFilteredHeeUserDtoWithTrusts() {
+    Page<HeeUser> foundUsersMock = mock(Page.class);
+    List<HeeUser> usersFromPage = Lists.newArrayList(heeUser2EmptyTrusts);
+    List<HeeUserDTO> mappedUsers = Lists.newArrayList(heeUser2EmptyTrustsDTO);
+    when(heeUserRepositoryMock.findByNameIgnoreCaseContaining(pageMock, "st name 2")).thenReturn(foundUsersMock);
+    when(foundUsersMock.getContent()).thenReturn(usersFromPage);
+    when(foundUsersMock.getTotalElements()).thenReturn(1L);
+    when(heeUserMapperMock.heeUsersToHeeUserDTOs(usersFromPage)).thenReturn(mappedUsers);
+
+    Page<HeeUserDTO> result = testObj.findAllUsersWithTrust(pageMock, "st name 2");
+
+    // asserts
+    Assert.assertEquals(1, result.getTotalElements());
+    Assert.assertEquals(FIRST_NAME_2, result.getContent().get(0).getFirstName());
+
+    // verify
+    verify(heeUserRepositoryMock).findByNameIgnoreCaseContaining(pageMock, "st name 2");
+    verify(foundUsersMock).getContent();
+    verify(heeUserMapperMock).heeUsersToHeeUserDTOs(usersFromPage);
+    verify(heeUserRepositoryMock, never()).findAll(any(Pageable.class));
+
   }
 
   @Test
