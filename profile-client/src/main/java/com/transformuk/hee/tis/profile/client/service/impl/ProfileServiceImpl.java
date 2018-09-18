@@ -13,6 +13,7 @@ import com.transformuk.hee.tis.profile.dto.TraineeIdListResponse;
 import com.transformuk.hee.tis.profile.dto.TraineeProfileDto;
 import com.transformuk.hee.tis.profile.service.dto.HeeUserDTO;
 import com.transformuk.hee.tis.security.model.UserProfile;
+import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -147,9 +149,25 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
     return responseEntity.getBody();
   }
 
-  public List<HeeUserDTO> getAllAdminUsers() {
-    ParameterizedTypeReference<List<HeeUserDTO>> typeReference = getHeeUserDtoListReference();
-    ResponseEntity<List<HeeUserDTO>> responseEntity = profileRestTemplate.exchange(serviceUrl + ALL_HEE_USERS_ENDPOINT,
+  public Page<HeeUserDTO> getAllAdminUsers(Pageable pageable, String username) {
+    ParameterizedTypeReference<CustomPageable<HeeUserDTO>> typeReference = getHeeUserDtoListReference();
+    String searchParam = StringUtils.EMPTY;
+    if (StringUtils.isNotEmpty(username)) {
+      searchParam = "?search=" + username;
+    }
+
+    String pageParam = StringUtils.EMPTY;
+    if(pageable != null) {
+      if(StringUtils.isNotEmpty(username)) {
+        pageParam = pageParam + "&";
+      } else {
+        pageParam = "?";
+      }
+
+      pageParam = pageParam + "page=" + pageable.getPageNumber() + "&size=" + pageable.getPageSize();
+    }
+
+    ResponseEntity<CustomPageable<HeeUserDTO>> responseEntity = profileRestTemplate.exchange(serviceUrl + ALL_HEE_USERS_ENDPOINT + searchParam + pageParam,
         HttpMethod.GET, null, typeReference);
     return responseEntity.getBody();
   }
@@ -176,8 +194,8 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
     };
   }
 
-  private ParameterizedTypeReference<List<HeeUserDTO>> getHeeUserDtoListReference() {
-    return new ParameterizedTypeReference<List<HeeUserDTO>>() {
+  private ParameterizedTypeReference<CustomPageable<HeeUserDTO>> getHeeUserDtoListReference() {
+    return new ParameterizedTypeReference<CustomPageable<HeeUserDTO>>() {
     };
   }
 
@@ -203,5 +221,15 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
   @Override
   public Map<Class, ParameterizedTypeReference> getClassToParamTypeRefMap() {
     return classToParamTypeRefMap;
+  }
+
+  static class CustomPageable<T> extends PageImpl<T> {
+    public CustomPageable() {
+      this(new ArrayList<>());
+    }
+
+    public CustomPageable(List<T> content) {
+      super(content);
+    }
   }
 }

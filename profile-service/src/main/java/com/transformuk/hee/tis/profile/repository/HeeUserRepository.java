@@ -1,6 +1,8 @@
 package com.transformuk.hee.tis.profile.repository;
 
 import com.transformuk.hee.tis.profile.domain.HeeUser;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -84,4 +86,14 @@ public interface HeeUserRepository extends JpaRepository<HeeUser, String>, JpaSp
 
   @Query(value = "SELECT u FROM HeeUser u LEFT JOIN FETCH u.associatedTrusts where u.name = :name")
   Optional<HeeUser> findByNameWithTrusts(@Param("name") String name);
+
+  /**
+   * Finds HeeUsers by username with a like search
+   *
+   * @param page
+   * @param name
+   * @return
+   */
+  Page<HeeUser> findByNameIgnoreCaseContaining(Pageable page, String name);
+
 }

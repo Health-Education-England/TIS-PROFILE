@@ -12,7 +12,6 @@ import com.transformuk.hee.tis.profile.service.dto.HeeUserDTO;
 import com.transformuk.hee.tis.profile.service.mapper.HeeUserMapper;
 import com.transformuk.hee.tis.profile.validators.HeeUserValidator;
 import com.transformuk.hee.tis.profile.web.rest.util.HeaderUtil;
-import com.transformuk.hee.tis.profile.web.rest.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import io.swagger.annotations.ApiParam;
 import org.apache.commons.collections4.CollectionUtils;
@@ -20,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -31,13 +29,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -155,9 +152,10 @@ public class HeeUserResource {
   @GetMapping("/hee-users")
   @Timed
   @PreAuthorize("hasAuthority('profile:view:entities')")
-  public ResponseEntity<List<HeeUserDTO>> getAllHeeUsers(@ApiParam Pageable pageable) {
+  public ResponseEntity<Page<HeeUserDTO>> getAllHeeUsers(@ApiParam Pageable pageable,
+                                                         @RequestParam(required = false) String search) {
     log.debug("REST request to get a page of HeeUsers");
-    List<HeeUserDTO> heeUserDTOS = userService.findAllUsersWithTrust(pageable);
+    Page<HeeUserDTO> heeUserDTOS = userService.findAllUsersWithTrust(pageable, search);
     return new ResponseEntity<>(heeUserDTOS, HttpStatus.OK);
   }
 
