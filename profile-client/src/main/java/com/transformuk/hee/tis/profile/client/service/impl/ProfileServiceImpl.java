@@ -30,6 +30,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -149,7 +150,7 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
   }
 
   public Page<HeeUserDTO> getAllAdminUsers(Pageable pageable, String username) {
-    ParameterizedTypeReference<Page<HeeUserDTO>> typeReference = getHeeUserDtoListReference();
+    ParameterizedTypeReference<CustomPageable<HeeUserDTO>> typeReference = getHeeUserDtoListReference();
     String searchParam = StringUtils.EMPTY;
     if (StringUtils.isNotEmpty(username)) {
       searchParam = "?search=" + username;
@@ -166,7 +167,7 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
       pageParam = pageParam + "page=" + pageable.getPageNumber() + "&size=" + pageable.getPageSize();
     }
 
-    ResponseEntity<Page<HeeUserDTO>> responseEntity = profileRestTemplate.exchange(serviceUrl + ALL_HEE_USERS_ENDPOINT + searchParam + pageParam,
+    ResponseEntity<CustomPageable<HeeUserDTO>> responseEntity = profileRestTemplate.exchange(serviceUrl + ALL_HEE_USERS_ENDPOINT + searchParam + pageParam,
         HttpMethod.GET, null, typeReference);
     return responseEntity.getBody();
   }
@@ -193,8 +194,8 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
     };
   }
 
-  private ParameterizedTypeReference<Page<HeeUserDTO>> getHeeUserDtoListReference() {
-    return new ParameterizedTypeReference<Page<HeeUserDTO>>() {
+  private ParameterizedTypeReference<CustomPageable<HeeUserDTO>> getHeeUserDtoListReference() {
+    return new ParameterizedTypeReference<CustomPageable<HeeUserDTO>>() {
     };
   }
 
@@ -220,5 +221,15 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
   @Override
   public Map<Class, ParameterizedTypeReference> getClassToParamTypeRefMap() {
     return classToParamTypeRefMap;
+  }
+
+  static class CustomPageable<T> extends PageImpl<T> {
+    public CustomPageable() {
+      this(new ArrayList<>());
+    }
+
+    public CustomPageable(List<T> content) {
+      super(content);
+    }
   }
 }
