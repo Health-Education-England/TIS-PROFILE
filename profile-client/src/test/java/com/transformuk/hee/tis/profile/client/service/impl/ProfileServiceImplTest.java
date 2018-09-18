@@ -149,7 +149,7 @@ public class ProfileServiceImplTest {
   public void getSingleAdminUserShouldReturnHeeUserDTO() {
     HeeUserDTO heeUserDTO = new HeeUserDTO();
     heeUserDTO.setFirstName(FIRSTNAME);
-    given(profileRestTemplate.exchange(eq(PROFILE_URL + "/api/hee-users/Username"),eq(HttpMethod.GET),eq(null),
+    given(profileRestTemplate.exchange(eq(PROFILE_URL + "/api/single-hee-users?username=Username"),eq(HttpMethod.GET),eq(null),
         parameterizedTypeReferenceArgumentCaptorSingleDTO.capture()))
         .willReturn(new ResponseEntity<>(heeUserDTO, OK));
 
@@ -158,7 +158,7 @@ public class ProfileServiceImplTest {
         parameterizedTypeReferenceArgumentCaptorSingleDTO.getValue();
 
     assertEquals(result, heeUserDTO);
-    verify(profileRestTemplate).exchange(PROFILE_URL + "/api/hee-users/Username",HttpMethod.GET,null,
+    verify(profileRestTemplate).exchange(PROFILE_URL + "/api/single-hee-users?username=Username",HttpMethod.GET,null,
         parameterizedTypeReferenceArgumentCaptorSingleDTOValue);
   }
 
