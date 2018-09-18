@@ -174,6 +174,17 @@ public class HeeUserResource {
     return ResponseUtil.wrapOrNotFound(Optional.ofNullable(heeUserDTO));
   }
 
+
+  @GetMapping("/single-hee-users")
+  @Timed
+  @PreAuthorize("hasAuthority('profile:view:entities')")
+  public ResponseEntity<HeeUserDTO> getSingleHeeUser(@RequestParam String username) {
+    log.debug("REST request to get HeeUser : {}", username);
+    HeeUserDTO heeUserDTO = userService.findSingleUserWithTrust(username);
+    return ResponseUtil.wrapOrNotFound(Optional.ofNullable(heeUserDTO));
+  }
+
+
   /**
    * DELETE  /hee-users/:name : delete the "name" heeUser.
    *

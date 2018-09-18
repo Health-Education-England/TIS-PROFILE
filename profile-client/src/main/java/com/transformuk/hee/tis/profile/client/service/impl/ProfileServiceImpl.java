@@ -55,7 +55,7 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
   private static final String USERS_ENDPOINT = "/api/users";
   private static final String TRAINEE_DBC_REGISTER_ENDPOINT = "/api/trainee-id/{designatedBodyCode}/register";
   private static final Map<Class, ParameterizedTypeReference> classToParamTypeRefMap;
-  private static final String SINGLE_USER_ENDPOINT = "/api/hee-users/";
+  private static final String SINGLE_USER_ENDPOINT = "/api/single-hee-users";
 
   static {
     classToParamTypeRefMap = Maps.newHashMap();
@@ -174,7 +174,7 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
 
   public HeeUserDTO getSingleAdminUser(String username) {
     ParameterizedTypeReference<HeeUserDTO> typeReference = getHeeUserDtoReference();
-    String url = serviceUrl + SINGLE_USER_ENDPOINT + username;
+    String url = serviceUrl + SINGLE_USER_ENDPOINT + "?username=" + username;
     ResponseEntity<HeeUserDTO> responseEntity = profileRestTemplate.exchange(url,
         HttpMethod.GET, null, typeReference);
     return responseEntity.getBody();
