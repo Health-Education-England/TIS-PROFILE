@@ -41,7 +41,7 @@ public class TraineeProfileServiceTest {
     RegistrationRequest request = new RegistrationRequest();
     request.setGmcNumber(EXISTING_GMC_NUMBER);
 
-    Set<String> gmcNumbers = newSet(EXISTING_GMC_NUMBER);
+    List<String> gmcNumbers = newArrayList(EXISTING_GMC_NUMBER);
     TraineeProfile existingTraineeProfile = new TraineeProfile(1L, EXISTING_GMC_NUMBER);
     existingTraineeProfile.setActive(true);
     existingTraineeProfile.setDesignatedBodyCode(DBC);
