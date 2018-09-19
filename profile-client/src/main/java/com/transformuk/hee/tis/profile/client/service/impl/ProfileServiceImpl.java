@@ -30,7 +30,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -223,13 +222,4 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
     return classToParamTypeRefMap;
   }
 
-  static class CustomPageable<T> extends PageImpl<T> {
-    public CustomPageable() {
-      this(new ArrayList<>());
-    }
-
-    public CustomPageable(List<T> content) {
-      super(content);
-    }
-  }
 }
