@@ -6,12 +6,12 @@ import com.transformuk.hee.tis.profile.domain.UserTrust;
 import com.transformuk.hee.tis.profile.repository.HeeUserRepository;
 import com.transformuk.hee.tis.profile.repository.UserTrustRepository;
 import com.transformuk.hee.tis.profile.service.KeycloakAdminClientService;
+import com.transformuk.hee.tis.profile.service.UserService;
 import com.transformuk.hee.tis.profile.service.UserTrustService;
 import com.transformuk.hee.tis.profile.service.dto.HeeUserDTO;
 import com.transformuk.hee.tis.profile.service.mapper.HeeUserMapper;
 import com.transformuk.hee.tis.profile.validators.HeeUserValidator;
 import com.transformuk.hee.tis.profile.web.rest.util.HeaderUtil;
-import com.transformuk.hee.tis.profile.web.rest.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import io.swagger.annotations.ApiParam;
 import org.apache.commons.collections4.CollectionUtils;
@@ -19,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -30,13 +29,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -54,6 +52,7 @@ public class HeeUserResource {
   private final HeeUserMapper heeUserMapper;
   private final UserTrustRepository userTrustRepository;
   private final UserTrustService userTrustService;
+  private final UserService userService;
 
   private KeycloakAdminClientService keyclockAdminClientService;
 
@@ -61,13 +60,15 @@ public class HeeUserResource {
 
   public HeeUserResource(HeeUserRepository heeUserRepository, HeeUserMapper heeUserMapper,
                          KeycloakAdminClientService keyclockAdminClientService, HeeUserValidator heeUserValidator,
-                         UserTrustRepository userTrustRepository, UserTrustService userTrustService) {
+                         UserTrustRepository userTrustRepository, UserTrustService userTrustService,
+                         UserService userService) {
     this.heeUserRepository = heeUserRepository;
     this.heeUserMapper = heeUserMapper;
     this.keyclockAdminClientService = keyclockAdminClientService;
     this.heeUserValidator = heeUserValidator;
     this.userTrustRepository = userTrustRepository;
     this.userTrustService = userTrustService;
+    this.userService = userService;
   }
 
   /**
@@ -151,11 +152,11 @@ public class HeeUserResource {
   @GetMapping("/hee-users")
   @Timed
   @PreAuthorize("hasAuthority('profile:view:entities')")
-  public ResponseEntity<List<HeeUserDTO>> getAllHeeUsers(@ApiParam Pageable pageable) {
+  public ResponseEntity<Page<HeeUserDTO>> getAllHeeUsers(@ApiParam Pageable pageable,
+                                                         @RequestParam(required = false) String search) {
     log.debug("REST request to get a page of HeeUsers");
-    Page<HeeUser> page = heeUserRepository.findAll(pageable);
-    HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/hee-users");
-    return new ResponseEntity<>(heeUserMapper.heeUsersToHeeUserDTOs(page.getContent()), headers, HttpStatus.OK);
+    Page<HeeUserDTO> heeUserDTOS = userService.findAllUsersWithTrust(pageable, search);
+    return new ResponseEntity<>(heeUserDTOS, HttpStatus.OK);
   }
 
   /**
@@ -169,10 +170,20 @@ public class HeeUserResource {
   @PreAuthorize("hasAuthority('profile:view:entities')")
   public ResponseEntity<HeeUserDTO> getHeeUser(@PathVariable String name) {
     log.debug("REST request to get HeeUser : {}", name);
-    Optional<HeeUser> heeUser = heeUserRepository.findByNameWithTrusts(name);
-    HeeUserDTO heeUserDTO = heeUserMapper.heeUserToHeeUserDTO(heeUser.orElse(null));
+    HeeUserDTO heeUserDTO = userService.findSingleUserWithTrust(name);
     return ResponseUtil.wrapOrNotFound(Optional.ofNullable(heeUserDTO));
   }
+
+
+  @GetMapping("/single-hee-users")
+  @Timed
+  @PreAuthorize("hasAuthority('profile:view:entities')")
+  public ResponseEntity<HeeUserDTO> getSingleHeeUser(@RequestParam String username) {
+    log.debug("REST request to get HeeUser : {}", username);
+    HeeUserDTO heeUserDTO = userService.findSingleUserWithTrust(username);
+    return ResponseUtil.wrapOrNotFound(Optional.ofNullable(heeUserDTO));
+  }
+
 
   /**
    * DELETE  /hee-users/:name : delete the "name" heeUser.

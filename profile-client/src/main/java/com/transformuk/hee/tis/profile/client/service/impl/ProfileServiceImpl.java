@@ -13,6 +13,7 @@ import com.transformuk.hee.tis.profile.dto.TraineeIdListResponse;
 import com.transformuk.hee.tis.profile.dto.TraineeProfileDto;
 import com.transformuk.hee.tis.profile.service.dto.HeeUserDTO;
 import com.transformuk.hee.tis.security.model.UserProfile;
+import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,9 +50,11 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
   private static final String SIZE_QUERY_PARAM = "size";
   private static final String TRAINEE_MAPPINGS_ENDPOINT = "/api/trainee-id/{dbc}/mappings";
   private static final String USERS_RO_USER_ENDPOINT = "/api/users/ro-user/";
+  private static final String ALL_HEE_USERS_ENDPOINT = "/api/hee-users";
   private static final String USERS_ENDPOINT = "/api/users";
   private static final String TRAINEE_DBC_REGISTER_ENDPOINT = "/api/trainee-id/{designatedBodyCode}/register";
   private static final Map<Class, ParameterizedTypeReference> classToParamTypeRefMap;
+  private static final String SINGLE_USER_ENDPOINT = "/api/single-hee-users";
 
   static {
     classToParamTypeRefMap = Maps.newHashMap();
@@ -145,6 +148,38 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
     return responseEntity.getBody();
   }
 
+  public Page<HeeUserDTO> getAllAdminUsers(Pageable pageable, String username) {
+    ParameterizedTypeReference<CustomPageable<HeeUserDTO>> typeReference = getHeeUserDtoListReference();
+    String searchParam = StringUtils.EMPTY;
+    if (StringUtils.isNotEmpty(username)) {
+      searchParam = "?search=" + username;
+    }
+
+    String pageParam = StringUtils.EMPTY;
+    if(pageable != null) {
+      if(StringUtils.isNotEmpty(username)) {
+        pageParam = pageParam + "&";
+      } else {
+        pageParam = "?";
+      }
+
+      pageParam = pageParam + "page=" + pageable.getPageNumber() + "&size=" + pageable.getPageSize();
+    }
+
+    ResponseEntity<CustomPageable<HeeUserDTO>> responseEntity = profileRestTemplate.exchange(serviceUrl + ALL_HEE_USERS_ENDPOINT + searchParam + pageParam,
+        HttpMethod.GET, null, typeReference);
+    return responseEntity.getBody();
+  }
+
+  public HeeUserDTO getSingleAdminUser(String username) {
+    ParameterizedTypeReference<HeeUserDTO> typeReference = getHeeUserDtoReference();
+    String url = serviceUrl + SINGLE_USER_ENDPOINT + "?username=" + username;
+    ResponseEntity<HeeUserDTO> responseEntity = profileRestTemplate.exchange(url,
+        HttpMethod.GET, null, typeReference);
+    return responseEntity.getBody();
+  }
+
+
   @Override
   public List<JsonPatchDTO> getJsonPathByTableDtoNameOrderByDateAddedAsc(String endpointUrl, Class objectDTO) {
     ParameterizedTypeReference<List<JsonPatchDTO>> typeReference = getJsonPatchDtoReference();
@@ -155,6 +190,16 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
 
   private ParameterizedTypeReference<List<JsonPatchDTO>> getJsonPatchDtoReference() {
     return new ParameterizedTypeReference<List<JsonPatchDTO>>() {
+    };
+  }
+
+  private ParameterizedTypeReference<CustomPageable<HeeUserDTO>> getHeeUserDtoListReference() {
+    return new ParameterizedTypeReference<CustomPageable<HeeUserDTO>>() {
+    };
+  }
+
+  private ParameterizedTypeReference<HeeUserDTO> getHeeUserDtoReference() {
+    return new ParameterizedTypeReference<HeeUserDTO>() {
     };
   }
 
@@ -176,4 +221,5 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
   public Map<Class, ParameterizedTypeReference> getClassToParamTypeRefMap() {
     return classToParamTypeRefMap;
   }
+
 }

@@ -3,6 +3,7 @@ package com.transformuk.hee.tis.profile.domain;
 import com.google.common.collect.Sets;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.persistence.CascadeType;
@@ -19,6 +20,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -33,6 +35,7 @@ import static javax.persistence.FetchType.LAZY;
 public class HeeUser implements Serializable {
 
   public static final String NONE = "None";
+  private static final UserTrust NULL_TRUST = null;
   private static final long serialVersionUID = 1L;
   private String name;
   private String firstName;
@@ -48,7 +51,8 @@ public class HeeUser implements Serializable {
 
   private Set<Role> roles;
   private Set<String> designatedBodyCodes;
-  private Set<UserTrust> associatedTrusts;
+
+  private Set<UserTrust> associatedTrusts = new HashSet<>();
 
   public HeeUser() {
     super();
@@ -196,13 +200,23 @@ public class HeeUser implements Serializable {
     this.designatedBodyCodes = designatedBodyCodes;
   }
 
-  @OneToMany(fetch = LAZY, mappedBy = "heeUser")
+  @OneToMany(fetch = LAZY, mappedBy = "heeUser", cascade = CascadeType.ALL)
   public Set<UserTrust> getAssociatedTrusts() {
     return associatedTrusts;
   }
 
   public void setAssociatedTrusts(Set<UserTrust> associatedTrusts) {
     this.associatedTrusts = associatedTrusts;
+  }
+
+  public void addAssociatedTrust(UserTrust userTrust) {
+    this.associatedTrusts.add(userTrust);
+    userTrust.setHeeUser(this);
+  }
+
+  public void removeAssociatedTrust(UserTrust userTrust) {
+    userTrust.setHeeUser(null);
+    this.associatedTrusts.remove(userTrust);
   }
 
   @Override
