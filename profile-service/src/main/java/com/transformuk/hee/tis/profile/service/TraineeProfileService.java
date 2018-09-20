@@ -46,8 +46,8 @@ public class TraineeProfileService {
     String[] gmcNumbers = requestMap.keySet().toArray(new String[0]);
     final int batchSize = 1000;
     for (int i = 0; i < gmcNumbers.length; i += batchSize) {
-      String[] strings = Arrays.copyOfRange(gmcNumbers, i, Math.min(gmcNumbers.length, i + batchSize));
-      dbProfiles.addAll(traineeProfileRepository.findByGmcNumberIn(Arrays.asList(strings)));
+      String[] gmcNumberBatch = Arrays.copyOfRange(gmcNumbers, i, Math.min(gmcNumbers.length, i + batchSize));
+      dbProfiles.addAll(traineeProfileRepository.findByGmcNumberIn(Arrays.asList(gmcNumberBatch)));
     }
 
     Set<String> dbGmcNumbers = dbProfiles.stream().map(TraineeProfile::getGmcNumber).collect(Collectors.toSet());
