@@ -14,7 +14,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
-import java.util.Set;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,7 +21,6 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.internal.util.collections.Sets.newSet;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TraineeProfileServiceTest {
@@ -41,7 +39,7 @@ public class TraineeProfileServiceTest {
     RegistrationRequest request = new RegistrationRequest();
     request.setGmcNumber(EXISTING_GMC_NUMBER);
 
-    Set<String> gmcNumbers = newSet(EXISTING_GMC_NUMBER);
+    List<String> gmcNumbers = newArrayList(EXISTING_GMC_NUMBER);
     TraineeProfile existingTraineeProfile = new TraineeProfile(1L, EXISTING_GMC_NUMBER);
     existingTraineeProfile.setActive(true);
     existingTraineeProfile.setDesignatedBodyCode(DBC);

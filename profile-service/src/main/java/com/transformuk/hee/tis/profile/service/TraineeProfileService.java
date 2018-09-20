@@ -1,5 +1,7 @@
 package com.transformuk.hee.tis.profile.service;
 
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
 import com.transformuk.hee.tis.profile.domain.TraineeProfile;
 import com.transformuk.hee.tis.profile.dto.RegistrationRequest;
 import com.transformuk.hee.tis.profile.repository.TraineeProfileRepository;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -40,10 +43,12 @@ public class TraineeProfileService {
   @Transactional
   public List<TraineeProfile> findOrCreate(String dbc, List<RegistrationRequest> requests) {
     Map<String, RegistrationRequest> requestMap = requests.stream().collect(toMap(t -> t.getGmcNumber(), v -> v));
-    List<TraineeProfile> dbProfiles = traineeProfileRepository.findByGmcNumberIn(requestMap.keySet());
-
+    List<TraineeProfile> dbProfiles = Lists.newArrayList();
+    String[] gmcNumbers = requestMap.keySet().toArray(new String[0]);
+    final int batchSize = 1000;
+    Iterators.partition(Arrays.stream(gmcNumbers).iterator(), batchSize)
+            .forEachRemaining((batch) -> dbProfiles.addAll(traineeProfileRepository.findByGmcNumberIn(batch)));
     Set<String> dbGmcNumbers = dbProfiles.stream().map(TraineeProfile::getGmcNumber).collect(Collectors.toSet());
-    Set<String> inputGmcNumbers = requestMap.keySet();
 
     // 1. Brand new profiles - not even associate to any DBC earlier
     List<TraineeProfile> brandNewProfiles = requests.stream()
