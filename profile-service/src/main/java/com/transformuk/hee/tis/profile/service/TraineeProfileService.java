@@ -1,5 +1,6 @@
 package com.transformuk.hee.tis.profile.service;
 
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.transformuk.hee.tis.profile.domain.TraineeProfile;
 import com.transformuk.hee.tis.profile.dto.RegistrationRequest;
@@ -45,11 +46,8 @@ public class TraineeProfileService {
     List<TraineeProfile> dbProfiles = Lists.newArrayList();
     String[] gmcNumbers = requestMap.keySet().toArray(new String[0]);
     final int batchSize = 1000;
-    for (int i = 0; i < gmcNumbers.length; i += batchSize) {
-      String[] gmcNumberBatch = Arrays.copyOfRange(gmcNumbers, i, Math.min(gmcNumbers.length, i + batchSize));
-      dbProfiles.addAll(traineeProfileRepository.findByGmcNumberIn(Arrays.asList(gmcNumberBatch)));
-    }
-
+    Iterators.partition(Arrays.stream(gmcNumbers).iterator(), batchSize)
+            .forEachRemaining((batch) -> dbProfiles.addAll(traineeProfileRepository.findByGmcNumberIn(batch)));
     Set<String> dbGmcNumbers = dbProfiles.stream().map(TraineeProfile::getGmcNumber).collect(Collectors.toSet());
 
     // 1. Brand new profiles - not even associate to any DBC earlier
