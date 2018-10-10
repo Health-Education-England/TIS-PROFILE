@@ -12,7 +12,7 @@
 
   <groupId>com.transformuk.hee.tis</groupId>
   <artifactId>profile-service</artifactId>
-  <version>2.10.9</version>
+  <version>3.0.0</version>
   <packaging>war</packaging>
   <name>profile-service</name>
 
