@@ -5,7 +5,6 @@ import com.transformuk.hee.tis.profile.domain.HeeUser;
 import com.transformuk.hee.tis.profile.domain.UserTrust;
 import com.transformuk.hee.tis.profile.repository.HeeUserRepository;
 import com.transformuk.hee.tis.profile.repository.UserTrustRepository;
-import com.transformuk.hee.tis.profile.service.KeycloakAdminClientService;
 import com.transformuk.hee.tis.profile.service.UserService;
 import com.transformuk.hee.tis.profile.service.UserTrustService;
 import com.transformuk.hee.tis.profile.service.dto.HeeUserDTO;
@@ -54,17 +53,14 @@ public class HeeUserResource {
   private final UserTrustService userTrustService;
   private final UserService userService;
 
-  private KeycloakAdminClientService keyclockAdminClientService;
-
   private HeeUserValidator heeUserValidator;
 
   public HeeUserResource(HeeUserRepository heeUserRepository, HeeUserMapper heeUserMapper,
-                         KeycloakAdminClientService keyclockAdminClientService, HeeUserValidator heeUserValidator,
+                         HeeUserValidator heeUserValidator,
                          UserTrustRepository userTrustRepository, UserTrustService userTrustService,
                          UserService userService) {
     this.heeUserRepository = heeUserRepository;
     this.heeUserMapper = heeUserMapper;
-    this.keyclockAdminClientService = keyclockAdminClientService;
     this.heeUserValidator = heeUserValidator;
     this.userTrustRepository = userTrustRepository;
     this.userTrustService = userTrustService;
@@ -91,9 +87,6 @@ public class HeeUserResource {
     heeUserValidator.validateIsTemporary(heeUser.getTemporaryPassword());
     //Validate
     validateHeeUser(heeUser);
-
-    // First try to create user in KeyClock
-    keyclockAdminClientService.createUser(heeUser);
 
     Set<UserTrust> associatedTrusts = heeUser.getAssociatedTrusts();
     if(CollectionUtils.isNotEmpty(associatedTrusts)){
@@ -132,8 +125,6 @@ public class HeeUserResource {
     //Validate
     validateHeeUser(heeUser);
 
-    // First try to update user in KeyClock
-    keyclockAdminClientService.updateUser(heeUser);
     heeUserRepository.save(heeUser);
     userTrustService.assignTrustsToUser(heeUserDTO);
     HeeUserDTO result = heeUserMapper.heeUserToHeeUserDTO(heeUserRepository.findByNameWithTrusts(heeUserDTO.getName()).orElse(null));

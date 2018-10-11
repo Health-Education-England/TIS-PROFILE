@@ -194,17 +194,6 @@
       <version>4.1.0</version>
     </dependency>
     <dependency>
-      <groupId>com.transformuk.hee.tis</groupId>
-      <artifactId>keycloak-admin-client</artifactId>
-      <version>1.2.3</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>slf4j-simple</artifactId>
-          <groupId>org.slf4j</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>com.zaxxer</groupId>
       <artifactId>HikariCP</artifactId>
       <exclusions>
