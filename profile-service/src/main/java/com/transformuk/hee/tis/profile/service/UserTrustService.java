@@ -26,7 +26,7 @@ public class UserTrustService {
     Set<UserTrust> associatedTrusts = heeUser.getAssociatedTrusts();
     if (CollectionUtils.isNotEmpty(associatedTrusts)) {
       for (UserTrust userTrust : associatedTrusts) {
-        userTrust.setHeeUser(heeUser);
+        heeUser.addAssociatedTrust(userTrust);
       }
     }
     List<UserTrust> userTrusts = userTrustRepository.findByHeeUser(heeUser);
