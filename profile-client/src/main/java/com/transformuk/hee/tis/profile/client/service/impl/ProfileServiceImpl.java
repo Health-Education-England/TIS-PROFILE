@@ -24,6 +24,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -177,6 +178,12 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
     ResponseEntity<HeeUserDTO> responseEntity = profileRestTemplate.exchange(url,
         HttpMethod.GET, null, typeReference);
     return responseEntity.getBody();
+  }
+
+  @Override
+  public boolean deleteUser(String username) {
+    ResponseEntity<Void> exchange = profileRestTemplate.exchange(serviceUrl + ALL_HEE_USERS_ENDPOINT + "/{username}", HttpMethod.DELETE, null, Void.class, username);
+    return HttpStatus.OK.equals(exchange.getStatusCode());
   }
 
 
