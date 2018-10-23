@@ -14,6 +14,8 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
 import org.springframework.validation.Validator;
@@ -32,6 +34,12 @@ import java.util.Collection;
 })
 @EnableAutoConfiguration(exclude = {MetricFilterAutoConfiguration.class, MetricRepositoryAutoConfiguration.class})
 @EnableConfigurationProperties({ApplicationProperties.class})
+@PropertySource(
+        {
+                "classpath:/config/application.yml",
+                "classpath:/config/referenceclientapplication.properties"
+        }
+)
 public class ProfileApp {
 
   public static final String SERVICE_NAME = "tis-profile";
