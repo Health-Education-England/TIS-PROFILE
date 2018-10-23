@@ -125,6 +125,8 @@ public class HeeUserResource {
     //Validate
     validateHeeUser(heeUser);
 
+    //fix bi directional link to trusts
+    heeUser.getAssociatedTrusts().forEach(a -> a.setHeeUser(heeUser));
     heeUserRepository.save(heeUser);
     userTrustService.assignTrustsToUser(heeUserDTO);
     HeeUserDTO result = heeUserMapper.heeUserToHeeUserDTO(heeUserRepository.findByNameWithTrusts(heeUserDTO.getName()).orElse(null));

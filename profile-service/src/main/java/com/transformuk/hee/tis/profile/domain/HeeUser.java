@@ -199,7 +199,7 @@ public class HeeUser implements Serializable {
     this.designatedBodyCodes = designatedBodyCodes;
   }
 
-  @OneToMany(fetch = LAZY, mappedBy = "heeUser", cascade = {CascadeType.REFRESH, CascadeType.REMOVE})
+  @OneToMany(fetch = LAZY, mappedBy = "heeUser", cascade = CascadeType.ALL)
   public Set<UserTrust> getAssociatedTrusts() {
     return associatedTrusts;
   }
