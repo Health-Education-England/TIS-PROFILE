@@ -6,7 +6,6 @@ import com.transformuk.hee.tis.profile.domain.HeeUser;
 import com.transformuk.hee.tis.profile.repository.HeeUserRepository;
 import com.transformuk.hee.tis.profile.repository.PermissionRepository;
 import com.transformuk.hee.tis.profile.repository.UserTrustRepository;
-import com.transformuk.hee.tis.profile.service.KeycloakAdminClientService;
 import com.transformuk.hee.tis.profile.service.UserService;
 import com.transformuk.hee.tis.profile.service.UserTrustService;
 import com.transformuk.hee.tis.profile.service.dto.HeeUserDTO;
@@ -16,7 +15,6 @@ import com.transformuk.hee.tis.profile.web.rest.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -47,7 +45,6 @@ import static com.transformuk.hee.tis.profile.web.rest.TestUtil.UPDATED_NAME;
 import static com.transformuk.hee.tis.profile.web.rest.TestUtil.UPDATED_PHONE_NUMBER;
 import static com.transformuk.hee.tis.profile.web.rest.TestUtil.createEntityHeeUser;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -86,9 +83,6 @@ public class HeeUserResourceIntTest {
   @Autowired
   private ExceptionTranslator exceptionTranslator;
 
-  @Mock
-  private KeycloakAdminClientService keyclockAdminClientService;
-
   @Autowired
   private HeeUserValidator heeUserValidator;
 
@@ -113,7 +107,7 @@ public class HeeUserResourceIntTest {
   public void setup() {
     MockitoAnnotations.initMocks(this);
     HeeUserResource heeUserResource = new HeeUserResource(heeUserRepository, heeUserMapper,
-        keyclockAdminClientService, heeUserValidator,userTrustRepository, userTrustService,
+        heeUserValidator, userTrustRepository, userTrustService,
         userService);
     this.restHeeUserMockMvc = MockMvcBuilders.standaloneSetup(heeUserResource)
         .setCustomArgumentResolvers(pageableArgumentResolver)

@@ -23,4 +23,5 @@ public interface ProfileService extends ClientService {
 
   List<TraineeProfileDto> getTraineeIdsForGmcNumbers(String designatedBodyCode, List<RegistrationRequest> registrationRequests);
 
+  boolean deleteUser(String username);
 }

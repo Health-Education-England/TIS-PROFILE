@@ -104,6 +104,9 @@ public class HeeUserRepositoryTest {
     heeUserWithTrust = heeUserRepository.saveAndFlush(heeUserWithTrust);
     heeUserWithEmptyTrust = heeUserRepository.saveAndFlush(heeUserWithEmptyTrust);
     heeUserWithNullTrust = heeUserRepository.saveAndFlush(heeUserWithNullTrust);
+
+    userTrustRepository.saveAndFlush(userTrust1);
+    userTrustRepository.saveAndFlush(userTrust2);
   }
 
   private void createUserTrusts() {
@@ -116,6 +119,7 @@ public class HeeUserRepositoryTest {
     userTrust2.setTrustCode(TRUST_CODE_2);
     userTrust2.setTrustId(TRUST_ID_2);
     userTrust2.setTrustName(TRUST_NAME_2);
+
   }
 
   @After

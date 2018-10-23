@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Set;
 
@@ -58,41 +57,27 @@ public class UserProfileController {
   })
   @CrossOrigin
   @RequestMapping(path = "/userinfo", method = GET, produces = APPLICATION_JSON_VALUE)
-  public ResponseEntity<UserProfile> profile(@RequestHeader(value = "OIDC_access_token") String token) {
-    HeeUser user;
-    HttpStatus httpStatus;
-    try {
-      user = loginService.getUserByToken(token);
-      httpStatus = HttpStatus.OK;
-    } catch (EntityNotFoundException enfe) {
-      LOG.debug("User not found using token, creating new user");
-      user = loginService.createUserByToken(token);
-      httpStatus = HttpStatus.CREATED;
-    }
-    UserProfile userProfile = assembler.toUserProfile(user);
-    return new ResponseEntity<>(userProfile, httpStatus);
+  public UserProfile profile(@RequestHeader(value = "OIDC_access_token") String token) {
+    HeeUser user = loginService.getUserByToken(token);
+    return assembler.toUserProfile(user);
   }
 
-  @ApiOperation(value = "Creates or Updates user", notes = "updates user roles and groups in auth db and returns " +
-      "updated user. Creates if it doesn't yet exist"
-      , response = UserProfile.class)
-  @ApiResponses(value = {
-      @ApiResponse(code = 200, message = "Returns updated user profile successfully", response = UserProfile.class)
-  })
+  /**
+   * This endpoint is being marked as deprecated now as we should not be creating/updating users here as we now have
+   * the User Management service
+   * <p>
+   * So all this does for now is just return the user based on the token provided
+   *
+   * @param token
+   * @return
+   */
   @CrossOrigin
   @RequestMapping(path = "/userupdate", method = GET, produces = APPLICATION_JSON_VALUE)
+  @Deprecated
   public ResponseEntity<UserProfile> amendUser(@RequestHeader(value = "OIDC_access_token") String token) {
-    HeeUser user;
     HttpStatus httpStatus;
-    try {
-      loginService.getUserByToken(token);
-      user = loginService.updateUserByToken(token);
-      httpStatus = HttpStatus.OK;
-    } catch (EntityNotFoundException enfe) {
-      LOG.debug("User not found using token, creating new user");
-      user = loginService.createUserByToken(token);
-      httpStatus = HttpStatus.CREATED;
-    }
+    HeeUser user = loginService.getUserByToken(token);
+    httpStatus = HttpStatus.OK;
     UserProfile userProfile = assembler.toUserProfile(user);
     return new ResponseEntity<>(userProfile, httpStatus);
   }
