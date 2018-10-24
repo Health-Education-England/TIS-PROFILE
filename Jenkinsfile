@@ -21,16 +21,8 @@ node {
     def buildVersion = env.GIT_COMMIT
     def imageName = ""
     def imageVersionTag = ""
-    boolean isService = false
 
     println "[Jenkinsfile INFO] Commit Hash is ${GIT_COMMIT}"
-
-    if (fileExists("$workspace/$service-service/pom.xml")) {
-        workspace = "$workspace/$service-service"
-        env.WORKSPACE= workspace
-        sh 'cd "$workspace"'
-        isService = true
-    }
 
     try {
 
@@ -59,9 +51,13 @@ node {
           imageName = env.ARTIFACT_ID
           imageVersionTag = env.GIT_COMMIT
 
-          if (isService) {
-              imageName = service
-              env.IMAGE_NAME = imageName
+          if (fileExists("$workspace/$service-service/pom.xml")) {
+            workspace = "$workspace/$service-service"
+            env.WORKSPACE= workspace
+            sh 'cd "$workspace"'
+
+            imageName = service
+            env.IMAGE_NAME = imageName
           }
 
           sh "ansible-playbook -i $env.DEVOPS_BASE/ansible/inventory/dev $env.DEVOPS_BASE/ansible/tasks/spring-boot-build.yml"
