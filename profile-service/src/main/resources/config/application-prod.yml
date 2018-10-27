@@ -134,7 +134,7 @@ jhipster:
 
 logging:
     level:
-        root: ${LOGGING_LEVEL:info}
+        root: ${LOGGING_LEVEL:debug}
 
 application:
 
