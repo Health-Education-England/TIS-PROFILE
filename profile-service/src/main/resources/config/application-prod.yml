@@ -132,6 +132,10 @@ jhipster:
 # https://jhipster.github.io/common-application-properties/
 # ===================================================================
 
+logging:
+    level:
+        root: ${LOGGING_LEVEL:info}
+
 application:
 
 endpoints:
