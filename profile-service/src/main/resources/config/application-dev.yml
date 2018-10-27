@@ -88,7 +88,6 @@ kc:
     password: ${KC_PASSWORD:z3REi8nL8FiUT9Da7kGRmxMhf}
     timeout: ${KC_TIMEOUT:10000}
 
-reference.service.url: ${REFERENCE_SERVER_URL:http://local.alxd.com/reference}
 # ===================================================================
 # JHipster specific properties
 #
