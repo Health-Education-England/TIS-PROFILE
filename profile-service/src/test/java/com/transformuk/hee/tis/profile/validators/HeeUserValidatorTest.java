@@ -9,11 +9,8 @@ import com.transformuk.hee.tis.profile.web.rest.errors.ErrorConstants;
 import com.transformuk.hee.tis.reference.api.dto.DBCDTO;
 import com.transformuk.hee.tis.reference.api.enums.Status;
 import com.transformuk.hee.tis.reference.client.ReferenceService;
-import jdk.nashorn.internal.ir.SetSplitState;
-import net.logstash.logback.encoder.org.apache.commons.lang.ObjectUtils;
 import net.logstash.logback.encoder.org.apache.commons.lang.StringUtils;
 import org.assertj.core.util.Sets;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,12 +19,9 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.Set;
 
-import static org.junit.Assert.*;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -59,7 +53,7 @@ public class HeeUserValidatorTest {
   private Permission permission1 = new Permission();
   private Set<Role> roles = Sets.newLinkedHashSet(role);
 
-    CustomParameterizedException customParameterizedException = new CustomParameterizedException("Invalid Designated Body Code: "
+  CustomParameterizedException customParameterizedException = new CustomParameterizedException("Invalid Designated Body Code: "
       + INVAlID_DBC, ErrorConstants.ERR_VALIDATION);
 
   @Mock
@@ -95,7 +89,7 @@ public class HeeUserValidatorTest {
   }
 
   @Test
-  public void shouldValidateDBCIds () {
+  public void shouldValidateDBCIds() {
     // Given
     when(referenceServiceMock.getDBCByCode(DBC)).thenReturn(new ResponseEntity<>(dbcdto, HttpStatus.OK));
 
@@ -157,6 +151,11 @@ public class HeeUserValidatorTest {
     testObj.validatePassword(StringUtils.EMPTY);
   }
 
+  @Test(expected = CustomParameterizedException.class)
+  public void shouldThrowExceptionIfPasswordNull() {
+    testObj.validatePassword(null);
+  }
+
   @Test
   public void shouldValidateNonNullTemporaryPassword() {
     testObj.validateIsTemporary(true);
@@ -170,6 +169,11 @@ public class HeeUserValidatorTest {
   @Test
   public void shouldValidateGmcId() {
     testObj.validateGmcId(GMC_ID);
+  }
+
+  @Test
+  public void shouldValidateGmcIdIfNull() {
+    testObj.validateGmcId(null);
   }
 
   @Test(expected = CustomParameterizedException.class)

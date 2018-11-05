@@ -77,7 +77,7 @@ public class HeeUserValidator {
    * @param password
    */
   public void validatePassword(String password) {
-    if (StringUtils.isEmpty(password) || password.length() < 8) {
+    if (password == null || StringUtils.isEmpty(password) || password.length() < 8) {
       throw new CustomParameterizedException("Password should be minimum 8 chars long", ErrorConstants.ERR_VALIDATION);
     }
   }
@@ -99,8 +99,10 @@ public class HeeUserValidator {
    * @param gmcId
    */
   public void validateGmcId(String gmcId) {
-    if (gmcId.length() > 7) {
-      throw new CustomParameterizedException("GMC Id shouldn't be greater than 7 chars long", ErrorConstants.ERR_VALIDATION);
+    if (gmcId != null) {
+      if (gmcId.length() > 7) {
+        throw new CustomParameterizedException("GMC Id shouldn't be greater than 7 chars long", ErrorConstants.ERR_VALIDATION);
+      }
     }
   }
 
