@@ -99,7 +99,7 @@ public class HeeUserValidator {
    * @param gmcId
    */
   public void validateGmcId(String gmcId) {
-    if (StringUtils.isEmpty(gmcId) || gmcId.length() > 7) {
+    if (gmcId.length() > 7) {
       throw new CustomParameterizedException("GMC Id shouldn't be greater than 7 chars long", ErrorConstants.ERR_VALIDATION);
     }
   }
