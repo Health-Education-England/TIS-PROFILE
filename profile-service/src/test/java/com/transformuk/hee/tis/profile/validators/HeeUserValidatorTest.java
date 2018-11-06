@@ -1,11 +1,10 @@
 package com.transformuk.hee.tis.profile.validators;
 
+import com.transformuk.hee.tis.profile.domain.HeeUser;
 import com.transformuk.hee.tis.profile.domain.Permission;
 import com.transformuk.hee.tis.profile.domain.Role;
-import com.transformuk.hee.tis.profile.repository.HeeUserRepository;
 import com.transformuk.hee.tis.profile.repository.RoleRepository;
 import com.transformuk.hee.tis.profile.web.rest.errors.CustomParameterizedException;
-import com.transformuk.hee.tis.profile.web.rest.errors.ErrorConstants;
 import com.transformuk.hee.tis.reference.api.dto.DBCDTO;
 import com.transformuk.hee.tis.reference.api.enums.Status;
 import com.transformuk.hee.tis.reference.client.ReferenceService;
@@ -22,6 +21,8 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.Set;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -44,6 +45,7 @@ public class HeeUserValidatorTest {
 
   private Set<String> dbcCodes = Sets.newLinkedHashSet(DBC);
   private Set<String> dbcCodes_invalid = Sets.newLinkedHashSet(INVAlID_DBC);
+  private Set<String> dbcCodes_none = Sets.newLinkedHashSet(HeeUser.NONE);
 
   private DBCDTO dbcdto = new DBCDTO();
   private DBCDTO dbcdto_invalid = new DBCDTO();
@@ -52,12 +54,7 @@ public class HeeUserValidatorTest {
   private Permission permission = new Permission();
   private Permission permission1 = new Permission();
   private Set<Role> roles = Sets.newLinkedHashSet(role);
-
-  CustomParameterizedException customParameterizedException = new CustomParameterizedException("Invalid Designated Body Code: "
-      + INVAlID_DBC, ErrorConstants.ERR_VALIDATION);
-
-  @Mock
-  private HeeUserRepository heeUserRepositoryMock;
+  private Set<Role> roles_null = Sets.newLinkedHashSet(null);
 
   @Mock
   private ReferenceService referenceServiceMock;
@@ -100,16 +97,34 @@ public class HeeUserValidatorTest {
     verify(referenceServiceMock).getDBCByCode(DBC);
   }
 
-  @Test(expected = CustomParameterizedException.class)
-  public void shouldThrowExceptionifInvalidDBC() {
+  @Test
+  public void shouldValidateInvalidDBCasEmptyReponse() {
     // Given
-    when(referenceServiceMock.getDBCByCode(INVAlID_DBC)).thenThrow(customParameterizedException);
+    when(referenceServiceMock.getDBCByCode(INVAlID_DBC)).thenReturn(new ResponseEntity<DBCDTO>(HttpStatus.NOT_FOUND));
 
     // When
     testObj.validateDBCIds(dbcCodes_invalid);
 
     // Then
     verify(referenceServiceMock).getDBCByCode(INVAlID_DBC);
+  }
+
+  @Test
+  public void shouldValidateIfCodeIsNone() {
+    // When
+    testObj.validateDBCIds(dbcCodes_none);
+
+    // Then
+    verify(referenceServiceMock, never()).getDBCByCode(any(String.class));
+  }
+
+  @Test
+  public void shouldValidateIfSetOfdbcCodesIsNull() {
+    // When
+    testObj.validateDBCIds(null);
+
+    // Then
+    verify(referenceServiceMock, never()).getDBCByCode(any(String.class));
   }
 
   @Test
@@ -125,15 +140,25 @@ public class HeeUserValidatorTest {
   }
 
   @Test(expected = CustomParameterizedException.class)
-  public void shouldThrowExceptionIfNullRole() {
+  public void shouldThrowExceptionIfRoleNotFoundInRepository() {
     // Given
-    when(roleRepositoryMock.findByName(role.getName())).thenReturn(null);
+    try {
+      when(roleRepositoryMock.findByName(role.getName())).thenReturn(null);
 
+      // When
+      testObj.validateRoles(roles);
+    } finally {
+      // Then
+      verify(roleRepositoryMock).findByName(role.getName());
+    }
+  }
+
+  @Test
+  public void shouldDealWithNullSetOfRoles() {
     // When
-    testObj.validateRoles(roles);
-
+    testObj.validateRoles(roles_null);
     // Then
-    verify(roleRepositoryMock).findByName(role.getName());
+    verify(roleRepositoryMock, never()).findByName(any(String.class));
   }
 
   @Test
