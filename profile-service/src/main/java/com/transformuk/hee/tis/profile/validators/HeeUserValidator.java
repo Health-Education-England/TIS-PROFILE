@@ -38,7 +38,6 @@ public class HeeUserValidator {
    * @throws CustomParameterizedException if any errors
    */
   public void validateDBCIds(Set<String> dbcCodes) {
-
     if (!CollectionUtils.isEmpty(dbcCodes)) {
       dbcCodes.forEach(dbcCode -> {
         try {
