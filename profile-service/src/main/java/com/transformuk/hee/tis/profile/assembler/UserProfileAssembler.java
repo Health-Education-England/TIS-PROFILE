@@ -4,9 +4,11 @@ import com.google.common.collect.Sets;
 import com.transformuk.hee.tis.profile.domain.HeeUser;
 import com.transformuk.hee.tis.profile.domain.Permission;
 import com.transformuk.hee.tis.profile.domain.Role;
+import com.transformuk.hee.tis.profile.domain.UserProgramme;
 import com.transformuk.hee.tis.profile.domain.UserTrust;
 import com.transformuk.hee.tis.profile.repository.PermissionRepository;
 import com.transformuk.hee.tis.security.model.Trust;
+import com.transformuk.hee.tis.security.model.Programme;
 import com.transformuk.hee.tis.security.model.UserProfile;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,11 +65,22 @@ public class UserProfileAssembler {
       Set<Trust> trusts = associatedTrusts.stream().map(this::getTrust).collect(Collectors.toSet());
       userProfile.setAssignedTrusts(trusts);
     }
+
+    Set<UserProgramme> associatedProgrammes = user.getAssociatedProgrammes();
+    if(CollectionUtils.isNotEmpty(associatedProgrammes)) {
+      Set<Programme> programmes = associatedProgrammes.stream().map(this::getProgramme).collect(Collectors.toSet());
+      userProfile.setAssignedProgrammes(programmes);
+    }
+
     return userProfile;
   }
 
   private Trust getTrust(UserTrust userTrust) {
     return new Trust(userTrust.getTrustId(), userTrust.getTrustCode(), userTrust.getTrustName());
+  }
+
+  private Programme getProgramme(UserProgramme userProgramme) {
+    return new Programme(userProgramme.getId(), userProgramme.getprogrammenName(), userProgramme.getprogrammeNumber());
   }
 
   private Set<String> getPermissions(Set<Role> roles) {
