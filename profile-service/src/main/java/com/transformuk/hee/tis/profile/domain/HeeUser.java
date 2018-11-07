@@ -52,6 +52,7 @@ public class HeeUser implements Serializable {
   private Set<String> designatedBodyCodes;
 
   private Set<UserTrust> associatedTrusts = new HashSet<>();
+  private Set<UserProgramme> associatedProgrammes = new HashSet<>();
 
   public HeeUser() {
     super();
@@ -60,7 +61,6 @@ public class HeeUser implements Serializable {
   public HeeUser(String name) {
     this.name = name;
   }
-
 
   @Id
   @NotNull
@@ -216,6 +216,15 @@ public class HeeUser implements Serializable {
   public void removeAssociatedTrust(UserTrust userTrust) {
     userTrust.setHeeUser(null);
     this.associatedTrusts.remove(userTrust);
+  }
+
+  @OneToMany(fetch = LAZY, mappedBy = "heeUser", cascade = CascadeType.ALL)
+  public Set<UserProgramme> getAssociatedProgrammes() {
+    return associatedProgrammes;
+  }
+
+  public void setAssociatedProgrammes(Set<UserProgramme> associatedProgrammes) {
+    this.associatedProgrammes = associatedProgrammes;
   }
 
   @Override
