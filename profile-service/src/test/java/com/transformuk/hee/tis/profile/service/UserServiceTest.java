@@ -165,15 +165,15 @@ public class UserServiceTest {
   @Test
   public void findSingleUserWithTrustShouldReturnHeeUserDTOWithTrustData() {
     Optional<HeeUser> foundUserMock = Optional.of(heeUser1WithTrusts);
-    when(heeUserRepositoryMock.findByNameWithTrusts(USERNAME)).thenReturn(foundUserMock);
+    when(heeUserRepositoryMock.findByNameWithTrustsAndProgrammes(USERNAME)).thenReturn(foundUserMock);
     when(heeUserMapperMock.heeUserToHeeUserDTO(foundUserMock.orElse(null))).thenReturn(heeUser1WithTrustsDTO);
 
-    HeeUserDTO result = testObj.findSingleUserWithTrust(USERNAME);
+    HeeUserDTO result = testObj.findSingleUserWithTrustAndProgrammes(USERNAME);
 
     Assert.assertEquals(FIRST_NAME_1, result.getFirstName());
     Assert.assertSame(userTrusts1DTO, result.getAssociatedTrusts());
 
     verify(heeUserMapperMock).heeUserToHeeUserDTO(foundUserMock.orElse(null));
-    verify(heeUserRepositoryMock).findByNameWithTrusts(USERNAME);
+    verify(heeUserRepositoryMock).findByNameWithTrustsAndProgrammes(USERNAME);
   }
 }

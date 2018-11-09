@@ -43,27 +43,27 @@ public class UserProgramme implements Serializable {
     this.heeUser = heeUser;
   }
 
-  public Long getprogrammenId() {
+  public Long getProgrammeId() {
     return programmeId;
   }
 
-  public void setprogrammenId(Long programmeId) {
+  public void setProgrammeId(Long programmeId) {
     this.programmeId = programmeId;
   }
 
-  public String getprogrammenName() {
+  public String getProgrammeName() {
     return programmeName;
   }
 
-  public void setprogrammenName(String programmeName) {
+  public void setProgrammeName(String programmeName) {
     this.programmeName = programmeName;
   }
 
-  public String getprogrammeNumber() {
+  public String getProgrammeNumber() {
     return programmeNumber;
   }
 
-  public void setprogrammeNumber(String programmeNumber) {
+  public void setProgrammeNumber(String programmeNumber) {
     this.programmeNumber = programmeNumber;
   }
 

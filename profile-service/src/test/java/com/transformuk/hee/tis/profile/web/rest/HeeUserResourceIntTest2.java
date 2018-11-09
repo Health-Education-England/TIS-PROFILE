@@ -102,7 +102,7 @@ public class HeeUserResourceIntTest2 {
     heeUserDTO.setFirstName(TESTNAME_1);
     heeUserDTO.setName(TESTNAME_2);
 
-    when(userServiceMock.findSingleUserWithTrust(TESTNAME_2)).thenReturn(heeUserDTO);
+    when(userServiceMock.findSingleUserWithTrustAndProgrammes(TESTNAME_2)).thenReturn(heeUserDTO);
 
     restHeeUserMockMvc.perform(get("/api/hee-users/" + TESTNAME_2).contentType(MediaType.APPLICATION_JSON_UTF8))
         .andExpect(status().isOk())

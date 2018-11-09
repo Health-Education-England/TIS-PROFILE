@@ -85,8 +85,11 @@ public interface HeeUserRepository extends JpaRepository<HeeUser, String>, JpaSp
    */
   long countByRolesNameAndActive(@Param("roleName") String roleName, @Param("active") Boolean active);
 
-  @Query(value = "SELECT u FROM HeeUser u LEFT JOIN FETCH u.associatedTrusts where u.name = :name")
-  Optional<HeeUser> findByNameWithTrusts(@Param("name") String name);
+  @Query(value = "SELECT u FROM HeeUser u " +
+      "LEFT JOIN FETCH u.associatedTrusts " +
+      "LEFT JOIN FETCH u.associatedProgrammes " +
+      "where u.name = :name")
+  Optional<HeeUser> findByNameWithTrustsAndProgrammes(@Param("name") String name);
 
   /**
    * Finds HeeUsers by username with a like search
