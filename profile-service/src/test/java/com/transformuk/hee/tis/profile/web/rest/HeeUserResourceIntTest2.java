@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.transformuk.hee.tis.profile.ProfileApp;
 import com.transformuk.hee.tis.profile.repository.HeeUserRepository;
 import com.transformuk.hee.tis.profile.repository.UserTrustRepository;
+import com.transformuk.hee.tis.profile.service.UserProgrammeService;
 import com.transformuk.hee.tis.profile.service.UserService;
 import com.transformuk.hee.tis.profile.service.UserTrustService;
 import com.transformuk.hee.tis.profile.service.dto.HeeUserDTO;
@@ -51,6 +52,8 @@ public class HeeUserResourceIntTest2 {
   @MockBean
   private UserTrustService userTrustServiceMock;
   @MockBean
+  private UserProgrammeService userProgrammeService;
+  @MockBean
   private UserService userServiceMock;
 
   @Autowired
@@ -72,6 +75,7 @@ public class HeeUserResourceIntTest2 {
         heeUserValidatorMock,
         userTrustRepositoryMock,
         userTrustServiceMock,
+        userProgrammeService,
         userServiceMock);
     this.restHeeUserMockMvc = MockMvcBuilders.standaloneSetup(heeUserResource)
         .setCustomArgumentResolvers(pageableArgumentResolver)
