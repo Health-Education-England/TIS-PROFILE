@@ -35,6 +35,7 @@ public interface HeeUserRepository extends JpaRepository<HeeUser, String>, JpaSp
   @Query("select u from HeeUser u " +
       "left outer join fetch u.designatedBodyCodes " +
       "left outer join fetch u.associatedTrusts " +
+      "left outer join fetch u.associatedProgrammes " +
       "inner join fetch u.roles r " +
       "inner join fetch r.permissions p " +
       "where u.active = true " +

@@ -35,6 +35,7 @@ public class HeeUser implements Serializable {
 
   public static final String NONE = "None";
   private static final UserTrust NULL_TRUST = null;
+  private static final UserProgramme NULL_PROGRAMME = null;
   private static final long serialVersionUID = 1L;
   private String name;
   private String firstName;
@@ -225,6 +226,16 @@ public class HeeUser implements Serializable {
 
   public void setAssociatedProgrammes(Set<UserProgramme> associatedProgrammes) {
     this.associatedProgrammes = associatedProgrammes;
+  }
+
+  public void addAssociatedProgramme(UserProgramme userProgramme) {
+    this.associatedProgrammes.add(userProgramme);
+    userProgramme.setHeeUser(this);
+  }
+
+  public void removeAssociatedProgramme(UserProgramme userProgramme) {
+    userProgramme.setHeeUser(null);
+    this.associatedProgrammes.remove(userProgramme);
   }
 
   @Override
