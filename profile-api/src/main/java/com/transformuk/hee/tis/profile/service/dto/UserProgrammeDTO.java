@@ -4,8 +4,8 @@ public class UserProgrammeDTO {
 
   private Long id;
   private HeeUserDTO heeUserDTO;
-  private Long programmenId;
-  private String programmenName;
+  private Long programmeId;
+  private String programmeName;
   private String programmeNumber;
 
   public Long getId() {
@@ -25,19 +25,19 @@ public class UserProgrammeDTO {
   }
 
   public Long getProgrammeId() {
-    return programmenId;
+    return programmeId;
   }
 
-  public void setProgrammeId(Long programmenId) {
-    this.programmenId = programmenId;
+  public void setProgrammeId(Long programmeId) {
+    this.programmeId = programmeId;
   }
 
   public String getProgrammeName() {
-    return programmenName;
+    return programmeName;
   }
 
-  public void setProgrammeName(String programmenName) {
-    this.programmenName = programmenName;
+  public void setProgrammeName(String programmeName) {
+    this.programmeName = programmeName;
   }
 
   public String getProgrammeNumber() {
