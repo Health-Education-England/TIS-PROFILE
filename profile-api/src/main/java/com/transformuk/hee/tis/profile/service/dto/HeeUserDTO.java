@@ -152,7 +152,7 @@ public class HeeUserDTO implements Serializable {
     this.associatedTrusts = associatedTrusts;
   }
 
-  public Set<UserProgrammeDTO> getAssociatedprogrames() {
+  public Set<UserProgrammeDTO> getAssociatedProgrammes() {
     return associatedProgrammes;
   }
 
