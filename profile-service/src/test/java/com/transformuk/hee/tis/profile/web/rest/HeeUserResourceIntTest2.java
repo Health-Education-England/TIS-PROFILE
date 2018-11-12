@@ -113,4 +113,18 @@ public class HeeUserResourceIntTest2 {
         .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
         .andExpect(jsonPath("$.firstName").value(TESTNAME_1));
   }
+
+  @Test
+  public void getSingleHeeUserShouldReturnSingeHeeUserDto() throws Exception {
+    HeeUserDTO heeUserDTO = new HeeUserDTO();
+    heeUserDTO.setFirstName(TESTNAME_1);
+    heeUserDTO.setName(TESTNAME_2);
+
+    when(userServiceMock.findSingleUserWithTrustAndProgrammes(TESTNAME_2)).thenReturn(heeUserDTO);
+
+    restHeeUserMockMvc.perform(get("/api/single-hee-users/?username=" + TESTNAME_2).contentType(MediaType.APPLICATION_JSON_UTF8))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+        .andExpect(jsonPath("$.firstName").value(TESTNAME_1));
+  }
 }
