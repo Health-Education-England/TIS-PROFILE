@@ -1,2 +1,2 @@
-ALTER TABLE `UserProgramme` CHANGE `programmenId` `programmeId` datatype(length);
-ALTER TABLE `UserProgramme` CHANGE `programmenName` `programmeName` datatype(length);
+ALTER TABLE `UserProgramme` CHANGE `programmenId` `programmeId` varchar(255);
+ALTER TABLE `UserProgramme` CHANGE `programmenName` `programmeName` varchar(255);
