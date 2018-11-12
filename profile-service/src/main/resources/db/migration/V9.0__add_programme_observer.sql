@@ -14,8 +14,8 @@ ON DUPLICATE KEY UPDATE `roleName` = `roleName`;
 CREATE TABLE `UserProgramme` (
     `id` bigint(20) NOT NULL AUTO_INCREMENT,
     `heeUser` varchar(255) NOT NULL,
-    `programmeId` bigint (20) NOT NULL,
-    `programmeName` varchar(255) NOT NULL,
+    `programmenId` bigint (20) NOT NULL,
+    `programmenName` varchar(255) NOT NULL,
     `programmeNumber` varchar(255) NOT NULL,
     PRIMARY KEY (`id`),
   	KEY `fk_userprogramme_heeuserx` (`heeUser`),
