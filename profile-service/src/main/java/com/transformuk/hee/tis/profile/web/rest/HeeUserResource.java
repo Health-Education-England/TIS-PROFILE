@@ -2,9 +2,11 @@ package com.transformuk.hee.tis.profile.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import com.transformuk.hee.tis.profile.domain.HeeUser;
+import com.transformuk.hee.tis.profile.domain.UserProgramme;
 import com.transformuk.hee.tis.profile.domain.UserTrust;
 import com.transformuk.hee.tis.profile.repository.HeeUserRepository;
 import com.transformuk.hee.tis.profile.repository.UserTrustRepository;
+import com.transformuk.hee.tis.profile.service.UserProgrammeService;
 import com.transformuk.hee.tis.profile.service.UserService;
 import com.transformuk.hee.tis.profile.service.UserTrustService;
 import com.transformuk.hee.tis.profile.service.dto.HeeUserDTO;
@@ -52,18 +54,20 @@ public class HeeUserResource {
   private final UserTrustRepository userTrustRepository;
   private final UserTrustService userTrustService;
   private final UserService userService;
+  private final UserProgrammeService userProgrammeService;
 
   private HeeUserValidator heeUserValidator;
 
   public HeeUserResource(HeeUserRepository heeUserRepository, HeeUserMapper heeUserMapper,
                          HeeUserValidator heeUserValidator,
                          UserTrustRepository userTrustRepository, UserTrustService userTrustService,
-                         UserService userService) {
+                         UserProgrammeService userProgrammeService, UserService userService) {
     this.heeUserRepository = heeUserRepository;
     this.heeUserMapper = heeUserMapper;
     this.heeUserValidator = heeUserValidator;
     this.userTrustRepository = userTrustRepository;
     this.userTrustService = userTrustService;
+    this.userProgrammeService = userProgrammeService;
     this.userService = userService;
   }
 
@@ -92,6 +96,13 @@ public class HeeUserResource {
     if(CollectionUtils.isNotEmpty(associatedTrusts)){
       for (UserTrust userTrust : associatedTrusts) {
         userTrust.setHeeUser(heeUser);
+      }
+    }
+
+    Set<UserProgramme> associatedProgrammes = heeUser.getAssociatedProgrammes();
+    if(CollectionUtils.isNotEmpty(associatedProgrammes)){
+      for (UserProgramme userProgramme : associatedProgrammes) {
+        userProgramme.setHeeUser(heeUser);
       }
     }
     heeUser = heeUserRepository.save(heeUser);
@@ -127,9 +138,11 @@ public class HeeUserResource {
 
     //fix bi directional link to trusts
     heeUser.getAssociatedTrusts().forEach(a -> a.setHeeUser(heeUser));
+    heeUser.getAssociatedProgrammes().forEach(a -> a.setHeeUser(heeUser));
     heeUserRepository.save(heeUser);
     userTrustService.assignTrustsToUser(heeUserDTO);
-    HeeUserDTO result = heeUserMapper.heeUserToHeeUserDTO(heeUserRepository.findByNameWithTrusts(heeUserDTO.getName()).orElse(null));
+    userProgrammeService.assignProgrammesToUser(heeUserDTO);
+    HeeUserDTO result = heeUserMapper.heeUserToHeeUserDTO(heeUserRepository.findByNameWithTrustsAndProgrammes(heeUserDTO.getName()).orElse(null));
     return ResponseEntity.ok()
         .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, heeUserDTO.getName().toString()))
         .body(result);
@@ -163,7 +176,7 @@ public class HeeUserResource {
   @PreAuthorize("hasAuthority('profile:view:entities')")
   public ResponseEntity<HeeUserDTO> getHeeUser(@PathVariable String name) {
     log.debug("REST request to get HeeUser : {}", name);
-    HeeUserDTO heeUserDTO = userService.findSingleUserWithTrust(name);
+    HeeUserDTO heeUserDTO = userService.findSingleUserWithTrustAndProgrammes(name);
     return ResponseUtil.wrapOrNotFound(Optional.ofNullable(heeUserDTO));
   }
 
@@ -173,7 +186,7 @@ public class HeeUserResource {
   @PreAuthorize("hasAuthority('profile:view:entities')")
   public ResponseEntity<HeeUserDTO> getSingleHeeUser(@RequestParam String username) {
     log.debug("REST request to get HeeUser : {}", username);
-    HeeUserDTO heeUserDTO = userService.findSingleUserWithTrust(username);
+    HeeUserDTO heeUserDTO = userService.findSingleUserWithTrustAndProgrammes(username);
     return ResponseUtil.wrapOrNotFound(Optional.ofNullable(heeUserDTO));
   }
 

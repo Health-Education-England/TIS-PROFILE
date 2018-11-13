@@ -6,6 +6,7 @@ import com.transformuk.hee.tis.profile.domain.HeeUser;
 import com.transformuk.hee.tis.profile.repository.HeeUserRepository;
 import com.transformuk.hee.tis.profile.repository.PermissionRepository;
 import com.transformuk.hee.tis.profile.repository.UserTrustRepository;
+import com.transformuk.hee.tis.profile.service.UserProgrammeService;
 import com.transformuk.hee.tis.profile.service.UserService;
 import com.transformuk.hee.tis.profile.service.UserTrustService;
 import com.transformuk.hee.tis.profile.service.dto.HeeUserDTO;
@@ -93,6 +94,9 @@ public class HeeUserResourceIntTest {
   private UserTrustService userTrustService;
 
   @Autowired
+  private UserProgrammeService userProgrammeService;
+
+  @Autowired
   private EntityManager em;
 
   @Autowired
@@ -107,7 +111,7 @@ public class HeeUserResourceIntTest {
   public void setup() {
     MockitoAnnotations.initMocks(this);
     HeeUserResource heeUserResource = new HeeUserResource(heeUserRepository, heeUserMapper,
-        heeUserValidator, userTrustRepository, userTrustService,
+        heeUserValidator, userTrustRepository, userTrustService, userProgrammeService,
         userService);
     this.restHeeUserMockMvc = MockMvcBuilders.standaloneSetup(heeUserResource)
         .setCustomArgumentResolvers(pageableArgumentResolver)

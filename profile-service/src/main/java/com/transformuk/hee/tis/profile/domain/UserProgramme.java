@@ -23,8 +23,8 @@ public class UserProgramme implements Serializable {
   @JoinColumn(name = "heeUser", nullable = false)
   private HeeUser heeUser;
 
-  private Long programmenId;
-  private String programmenName;
+  private Long programmeId;
+  private String programmeName;
   private String programmeNumber;
 
   public Long getId() {
@@ -43,27 +43,27 @@ public class UserProgramme implements Serializable {
     this.heeUser = heeUser;
   }
 
-  public Long getprogrammenId() {
-    return programmenId;
+  public Long getProgrammeId() {
+    return programmeId;
   }
 
-  public void setprogrammenId(Long programmenId) {
-    this.programmenId = programmenId;
+  public void setProgrammeId(Long programmeId) {
+    this.programmeId = programmeId;
   }
 
-  public String getprogrammenName() {
-    return programmenName;
+  public String getProgrammeName() {
+    return programmeName;
   }
 
-  public void setprogrammenName(String programmenName) {
-    this.programmenName = programmenName;
+  public void setProgrammeName(String programmeName) {
+    this.programmeName = programmeName;
   }
 
-  public String getprogrammeNumber() {
+  public String getProgrammeNumber() {
     return programmeNumber;
   }
 
-  public void setprogrammeNumber(String programmeNumber) {
+  public void setProgrammeNumber(String programmeNumber) {
     this.programmeNumber = programmeNumber;
   }
 
@@ -74,15 +74,14 @@ public class UserProgramme implements Serializable {
     UserProgramme userProgramme = (UserProgramme) o;
     return Objects.equals(id, userProgramme.id) &&
         Objects.equals(heeUser, userProgramme.heeUser) &&
-        Objects.equals(programmenId, userProgramme.programmenId) &&
-        Objects.equals(programmenName, userProgramme.programmenName) &&
+        Objects.equals(programmeId, userProgramme.programmeId) &&
+        Objects.equals(programmeName, userProgramme.programmeName) &&
         Objects.equals(programmeNumber, userProgramme.programmeNumber);
   }
 
   @Override
   public int hashCode() {
-
-    return Objects.hash(id, heeUser, programmenId, programmenName, programmeNumber);
+    return Objects.hash(id, heeUser, programmeId, programmeName, programmeNumber);
   }
 
   @Override
@@ -90,8 +89,8 @@ public class UserProgramme implements Serializable {
     return "UserProgramme{" +
         "id=" + id +
         ", heeUser=" + heeUser +
-        ", programmenId=" + programmenId +
-        ", programmenName='" + programmenName + '\'' +
+        ", programmeId=" + programmeId +
+        ", programmeName='" + programmeName + '\'' +
         ", programmeNumber='" + programmeNumber + '\'' +
         '}';
   }

@@ -39,8 +39,8 @@ public class UserService {
   }
 
   @Transactional
-  public HeeUserDTO findSingleUserWithTrust (String username) {
-    Optional<HeeUser> heeUser = heeUserRepository.findByNameWithTrusts(username);
+  public HeeUserDTO findSingleUserWithTrustAndProgrammes(String username) {
+    Optional<HeeUser> heeUser = heeUserRepository.findByNameWithTrustsAndProgrammes(username);
     HeeUserDTO heeUserDTO = heeUserMapper.heeUserToHeeUserDTO(heeUser.orElse(null));
     return heeUserDTO;
   }
