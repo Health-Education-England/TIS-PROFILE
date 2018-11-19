@@ -80,7 +80,7 @@ public class UserProfileAssembler {
   }
 
   private Programme getProgramme(UserProgramme userProgramme) {
-    return new Programme(userProgramme.getId(), userProgramme.getProgrammeName(), userProgramme.getProgrammeNumber());
+    return new Programme(userProgramme.getProgrammeId(), userProgramme.getProgrammeName(), userProgramme.getProgrammeNumber());
   }
 
   private Set<String> getPermissions(Set<Role> roles) {
