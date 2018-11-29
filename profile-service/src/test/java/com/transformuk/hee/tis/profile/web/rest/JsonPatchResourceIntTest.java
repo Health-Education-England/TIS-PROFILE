@@ -214,7 +214,7 @@ public class JsonPatchResourceIntTest {
     int databaseSizeBeforeUpdate = jsonPatchRepository.findAll().size();
 
     // Update the jsonPatch
-    JsonPatch updateJsonPatch = jsonPatchRepository.findOne(jsonPatch.getId());
+    JsonPatch updateJsonPatch = jsonPatchRepository.findById(jsonPatch.getId()).get();
     updateJsonPatch
         .patchId(UPDATED_DEFAULT_PATCH_ID)
         .patch(UPDATED_DEFAULT_PATCH);

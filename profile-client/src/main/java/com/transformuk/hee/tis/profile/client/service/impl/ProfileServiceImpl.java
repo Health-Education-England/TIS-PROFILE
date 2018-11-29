@@ -133,7 +133,6 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
 
   /**
    * Gets user details given designatedBody from Auth Service
-   * (https://dev-api.transformcloud.net/profile/swagger-ui.html#!/login-controller/getUsersUsingGET)
    *
    * @param designatedBodyCodes user's designatedBody
    * @param permissions         submit_to_gmc permissions

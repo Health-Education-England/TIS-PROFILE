@@ -1,7 +1,6 @@
 package com.transformuk.hee.tis.profile.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Set;
 
@@ -22,7 +21,6 @@ public class UserDetails {
   private String phoneNumber;
   private String emailAddress;
 
-  @ApiModelProperty(value = "the roles the current user has in the TIS system")
   public Set<String> getRoles() {
     return roles;
   }
@@ -31,8 +29,6 @@ public class UserDetails {
     this.roles = roles;
   }
 
-  @ApiModelProperty(value = "the aggregated Set of permissions for the user ," +
-      " with no duplicates corresponding to the roles")
   public Set<String> getPermissions() {
     return permissions;
   }
@@ -41,7 +37,6 @@ public class UserDetails {
     this.permissions = permissions;
   }
 
-  @ApiModelProperty(value = "The user name unique identifier")
   public String getUserName() {
     return userName;
   }
@@ -50,7 +45,6 @@ public class UserDetails {
     this.userName = userName;
   }
 
-  @ApiModelProperty(value = "The user's first name")
   public String getFirstName() {
     return firstName;
   }
@@ -59,7 +53,6 @@ public class UserDetails {
     this.firstName = firstName;
   }
 
-  @ApiModelProperty(value = "The user's last name")
   public String getLastName() {
     return lastName;
   }
@@ -68,7 +61,6 @@ public class UserDetails {
     this.lastName = lastName;
   }
 
-  @ApiModelProperty(value = "The user's full name")
   public String getFullName() {
     return fullName;
   }
@@ -77,7 +69,6 @@ public class UserDetails {
     this.fullName = fullName;
   }
 
-  @ApiModelProperty(value = "The GMC ID of the user")
   public String getGmcId() {
     return gmcId;
   }
@@ -86,7 +77,6 @@ public class UserDetails {
     this.gmcId = gmcId;
   }
 
-  @ApiModelProperty(value = "The user's designated body code")
   public String getDesignatedBodyCode() {
     return designatedBodyCode;
   }
@@ -95,7 +85,6 @@ public class UserDetails {
     this.designatedBodyCode = designatedBodyCode;
   }
 
-  @ApiModelProperty(value = "The user's phone number")
   public String getPhoneNumber() {
     return phoneNumber;
   }
@@ -104,7 +93,6 @@ public class UserDetails {
     this.phoneNumber = phoneNumber;
   }
 
-  @ApiModelProperty(value = "The users email address")
   public String getEmailAddress() {
     return emailAddress;
   }

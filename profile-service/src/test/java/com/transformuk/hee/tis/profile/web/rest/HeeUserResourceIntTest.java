@@ -143,7 +143,7 @@ public class HeeUserResourceIntTest {
     // Validate the HeeUser in the database
     List<HeeUser> heeUserList = heeUserRepository.findAll();
     assertThat(heeUserList).hasSize(databaseSizeBeforeCreate + 1);
-    HeeUser testHeeUser = heeUserRepository.findOne(DEFAULT_NAME);
+    HeeUser testHeeUser = heeUserRepository.findById(DEFAULT_NAME).get();
     assertThat(testHeeUser.getName()).isEqualTo(DEFAULT_NAME);
     assertThat(testHeeUser.getFirstName()).isEqualTo(DEFAULT_FIRST_NAME);
     assertThat(testHeeUser.getLastName()).isEqualTo(DEFAULT_LAST_NAME);
@@ -297,7 +297,7 @@ public class HeeUserResourceIntTest {
     int databasePermissionSizeBeforeCreate = permissionRepository.findAll().size();
 
     // Update the heeUser
-    HeeUser updatedHeeUser = heeUserRepository.findOne(heeUser.getName());
+    HeeUser updatedHeeUser = heeUserRepository.findById(heeUser.getName()).get();
     updatedHeeUser
         .firstName(UPDATED_FIRST_NAME)
         .lastName(UPDATED_LAST_NAME)
@@ -315,7 +315,7 @@ public class HeeUserResourceIntTest {
     // Validate the HeeUser in the database
     List<HeeUser> heeUserList = heeUserRepository.findAll();
     assertThat(heeUserList).hasSize(databaseSizeBeforeUpdate);
-    HeeUser testHeeUser = heeUserRepository.findOne(DEFAULT_NAME);
+    HeeUser testHeeUser = heeUserRepository.findById(DEFAULT_NAME).get();
     assertThat(testHeeUser.getName()).isEqualTo(DEFAULT_NAME);
     assertThat(testHeeUser.getFirstName()).isEqualTo(UPDATED_FIRST_NAME);
     assertThat(testHeeUser.getLastName()).isEqualTo(UPDATED_LAST_NAME);

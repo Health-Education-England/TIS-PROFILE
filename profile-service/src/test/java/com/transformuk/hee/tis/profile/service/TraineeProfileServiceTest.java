@@ -45,7 +45,6 @@ public class TraineeProfileServiceTest {
     existingTraineeProfile.setDesignatedBodyCode(DBC);
 
     // given
-    given(traineeProfileRepository.findByDesignatedBodyCode(DBC)).willReturn(newArrayList(existingTraineeProfile));
     given(traineeProfileRepository.findByGmcNumberIn(gmcNumbers)).willReturn(newArrayList(existingTraineeProfile));
 
     // when
@@ -66,8 +65,7 @@ public class TraineeProfileServiceTest {
 
     TraineeProfile newTraineeProfile = new TraineeProfile(null, NEW_GMC_NUMBER);
     // given
-    given(traineeProfileRepository.findByGmcNumberIn(gmcNumbers)).willReturn(newArrayList(existingTraineeProfile));
-    given(traineeProfileRepository.save(anyListOf(TraineeProfile.class))).willReturn(newArrayList
+    given(traineeProfileRepository.saveAll(anyListOf(TraineeProfile.class))).willReturn(newArrayList
         (existingTraineeProfile, newTraineeProfile));
 
     // when

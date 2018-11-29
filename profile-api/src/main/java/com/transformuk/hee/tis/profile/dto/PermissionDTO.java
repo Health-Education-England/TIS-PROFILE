@@ -1,13 +1,9 @@
 package com.transformuk.hee.tis.profile.dto;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
 
-@ApiModel(description = "Permission given to a role")
 public class PermissionDTO implements Serializable {
   @NotNull
   private String name;
@@ -28,7 +24,6 @@ public class PermissionDTO implements Serializable {
   @NotNull
   private String effect;
 
-  @ApiModelProperty(required = true, value = "Permission name")
   public String getName() {
     return name;
   }
@@ -53,7 +48,6 @@ public class PermissionDTO implements Serializable {
     this.description = description;
   }
 
-  @ApiModelProperty(required = true, value = "Principal")
   public String getPrincipal() {
     return principal;
   }
@@ -62,7 +56,6 @@ public class PermissionDTO implements Serializable {
     this.principal = principal;
   }
 
-  @ApiModelProperty(required = true, value = "Resource")
   public String getResource() {
     return resource;
   }
@@ -71,7 +64,6 @@ public class PermissionDTO implements Serializable {
     this.resource = resource;
   }
 
-  @ApiModelProperty(required = true, value = "Actions (Create, Update, View, Delete, Submit)")
   public List<String> getActions() {
     return actions;
   }
@@ -80,7 +72,6 @@ public class PermissionDTO implements Serializable {
     this.actions = actions;
   }
 
-  @ApiModelProperty(required = true, value = "Effect (Allow or Deny)")
   public String getEffect() {
     return effect;
   }

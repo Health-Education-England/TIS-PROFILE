@@ -31,11 +31,11 @@ public class UserTrustService {
     }
     List<UserTrust> userTrusts = userTrustRepository.findByHeeUser(heeUser);
     if (CollectionUtils.isNotEmpty(userTrusts)) {
-      userTrustRepository.delete(userTrusts);
+      userTrustRepository.deleteAll(userTrusts);
     }
 
     if (CollectionUtils.isNotEmpty(associatedTrusts)) {
-      userTrustRepository.save(associatedTrusts);
+      userTrustRepository.saveAll(associatedTrusts);
     }
   }
 }

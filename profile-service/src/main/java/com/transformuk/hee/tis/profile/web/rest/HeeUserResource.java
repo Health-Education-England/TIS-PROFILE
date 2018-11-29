@@ -1,6 +1,5 @@
 package com.transformuk.hee.tis.profile.web.rest;
 
-import com.codahale.metrics.annotation.Timed;
 import com.transformuk.hee.tis.profile.domain.HeeUser;
 import com.transformuk.hee.tis.profile.domain.UserProgramme;
 import com.transformuk.hee.tis.profile.domain.UserTrust;
@@ -14,7 +13,6 @@ import com.transformuk.hee.tis.profile.service.mapper.HeeUserMapper;
 import com.transformuk.hee.tis.profile.validators.HeeUserValidator;
 import com.transformuk.hee.tis.profile.web.rest.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
-import io.swagger.annotations.ApiParam;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +45,6 @@ import java.util.Set;
 public class HeeUserResource {
 
   private static final String ENTITY_NAME = "heeUser";
-  private static final String REALM_LIN = "lin";
   private final Logger log = LoggerFactory.getLogger(HeeUserResource.class);
   private final HeeUserRepository heeUserRepository;
   private final HeeUserMapper heeUserMapper;
@@ -79,7 +76,6 @@ public class HeeUserResource {
    * @throws URISyntaxException if the Location URI syntax is incorrect
    */
   @PostMapping("/hee-users")
-  @Timed
   @PreAuthorize("hasAuthority('profile:add:modify:entities')")
   public ResponseEntity<HeeUserDTO> createHeeUser(@Valid @RequestBody HeeUserDTO heeUserDTO) throws URISyntaxException {
     log.debug("REST request to save HeeUser : {}", heeUserDTO);
@@ -106,7 +102,7 @@ public class HeeUserResource {
       }
     }
     heeUser = heeUserRepository.save(heeUser);
-    userTrustRepository.save(associatedTrusts);
+    userTrustRepository.saveAll(associatedTrusts);
     HeeUserDTO result = heeUserMapper.heeUserToHeeUserDTO(heeUser);
     return ResponseEntity.created(new URI("/api/hee-users/" + result.getName()))
         .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getName()))
@@ -123,12 +119,11 @@ public class HeeUserResource {
    * @throws URISyntaxException if the Location URI syntax is incorrect
    */
   @PutMapping("/hee-users")
-  @Timed
   @PreAuthorize("hasAuthority('profile:add:modify:entities')")
   public ResponseEntity<HeeUserDTO> updateHeeUser(@Valid @RequestBody HeeUserDTO heeUserDTO) throws URISyntaxException {
     log.debug("REST request to update HeeUser : {}", heeUserDTO);
 
-    HeeUser dbHeeUser = heeUserRepository.findOne(heeUserDTO.getName());
+    HeeUser dbHeeUser = heeUserRepository.findById(heeUserDTO.getName()).orElse(null);
     if (dbHeeUser == null || dbHeeUser.getName() == null) {
       return createHeeUser(heeUserDTO);
     }
@@ -144,7 +139,7 @@ public class HeeUserResource {
     userProgrammeService.assignProgrammesToUser(heeUserDTO);
     HeeUserDTO result = heeUserMapper.heeUserToHeeUserDTO(heeUserRepository.findByNameWithTrustsAndProgrammes(heeUserDTO.getName()).orElse(null));
     return ResponseEntity.ok()
-        .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, heeUserDTO.getName().toString()))
+        .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, heeUserDTO.getName()))
         .body(result);
   }
 
@@ -156,9 +151,8 @@ public class HeeUserResource {
    * @throws URISyntaxException if there is an error to generate the pagination HTTP headers
    */
   @GetMapping("/hee-users")
-  @Timed
   @PreAuthorize("hasAuthority('profile:view:entities')")
-  public ResponseEntity<Page<HeeUserDTO>> getAllHeeUsers(@ApiParam Pageable pageable,
+  public ResponseEntity<Page<HeeUserDTO>> getAllHeeUsers(Pageable pageable,
                                                          @RequestParam(required = false) String search) {
     log.debug("REST request to get a page of HeeUsers");
     Page<HeeUserDTO> heeUserDTOS = userService.findAllUsersWithTrust(pageable, search);
@@ -172,7 +166,6 @@ public class HeeUserResource {
    * @return the ResponseEntity with status 200 (OK) and with body the heeUserDTO, or with status 404 (Not Found)
    */
   @GetMapping("/hee-users/{name}")
-  @Timed
   @PreAuthorize("hasAuthority('profile:view:entities')")
   public ResponseEntity<HeeUserDTO> getHeeUser(@PathVariable String name) {
     log.debug("REST request to get HeeUser : {}", name);
@@ -182,7 +175,6 @@ public class HeeUserResource {
 
 
   @GetMapping("/single-hee-users")
-  @Timed
   @PreAuthorize("hasAuthority('profile:view:entities')")
   public ResponseEntity<HeeUserDTO> getSingleHeeUser(@RequestParam String username) {
     log.debug("REST request to get HeeUser : {}", username);
@@ -198,11 +190,10 @@ public class HeeUserResource {
    * @return the ResponseEntity with status 200 (OK)
    */
   @DeleteMapping("/hee-users/{name}")
-  @Timed
   @PreAuthorize("hasAuthority('profile:delete:entities')")
   public ResponseEntity<Void> deleteHeeUser(@PathVariable String name) {
     log.debug("REST request to delete HeeUser : {}", name);
-    heeUserRepository.delete(name);
+    heeUserRepository.deleteById(name);
     return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, name)).build();
   }
 

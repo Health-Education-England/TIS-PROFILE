@@ -1,17 +1,12 @@
 package com.transformuk.hee.tis.profile.web.rest;
 
 
-import com.transformuk.hee.tis.profile.ProfileApp;
 import com.transformuk.hee.tis.profile.domain.TraineeProfile;
 import com.transformuk.hee.tis.profile.dto.PagedResponse;
 import com.transformuk.hee.tis.profile.dto.RegistrationRequest;
 import com.transformuk.hee.tis.profile.dto.TraineeIdListResponse;
 import com.transformuk.hee.tis.profile.dto.TraineeProfileDto;
 import com.transformuk.hee.tis.profile.service.TraineeProfileService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import org.slf4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,12 +29,9 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @RestController
-@Api(value = ProfileApp.SERVICE_NAME, description = "API to get trainee id mappings")
 @RequestMapping("/api/trainee-id")
 @Validated
 public class TraineeProfileController {
-
-  private static final Logger LOG = getLogger(TraineeProfileController.class);
 
   private TraineeProfileService traineeProfileService;
 
@@ -48,11 +40,6 @@ public class TraineeProfileController {
     this.traineeProfileService = traineeProfileService;
   }
 
-  @ApiOperation(value = "traineeIds()", notes = "creates/gets mapping between traineeId and gmcIds",
-      response = TraineeIdListResponse.class, responseContainer = "traineeIdList")
-  @ApiResponses(value = {
-      @ApiResponse(code = 200, message = "Mapped trainee Ids", response = TraineeIdListResponse.class)
-  })
   @CrossOrigin
   @RequestMapping(path = "/{designatedBodyCode}/register", method = POST, produces = APPLICATION_JSON_VALUE,
       consumes = APPLICATION_JSON_VALUE)
@@ -65,11 +52,6 @@ public class TraineeProfileController {
     return new TraineeIdListResponse(profileDtos);
   }
 
-  @ApiOperation(value = "getTraineeIds()", notes = "returns mapped trainee Ids", response = PagedResponse.class,
-      responseContainer = "traineeIdList")
-  @ApiResponses(value = {
-      @ApiResponse(code = 200, message = "returns mapped trainee Ids", response = PagedResponse.class)
-  })
   @CrossOrigin
   @RequestMapping(path = "/{designatedBodyCode}/mappings", method = GET, produces = APPLICATION_JSON_VALUE)
   @PreAuthorize("hasAuthority('profile:view:all:mappings')")

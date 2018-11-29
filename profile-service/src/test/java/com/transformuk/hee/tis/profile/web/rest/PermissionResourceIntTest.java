@@ -110,7 +110,7 @@ public class PermissionResourceIntTest {
     // Validate the Permission in the database
     List<com.transformuk.hee.tis.profile.domain.Permission> permissionList = permissionRepository.findAll();
     assertThat(permissionList).hasSize(databaseSizeBeforeCreate + 1);
-    com.transformuk.hee.tis.profile.domain.Permission testPermission = permissionRepository.findOne(this.permission.getName());
+    com.transformuk.hee.tis.profile.domain.Permission testPermission = permissionRepository.findById(this.permission.getName()).get();
     assertThat(testPermission.getName()).isEqualTo(DEFAULT_NAME);
     assertThat(testPermission.getDescription()).isEqualTo(DEFAULT_DESC);
     assertThat(testPermission.getType()).isEqualTo(DEFAULT_TYPE);

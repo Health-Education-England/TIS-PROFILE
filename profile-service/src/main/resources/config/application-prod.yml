@@ -1,31 +1,28 @@
 spring:
-    devtools:
-        restart:
-            enabled: false
-        livereload:
-            enabled: false
-    datasource:
-        url: jdbc:mysql://${DBHOST}:${DBPORT}/${DBNAME}?useUnicode=true&characterEncoding=utf8&useSSL=${USE_SSL}
-        username: ${DBUSER}
-        password: ${DBPASSWORD}
-    jpa:
-        properties:
-            hibernate.generate_statistics: false
-    mail:
-        host: ${DBHOST}
+  devtools:
+    restart:
+      enabled: false
+    livereload:
+      enabled: false
+  datasource:
+    url: jdbc:mysql://${DBHOST}:${DBPORT}/${DBNAME}?useUnicode=true&characterEncoding=utf8&useSSL=${USE_SSL}
+    username: ${DBUSER}
+    password: ${DBPASSWORD}
+  jpa:
+    properties:
+      hibernate.generate_statistics: false
+  mail:
+    host: ${DBHOST}
 
 jhipster:
-    http:
-        cache: # Used by the CachingHttpHeadersFilter
-            timeToLiveInDays: 1461
-    security:
-        authentication:
-            jwt:
-                secret: 20fb0c95203947e254dd09243256257d9abc1f9a
+  http:
+    cache: # Used by the CachingHttpHeadersFilter
+      timeToLiveInDays: 1461
+  security:
+    authentication:
+      jwt:
+        secret: 20fb0c95203947e254dd09243256257d9abc1f9a
 
 logging:
-    level:
-        com.transformuk: ${LOGGING_LEVEL}
-
-endpoints:
-    enabled: false # disable all monitoring endpoints
+  level:
+    com.transformuk: ${LOGGING_LEVEL}

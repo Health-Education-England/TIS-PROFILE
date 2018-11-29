@@ -131,7 +131,7 @@ public class RoleResourceIntTest {
     // Validate the Role in the database
     List<Role> roleList = roleRepository.findAll();
     assertThat(roleList).hasSize(databaseSizeBeforeCreate + 1);
-    Role testRole = roleRepository.findOne(role.getName());
+    Role testRole = roleRepository.findById(role.getName()).get();
     assertThat(testRole.getName()).isEqualTo(DEFAULT_NAME);
     assertThat(permissionRepository.findAll().size()).isEqualTo(dbPermissionSizeBeforeCreate);
   }
@@ -158,7 +158,7 @@ public class RoleResourceIntTest {
     // Validate the Role in the database
     List<Role> roleList = roleRepository.findAll();
     assertThat(roleList).hasSize(databaseSizeBeforeCreate);
-    Role testRole = roleRepository.findOne(role.getName());
+    Role testRole = roleRepository.findById(role.getName()).orElse(null);
     assertThat(testRole).isNull();
   }
 

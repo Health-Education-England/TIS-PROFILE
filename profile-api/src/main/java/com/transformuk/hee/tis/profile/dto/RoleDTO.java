@@ -1,21 +1,15 @@
 package com.transformuk.hee.tis.profile.dto;
 
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Set;
 
-@ApiModel(description = "Role that can be assigned to a user")
 public class RoleDTO implements Serializable {
   @NotNull
   private String name;
   private Set<PermissionDTO> permissions;
 
-  @ApiModelProperty(required = true, value = "Role name")
   public String getName() {
     return name;
   }
@@ -24,7 +18,6 @@ public class RoleDTO implements Serializable {
     this.name = name;
   }
 
-  @ApiModelProperty(required = true, value = "Permissions given to a role")
   public Set<PermissionDTO> getPermissions() {
     return permissions;
   }

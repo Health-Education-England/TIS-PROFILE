@@ -3,8 +3,8 @@ package com.transformuk.hee.tis.profile.repository;
 import com.transformuk.hee.tis.profile.ProfileApp;
 import com.transformuk.hee.tis.profile.domain.HeeUser;
 import com.transformuk.hee.tis.profile.domain.UserTrust;
+import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.util.Lists;
-import org.h2.util.StringUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -171,7 +171,7 @@ public class HeeUserRepositoryTest {
     user1.setName("Bob");
     user2.setName("James");
     user3.setName("aBo");
-    heeUserRepository.save(Lists.newArrayList(user1, user2, user3));
+    heeUserRepository.saveAll(Lists.newArrayList(user1, user2, user3));
     heeUserRepository.flush();
 
     Pageable page = new PageRequest(0, 100);

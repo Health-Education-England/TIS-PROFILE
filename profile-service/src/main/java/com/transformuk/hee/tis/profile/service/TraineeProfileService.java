@@ -55,7 +55,7 @@ public class TraineeProfileService {
         .filter(e -> !dbGmcNumbers.contains(e.getGmcNumber()))
         .map(e -> newProfile(dbc, e))
         .collect(Collectors.toList());
-    List<TraineeProfile> savedBrandNewProfiles = traineeProfileRepository.save(brandNewProfiles);
+    List<TraineeProfile> savedBrandNewProfiles = traineeProfileRepository.saveAll(brandNewProfiles);
 
     // 2. Matched profiles - associated same DBC in past and now
     List<TraineeProfile> matchedProfiles = dbProfiles.stream()
@@ -73,7 +73,7 @@ public class TraineeProfileService {
           return e;
         })
         .collect(Collectors.toList());
-    traineeProfileRepository.save(movedInProfiles);
+    traineeProfileRepository.saveAll(movedInProfiles);
 
     // 4. Completely moved out from system - de-activate
     // TODO : since we process per DBC don't know whether trainees moved or completely gone.

@@ -1,6 +1,5 @@
 package com.transformuk.hee.tis.profile.web.rest;
 
-import com.codahale.metrics.annotation.Timed;
 import com.transformuk.hee.tis.profile.domain.Role;
 import com.transformuk.hee.tis.profile.dto.RoleDTO;
 import com.transformuk.hee.tis.profile.repository.RoleRepository;
@@ -9,7 +8,6 @@ import com.transformuk.hee.tis.profile.validators.RoleValidator;
 import com.transformuk.hee.tis.profile.web.rest.util.HeaderUtil;
 import com.transformuk.hee.tis.profile.web.rest.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
-import io.swagger.annotations.ApiParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -62,7 +60,6 @@ public class RoleResource {
    * @throws URISyntaxException if the Location URI syntax is incorrect
    */
   @PostMapping("/roles")
-  @Timed
   @PreAuthorize("hasAuthority('profile:add:modify:entities')")
   public ResponseEntity<RoleDTO> createRole(@Valid @RequestBody RoleDTO roleDTO) throws URISyntaxException {
     log.debug("REST request to save Role : {}", roleDTO);
@@ -73,7 +70,7 @@ public class RoleResource {
     role = roleRepository.save(role);
     RoleDTO result = roleMapper.roleToRoleDTO(role);
     return ResponseEntity.created(new URI("/api/roles/" + result.getName()))
-        .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getName().toString()))
+        .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getName()))
         .body(result);
   }
 
@@ -89,7 +86,6 @@ public class RoleResource {
    * @throws URISyntaxException if the Location URI syntax is incorrect
    */
   @PutMapping("/roles")
-  @Timed
   @PreAuthorize("hasAuthority('profile:add:modify:entities')")
   public ResponseEntity<RoleDTO> updateRole(@Valid @RequestBody RoleDTO roleDTO) throws URISyntaxException {
     log.debug("REST request to update Role : {}", roleDTO);
@@ -103,7 +99,7 @@ public class RoleResource {
     role = roleRepository.save(role);
     RoleDTO result = roleMapper.roleToRoleDTO(role);
     return ResponseEntity.ok()
-        .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, roleDTO.getName().toString()))
+        .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, roleDTO.getName()))
         .body(result);
   }
 
@@ -115,9 +111,8 @@ public class RoleResource {
    * @throws URISyntaxException if there is an error to generate the pagination HTTP headers
    */
   @GetMapping("/roles")
-  @Timed
   @PreAuthorize("hasAuthority('profile:view:entities')")
-  public ResponseEntity<List<RoleDTO>> getAllRoles(@ApiParam Pageable pageable) {
+  public ResponseEntity<List<RoleDTO>> getAllRoles(Pageable pageable) {
     log.debug("REST request to get a page of Roles");
     Page<Role> page = roleRepository.findAll(pageable);
     HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/roles");
@@ -131,11 +126,10 @@ public class RoleResource {
    * @return the ResponseEntity with status 200 (OK) and with body the roleDTO, or with status 404 (Not Found)
    */
   @GetMapping("/roles/{name}")
-  @Timed
   @PreAuthorize("hasAuthority('profile:view:entities')")
   public ResponseEntity<RoleDTO> getRole(@PathVariable String name) {
     log.debug("REST request to get Role : {}", name);
-    Role role = roleRepository.findOne(name);
+    Role role = roleRepository.findById(name).orElse(null);
     RoleDTO roleDTO = roleMapper.roleToRoleDTO(role);
     return ResponseUtil.wrapOrNotFound(Optional.ofNullable(roleDTO));
   }
@@ -147,14 +141,13 @@ public class RoleResource {
    * @return the ResponseEntity with status 200 (OK)
    */
   @DeleteMapping("/roles/{name}")
-  @Timed
   @PreAuthorize("hasAuthority('profile:delete:entities')")
   public ResponseEntity<Void> deleteRole(@PathVariable String name) {
     log.debug("REST request to delete Role : {}", name);
     //validate before delete
     roleValidator.validateBeforeDelete(name);
 
-    roleRepository.delete(name);
+    roleRepository.deleteById(name);
     return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, name)).build();
   }
 

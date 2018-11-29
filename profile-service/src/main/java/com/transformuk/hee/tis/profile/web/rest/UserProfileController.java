@@ -7,10 +7,6 @@ import com.transformuk.hee.tis.profile.dto.UserInfoResponse;
 import com.transformuk.hee.tis.profile.dto.UserListResponse;
 import com.transformuk.hee.tis.profile.service.LoginService;
 import com.transformuk.hee.tis.security.model.UserProfile;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import org.slf4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +32,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @RestController
-@Api(value = ProfileApp.SERVICE_NAME, description = "API to get user profile with permissions")
 @RequestMapping("/api")
 public class UserProfileController {
   private static final Logger LOG = getLogger(UserProfileController.class);
@@ -50,11 +45,6 @@ public class UserProfileController {
     this.assembler = assembler;
   }
 
-  @ApiOperation(value = "Gets user profile", notes = "gets user profile with permissions", response = UserProfile
-      .class)
-  @ApiResponses(value = {
-      @ApiResponse(code = 200, message = "Returns user profile successfully", response = UserProfile.class)
-  })
   @CrossOrigin
   @RequestMapping(path = "/userinfo", method = GET, produces = APPLICATION_JSON_VALUE)
   public UserProfile profile(@RequestHeader(value = "OIDC_access_token") String token) {
@@ -82,12 +72,6 @@ public class UserProfileController {
     return new ResponseEntity<>(userProfile, httpStatus);
   }
 
-  @ApiOperation(value = "Returns list of users by exact matching of given designatedBodyCodes",
-      notes = "http://localhost:8084/users?designatedBodyCode=DBC&permissions=comma separated values",
-      response = UserListResponse.class)
-  @ApiResponses(value = {
-      @ApiResponse(code = 200, message = "User list returned", response = UserListResponse.class)
-  })
   @CrossOrigin
   @RequestMapping(path = "/users", method = GET, produces = APPLICATION_JSON_VALUE)
   @PreAuthorize("hasAuthority('profile:get:users')")
@@ -101,10 +85,6 @@ public class UserProfileController {
     return resource;
   }
 
-  @ApiOperation(value = "Gets RevalidationOfficer deatils", response = UserProfile.class)
-  @ApiResponses(value = {
-      @ApiResponse(code = 200, message = "Got user successfully", response = UserProfile.class)
-  })
   @CrossOrigin
   @RequestMapping(path = "/users/ro-user/{designatedBodyCode}", method = GET, produces = APPLICATION_JSON_VALUE)
   @PreAuthorize("hasAuthority('profile:get:ro:user')")

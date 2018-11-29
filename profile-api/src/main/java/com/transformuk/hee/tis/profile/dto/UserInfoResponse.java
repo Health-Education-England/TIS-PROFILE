@@ -1,13 +1,10 @@
 package com.transformuk.hee.tis.profile.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Set;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-@ApiModel(description = "User information")
 public class UserInfoResponse {
   private String name;
   private String firstName;
@@ -19,7 +16,6 @@ public class UserInfoResponse {
   private String phoneNumber;
   private String emailAddress;
 
-  @ApiModelProperty(required = true, value = "User identifier")
   public String getName() {
     return name;
   }
@@ -28,7 +24,6 @@ public class UserInfoResponse {
     this.name = name;
   }
 
-  @ApiModelProperty(required = true, value = "User's first name")
   public String getFirstName() {
     return firstName;
   }
@@ -37,7 +32,6 @@ public class UserInfoResponse {
     this.firstName = firstName;
   }
 
-  @ApiModelProperty(required = true, value = "User's last name")
   public String getLastName() {
     return lastName;
   }
@@ -46,7 +40,6 @@ public class UserInfoResponse {
     this.lastName = lastName;
   }
 
-  @ApiModelProperty(required = true, value = "7 digit GMC Reference number of the user(Trainee doctor)")
   public String getGmcId() {
     return gmcId;
   }
@@ -55,7 +48,6 @@ public class UserInfoResponse {
     this.gmcId = gmcId;
   }
 
-  @ApiModelProperty(required = true, value = "Designated Body codes of user's organisation")
   public Set<String> getDesignatedBodyCodes() {
     return designatedBodyCodes;
   }
@@ -64,7 +56,6 @@ public class UserInfoResponse {
     this.designatedBodyCodes = designatedBodyCodes;
   }
 
-  @ApiModelProperty(value = "User's phone number")
   public String getPhoneNumber() {
     return phoneNumber;
   }
@@ -73,7 +64,6 @@ public class UserInfoResponse {
     this.phoneNumber = phoneNumber;
   }
 
-  @ApiModelProperty(value = "User's email address")
   public String getEmailAddress() {
     return emailAddress;
   }
@@ -82,7 +72,6 @@ public class UserInfoResponse {
     this.emailAddress = emailAddress;
   }
 
-  @ApiModelProperty(value = "The user's full name")
   public String getFullName() {
     return fullName;
   }
