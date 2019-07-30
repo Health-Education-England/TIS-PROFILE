@@ -1,6 +1,8 @@
 package com.transformuk.hee.tis.profile.repository;
 
 import com.transformuk.hee.tis.profile.domain.HeeUser;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,15 +11,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Optional;
-
 /**
  * Spring Data JPA repository for the HeeUser entity.
  */
 @SuppressWarnings("unused")
 @Repository
-public interface HeeUserRepository extends JpaRepository<HeeUser, String>, JpaSpecificationExecutor<HeeUser> {
+public interface HeeUserRepository extends JpaRepository<HeeUser, String>,
+    JpaSpecificationExecutor<HeeUser> {
 
   /**
    * Gets RO by designatedBodyCode
@@ -26,11 +26,11 @@ public interface HeeUserRepository extends JpaRepository<HeeUser, String>, JpaSp
    * @return RO user details
    */
   @Query("select u from HeeUser u " +
-          " join u.roles r " +
-          " left outer join fetch u.associatedTrusts " +
-          " left outer join fetch u.associatedProgrammes " +
-          " join u.designatedBodyCodes dbc " +
-          " where r.name='RVOfficer' and dbc = :dbc")
+      " join u.roles r " +
+      " left outer join fetch u.associatedTrusts " +
+      " left outer join fetch u.associatedProgrammes " +
+      " join u.designatedBodyCodes dbc " +
+      " where r.name='RVOfficer' and dbc = :dbc")
   List<HeeUser> findRVOfficerByDesignatedBodyCode(@Param("dbc") String designatedBodyCodes);
 
   @Query("select u from HeeUser u " +
@@ -53,14 +53,16 @@ public interface HeeUserRepository extends JpaRepository<HeeUser, String>, JpaSp
   @Query(value = "select distinct u.* from HeeUser u " +
       "inner join UserRole ur on ur.userName = u.name " +
       "inner join (" +
-      "select userName,GROUP_CONCAT(distinct designatedBodyCode order by designatedBodyCode) dbcs from UserDesignatedBody " +
+      "select userName,GROUP_CONCAT(distinct designatedBodyCode order by designatedBodyCode) dbcs from UserDesignatedBody "
+      +
       "group by userName) as usb on usb.userName = u.name and usb.dbcs = :designatedBodyCodes " +
       "inner join RolePermission rp on rp.roleName = ur.roleName " +
       "where u.active = true " +
       "and rp.permissionName in (:permissions) order by u.firstName ",
       nativeQuery = true)
-  List<HeeUser> findDistinctByExactDesignatedBodyCodesAndPermissions(@Param("designatedBodyCodes") String designatedBodyCodes,
-                                                                     @Param("permissions") List<String> permissions);
+  List<HeeUser> findDistinctByExactDesignatedBodyCodesAndPermissions(
+      @Param("designatedBodyCodes") String designatedBodyCodes,
+      @Param("permissions") List<String> permissions);
 
   /**
    * Gets distinct Users by exact designatedBodyCodes
@@ -71,12 +73,14 @@ public interface HeeUserRepository extends JpaRepository<HeeUser, String>, JpaSp
   @Query(value = "select distinct u.* from HeeUser u " +
       "inner join UserRole ur on ur.userName = u.name " +
       "inner join (" +
-      "select userName,GROUP_CONCAT(distinct designatedBodyCode order by designatedBodyCode) dbcs from UserDesignatedBody " +
+      "select userName,GROUP_CONCAT(distinct designatedBodyCode order by designatedBodyCode) dbcs from UserDesignatedBody "
+      +
       "group by userName) as usb on usb.userName = u.name and usb.dbcs = :designatedBodyCodes " +
       "where u.active = true " +
       "order by u.firstName ",
       nativeQuery = true)
-  List<HeeUser> findDistinctByExactDesignatedBodyCodes(@Param("designatedBodyCodes") String designatedBodyCodes);
+  List<HeeUser> findDistinctByExactDesignatedBodyCodes(
+      @Param("designatedBodyCodes") String designatedBodyCodes);
 
   /**
    * Gets counts of users by roles
@@ -84,7 +88,8 @@ public interface HeeUserRepository extends JpaRepository<HeeUser, String>, JpaSp
    * @param roleName
    * @return
    */
-  long countByRolesNameAndActive(@Param("roleName") String roleName, @Param("active") Boolean active);
+  long countByRolesNameAndActive(@Param("roleName") String roleName,
+      @Param("active") Boolean active);
 
   @Query(value = "SELECT u FROM HeeUser u " +
       "LEFT JOIN FETCH u.associatedTrusts " +

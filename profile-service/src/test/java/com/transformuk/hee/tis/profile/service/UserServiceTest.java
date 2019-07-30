@@ -1,5 +1,12 @@
 package com.transformuk.hee.tis.profile.service;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.google.common.collect.Sets;
 import com.transformuk.hee.tis.profile.domain.HeeUser;
 import com.transformuk.hee.tis.profile.domain.UserTrust;
@@ -7,6 +14,9 @@ import com.transformuk.hee.tis.profile.repository.HeeUserRepository;
 import com.transformuk.hee.tis.profile.service.dto.HeeUserDTO;
 import com.transformuk.hee.tis.profile.service.dto.UserTrustDTO;
 import com.transformuk.hee.tis.profile.service.mapper.HeeUserMapper;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import org.assertj.core.util.Lists;
 import org.junit.Assert;
 import org.junit.Before;
@@ -17,17 +27,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserServiceTest {
@@ -112,8 +111,10 @@ public class UserServiceTest {
   @Test
   public void findAllUsersWithTrustShouldReturnHeeUserDTOWithTrustData() {
     Page<HeeUser> foundUsersMock = mock(Page.class);
-    List<HeeUser> usersFromPage = Lists.newArrayList(heeUser1WithTrusts, heeUser2EmptyTrusts, heeUser3NullTrusts);
-    List<HeeUserDTO> mappedUsers = Lists.newArrayList(heeUser1WithTrustsDTO, heeUser2EmptyTrustsDTO, heeUser3NullTrustsDTO);
+    List<HeeUser> usersFromPage = Lists
+        .newArrayList(heeUser1WithTrusts, heeUser2EmptyTrusts, heeUser3NullTrusts);
+    List<HeeUserDTO> mappedUsers = Lists
+        .newArrayList(heeUser1WithTrustsDTO, heeUser2EmptyTrustsDTO, heeUser3NullTrustsDTO);
     when(heeUserRepositoryMock.findAll(pageMock)).thenReturn(foundUsersMock);
     when(foundUsersMock.getContent()).thenReturn(usersFromPage);
     when(foundUsersMock.getTotalElements()).thenReturn(3L);
@@ -135,7 +136,8 @@ public class UserServiceTest {
     verify(heeUserRepositoryMock).findAll(pageMock);
     verify(foundUsersMock).getContent();
     verify(heeUserMapperMock).heeUsersToHeeUserDTOs(usersFromPage);
-    verify(heeUserRepositoryMock, never()).findByNameIgnoreCaseContaining(any(Pageable.class), anyString());
+    verify(heeUserRepositoryMock, never())
+        .findByNameIgnoreCaseContaining(any(Pageable.class), anyString());
   }
 
   @Test
@@ -143,7 +145,8 @@ public class UserServiceTest {
     Page<HeeUser> foundUsersMock = mock(Page.class);
     List<HeeUser> usersFromPage = Lists.newArrayList(heeUser2EmptyTrusts);
     List<HeeUserDTO> mappedUsers = Lists.newArrayList(heeUser2EmptyTrustsDTO);
-    when(heeUserRepositoryMock.findByNameIgnoreCaseContaining(pageMock, "st name 2")).thenReturn(foundUsersMock);
+    when(heeUserRepositoryMock.findByNameIgnoreCaseContaining(pageMock, "st name 2"))
+        .thenReturn(foundUsersMock);
     when(foundUsersMock.getContent()).thenReturn(usersFromPage);
     when(foundUsersMock.getTotalElements()).thenReturn(1L);
     when(heeUserMapperMock.heeUsersToHeeUserDTOs(usersFromPage)).thenReturn(mappedUsers);
@@ -165,8 +168,10 @@ public class UserServiceTest {
   @Test
   public void findSingleUserWithTrustShouldReturnHeeUserDTOWithTrustData() {
     Optional<HeeUser> foundUserMock = Optional.of(heeUser1WithTrusts);
-    when(heeUserRepositoryMock.findByNameWithTrustsAndProgrammes(USERNAME)).thenReturn(foundUserMock);
-    when(heeUserMapperMock.heeUserToHeeUserDTO(foundUserMock.orElse(null))).thenReturn(heeUser1WithTrustsDTO);
+    when(heeUserRepositoryMock.findByNameWithTrustsAndProgrammes(USERNAME))
+        .thenReturn(foundUserMock);
+    when(heeUserMapperMock.heeUserToHeeUserDTO(foundUserMock.orElse(null)))
+        .thenReturn(heeUser1WithTrustsDTO);
 
     HeeUserDTO result = testObj.findSingleUserWithTrustAndProgrammes(USERNAME);
 

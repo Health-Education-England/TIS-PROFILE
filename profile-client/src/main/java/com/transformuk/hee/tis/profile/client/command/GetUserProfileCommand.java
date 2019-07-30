@@ -4,6 +4,7 @@ import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.netflix.hystrix.HystrixCommandKey;
 import com.transformuk.hee.tis.security.model.UserProfile;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -12,8 +13,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.Optional;
 
 /**
  * Hystrix command that makes a request to the profile service.
@@ -34,7 +33,8 @@ public class GetUserProfileCommand extends HystrixCommand<Optional<UserProfile>>
   private String urlEndpoint;
   private String securityToken;
 
-  public GetUserProfileCommand(RestTemplate restTemplate, String urlEndpoint, String securityToken) {
+  public GetUserProfileCommand(RestTemplate restTemplate, String urlEndpoint,
+      String securityToken) {
     super(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(GROUP_KEY))
         .andCommandKey(HystrixCommandKey.Factory.asKey(COMMAND_KEY)));
     this.restTemplate = restTemplate;
@@ -45,8 +45,8 @@ public class GetUserProfileCommand extends HystrixCommand<Optional<UserProfile>>
   /**
    * Make the get user info rest call to the profile service
    * <p>
-   * Do NOT catch all errors as we need the HTTP 5xx errors to contribute to the error count for the circuit breaker
-   * client errors should not contribute to the error count
+   * Do NOT catch all errors as we need the HTTP 5xx errors to contribute to the error count for the
+   * circuit breaker client errors should not contribute to the error count
    *
    * @return Optional user profile if its there
    * @throws Exception HTTP 5xx or other exceptions that can occur during th rest call
@@ -58,8 +58,9 @@ public class GetUserProfileCommand extends HystrixCommand<Optional<UserProfile>>
     headers.set(AUTH_TOKEN_HEADER, AUTH_TOKEN_BEARER + securityToken);
     HttpEntity<?> entity = new HttpEntity<String>(headers);
     try {
-      ResponseEntity<UserProfile> responseEntity = restTemplate.exchange(urlEndpoint, HttpMethod.GET, entity,
-          UserProfile.class);
+      ResponseEntity<UserProfile> responseEntity = restTemplate
+          .exchange(urlEndpoint, HttpMethod.GET, entity,
+              UserProfile.class);
       return Optional.of(responseEntity.getBody());
     } catch (HttpClientErrorException e) {
       LOG.debug("A client error occurred during a rest call to [{}]", urlEndpoint);

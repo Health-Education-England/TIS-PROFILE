@@ -1,20 +1,18 @@
 package com.transformuk.hee.tis.profile.client.service.impl;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.transformuk.hee.tis.profile.client.command.GetUserProfileCommand;
 import com.transformuk.hee.tis.security.model.UserProfile;
 import com.transformuk.hee.tis.security.service.JwtProfileService;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.access.method.P;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
-
-import static java.util.Objects.requireNonNull;
 
 /**
  * Service that's used within the context of a microservices spring security.
@@ -48,11 +46,11 @@ public class JwtProfileServiceImpl implements JwtProfileService {
   }
 
   /**
-   * Get a UserProfile using the provided security token. This method should only be used during authenticating the user
-   * in Spring Security
-   *
-   * This method uses both caching and hystrix to reduce the amount of calls to the service, so if the services is down
-   * or slow, we can fallback gracefully
+   * Get a UserProfile using the provided security token. This method should only be used during
+   * authenticating the user in Spring Security
+   * <p>
+   * This method uses both caching and hystrix to reduce the amount of calls to the service, so if
+   * the services is down or slow, we can fallback gracefully
    *
    * @return UserProfile containing information of the current authenticated user
    */
@@ -60,7 +58,7 @@ public class JwtProfileServiceImpl implements JwtProfileService {
     requireNonNull(securityToken, "securityToken must not be null");
 
     Optional<UserProfile> optionalUserProfile = userProfileCache.getIfPresent(securityToken);
-    if(optionalUserProfile != null) {
+    if (optionalUserProfile != null) {
       return optionalUserProfile;
     } else {
       optionalUserProfile = getUserProfile(securityToken);
@@ -70,7 +68,8 @@ public class JwtProfileServiceImpl implements JwtProfileService {
   }
 
   protected Optional<UserProfile> getUserProfile(String securityToken) {
-    return new GetUserProfileCommand(restTemplate, serviceUrl + USER_INFO_ENDPOINT, securityToken).execute();
+    return new GetUserProfileCommand(restTemplate, serviceUrl + USER_INFO_ENDPOINT, securityToken)
+        .execute();
   }
 
   public void setUserProfileCache(Cache<String, Optional<UserProfile>> userProfileCache) {

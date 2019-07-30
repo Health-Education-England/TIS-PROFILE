@@ -3,7 +3,6 @@ package com.transformuk.hee.tis.profile.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
 import java.time.LocalDate;
 
 @ApiModel(description = "Request class to hold gmc info required for a trainee registration.")

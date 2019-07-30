@@ -2,11 +2,10 @@ package com.transformuk.hee.tis.profile.service.dto;
 
 
 import com.transformuk.hee.tis.profile.dto.RoleDTO;
-
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Set;
+import javax.validation.constraints.NotNull;
 
 /**
  * A DTO for the HeeUser entity.
@@ -41,8 +40,9 @@ public class HeeUserDTO implements Serializable {
   }
 
   public HeeUserDTO(String name, String firstName, String lastName, String gmcId,
-                    String phoneNumber, String emailAddress, Boolean active,
-                    String password,Boolean isTemporaryPassword, Set<RoleDTO> roles, Set<String> designatedBodyCodes) {
+      String phoneNumber, String emailAddress, Boolean active,
+      String password, Boolean isTemporaryPassword, Set<RoleDTO> roles,
+      Set<String> designatedBodyCodes) {
     this.name = name;
     this.firstName = firstName;
     this.lastName = lastName;

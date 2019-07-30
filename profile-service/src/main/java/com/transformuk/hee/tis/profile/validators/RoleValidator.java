@@ -5,12 +5,11 @@ import com.transformuk.hee.tis.profile.repository.HeeUserRepository;
 import com.transformuk.hee.tis.profile.repository.PermissionRepository;
 import com.transformuk.hee.tis.profile.web.rest.errors.CustomParameterizedException;
 import com.transformuk.hee.tis.profile.web.rest.errors.ErrorConstants;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
-
-import java.util.Set;
 
 /**
  * Validator to validate permissions and Hee User associated with role
@@ -37,7 +36,8 @@ public class RoleValidator {
       permissions.forEach(permission -> {
         Permission dbPermission = permissionRepository.findByName(permission.getName());
         if (dbPermission == null) {
-          throw new CustomParameterizedException("Invalid " + PERMISSION_NAME + permission.getName(),
+          throw new CustomParameterizedException(
+              "Invalid " + PERMISSION_NAME + permission.getName(),
               ErrorConstants.ERR_VALIDATION);
         }
       });
@@ -51,8 +51,9 @@ public class RoleValidator {
     if (!StringUtils.isEmpty(roleName)) {
       long noOfUsersHasRole = heeUserRepository.countByRolesNameAndActive(roleName, true);
       if (noOfUsersHasRole > 0) {
-        throw new CustomParameterizedException("This role: " + roleName + " cann't be deleted as it's " +
-            "associated with users",
+        throw new CustomParameterizedException(
+            "This role: " + roleName + " cann't be deleted as it's " +
+                "associated with users",
             ErrorConstants.ERR_VALIDATION);
       }
     }

@@ -1,16 +1,15 @@
 package com.transformuk.hee.tis.profile.domain;
 
 import com.transformuk.hee.tis.profile.dto.PermissionType;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
+import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * A Permission.
@@ -48,7 +47,7 @@ public class Permission implements Serializable {
   }
 
   public Permission(String name, PermissionType type, String description,
-                    String principal, String resource, String actions, String effect) {
+      String principal, String resource, String actions, String effect) {
     this.name = name;
     this.type = type;
     this.description = description;
@@ -116,19 +115,35 @@ public class Permission implements Serializable {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
 
     Permission that = (Permission) o;
     if (that.name == null || name == null) {
       return false;
     }
-    if (name != null ? !name.equals(that.name) : that.name != null) return false;
-    if (type != that.type) return false;
-    if (description != null ? !description.equals(that.description) : that.description != null) return false;
-    if (principal != null ? !principal.equals(that.principal) : that.principal != null) return false;
-    if (resource != null ? !resource.equals(that.resource) : that.resource != null) return false;
-    if (actions != null ? !actions.equals(that.actions) : that.actions != null) return false;
+    if (name != null ? !name.equals(that.name) : that.name != null) {
+      return false;
+    }
+    if (type != that.type) {
+      return false;
+    }
+    if (description != null ? !description.equals(that.description) : that.description != null) {
+      return false;
+    }
+    if (principal != null ? !principal.equals(that.principal) : that.principal != null) {
+      return false;
+    }
+    if (resource != null ? !resource.equals(that.resource) : that.resource != null) {
+      return false;
+    }
+    if (actions != null ? !actions.equals(that.actions) : that.actions != null) {
+      return false;
+    }
     return effect != null ? effect.equals(that.effect) : that.effect == null;
 
   }

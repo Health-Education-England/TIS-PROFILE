@@ -1,13 +1,12 @@
 package com.transformuk.hee.tis.profile.domain;
 
-import org.hibernate.envers.Audited;
-
+import java.time.LocalDate;
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import java.time.LocalDate;
-import java.util.Objects;
+import org.hibernate.envers.Audited;
 
 @Entity(name = "TraineeProfile")
 @Audited
@@ -71,8 +70,12 @@ public class TraineeProfile {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
     TraineeProfile traineeProfile = (TraineeProfile) o;
     return Objects.equals(tisId, traineeProfile.tisId) &&
         Objects.equals(gmcNumber, traineeProfile.gmcNumber);

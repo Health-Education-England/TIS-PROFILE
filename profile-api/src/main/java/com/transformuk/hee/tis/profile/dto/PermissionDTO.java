@@ -2,13 +2,13 @@ package com.transformuk.hee.tis.profile.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
+import javax.validation.constraints.NotNull;
 
 @ApiModel(description = "Permission given to a role")
 public class PermissionDTO implements Serializable {
+
   @NotNull
   private String name;
 
@@ -91,17 +91,33 @@ public class PermissionDTO implements Serializable {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
 
     PermissionDTO that = (PermissionDTO) o;
 
-    if (name != null ? !name.equals(that.name) : that.name != null) return false;
-    if (type != that.type) return false;
-    if (description != null ? !description.equals(that.description) : that.description != null) return false;
-    if (principal != null ? !principal.equals(that.principal) : that.principal != null) return false;
-    if (resource != null ? !resource.equals(that.resource) : that.resource != null) return false;
-    if (actions != null ? !actions.equals(that.actions) : that.actions != null) return false;
+    if (name != null ? !name.equals(that.name) : that.name != null) {
+      return false;
+    }
+    if (type != that.type) {
+      return false;
+    }
+    if (description != null ? !description.equals(that.description) : that.description != null) {
+      return false;
+    }
+    if (principal != null ? !principal.equals(that.principal) : that.principal != null) {
+      return false;
+    }
+    if (resource != null ? !resource.equals(that.resource) : that.resource != null) {
+      return false;
+    }
+    if (actions != null ? !actions.equals(that.actions) : that.actions != null) {
+      return false;
+    }
     return effect != null ? effect.equals(that.effect) : that.effect != null;
 
   }

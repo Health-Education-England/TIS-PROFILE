@@ -12,9 +12,9 @@ import org.springframework.web.client.RestTemplate;
 /**
  * Configuration class to define a rest template to be used by the Profile Client
  * <p>
- * This rest template is to only be used when a service needs to communicate with the profile service
- * on behalf of itself, where there is no interaction if a browser or end client.
- * e.g. during an ETL, some batch processing etc.
+ * This rest template is to only be used when a service needs to communicate with the profile
+ * service on behalf of itself, where there is no interaction if a browser or end client. e.g.
+ * during an ETL, some batch processing etc.
  * <p>
  */
 public class ProfileClientConfig {
@@ -35,18 +35,20 @@ public class ProfileClientConfig {
    * This rest template communicates with keycloak to get auth headers which are then added to the
    * request.
    * <p>
-   * Use this rest template when you need to make a request from a backend service that has no interaction
-   * with a browser. These are typically ETL's
+   * Use this rest template when you need to make a request from a backend service that has no
+   * interaction with a browser. These are typically ETL's
    *
    * @param keycloak keycloak bean
    * @return
    */
   public RestTemplate prodProfileRestTemplate(Keycloak keycloak) {
-    final KeycloakClientRequestFactory keycloakClientRequestFactory = new KeycloakClientRequestFactory(keycloak);
+    final KeycloakClientRequestFactory keycloakClientRequestFactory = new KeycloakClientRequestFactory(
+        keycloak);
     return new KeycloakRestTemplate(keycloakClientRequestFactory);
   }
 
-  private static class LocalClientRequestFactory extends HttpComponentsClientHttpRequestFactory implements ClientHttpRequestFactory {
+  private static class LocalClientRequestFactory extends
+      HttpComponentsClientHttpRequestFactory implements ClientHttpRequestFactory {
 
     private static final String TOKEN_HEADER = "OIDC_access_token";
     private static final String AUTH_TOKEN_HEADER = "Authorization";

@@ -2,11 +2,10 @@ package com.transformuk.hee.tis.profile.service.mapper;
 
 import com.transformuk.hee.tis.profile.domain.Permission;
 import com.transformuk.hee.tis.profile.dto.PermissionDTO;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-
 import java.util.Arrays;
 import java.util.List;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 /**
  * Mapper for the entity Permission and its DTO Permission.

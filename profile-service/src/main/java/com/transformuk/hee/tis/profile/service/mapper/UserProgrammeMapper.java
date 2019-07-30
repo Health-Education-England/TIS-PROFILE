@@ -2,9 +2,8 @@ package com.transformuk.hee.tis.profile.service.mapper;
 
 import com.transformuk.hee.tis.profile.domain.UserProgramme;
 import com.transformuk.hee.tis.profile.service.dto.UserProgrammeDTO;
-import org.mapstruct.Mapper;
-
 import java.util.List;
+import org.mapstruct.Mapper;
 
 /**
  * Mapper for the entity UserProgramme and its DTO UserProgrammeDTO.

@@ -1,19 +1,5 @@
 package com.transformuk.hee.tis.profile.service;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import com.transformuk.hee.tis.profile.domain.HeeUser;
-import com.transformuk.hee.tis.profile.repository.HeeUserRepository;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
-import javax.persistence.EntityNotFoundException;
-import java.util.List;
-import java.util.Set;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertSame;
@@ -21,6 +7,19 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.internal.util.collections.Sets.newSet;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.transformuk.hee.tis.profile.domain.HeeUser;
+import com.transformuk.hee.tis.profile.repository.HeeUserRepository;
+import java.util.List;
+import java.util.Set;
+import javax.persistence.EntityNotFoundException;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LoginServiceTest {
@@ -70,16 +69,16 @@ public class LoginServiceTest {
   }
 
   /**
-   * User Alison has two designatedBodyCodes 1-AIIDWT,1-DGBODY and
-   * user Jamesh has one designatedBodyCodes 1-AIIDWT,1-DGBODY
-   * when we fetch by two designatedBodyCodes 1-AIIDWT,1-DGBODY it should match with other users exactly
-   * same designatedBodyCodes
-   * Expected: two user Alison and Jamesh
+   * User Alison has two designatedBodyCodes 1-AIIDWT,1-DGBODY and user Jamesh has one
+   * designatedBodyCodes 1-AIIDWT,1-DGBODY when we fetch by two designatedBodyCodes
+   * 1-AIIDWT,1-DGBODY it should match with other users exactly same designatedBodyCodes Expected:
+   * two user Alison and Jamesh
    */
   @Test
   public void shouldFetchTwoUsersExactDesignatedBodyCodes() {
     // given
-    Set<String> designatedBodyCodes = Sets.newHashSet(DESIGNATED_BODY_CODE_1DGBODY, DESIGNATED_BODY_CODE_1AIIDWT);
+    Set<String> designatedBodyCodes = Sets
+        .newHashSet(DESIGNATED_BODY_CODE_1DGBODY, DESIGNATED_BODY_CODE_1AIIDWT);
     HeeUser aUser = new HeeUser();
     aUser.setName(USER_NAME_ALISON);
     aUser.setDesignatedBodyCodes(designatedBodyCodes);
@@ -93,8 +92,9 @@ public class LoginServiceTest {
         DESIGNATED_BODY_CODE_1AIIDWT + "," + DESIGNATED_BODY_CODE_1DGBODY)).willReturn(users);
 
     // when
-    List<HeeUser> actualUsers = service.getUsers(newSet(DESIGNATED_BODY_CODE_1DGBODY, DESIGNATED_BODY_CODE_1AIIDWT),
-        null);
+    List<HeeUser> actualUsers = service
+        .getUsers(newSet(DESIGNATED_BODY_CODE_1DGBODY, DESIGNATED_BODY_CODE_1AIIDWT),
+            null);
 
     // then
     assertSame(users, actualUsers);
@@ -102,16 +102,15 @@ public class LoginServiceTest {
   }
 
   /**
-   * User Alison has two designatedBodyCodes 1-AIIDWT,1-DGBODY and
-   * user Jamesh has one designatedBodyCodes 1-AIIDWT
-   * when we fetch by two designatedBodyCodes 1-AIIDWT,1-DGBODY it should match with other users exactly
-   * same designatedBodyCodes
-   * Expected: only one user Alison
+   * User Alison has two designatedBodyCodes 1-AIIDWT,1-DGBODY and user Jamesh has one
+   * designatedBodyCodes 1-AIIDWT when we fetch by two designatedBodyCodes 1-AIIDWT,1-DGBODY it
+   * should match with other users exactly same designatedBodyCodes Expected: only one user Alison
    */
   @Test
   public void shouldFetchOneUsersExactDesignatedBodyCodes1() {
     // given
-    Set<String> twoDesignatedBodyCodes = Sets.newHashSet(DESIGNATED_BODY_CODE_1DGBODY, DESIGNATED_BODY_CODE_1AIIDWT);
+    Set<String> twoDesignatedBodyCodes = Sets
+        .newHashSet(DESIGNATED_BODY_CODE_1DGBODY, DESIGNATED_BODY_CODE_1AIIDWT);
     Set<String> oneDesignatedBodyCodes = Sets.newHashSet(DESIGNATED_BODY_CODE_1DGBODY);
     HeeUser aUser = new HeeUser();
     aUser.setName(USER_NAME_ALISON);
@@ -127,8 +126,9 @@ public class LoginServiceTest {
         .willReturn(Lists.newArrayList(aUser));
 
     // when
-    List<HeeUser> actualUsers = service.getUsers(newSet(DESIGNATED_BODY_CODE_1DGBODY, DESIGNATED_BODY_CODE_1AIIDWT),
-        null);
+    List<HeeUser> actualUsers = service
+        .getUsers(newSet(DESIGNATED_BODY_CODE_1DGBODY, DESIGNATED_BODY_CODE_1AIIDWT),
+            null);
 
     // then
     assertArrayEquals(Lists.newArrayList(aUser).toArray(), actualUsers.toArray());
@@ -136,16 +136,15 @@ public class LoginServiceTest {
   }
 
   /**
-   * User Alison has two designatedBodyCodes 1-DGBODY,1-AIIDWT and
-   * user Jamesh has one designatedBodyCodes 1-AIIDWT
-   * when we fetch by two designatedBodyCodes 1-AIIDWT it should match with other users exactly
-   * same designatedBodyCodes
-   * Expected: only one user Jamesh
+   * User Alison has two designatedBodyCodes 1-DGBODY,1-AIIDWT and user Jamesh has one
+   * designatedBodyCodes 1-AIIDWT when we fetch by two designatedBodyCodes 1-AIIDWT it should match
+   * with other users exactly same designatedBodyCodes Expected: only one user Jamesh
    */
   @Test
   public void shouldFetchOneUsersExactDesignatedBodyCodes2() {
     // given
-    Set<String> twoDesignatedBodyCodes = Sets.newHashSet(DESIGNATED_BODY_CODE_1DGBODY, DESIGNATED_BODY_CODE_1AIIDWT);
+    Set<String> twoDesignatedBodyCodes = Sets
+        .newHashSet(DESIGNATED_BODY_CODE_1DGBODY, DESIGNATED_BODY_CODE_1AIIDWT);
     Set<String> oneDesignatedBodyCodes = Sets.newHashSet(DESIGNATED_BODY_CODE_1DGBODY);
     HeeUser aUser = new HeeUser();
     aUser.setName(USER_NAME_ALISON);

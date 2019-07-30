@@ -1,35 +1,5 @@
 package com.transformuk.hee.tis.profile.web.rest;
 
-import com.google.common.collect.Sets;
-import com.transformuk.hee.tis.profile.ProfileApp;
-import com.transformuk.hee.tis.profile.domain.HeeUser;
-import com.transformuk.hee.tis.profile.repository.HeeUserRepository;
-import com.transformuk.hee.tis.profile.repository.PermissionRepository;
-import com.transformuk.hee.tis.profile.repository.UserTrustRepository;
-import com.transformuk.hee.tis.profile.service.UserProgrammeService;
-import com.transformuk.hee.tis.profile.service.UserService;
-import com.transformuk.hee.tis.profile.service.UserTrustService;
-import com.transformuk.hee.tis.profile.service.dto.HeeUserDTO;
-import com.transformuk.hee.tis.profile.service.mapper.HeeUserMapper;
-import com.transformuk.hee.tis.profile.validators.HeeUserValidator;
-import com.transformuk.hee.tis.profile.web.rest.errors.ExceptionTranslator;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
-import org.springframework.http.MediaType;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import java.util.List;
-
 import static com.transformuk.hee.tis.profile.web.rest.TestUtil.DEFAULT_ACTIVE;
 import static com.transformuk.hee.tis.profile.web.rest.TestUtil.DEFAULT_EMAIL_ADDRESS;
 import static com.transformuk.hee.tis.profile.web.rest.TestUtil.DEFAULT_FIRST_NAME;
@@ -54,6 +24,35 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import com.google.common.collect.Sets;
+import com.transformuk.hee.tis.profile.ProfileApp;
+import com.transformuk.hee.tis.profile.domain.HeeUser;
+import com.transformuk.hee.tis.profile.repository.HeeUserRepository;
+import com.transformuk.hee.tis.profile.repository.PermissionRepository;
+import com.transformuk.hee.tis.profile.repository.UserTrustRepository;
+import com.transformuk.hee.tis.profile.service.UserProgrammeService;
+import com.transformuk.hee.tis.profile.service.UserService;
+import com.transformuk.hee.tis.profile.service.UserTrustService;
+import com.transformuk.hee.tis.profile.service.dto.HeeUserDTO;
+import com.transformuk.hee.tis.profile.service.mapper.HeeUserMapper;
+import com.transformuk.hee.tis.profile.validators.HeeUserValidator;
+import com.transformuk.hee.tis.profile.web.rest.errors.ExceptionTranslator;
+import java.util.List;
+import javax.persistence.EntityManager;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Test class for the HeeUserResource REST controller.
@@ -251,11 +250,14 @@ public class HeeUserResourceIntTest {
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
         .andExpect(jsonPath("$.content.[*].name").value(hasItem(DEFAULT_NAME.toString())))
-        .andExpect(jsonPath("$.content.[*].firstName").value(hasItem(DEFAULT_FIRST_NAME.toString())))
+        .andExpect(
+            jsonPath("$.content.[*].firstName").value(hasItem(DEFAULT_FIRST_NAME.toString())))
         .andExpect(jsonPath("$.content.[*].lastName").value(hasItem(DEFAULT_LAST_NAME.toString())))
         .andExpect(jsonPath("$.content.[*].gmcId").value(hasItem(DEFAULT_GMC_ID.toString())))
-        .andExpect(jsonPath("$.content.[*].phoneNumber").value(hasItem(DEFAULT_PHONE_NUMBER.toString())))
-        .andExpect(jsonPath("$.content.[*].emailAddress").value(hasItem(DEFAULT_EMAIL_ADDRESS.toString())))
+        .andExpect(
+            jsonPath("$.content.[*].phoneNumber").value(hasItem(DEFAULT_PHONE_NUMBER.toString())))
+        .andExpect(
+            jsonPath("$.content.[*].emailAddress").value(hasItem(DEFAULT_EMAIL_ADDRESS.toString())))
         .andExpect(jsonPath("$.content.[*].active").value(hasItem(DEFAULT_ACTIVE.booleanValue())))
         .andExpect(jsonPath("$.size").value(20))
         .andExpect(jsonPath("$.totalPages").value(1));

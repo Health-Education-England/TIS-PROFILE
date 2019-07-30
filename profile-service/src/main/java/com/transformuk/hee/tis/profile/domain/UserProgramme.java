@@ -1,5 +1,7 @@
 package com.transformuk.hee.tis.profile.domain;
 
+import java.io.Serializable;
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -8,8 +10,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import java.io.Serializable;
-import java.util.Objects;
 
 @Entity
 @Table(name = "UserProgramme")
@@ -69,8 +69,12 @@ public class UserProgramme implements Serializable {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
     UserProgramme userProgramme = (UserProgramme) o;
     return Objects.equals(id, userProgramme.id) &&
         Objects.equals(heeUser, userProgramme.heeUser) &&
