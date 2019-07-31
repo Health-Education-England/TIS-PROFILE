@@ -1,22 +1,21 @@
 package com.transformuk.hee.tis.profile.web.rest;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.collect.Sets;
 import com.transformuk.hee.tis.profile.domain.HeeUser;
 import com.transformuk.hee.tis.profile.domain.Role;
-import org.hamcrest.Description;
-import org.hamcrest.TypeSafeDiagnosingMatcher;
-import org.springframework.http.MediaType;
-
-import javax.persistence.EntityManager;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import javax.persistence.EntityManager;
+import org.hamcrest.Description;
+import org.hamcrest.TypeSafeDiagnosingMatcher;
+import org.springframework.http.MediaType;
 
 /**
  * Utility class for testing REST controllers.
@@ -88,7 +87,8 @@ public class TestUtil {
   }
 
   /**
-   * Creates a matcher that matches when the examined string reprensents the same instant as the profile datetime
+   * Creates a matcher that matches when the examined string reprensents the same instant as the
+   * profile datetime
    *
    * @param date the profile datetime against which the examined string is checked
    */
@@ -117,8 +117,8 @@ public class TestUtil {
   /**
    * Create an entity for this test.
    * <p>
-   * This is a static method, as tests for other entities might also need it,
-   * if they test an entity which requires the current entity.
+   * This is a static method, as tests for other entities might also need it, if they test an entity
+   * which requires the current entity.
    */
   public static HeeUser createEntityHeeUser(EntityManager em) {
     Role role = new Role();
@@ -139,7 +139,8 @@ public class TestUtil {
   }
 
   /**
-   * A matcher that tests that the examined string represents the same instant as the profile datetime.
+   * A matcher that tests that the examined string represents the same instant as the profile
+   * datetime.
    */
   public static class ZonedDateTimeMatcher extends TypeSafeDiagnosingMatcher<String> {
 

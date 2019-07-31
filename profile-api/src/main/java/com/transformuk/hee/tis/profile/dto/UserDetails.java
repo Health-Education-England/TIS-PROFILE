@@ -2,7 +2,6 @@ package com.transformuk.hee.tis.profile.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.annotations.ApiModelProperty;
-
 import java.util.Set;
 
 /**

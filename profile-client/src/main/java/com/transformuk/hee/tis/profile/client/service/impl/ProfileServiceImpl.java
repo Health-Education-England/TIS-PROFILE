@@ -1,5 +1,9 @@
 package com.transformuk.hee.tis.profile.client.service.impl;
 
+import static org.slf4j.LoggerFactory.getLogger;
+import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.web.util.UriComponentsBuilder.fromHttpUrl;
+
 import com.google.common.collect.Maps;
 import com.transformuk.hee.tis.client.impl.AbstractClientService;
 import com.transformuk.hee.tis.profile.client.service.ProfileService;
@@ -13,6 +17,8 @@ import com.transformuk.hee.tis.profile.dto.TraineeIdListResponse;
 import com.transformuk.hee.tis.profile.dto.TraineeProfileDto;
 import com.transformuk.hee.tis.profile.service.dto.HeeUserDTO;
 import com.transformuk.hee.tis.security.model.UserProfile;
+import java.util.List;
+import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
@@ -31,16 +37,9 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.List;
-import java.util.Map;
-
-import static org.slf4j.LoggerFactory.getLogger;
-import static org.springframework.http.HttpMethod.POST;
-import static org.springframework.web.util.UriComponentsBuilder.fromHttpUrl;
-
 /**
- * The default implementation for the profile service. Provides methods to which we use to communicate and use the
- * Tis Profile Service
+ * The default implementation for the profile service. Provides methods to which we use to
+ * communicate and use the Tis Profile Service
  */
 @Service
 public class ProfileServiceImpl extends AbstractClientService implements ProfileService {
@@ -59,14 +58,17 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
 
   static {
     classToParamTypeRefMap = Maps.newHashMap();
-    classToParamTypeRefMap.put(HeeUserDTO.class, new ParameterizedTypeReference<List<HeeUserDTO>>() {
-    });
-    classToParamTypeRefMap.put(PermissionDTO.class, new ParameterizedTypeReference<List<PermissionDTO>>() {
-    });
+    classToParamTypeRefMap
+        .put(HeeUserDTO.class, new ParameterizedTypeReference<List<HeeUserDTO>>() {
+        });
+    classToParamTypeRefMap
+        .put(PermissionDTO.class, new ParameterizedTypeReference<List<PermissionDTO>>() {
+        });
     classToParamTypeRefMap.put(RoleDTO.class, new ParameterizedTypeReference<List<RoleDTO>>() {
     });
-    classToParamTypeRefMap.put(TraineeProfileDto.class, new ParameterizedTypeReference<List<TraineeProfileDto>>() {
-    });
+    classToParamTypeRefMap
+        .put(TraineeProfileDto.class, new ParameterizedTypeReference<List<TraineeProfileDto>>() {
+        });
   }
 
   @Autowired
@@ -81,8 +83,9 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
   @Value("${profile.service.url}")
   private String serviceUrl;
 
-  public ProfileServiceImpl(@Value("${profile.client.rate.limit}") double standardRequestsPerSecondLimit,
-                            @Value("${profile.client.bulk.rate.limit}") double bulkRequestsPerSecondLimit) {
+  public ProfileServiceImpl(
+      @Value("${profile.client.rate.limit}") double standardRequestsPerSecondLimit,
+      @Value("${profile.client.bulk.rate.limit}") double bulkRequestsPerSecondLimit) {
     super(standardRequestsPerSecondLimit, bulkRequestsPerSecondLimit);
   }
 
@@ -98,9 +101,11 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
         .queryParam(PAGE_QUERY_PARAM, pageable.getPageNumber())
         .queryParam(SIZE_QUERY_PARAM, pageable.getPageSize())
         .buildAndExpand(dbc);
-    PagedTraineeIdResponse pagedTraineeIdResponse = profileRestTemplate.getForObject(uriComponents.encode().toUri(),
-        PagedTraineeIdResponse.class);
-    return new PageImpl<>(pagedTraineeIdResponse.getContent(), pageable, pagedTraineeIdResponse.getTotalElements());
+    PagedTraineeIdResponse pagedTraineeIdResponse = profileRestTemplate
+        .getForObject(uriComponents.encode().toUri(),
+            PagedTraineeIdResponse.class);
+    return new PageImpl<>(pagedTraineeIdResponse.getContent(), pageable,
+        pagedTraineeIdResponse.getTotalElements());
   }
 
   /**
@@ -108,12 +113,14 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
    *
    * @return List of {@link TraineeId}
    */
-  public List<TraineeProfileDto> getTraineeIdsForGmcNumbers(String designatedBodyCode, List<RegistrationRequest> registrationRequests) {
+  public List<TraineeProfileDto> getTraineeIdsForGmcNumbers(String designatedBodyCode,
+      List<RegistrationRequest> registrationRequests) {
     HttpEntity<List<RegistrationRequest>> requestEntity = new HttpEntity<>(registrationRequests);
     String url = serviceUrl + TRAINEE_DBC_REGISTER_ENDPOINT;
     UriComponents uriComponents = fromHttpUrl(url).buildAndExpand(designatedBodyCode);
-    ResponseEntity<TraineeIdListResponse> response = profileRestTemplate.exchange(uriComponents.encode().toUri(), POST,
-        requestEntity, TraineeIdListResponse.class);
+    ResponseEntity<TraineeIdListResponse> response = profileRestTemplate
+        .exchange(uriComponents.encode().toUri(), POST,
+            requestEntity, TraineeIdListResponse.class);
     return response.getBody().getTraineeIds();
   }
 
@@ -125,15 +132,15 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
    */
   public UserProfile getRODetails(String designatedBodyCode) {
     String url = serviceUrl + USERS_RO_USER_ENDPOINT + designatedBodyCode;
-    LOG.info("GetRODetails --> {}" , url);
-    ResponseEntity<UserProfile> responseEntity = profileRestTemplate.getForEntity(url, UserProfile.class);
+    LOG.info("GetRODetails --> {}", url);
+    ResponseEntity<UserProfile> responseEntity = profileRestTemplate
+        .getForEntity(url, UserProfile.class);
     LOG.info("After GetRODetails call");
     return responseEntity.getBody();
   }
 
   /**
-   * Gets user details given designatedBody from Auth Service
-   * (https://dev-api.transformcloud.net/profile/swagger-ui.html#!/login-controller/getUsersUsingGET)
+   * Gets user details given designatedBody from Auth Service (https://dev-api.transformcloud.net/profile/swagger-ui.html#!/login-controller/getUsersUsingGET)
    *
    * @param designatedBodyCodes user's designatedBody
    * @param permissions         submit_to_gmc permissions
@@ -145,7 +152,8 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
         .queryParam("limit", limit)
         .queryParam("designatedBodyCode", designatedBodyCodes)
         .queryParam("permissions", permissions);
-    ResponseEntity<JSONObject> responseEntity = profileRestTemplate.getForEntity(builder.toUriString(), JSONObject.class);
+    ResponseEntity<JSONObject> responseEntity = profileRestTemplate
+        .getForEntity(builder.toUriString(), JSONObject.class);
     return responseEntity.getBody();
   }
 
@@ -157,18 +165,20 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
     }
 
     String pageParam = StringUtils.EMPTY;
-    if(pageable != null) {
-      if(StringUtils.isNotEmpty(username)) {
+    if (pageable != null) {
+      if (StringUtils.isNotEmpty(username)) {
         pageParam = pageParam + "&";
       } else {
         pageParam = "?";
       }
 
-      pageParam = pageParam + "page=" + pageable.getPageNumber() + "&size=" + pageable.getPageSize();
+      pageParam =
+          pageParam + "page=" + pageable.getPageNumber() + "&size=" + pageable.getPageSize();
     }
 
-    ResponseEntity<CustomPageable<HeeUserDTO>> responseEntity = profileRestTemplate.exchange(serviceUrl + ALL_HEE_USERS_ENDPOINT + searchParam + pageParam,
-        HttpMethod.GET, null, typeReference);
+    ResponseEntity<CustomPageable<HeeUserDTO>> responseEntity = profileRestTemplate
+        .exchange(serviceUrl + ALL_HEE_USERS_ENDPOINT + searchParam + pageParam,
+            HttpMethod.GET, null, typeReference);
     return responseEntity.getBody();
   }
 
@@ -182,16 +192,20 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
 
   @Override
   public boolean deleteUser(String username) {
-    ResponseEntity<Void> exchange = profileRestTemplate.exchange(serviceUrl + ALL_HEE_USERS_ENDPOINT + "/{username}", HttpMethod.DELETE, null, Void.class, username);
+    ResponseEntity<Void> exchange = profileRestTemplate
+        .exchange(serviceUrl + ALL_HEE_USERS_ENDPOINT + "/{username}", HttpMethod.DELETE, null,
+            Void.class, username);
     return HttpStatus.OK.equals(exchange.getStatusCode());
   }
 
 
   @Override
-  public List<JsonPatchDTO> getJsonPathByTableDtoNameOrderByDateAddedAsc(String endpointUrl, Class objectDTO) {
+  public List<JsonPatchDTO> getJsonPathByTableDtoNameOrderByDateAddedAsc(String endpointUrl,
+      Class objectDTO) {
     ParameterizedTypeReference<List<JsonPatchDTO>> typeReference = getJsonPatchDtoReference();
-    ResponseEntity<List<JsonPatchDTO>> response = profileRestTemplate.exchange(serviceUrl + endpointUrl + objectDTO.getSimpleName(),
-        HttpMethod.GET, null, typeReference);
+    ResponseEntity<List<JsonPatchDTO>> response = profileRestTemplate
+        .exchange(serviceUrl + endpointUrl + objectDTO.getSimpleName(),
+            HttpMethod.GET, null, typeReference);
     return response.getBody();
   }
 

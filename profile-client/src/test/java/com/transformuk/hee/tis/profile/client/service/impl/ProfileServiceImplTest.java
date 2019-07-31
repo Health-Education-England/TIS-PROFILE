@@ -1,5 +1,14 @@
 package com.transformuk.hee.tis.profile.client.service.impl;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.http.HttpStatus.OK;
+
 import com.google.common.collect.Lists;
 import com.transformuk.hee.tis.profile.dto.PagedTraineeIdResponse;
 import com.transformuk.hee.tis.profile.dto.RegistrationRequest;
@@ -8,6 +17,8 @@ import com.transformuk.hee.tis.profile.dto.TraineeIdListResponse;
 import com.transformuk.hee.tis.profile.dto.TraineeProfileDto;
 import com.transformuk.hee.tis.profile.service.dto.HeeUserDTO;
 import com.transformuk.hee.tis.security.model.UserProfile;
+import java.net.URI;
+import java.util.List;
 import org.json.simple.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
@@ -29,19 +40,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
-
-import java.net.URI;
-import java.util.List;
-
-import static com.google.common.collect.Lists.newArrayList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.springframework.http.HttpMethod.POST;
-import static org.springframework.http.HttpStatus.OK;
 
 
 @RunWith(BlockJUnit4ClassRunner.class)
@@ -90,7 +88,8 @@ public class ProfileServiceImplTest {
     Pageable pageable = new PageRequest(0, 100);
     List<TraineeId> traineeIds = newArrayList(new TraineeId(999L, "1234567	"));
     PagedTraineeIdResponse response = new PagedTraineeIdResponse(traineeIds, 1);
-    given(profileRestTemplate.getForObject(any(URI.class), eq(PagedTraineeIdResponse.class))).willReturn(response);
+    given(profileRestTemplate.getForObject(any(URI.class), eq(PagedTraineeIdResponse.class)))
+        .willReturn(response);
 
     // when
     Page<TraineeId> allTraineeIdMappings = profileServiceImpl.getPagedTraineeIds(DBC, pageable);
@@ -110,7 +109,8 @@ public class ProfileServiceImplTest {
     profileServiceImpl.getRODetails(DBC);
 
     // then
-    verify(profileRestTemplate).getForEntity(eq(PROFILE_URL + "/api/users/ro-user/" + DBC), eq(UserProfile.class));
+    verify(profileRestTemplate)
+        .getForEntity(eq(PROFILE_URL + "/api/users/ro-user/" + DBC), eq(UserProfile.class));
 
   }
 
@@ -135,22 +135,26 @@ public class ProfileServiceImplTest {
     // given
     JSONObject jsonObject = new JSONObject();
     ResponseEntity responseEntity = new ResponseEntity(jsonObject, HttpStatus.OK);
-    given(profileRestTemplate.getForEntity(any(String.class), eq(JSONObject.class))).willReturn(responseEntity);
+    given(profileRestTemplate.getForEntity(any(String.class), eq(JSONObject.class)))
+        .willReturn(responseEntity);
 
     // when
     profileServiceImpl.getAllUsers(PERMISSIONS, DBC);
 
     // then
-    verify(profileRestTemplate).getForEntity(eq(PROFILE_URL + "/api/users?offset&limit&designatedBodyCode=" + DBC +
-        "&permissions=" + PERMISSIONS), eq(JSONObject.class));
+    verify(profileRestTemplate)
+        .getForEntity(eq(PROFILE_URL + "/api/users?offset&limit&designatedBodyCode=" + DBC +
+            "&permissions=" + PERMISSIONS), eq(JSONObject.class));
   }
 
   @Test
   public void getSingleAdminUserShouldReturnHeeUserDTO() {
     HeeUserDTO heeUserDTO = new HeeUserDTO();
     heeUserDTO.setFirstName(FIRSTNAME);
-    given(profileRestTemplate.exchange(eq(PROFILE_URL + "/api/single-hee-users?username=Username"),eq(HttpMethod.GET),eq(null),
-        parameterizedTypeReferenceArgumentCaptorSingleDTO.capture()))
+    given(profileRestTemplate
+        .exchange(eq(PROFILE_URL + "/api/single-hee-users?username=Username"), eq(HttpMethod.GET),
+            eq(null),
+            parameterizedTypeReferenceArgumentCaptorSingleDTO.capture()))
         .willReturn(new ResponseEntity<>(heeUserDTO, OK));
 
     HeeUserDTO result = profileServiceImpl.getSingleAdminUser("Username");
@@ -158,8 +162,9 @@ public class ProfileServiceImplTest {
         parameterizedTypeReferenceArgumentCaptorSingleDTO.getValue();
 
     assertEquals(result, heeUserDTO);
-    verify(profileRestTemplate).exchange(PROFILE_URL + "/api/single-hee-users?username=Username",HttpMethod.GET,null,
-        parameterizedTypeReferenceArgumentCaptorSingleDTOValue);
+    verify(profileRestTemplate)
+        .exchange(PROFILE_URL + "/api/single-hee-users?username=Username", HttpMethod.GET, null,
+            parameterizedTypeReferenceArgumentCaptorSingleDTOValue);
   }
 
   @Test
@@ -168,22 +173,26 @@ public class ProfileServiceImplTest {
     HeeUserDTO heeUserDTO1 = new HeeUserDTO();
     heeUserDTO.setFirstName(FIRSTNAME);
     heeUserDTO1.setFirstName(FIRSTNAME1);
-    List<HeeUserDTO> heeUserDTOS = Lists.newArrayList(heeUserDTO,heeUserDTO1);
+    List<HeeUserDTO> heeUserDTOS = Lists.newArrayList(heeUserDTO, heeUserDTO1);
     Page<HeeUserDTO> heeUserDTOSPage = new PageImpl<>(heeUserDTOS);
-    PageRequest pageRequest = new PageRequest(0,11);
+    PageRequest pageRequest = new PageRequest(0, 11);
 
-
-    given(profileRestTemplate.exchange(eq(PROFILE_URL + "/api/hee-users?search=Username"),eq(HttpMethod.GET),eq(null), parameterizedTypeReferenceArgumentCaptor.capture()))
+    given(profileRestTemplate
+        .exchange(eq(PROFILE_URL + "/api/hee-users?search=Username"), eq(HttpMethod.GET), eq(null),
+            parameterizedTypeReferenceArgumentCaptor.capture()))
         .willReturn(new ResponseEntity<>(heeUserDTOSPage, HttpStatus.OK));
 
     Page<HeeUserDTO> result = profileServiceImpl.getAllAdminUsers(null, "Username");
 
-    ParameterizedTypeReference<Page<HeeUserDTO>> capturedParamValue = parameterizedTypeReferenceArgumentCaptor.getValue();
+    ParameterizedTypeReference<Page<HeeUserDTO>> capturedParamValue = parameterizedTypeReferenceArgumentCaptor
+        .getValue();
     assertEquals(result, heeUserDTOSPage);
     assertEquals(2, result.getContent().size());
     assertEquals(2, result.getTotalElements());
     assertEquals(0, result.getNumber());
-    verify(profileRestTemplate).exchange(PROFILE_URL + "/api/hee-users?search=Username", HttpMethod.GET,null, capturedParamValue);
+    verify(profileRestTemplate)
+        .exchange(PROFILE_URL + "/api/hee-users?search=Username", HttpMethod.GET, null,
+            capturedParamValue);
   }
 
   @Test
@@ -192,22 +201,26 @@ public class ProfileServiceImplTest {
     HeeUserDTO heeUserDTO1 = new HeeUserDTO();
     heeUserDTO.setFirstName(FIRSTNAME);
     heeUserDTO1.setFirstName(FIRSTNAME1);
-    List<HeeUserDTO> heeUserDTOS = Lists.newArrayList(heeUserDTO,heeUserDTO1);
+    List<HeeUserDTO> heeUserDTOS = Lists.newArrayList(heeUserDTO, heeUserDTO1);
     Page<HeeUserDTO> heeUserDTOSPage = new PageImpl<>(heeUserDTOS);
-    PageRequest pageRequest = new PageRequest(0,11);
+    PageRequest pageRequest = new PageRequest(0, 11);
 
-
-    given(profileRestTemplate.exchange(eq(PROFILE_URL + "/api/hee-users?search=Username&page=0&size=11"),eq(HttpMethod.GET),eq(null), parameterizedTypeReferenceArgumentCaptor.capture()))
+    given(profileRestTemplate
+        .exchange(eq(PROFILE_URL + "/api/hee-users?search=Username&page=0&size=11"),
+            eq(HttpMethod.GET), eq(null), parameterizedTypeReferenceArgumentCaptor.capture()))
         .willReturn(new ResponseEntity<>(heeUserDTOSPage, HttpStatus.OK));
 
     Page<HeeUserDTO> result = profileServiceImpl.getAllAdminUsers(pageRequest, "Username");
 
-    ParameterizedTypeReference<Page<HeeUserDTO>> capturedParamValue = parameterizedTypeReferenceArgumentCaptor.getValue();
+    ParameterizedTypeReference<Page<HeeUserDTO>> capturedParamValue = parameterizedTypeReferenceArgumentCaptor
+        .getValue();
     assertEquals(result, heeUserDTOSPage);
     assertEquals(2, result.getContent().size());
     assertEquals(2, result.getTotalElements());
     assertEquals(0, result.getNumber());
-    verify(profileRestTemplate).exchange(PROFILE_URL + "/api/hee-users?search=Username&page=0&size=11", HttpMethod.GET,null, capturedParamValue);
+    verify(profileRestTemplate)
+        .exchange(PROFILE_URL + "/api/hee-users?search=Username&page=0&size=11", HttpMethod.GET,
+            null, capturedParamValue);
   }
 
   @Test
@@ -216,22 +229,26 @@ public class ProfileServiceImplTest {
     HeeUserDTO heeUserDTO1 = new HeeUserDTO();
     heeUserDTO.setFirstName(FIRSTNAME);
     heeUserDTO1.setFirstName(FIRSTNAME1);
-    List<HeeUserDTO> heeUserDTOS = Lists.newArrayList(heeUserDTO,heeUserDTO1);
+    List<HeeUserDTO> heeUserDTOS = Lists.newArrayList(heeUserDTO, heeUserDTO1);
     Page<HeeUserDTO> heeUserDTOSPage = new PageImpl<>(heeUserDTOS);
-    PageRequest pageRequest = new PageRequest(0,11);
+    PageRequest pageRequest = new PageRequest(0, 11);
 
-
-    given(profileRestTemplate.exchange(eq(PROFILE_URL + "/api/hee-users?page=0&size=11"),eq(HttpMethod.GET),eq(null), parameterizedTypeReferenceArgumentCaptor.capture()))
+    given(profileRestTemplate
+        .exchange(eq(PROFILE_URL + "/api/hee-users?page=0&size=11"), eq(HttpMethod.GET), eq(null),
+            parameterizedTypeReferenceArgumentCaptor.capture()))
         .willReturn(new ResponseEntity<>(heeUserDTOSPage, HttpStatus.OK));
 
     Page<HeeUserDTO> result = profileServiceImpl.getAllAdminUsers(pageRequest, null);
 
-    ParameterizedTypeReference<Page<HeeUserDTO>> capturedParamValue = parameterizedTypeReferenceArgumentCaptor.getValue();
+    ParameterizedTypeReference<Page<HeeUserDTO>> capturedParamValue = parameterizedTypeReferenceArgumentCaptor
+        .getValue();
     assertEquals(result, heeUserDTOSPage);
     assertEquals(2, result.getContent().size());
     assertEquals(2, result.getTotalElements());
     assertEquals(0, result.getNumber());
-    verify(profileRestTemplate).exchange(PROFILE_URL + "/api/hee-users?page=0&size=11", HttpMethod.GET,null, capturedParamValue);
+    verify(profileRestTemplate)
+        .exchange(PROFILE_URL + "/api/hee-users?page=0&size=11", HttpMethod.GET, null,
+            capturedParamValue);
   }
 
   @Test
@@ -240,21 +257,24 @@ public class ProfileServiceImplTest {
     HeeUserDTO heeUserDTO1 = new HeeUserDTO();
     heeUserDTO.setFirstName(FIRSTNAME);
     heeUserDTO1.setFirstName(FIRSTNAME1);
-    List<HeeUserDTO> heeUserDTOS = Lists.newArrayList(heeUserDTO,heeUserDTO1);
+    List<HeeUserDTO> heeUserDTOS = Lists.newArrayList(heeUserDTO, heeUserDTO1);
     Page<HeeUserDTO> heeUserDTOSPage = new PageImpl<>(heeUserDTOS);
 
-
-    given(profileRestTemplate.exchange(eq(PROFILE_URL + "/api/hee-users"),eq(HttpMethod.GET),eq(null), parameterizedTypeReferenceArgumentCaptor.capture()))
+    given(profileRestTemplate
+        .exchange(eq(PROFILE_URL + "/api/hee-users"), eq(HttpMethod.GET), eq(null),
+            parameterizedTypeReferenceArgumentCaptor.capture()))
         .willReturn(new ResponseEntity<>(heeUserDTOSPage, HttpStatus.OK));
 
     Page<HeeUserDTO> result = profileServiceImpl.getAllAdminUsers(null, null);
 
-    ParameterizedTypeReference<Page<HeeUserDTO>> capturedParamValue = parameterizedTypeReferenceArgumentCaptor.getValue();
+    ParameterizedTypeReference<Page<HeeUserDTO>> capturedParamValue = parameterizedTypeReferenceArgumentCaptor
+        .getValue();
     assertEquals(result, heeUserDTOSPage);
     assertEquals(2, result.getContent().size());
     assertEquals(2, result.getTotalElements());
     assertEquals(0, result.getNumber());
-    verify(profileRestTemplate).exchange(PROFILE_URL + "/api/hee-users", HttpMethod.GET,null, capturedParamValue);
+    verify(profileRestTemplate)
+        .exchange(PROFILE_URL + "/api/hee-users", HttpMethod.GET, null, capturedParamValue);
   }
 
   @Test
@@ -266,11 +286,13 @@ public class ProfileServiceImplTest {
     traineeProfileDto.setTisId(TIS_ID);
     traineeProfileDto.setGmcNumber(GMC_NUMBER);
     TraineeIdListResponse listResponse = new TraineeIdListResponse(newArrayList(traineeProfileDto));
-    given(profileRestTemplate.exchange(any(URI.class), eq(POST), any(ResponseEntity.class), eq(TraineeIdListResponse.class)))
+    given(profileRestTemplate.exchange(any(URI.class), eq(POST), any(ResponseEntity.class),
+        eq(TraineeIdListResponse.class)))
         .willReturn(new ResponseEntity<>(listResponse, OK));
 
     // when
-    List<TraineeProfileDto> traineeProfileList = profileServiceImpl.getTraineeIdsForGmcNumbers(DBC, newArrayList(request));
+    List<TraineeProfileDto> traineeProfileList = profileServiceImpl
+        .getTraineeIdsForGmcNumbers(DBC, newArrayList(request));
 
     // then
     assertEquals(1, traineeProfileList.size());

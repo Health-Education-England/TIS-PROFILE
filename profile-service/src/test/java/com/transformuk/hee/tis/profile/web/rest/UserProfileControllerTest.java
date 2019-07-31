@@ -1,5 +1,13 @@
 package com.transformuk.hee.tis.profile.web.rest;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.hasItems;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.internal.util.collections.Sets.newSet;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.google.common.collect.Lists;
 import com.transformuk.hee.tis.profile.ProfileApp;
 import com.transformuk.hee.tis.profile.assembler.UserProfileAssembler;
@@ -9,6 +17,8 @@ import com.transformuk.hee.tis.profile.domain.Role;
 import com.transformuk.hee.tis.profile.dto.PermissionType;
 import com.transformuk.hee.tis.profile.service.LoginService;
 import com.transformuk.hee.tis.profile.web.rest.errors.ExceptionTranslator;
+import java.util.List;
+import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,17 +35,6 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import java.util.List;
-import java.util.Set;
-
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.hasItems;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.internal.util.collections.Sets.newSet;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ProfileApp.class)

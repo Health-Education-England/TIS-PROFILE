@@ -1,10 +1,9 @@
 package com.transformuk.hee.tis.profile.repository;
 
 import com.transformuk.hee.tis.profile.domain.Role;
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import java.util.List;
 import java.util.Set;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
  * Spring Data JPA repository for the Role entity.

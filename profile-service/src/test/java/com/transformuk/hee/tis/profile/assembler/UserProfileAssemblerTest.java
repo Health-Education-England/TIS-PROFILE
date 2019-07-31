@@ -1,5 +1,8 @@
 package com.transformuk.hee.tis.profile.assembler;
 
+import static com.transformuk.hee.tis.profile.assembler.UserProfileAssembler.PRINCIPLE_SEPARATOR;
+import static org.mockito.Mockito.when;
+
 import com.google.common.collect.Sets;
 import com.transformuk.hee.tis.profile.domain.HeeUser;
 import com.transformuk.hee.tis.profile.domain.Permission;
@@ -8,6 +11,7 @@ import com.transformuk.hee.tis.profile.domain.UserTrust;
 import com.transformuk.hee.tis.profile.repository.PermissionRepository;
 import com.transformuk.hee.tis.security.model.Trust;
 import com.transformuk.hee.tis.security.model.UserProfile;
+import java.util.Set;
 import org.assertj.core.util.Lists;
 import org.junit.Assert;
 import org.junit.Before;
@@ -16,12 +20,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import java.util.Set;
-
-import static com.transformuk.hee.tis.profile.assembler.UserProfileAssembler.PRINCIPLE_SEPARATOR;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserProfileAssemblerTest {
@@ -52,7 +50,7 @@ public class UserProfileAssemblerTest {
   private UserTrust userTrustMock;
 
   @Before
-  public void before(){
+  public void before() {
     when(heeUserMock.getDesignatedBodyCodes()).thenReturn(USER_DESIGNATED_BODY_CODES);
     when(heeUserMock.getEmailAddress()).thenReturn(USER_EMAIL);
     when(heeUserMock.getFirstName()).thenReturn(USER_FIRST_NAME);
@@ -60,7 +58,6 @@ public class UserProfileAssemblerTest {
     when(heeUserMock.getGmcId()).thenReturn(USER_GMC_ID);
     when(heeUserMock.getPhoneNumber()).thenReturn(USER_PHONE_NUMBER);
     when(heeUserMock.getName()).thenReturn(USER_NAME);
-
 
     Set<Role> roles = Sets.newHashSet(role1Mock, role2Mock);
     when(heeUserMock.getRoles()).thenReturn(roles);
@@ -75,7 +72,8 @@ public class UserProfileAssemblerTest {
   @Test
   public void toUserProfileReturnsUserProfileWithPopulatedHeeUserData() {
 
-    when(permissionRepositoryMock.findByPrincipalEndsWith(PRINCIPLE_SEPARATOR + USER_NAME)).thenReturn(Lists.newArrayList(permissionPolicyMock));
+    when(permissionRepositoryMock.findByPrincipalEndsWith(PRINCIPLE_SEPARATOR + USER_NAME))
+        .thenReturn(Lists.newArrayList(permissionPolicyMock));
 
     UserProfile result = testObj.toUserProfile(heeUserMock);
     Assert.assertEquals(USER_EMAIL, result.getEmailAddress());

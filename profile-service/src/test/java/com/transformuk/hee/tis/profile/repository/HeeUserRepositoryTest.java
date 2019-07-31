@@ -3,6 +3,9 @@ package com.transformuk.hee.tis.profile.repository;
 import com.transformuk.hee.tis.profile.ProfileApp;
 import com.transformuk.hee.tis.profile.domain.HeeUser;
 import com.transformuk.hee.tis.profile.domain.UserTrust;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import org.assertj.core.util.Lists;
 import org.h2.util.StringUtils;
 import org.junit.After;
@@ -18,15 +21,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ProfileApp.class)
 public class HeeUserRepositoryTest {
 
   public static final String TRUST_NAME_1 = "St Georges";
+  public static final String TRUST_CODE_1 = "RJ7";
+  public static final String TRUST_CODE_2 = "RA1";
+  public static final long TRUST_ID_1 = 12345L;
+  public static final long TRUST_ID_2 = 6789L;
+  public static final String TRUST_NAME_2 = "St Pauls";
   private static final String GMC_ID_1 = "GMC ID1";
   private static final String EMAIL_1 = "EMAIL 1";
   private static final String FIRST_NAME_1 = "FIRST NAME 1";
@@ -45,11 +49,6 @@ public class HeeUserRepositoryTest {
   private static final String LAST_NAME_3 = "LAST NAME 3";
   private static final String NAME_3 = "NAME 3";
   private static final String PHONE_NUMBER_3 = "03030303030";
-  public static final String TRUST_CODE_1 = "RJ7";
-  public static final String TRUST_CODE_2 = "RA1";
-  public static final long TRUST_ID_1 = 12345L;
-  public static final long TRUST_ID_2 = 6789L;
-  public static final String TRUST_NAME_2 = "St Pauls";
   private static final String NAME_SEARCH_STRING = "Bo";
 
   @Autowired
@@ -176,12 +175,15 @@ public class HeeUserRepositoryTest {
 
     Pageable page = new PageRequest(0, 100);
 
-    Page<HeeUser> results = heeUserRepository.findByNameIgnoreCaseContaining(page, NAME_SEARCH_STRING);
+    Page<HeeUser> results = heeUserRepository
+        .findByNameIgnoreCaseContaining(page, NAME_SEARCH_STRING);
 
     Assert.assertEquals(2, results.getTotalElements());
-    Optional<HeeUser> foundBobOptional = results.getContent().stream().filter(user -> StringUtils.equals("Bob", user.getName())).findAny();
+    Optional<HeeUser> foundBobOptional = results.getContent().stream()
+        .filter(user -> StringUtils.equals("Bob", user.getName())).findAny();
     Assert.assertTrue(foundBobOptional.isPresent());
-    Optional<HeeUser> foundBoOptional = results.getContent().stream().filter(user -> StringUtils.equals("aBo", user.getName())).findAny();
+    Optional<HeeUser> foundBoOptional = results.getContent().stream()
+        .filter(user -> StringUtils.equals("aBo", user.getName())).findAny();
     Assert.assertTrue(foundBoOptional.isPresent());
   }
 

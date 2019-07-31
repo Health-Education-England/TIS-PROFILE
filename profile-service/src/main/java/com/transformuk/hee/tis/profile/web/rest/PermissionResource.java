@@ -9,6 +9,11 @@ import com.transformuk.hee.tis.profile.web.rest.util.HeaderUtil;
 import com.transformuk.hee.tis.profile.web.rest.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import io.swagger.annotations.ApiParam;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Optional;
+import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -26,12 +31,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Optional;
-
 /**
  * REST controller for managing Permission.
  */
@@ -45,7 +44,8 @@ public class PermissionResource {
 
   private final PermissionMapper permissionMapper;
 
-  public PermissionResource(PermissionRepository permissionRepository, PermissionMapper permissionMapper) {
+  public PermissionResource(PermissionRepository permissionRepository,
+      PermissionMapper permissionMapper) {
     this.permissionRepository = permissionRepository;
     this.permissionMapper = permissionMapper;
   }
@@ -54,13 +54,15 @@ public class PermissionResource {
    * POST  /permissions : Create a new permission.
    *
    * @param permissionDTO the permissionDTO to create
-   * @return the ResponseEntity with status 201 (Created) and with body the new permissionDTO, or with status 400 (Bad Request) if the permission has already an ID
+   * @return the ResponseEntity with status 201 (Created) and with body the new permissionDTO, or
+   * with status 400 (Bad Request) if the permission has already an ID
    * @throws URISyntaxException if the Location URI syntax is incorrect
    */
   @PostMapping("/permissions")
   @Timed
   @PreAuthorize("hasAuthority('profile:add:modify:entities')")
-  public ResponseEntity<PermissionDTO> createPermission(@Valid @RequestBody PermissionDTO permissionDTO) throws URISyntaxException {
+  public ResponseEntity<PermissionDTO> createPermission(
+      @Valid @RequestBody PermissionDTO permissionDTO) throws URISyntaxException {
     log.debug("REST request to save Permission : {}", permissionDTO);
     Permission permission = permissionMapper.permissionDTOToPermission(permissionDTO);
     permission = permissionRepository.save(permission);
@@ -71,19 +73,21 @@ public class PermissionResource {
   }
 
   /**
-   * PUT  /permissions : Updates an existing permission. Please note, given that a permission is just
-   * one string, updating a permission just means creating a new one, the existing one will still be there
+   * PUT  /permissions : Updates an existing permission. Please note, given that a permission is
+   * just one string, updating a permission just means creating a new one, the existing one will
+   * still be there
    *
    * @param permission the permission to update
-   * @return the ResponseEntity with status 200 (OK) and with body the updated permission,
-   * or with status 400 (Bad Request) if the permission is not valid,
-   * or with status 500 (Internal Server Error) if the permission couldnt be updated
+   * @return the ResponseEntity with status 200 (OK) and with body the updated permission, or with
+   * status 400 (Bad Request) if the permission is not valid, or with status 500 (Internal Server
+   * Error) if the permission couldnt be updated
    * @throws URISyntaxException if the Location URI syntax is incorrect
    */
   @PutMapping("/permissions")
   @Timed
   @PreAuthorize("hasAuthority('profile:add:modify:entities')")
-  public ResponseEntity<PermissionDTO> updatePermission(@Valid @RequestBody PermissionDTO permission) throws URISyntaxException {
+  public ResponseEntity<PermissionDTO> updatePermission(
+      @Valid @RequestBody PermissionDTO permission) throws URISyntaxException {
     log.debug("REST request to update Permission : {}", permission);
     return createPermission(permission);
   }
@@ -102,14 +106,16 @@ public class PermissionResource {
     log.debug("REST request to get a page of Permissions");
     Page<Permission> page = permissionRepository.findAll(pageable);
     HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/permissions");
-    return new ResponseEntity<>(permissionMapper.permissionsToPermissionDTOs(page.getContent()), headers, HttpStatus.OK);
+    return new ResponseEntity<>(permissionMapper.permissionsToPermissionDTOs(page.getContent()),
+        headers, HttpStatus.OK);
   }
 
   /**
    * GET  /permissions/:name : get the "name" permission.
    *
    * @param name the id of the permissionDTO to retrieve
-   * @return the ResponseEntity with status 200 (OK) and with body the permissionDTO, or with status 404 (Not Found)
+   * @return the ResponseEntity with status 200 (OK) and with body the permissionDTO, or with status
+   * 404 (Not Found)
    */
   @GetMapping("/permissions/{name}")
   @Timed
@@ -133,7 +139,8 @@ public class PermissionResource {
   public ResponseEntity<Void> deletePermission(@PathVariable String name) {
     log.debug("REST request to delete Permission : {}", name);
     permissionRepository.delete(name);
-    return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, name)).build();
+    return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, name))
+        .build();
   }
 
 }

@@ -1,10 +1,9 @@
 package com.transformuk.hee.tis.profile.filters;
 
 import com.transformuk.hee.tis.profile.domain.HeeUser;
-import org.springframework.data.jpa.domain.Specification;
-
 import java.util.List;
 import java.util.Set;
+import org.springframework.data.jpa.domain.Specification;
 
 /**
  * Spring data JPA Specification to do dynamic queries on Revalidation entity.

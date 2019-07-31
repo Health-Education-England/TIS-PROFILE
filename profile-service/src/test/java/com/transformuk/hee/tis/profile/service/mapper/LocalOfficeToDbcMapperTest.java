@@ -1,11 +1,10 @@
 package com.transformuk.hee.tis.profile.service.mapper;
 
-import com.google.common.collect.Sets;
-import org.junit.Test;
-
-import java.util.Set;
-
 import static org.assertj.core.api.Assertions.assertThat;
+
+import com.google.common.collect.Sets;
+import java.util.Set;
+import org.junit.Test;
 
 public class LocalOfficeToDbcMapperTest {
 
@@ -23,7 +22,9 @@ public class LocalOfficeToDbcMapperTest {
 
     //Then
     assertThat(response).hasSize(8);
-    assertThat(response).contains("1-AIIDSI","1-AIIDNQ","1-AIIDQQ","1-AIIDR8","1-AIIDWA","1-AIIDVS","1-AIIDWI","LDN-MOCK-DBC");
+    assertThat(response)
+        .contains("1-AIIDSI", "1-AIIDNQ", "1-AIIDQQ", "1-AIIDR8", "1-AIIDWA", "1-AIIDVS",
+            "1-AIIDWI", "LDN-MOCK-DBC");
   }
 
   @Test

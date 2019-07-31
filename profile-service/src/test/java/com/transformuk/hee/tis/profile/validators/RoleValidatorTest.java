@@ -1,22 +1,21 @@
 package com.transformuk.hee.tis.profile.validators;
 
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.transformuk.hee.tis.profile.domain.Permission;
 import com.transformuk.hee.tis.profile.repository.HeeUserRepository;
 import com.transformuk.hee.tis.profile.repository.PermissionRepository;
 import com.transformuk.hee.tis.profile.web.rest.TestUtil;
 import com.transformuk.hee.tis.profile.web.rest.errors.CustomParameterizedException;
+import java.util.Arrays;
+import javax.persistence.EntityManager;
 import org.assertj.core.util.Sets;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import javax.persistence.EntityManager;
-import java.util.Arrays;
-
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RoleValidatorTest {

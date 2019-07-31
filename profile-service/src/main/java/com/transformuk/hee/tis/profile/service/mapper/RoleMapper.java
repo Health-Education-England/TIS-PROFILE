@@ -4,11 +4,10 @@ import com.transformuk.hee.tis.profile.domain.Permission;
 import com.transformuk.hee.tis.profile.domain.Role;
 import com.transformuk.hee.tis.profile.dto.PermissionDTO;
 import com.transformuk.hee.tis.profile.dto.RoleDTO;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-
 import java.util.Arrays;
 import java.util.List;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 /**
  * Mapper for the entity Role and its DTO RoleDTO.

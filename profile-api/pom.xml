@@ -6,7 +6,7 @@
 
   <groupId>com.transformuk.hee</groupId>
   <artifactId>profile-api</artifactId>
-  <version>2.4.2</version>
+  <version>2.4.3</version>
   <packaging>jar</packaging>
 
   <properties>
@@ -30,4 +30,35 @@
       <version>1.1.0.Final</version>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <!-- Checkstyle can be provided by tis-parent 3.0.2+ but requires additional migration. -->
+      <plugin>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <groupId>org.apache.maven.plugins</groupId>
+        <version>3.0.0</version>
+        <configuration>
+          <configLocation>google_checks.xml</configLocation>
+          <consoleOutput>true</consoleOutput>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>com.puppycrawl.tools</groupId>
+            <artifactId>checkstyle</artifactId>
+            <version>8.22</version>
+          </dependency>
+        </dependencies>
+        <executions>
+          <execution>
+            <id>validate</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>

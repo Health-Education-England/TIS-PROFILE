@@ -1,6 +1,11 @@
 package com.transformuk.hee.tis.profile.web.rest;
 
 
+import static org.slf4j.LoggerFactory.getLogger;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
 import com.transformuk.hee.tis.profile.ProfileApp;
 import com.transformuk.hee.tis.profile.domain.TraineeProfile;
 import com.transformuk.hee.tis.profile.dto.PagedResponse;
@@ -12,6 +17,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,14 +31,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.slf4j.LoggerFactory.getLogger;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @RestController
 @Api(value = ProfileApp.SERVICE_NAME, description = "API to get trainee id mappings")
@@ -57,9 +56,11 @@ public class TraineeProfileController {
   @RequestMapping(path = "/{designatedBodyCode}/register", method = POST, produces = APPLICATION_JSON_VALUE,
       consumes = APPLICATION_JSON_VALUE)
   @PreAuthorize("hasAuthority('profile:register:trainee')")
-  public TraineeIdListResponse getOrCreateTraineeIds(@PathVariable(value = "designatedBodyCode") String designatedBodyCode,
-                                                     @RequestBody List<RegistrationRequest> requests) {
-    List<TraineeProfile> traineeProfiles = traineeProfileService.findOrCreate(designatedBodyCode, requests);
+  public TraineeIdListResponse getOrCreateTraineeIds(
+      @PathVariable(value = "designatedBodyCode") String designatedBodyCode,
+      @RequestBody List<RegistrationRequest> requests) {
+    List<TraineeProfile> traineeProfiles = traineeProfileService
+        .findOrCreate(designatedBodyCode, requests);
     List<TraineeProfileDto> profileDtos = getTraineeProfileDtos(traineeProfiles);
 
     return new TraineeIdListResponse(profileDtos);
@@ -73,8 +74,9 @@ public class TraineeProfileController {
   @CrossOrigin
   @RequestMapping(path = "/{designatedBodyCode}/mappings", method = GET, produces = APPLICATION_JSON_VALUE)
   @PreAuthorize("hasAuthority('profile:view:all:mappings')")
-  public PagedResponse<TraineeProfileDto> getTraineeIds(@PathVariable(value = "designatedBodyCode") String
-                                                            designatedBodyCode, Pageable pageable) {
+  public PagedResponse<TraineeProfileDto> getTraineeIds(
+      @PathVariable(value = "designatedBodyCode") String
+          designatedBodyCode, Pageable pageable) {
     Page<TraineeProfile> page = traineeProfileService.findAll(designatedBodyCode, pageable);
     List<TraineeProfileDto> traineeProfileDtos = getTraineeProfileDtos(page.getContent());
     return new PagedResponse<>(traineeProfileDtos, page.getTotalElements(), page.getTotalPages());

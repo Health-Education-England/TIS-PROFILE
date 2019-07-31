@@ -1,5 +1,6 @@
 package com.transformuk.hee.tis.profile.web.rest.errors;
 
+import java.util.List;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.http.HttpStatus;
@@ -14,8 +15,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-
-import java.util.List;
 
 /**
  * Controller advice to translate the server side exceptions to client-friendly json structures.
@@ -67,7 +66,8 @@ public class ExceptionTranslator {
   @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
   @ResponseBody
   @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
-  public ErrorVM processMethodNotSupportedException(HttpRequestMethodNotSupportedException exception) {
+  public ErrorVM processMethodNotSupportedException(
+      HttpRequestMethodNotSupportedException exception) {
     return new ErrorVM(ErrorConstants.ERR_METHOD_NOT_SUPPORTED, exception.getMessage());
   }
 
@@ -75,7 +75,8 @@ public class ExceptionTranslator {
   public ResponseEntity<ErrorVM> processRuntimeException(Exception ex) {
     BodyBuilder builder;
     ErrorVM errorVM;
-    ResponseStatus responseStatus = AnnotationUtils.findAnnotation(ex.getClass(), ResponseStatus.class);
+    ResponseStatus responseStatus = AnnotationUtils
+        .findAnnotation(ex.getClass(), ResponseStatus.class);
     if (responseStatus != null) {
       builder = ResponseEntity.status(responseStatus.value());
       errorVM = new ErrorVM("error." + responseStatus.value().value(), responseStatus.reason());

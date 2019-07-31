@@ -1,11 +1,21 @@
 package com.transformuk.hee.tis.profile.web.rest;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.hasItem;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.transformuk.hee.tis.profile.ProfileApp;
 import com.transformuk.hee.tis.profile.dto.PermissionDTO;
 import com.transformuk.hee.tis.profile.dto.PermissionType;
 import com.transformuk.hee.tis.profile.repository.PermissionRepository;
 import com.transformuk.hee.tis.profile.service.mapper.PermissionMapper;
 import com.transformuk.hee.tis.profile.web.rest.errors.ExceptionTranslator;
+import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,17 +29,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Test class for the PermissionResource REST controller.
@@ -70,12 +69,13 @@ public class PermissionResourceIntTest {
   /**
    * Create an entity for this test.
    * <p>
-   * This is a static method, as tests for other entities might also need it,
-   * if they test an entity which requires the current entity.
+   * This is a static method, as tests for other entities might also need it, if they test an entity
+   * which requires the current entity.
    */
   public static com.transformuk.hee.tis.profile.domain.Permission createEntity() {
     com.transformuk.hee.tis.profile.domain.Permission permission = new com.transformuk.hee.tis.profile.domain.Permission(
-        DEFAULT_NAME, DEFAULT_TYPE, DEFAULT_DESC, DEFAULT_PRINCIPAL, DEFAULT_RESOURCE, DEFAULT_ACTIONS, DEFAULT_EFFECT
+        DEFAULT_NAME, DEFAULT_TYPE, DEFAULT_DESC, DEFAULT_PRINCIPAL, DEFAULT_RESOURCE,
+        DEFAULT_ACTIONS, DEFAULT_EFFECT
     );
     return permission;
   }
@@ -83,7 +83,8 @@ public class PermissionResourceIntTest {
   @Before
   public void setup() {
     MockitoAnnotations.initMocks(this);
-    PermissionResource permissionResource = new PermissionResource(permissionRepository, permissionMapper);
+    PermissionResource permissionResource = new PermissionResource(permissionRepository,
+        permissionMapper);
     this.restPermissionMockMvc = MockMvcBuilders.standaloneSetup(permissionResource)
         .setCustomArgumentResolvers(pageableArgumentResolver)
         .setControllerAdvice(exceptionTranslator)
@@ -108,9 +109,11 @@ public class PermissionResourceIntTest {
         .andExpect(status().isCreated());
 
     // Validate the Permission in the database
-    List<com.transformuk.hee.tis.profile.domain.Permission> permissionList = permissionRepository.findAll();
+    List<com.transformuk.hee.tis.profile.domain.Permission> permissionList = permissionRepository
+        .findAll();
     assertThat(permissionList).hasSize(databaseSizeBeforeCreate + 1);
-    com.transformuk.hee.tis.profile.domain.Permission testPermission = permissionRepository.findOne(this.permission.getName());
+    com.transformuk.hee.tis.profile.domain.Permission testPermission = permissionRepository
+        .findOne(this.permission.getName());
     assertThat(testPermission.getName()).isEqualTo(DEFAULT_NAME);
     assertThat(testPermission.getDescription()).isEqualTo(DEFAULT_DESC);
     assertThat(testPermission.getType()).isEqualTo(DEFAULT_TYPE);
@@ -136,7 +139,8 @@ public class PermissionResourceIntTest {
         .andExpect(status().isCreated());
 
     // Validate the Alice in the database
-    List<com.transformuk.hee.tis.profile.domain.Permission> permissionList = permissionRepository.findAll();
+    List<com.transformuk.hee.tis.profile.domain.Permission> permissionList = permissionRepository
+        .findAll();
     assertThat(permissionList).hasSize(databaseSizeBeforeCreate);
   }
 
@@ -155,7 +159,8 @@ public class PermissionResourceIntTest {
         .content(TestUtil.convertObjectToJsonBytes(permission)))
         .andExpect(status().isBadRequest());
 
-    List<com.transformuk.hee.tis.profile.domain.Permission> permissionList = permissionRepository.findAll();
+    List<com.transformuk.hee.tis.profile.domain.Permission> permissionList = permissionRepository
+        .findAll();
     assertThat(permissionList).hasSize(databaseSizeBeforeTest);
   }
 
@@ -218,7 +223,8 @@ public class PermissionResourceIntTest {
         .andExpect(status().isOk());
 
     // Validate the database is empty
-    List<com.transformuk.hee.tis.profile.domain.Permission> permissionList = permissionRepository.findAll();
+    List<com.transformuk.hee.tis.profile.domain.Permission> permissionList = permissionRepository
+        .findAll();
     assertThat(permissionList).hasSize(databaseSizeBeforeDelete - 1);
   }
 

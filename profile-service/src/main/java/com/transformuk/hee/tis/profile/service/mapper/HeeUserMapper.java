@@ -10,11 +10,10 @@ import com.transformuk.hee.tis.profile.dto.RoleDTO;
 import com.transformuk.hee.tis.profile.service.dto.HeeUserDTO;
 import com.transformuk.hee.tis.profile.service.dto.UserProgrammeDTO;
 import com.transformuk.hee.tis.profile.service.dto.UserTrustDTO;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-
 import java.util.Arrays;
 import java.util.List;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 /**
  * Mapper for the entity HeeUser and its DTO HeeUserDTO.

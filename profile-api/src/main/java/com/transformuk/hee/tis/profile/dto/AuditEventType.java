@@ -1,9 +1,9 @@
 package com.transformuk.hee.tis.profile.dto;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.collect.ImmutableMap;
 import org.springframework.boot.actuate.audit.AuditEvent;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Holds the possible audit events for the revalidation service
@@ -31,7 +31,8 @@ public enum AuditEventType {
   public static AuditEvent createEvent(String userId, AuditEventType eventType, Object data) {
     checkNotNull(userId);
     checkNotNull(eventType);
-    return new AuditEvent(userId, prefix.concat(eventType.name()), ImmutableMap.of(eventType.field(), data));
+    return new AuditEvent(userId, prefix.concat(eventType.name()),
+        ImmutableMap.of(eventType.field(), data));
   }
 
   /**

@@ -1,6 +1,15 @@
 package com.transformuk.hee.tis.profile.web.rest;
 
 
+import static com.google.common.collect.Lists.newArrayList;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Matchers.anyListOf;
+import static org.mockito.Matchers.eq;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.transformuk.hee.tis.profile.ProfileApp;
 import com.transformuk.hee.tis.profile.domain.TraineeProfile;
 import com.transformuk.hee.tis.profile.dto.RegistrationRequest;
@@ -23,15 +32,6 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import static com.google.common.collect.Lists.newArrayList;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.anyListOf;
-import static org.mockito.Matchers.eq;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ProfileApp.class)
@@ -57,7 +57,8 @@ public class TraineeProfileControllerTest {
   @Before
   public void setup() {
     MockitoAnnotations.initMocks(this);
-    TraineeProfileController profileController = new TraineeProfileController(traineeProfileService);
+    TraineeProfileController profileController = new TraineeProfileController(
+        traineeProfileService);
     this.mvc = MockMvcBuilders.standaloneSetup(profileController)
         .setCustomArgumentResolvers(pageableArgumentResolver)
         .setControllerAdvice(exceptionTranslator)
@@ -68,7 +69,8 @@ public class TraineeProfileControllerTest {
   public void shouldReturnTraineeIds() throws Exception {
     //Given
     TraineeProfile traineeProfile = new TraineeProfile(TIS_ID, GMC_NUMBER);
-    given(traineeProfileService.findOrCreate(eq(DESIGNATED_BODY_CODE), anyListOf(RegistrationRequest.class))).willReturn
+    given(traineeProfileService
+        .findOrCreate(eq(DESIGNATED_BODY_CODE), anyListOf(RegistrationRequest.class))).willReturn
         (newArrayList(traineeProfile));
 
     // When & Then
@@ -84,7 +86,9 @@ public class TraineeProfileControllerTest {
   @Test
   public void shouldReturn500ForInternException() throws Exception {
     //Given
-    given(traineeProfileService.findOrCreate(eq(DESIGNATED_BODY_CODE), anyListOf(RegistrationRequest.class))).willThrow(RuntimeException.class);
+    given(traineeProfileService
+        .findOrCreate(eq(DESIGNATED_BODY_CODE), anyListOf(RegistrationRequest.class)))
+        .willThrow(RuntimeException.class);
 
     // When & Then
     this.mvc.perform(post("/api/trainee-id/1-DGBODY/register")

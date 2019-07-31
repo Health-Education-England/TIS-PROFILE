@@ -10,6 +10,11 @@ import com.transformuk.hee.tis.profile.web.rest.util.HeaderUtil;
 import com.transformuk.hee.tis.profile.web.rest.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import io.swagger.annotations.ApiParam;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Optional;
+import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -27,12 +32,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Optional;
-
 /**
  * REST controller for managing Role.
  */
@@ -48,7 +47,8 @@ public class RoleResource {
 
   private final RoleValidator roleValidator;
 
-  public RoleResource(RoleRepository roleRepository, RoleMapper roleMapper, RoleValidator roleValidator) {
+  public RoleResource(RoleRepository roleRepository, RoleMapper roleMapper,
+      RoleValidator roleValidator) {
     this.roleRepository = roleRepository;
     this.roleMapper = roleMapper;
     this.roleValidator = roleValidator;
@@ -58,13 +58,15 @@ public class RoleResource {
    * POST  /roles : Create a new role.
    *
    * @param roleDTO the roleDTO to create
-   * @return the ResponseEntity with status 201 (Created) and with body the new roleDTO, or with status 400 (Bad Request) if the role has already an ID
+   * @return the ResponseEntity with status 201 (Created) and with body the new roleDTO, or with
+   * status 400 (Bad Request) if the role has already an ID
    * @throws URISyntaxException if the Location URI syntax is incorrect
    */
   @PostMapping("/roles")
   @Timed
   @PreAuthorize("hasAuthority('profile:add:modify:entities')")
-  public ResponseEntity<RoleDTO> createRole(@Valid @RequestBody RoleDTO roleDTO) throws URISyntaxException {
+  public ResponseEntity<RoleDTO> createRole(@Valid @RequestBody RoleDTO roleDTO)
+      throws URISyntaxException {
     log.debug("REST request to save Role : {}", roleDTO);
     Role role = roleMapper.roleDTOToRole(roleDTO);
     //Validate
@@ -78,20 +80,21 @@ public class RoleResource {
   }
 
   /**
-   * PUT  /roles : Updates an existing role. Please note, given that a permission is just
-   * one string, updating a permission just means creating a new one, the existing one will still
-   * be there
+   * PUT  /roles : Updates an existing role. Please note, given that a permission is just one
+   * string, updating a permission just means creating a new one, the existing one will still be
+   * there
    *
    * @param roleDTO the roleDTO to update
-   * @return the ResponseEntity with status 200 (OK) and with body the updated roleDTO,
-   * or with status 400 (Bad Request) if the roleDTO is not valid,
-   * or with status 500 (Internal Server Error) if the roleDTO couldnt be updated
+   * @return the ResponseEntity with status 200 (OK) and with body the updated roleDTO, or with
+   * status 400 (Bad Request) if the roleDTO is not valid, or with status 500 (Internal Server
+   * Error) if the roleDTO couldnt be updated
    * @throws URISyntaxException if the Location URI syntax is incorrect
    */
   @PutMapping("/roles")
   @Timed
   @PreAuthorize("hasAuthority('profile:add:modify:entities')")
-  public ResponseEntity<RoleDTO> updateRole(@Valid @RequestBody RoleDTO roleDTO) throws URISyntaxException {
+  public ResponseEntity<RoleDTO> updateRole(@Valid @RequestBody RoleDTO roleDTO)
+      throws URISyntaxException {
     log.debug("REST request to update Role : {}", roleDTO);
     Role dbRole = roleRepository.findByName(roleDTO.getName());
     if (dbRole == null || dbRole.getName() == null) {
@@ -121,14 +124,16 @@ public class RoleResource {
     log.debug("REST request to get a page of Roles");
     Page<Role> page = roleRepository.findAll(pageable);
     HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/roles");
-    return new ResponseEntity<>(roleMapper.rolesToRoleDTOs(page.getContent()), headers, HttpStatus.OK);
+    return new ResponseEntity<>(roleMapper.rolesToRoleDTOs(page.getContent()), headers,
+        HttpStatus.OK);
   }
 
   /**
    * GET  /roles/:name : get the "name" role.
    *
    * @param name the name of the roleDTO to retrieve
-   * @return the ResponseEntity with status 200 (OK) and with body the roleDTO, or with status 404 (Not Found)
+   * @return the ResponseEntity with status 200 (OK) and with body the roleDTO, or with status 404
+   * (Not Found)
    */
   @GetMapping("/roles/{name}")
   @Timed
@@ -155,7 +160,8 @@ public class RoleResource {
     roleValidator.validateBeforeDelete(name);
 
     roleRepository.delete(name);
-    return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, name)).build();
+    return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, name))
+        .build();
   }
 
   private void validateRole(Role role) {

@@ -7,14 +7,13 @@ import com.transformuk.hee.tis.profile.web.rest.errors.CustomParameterizedExcept
 import com.transformuk.hee.tis.profile.web.rest.errors.ErrorConstants;
 import com.transformuk.hee.tis.reference.api.dto.DBCDTO;
 import com.transformuk.hee.tis.reference.client.ReferenceService;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpClientErrorException;
-
-import java.util.Set;
 
 /**
  * Validator to validate DBC codes,roles, password and gmc id of a Hee User
@@ -46,7 +45,8 @@ public class HeeUserValidator {
             ResponseEntity<DBCDTO> dbcdto = referenceService.getDBCByCode(dbcCode);
           }
         } catch (HttpClientErrorException ex) {
-          throw new CustomParameterizedException("Invalid " + DESIGNATED_BODY_CODE + dbcCode, ErrorConstants.ERR_VALIDATION);
+          throw new CustomParameterizedException("Invalid " + DESIGNATED_BODY_CODE + dbcCode,
+              ErrorConstants.ERR_VALIDATION);
         }
       });
     }
@@ -64,7 +64,8 @@ public class HeeUserValidator {
       roles.forEach(role -> {
         Role dbRole = roleRepository.findByName(role.getName());
         if (dbRole == null) {
-          throw new CustomParameterizedException("Invalid " + ROLE_NAME + role.getName(), ErrorConstants.ERR_VALIDATION);
+          throw new CustomParameterizedException("Invalid " + ROLE_NAME + role.getName(),
+              ErrorConstants.ERR_VALIDATION);
         }
       });
     }
@@ -77,7 +78,8 @@ public class HeeUserValidator {
    */
   public void validatePassword(String password) {
     if (password == null || StringUtils.isEmpty(password) || password.length() < 8) {
-      throw new CustomParameterizedException("Password should be minimum 8 chars long", ErrorConstants.ERR_VALIDATION);
+      throw new CustomParameterizedException("Password should be minimum 8 chars long",
+          ErrorConstants.ERR_VALIDATION);
     }
   }
 
@@ -88,7 +90,8 @@ public class HeeUserValidator {
    */
   public void validateIsTemporary(Boolean isTemporaryPassword) {
     if (isTemporaryPassword == null) {
-      throw new CustomParameterizedException("isTemporaryPassword should be true or false", ErrorConstants.ERR_VALIDATION);
+      throw new CustomParameterizedException("isTemporaryPassword should be true or false",
+          ErrorConstants.ERR_VALIDATION);
     }
   }
 
@@ -99,7 +102,8 @@ public class HeeUserValidator {
    */
   public void validateGmcId(String gmcId) {
     if (gmcId != null && gmcId.length() > 7) {
-      throw new CustomParameterizedException("GMC Id shouldn't be greater than 7 chars long", ErrorConstants.ERR_VALIDATION);
+      throw new CustomParameterizedException("GMC Id shouldn't be greater than 7 chars long",
+          ErrorConstants.ERR_VALIDATION);
     }
   }
 }

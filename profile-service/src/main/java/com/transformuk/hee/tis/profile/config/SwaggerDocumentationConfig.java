@@ -11,8 +11,8 @@ import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
- * Configuration for swagger to auto generate our REST API documentation.
- * For more info please {@see http://swagger.io/getting-started/}
+ * Configuration for swagger to auto generate our REST API documentation. For more info please {@see
+ * http://swagger.io/getting-started/}
  */
 @Configuration
 @EnableSwagger2
@@ -26,12 +26,12 @@ public class SwaggerDocumentationConfig {
         .licenseUrl("")
         .termsOfServiceUrl("")
         .version("1.0.0")
-        .contact(new Contact("Transform","http://transformuk.com/", "info@transformuk,com"))
+        .contact(new Contact("Transform", "http://transformuk.com/", "info@transformuk,com"))
         .build();
   }
 
   @Bean
-  public Docket customImplementation(){
+  public Docket customImplementation() {
     return new Docket(DocumentationType.SWAGGER_2)
         .groupName("Profile")
         .select()

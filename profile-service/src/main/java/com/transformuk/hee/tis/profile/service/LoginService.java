@@ -1,9 +1,18 @@
 package com.transformuk.hee.tis.profile.service;
 
+import static java.lang.String.format;
+import static java.util.Arrays.asList;
+import static org.slf4j.LoggerFactory.getLogger;
+
 import com.google.common.collect.Lists;
 import com.transformuk.hee.tis.profile.domain.HeeUser;
 import com.transformuk.hee.tis.profile.dto.JwtAuthToken;
 import com.transformuk.hee.tis.profile.repository.HeeUserRepository;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import javax.persistence.EntityNotFoundException;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -13,16 +22,6 @@ import org.springframework.security.jwt.Jwt;
 import org.springframework.security.jwt.JwtHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityNotFoundException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static java.lang.String.format;
-import static java.util.Arrays.asList;
-import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * Service for user login/logout process and getting user's data
@@ -48,14 +47,16 @@ public class LoginService {
     JwtAuthToken jwtAuthToken = decode(token);
     HeeUser user = userRepository.findByActive(jwtAuthToken.getUsername());
     if (user == null) {
-      throw new EntityNotFoundException(format("User with username %s either not found or not active",
-          jwtAuthToken.getUsername()));
+      throw new EntityNotFoundException(
+          format("User with username %s either not found or not active",
+              jwtAuthToken.getUsername()));
     }
     return user;
   }
 
   /**
-   * Returns all active users by exact matching with given designatedBodyCodes and permissions if any
+   * Returns all active users by exact matching with given designatedBodyCodes and permissions if
+   * any
    *
    * @param designatedBodyCodes the designatedBodyCode to use
    * @param designatedBodyCodes
@@ -68,7 +69,9 @@ public class LoginService {
     List<String> permissionList = Lists.newArrayList();
     if (permissions != null) {
       permissionList.addAll(asList(permissions.split(",")));
-      return userRepository.findDistinctByExactDesignatedBodyCodesAndPermissions(designatedBodyCodesValue, permissionList);
+      return userRepository
+          .findDistinctByExactDesignatedBodyCodesAndPermissions(designatedBodyCodesValue,
+              permissionList);
     }
     return userRepository.findDistinctByExactDesignatedBodyCodes(
         designatedBodyCodesValue);

@@ -1,19 +1,18 @@
 package com.transformuk.hee.tis.profile.service;
 
+import static org.assertj.core.api.Java6Assertions.assertThat;
+import static org.mockito.BDDMockito.given;
+
 import com.transformuk.hee.tis.profile.assembler.UserProfileAssembler;
 import com.transformuk.hee.tis.profile.domain.HeeUser;
 import com.transformuk.hee.tis.security.model.UserProfile;
+import java.util.Optional;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import java.util.Optional;
-
-import static org.assertj.core.api.Java6Assertions.assertThat;
-import static org.mockito.BDDMockito.given;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ProfileUserDetailsServiceImplTest {
