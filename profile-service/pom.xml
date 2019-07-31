@@ -48,6 +48,7 @@
     <maven.version>3.0.0</maven.version>
     <metrics-spring.version>3.1.3</metrics-spring.version>
     <node.version>v6.10.0</node.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <!-- Sonar properties -->
     <project.testresult.directory>${project.build.directory}/test-results</project.testresult.directory>
@@ -596,6 +597,33 @@ Enable the line below to have remote debugging of your application on port 5005
         </configuration>
       </plugin>
       <!-- jhipster-needle-maven-add-plugin -->
+
+      <!-- Checkstyle can be provided by tis-parent 3.0.2+ but requires additional migration. -->
+      <plugin>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <groupId>org.apache.maven.plugins</groupId>
+        <version>3.0.0</version>
+        <configuration>
+          <configLocation>google_checks.xml</configLocation>
+          <consoleOutput>true</consoleOutput>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>com.puppycrawl.tools</groupId>
+            <artifactId>checkstyle</artifactId>
+            <version>8.22</version>
+          </dependency>
+        </dependencies>
+        <executions>
+          <execution>
+            <id>validate</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
   <profiles>
