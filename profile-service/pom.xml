@@ -12,7 +12,7 @@
 
   <groupId>com.transformuk.hee.tis</groupId>
   <artifactId>profile-service</artifactId>
-  <version>3.0.11</version>
+  <version>3.1.0</version>
   <packaging>war</packaging>
   <name>profile-service</name>
 
@@ -591,9 +591,9 @@
           <executable>true</executable>
           <fork>true</fork>
           <!--
-Enable the line below to have remote debugging of your application on port 5005
-<jvmArguments>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005</jvmArguments>
--->
+Enable the line below to have remote debugging of your application on port 5005-->
+          <jvmArguments>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5008</jvmArguments>
+
         </configuration>
       </plugin>
       <!-- jhipster-needle-maven-add-plugin -->
