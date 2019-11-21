@@ -11,6 +11,7 @@ ON DUPLICATE KEY UPDATE `name` = `name`;
 
 INSERT INTO `RolePermission` (`roleName`, `permissionName`)
 VALUES
-      ('HEE Admin','placement:approve'),
-      ('HEE TIS Admin','placement:approve')
+      ('HEE Admin', 'placement:approve'),
+      ('HEE TIS Admin', 'placement:approve'),
+      ('BulkUploadAdmin', 'placement:approve')
 ON DUPLICATE KEY UPDATE `roleName` = `roleName`;
