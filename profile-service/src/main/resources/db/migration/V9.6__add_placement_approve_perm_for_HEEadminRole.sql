@@ -1,7 +1,7 @@
 INSERT INTO `Permission`(`name`, `type`, `description`, `principal`, `resource`, `actions`, `effect`)
 VALUES
 	  ('placement:approve',
-	  'PCS',
+	  'PP',
 	  'can approve placement',
 	  'tis:profile::user:',
 	  'tis:placements::placement:',
