@@ -355,6 +355,7 @@ public class HeeUserResourceIntTest {
   @Transactional
   public void deleteHeeUser() throws Exception {
     // Initialize the database
+    heeUser.setName("test@hee.nhs.uk");
     heeUserRepository.saveAndFlush(heeUser);
     int databaseSizeBeforeDelete = heeUserRepository.findAll().size();
 

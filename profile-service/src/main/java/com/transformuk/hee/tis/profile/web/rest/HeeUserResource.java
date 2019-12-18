@@ -175,7 +175,7 @@ public class HeeUserResource {
    * @return the ResponseEntity with status 200 (OK) and with body the heeUserDTO, or with status
    * 404 (Not Found)
    */
-  @GetMapping("/hee-users/{name}")
+  @GetMapping("/hee-users/{name:.+}")
   @Timed
   @PreAuthorize("hasAuthority('profile:view:entities')")
   public ResponseEntity<HeeUserDTO> getHeeUser(@PathVariable String name) {
@@ -201,7 +201,7 @@ public class HeeUserResource {
    * @param name the name of the heeUserDTO to delete
    * @return the ResponseEntity with status 200 (OK)
    */
-  @DeleteMapping("/hee-users/{name}")
+  @DeleteMapping("/hee-users/{name:.+}")
   @Timed
   @PreAuthorize("hasAuthority('profile:delete:entities')")
   public ResponseEntity<Void> deleteHeeUser(@PathVariable String name) {
