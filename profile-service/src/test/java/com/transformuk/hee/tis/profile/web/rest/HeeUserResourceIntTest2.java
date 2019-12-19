@@ -41,7 +41,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 public class HeeUserResourceIntTest2 {
 
   private static final String TESTNAME_1 = "TESTNAME1";
-  private static final String TESTNAME_2 = "TESTNAME2";
+  private static final String TESTNAME_2 = "TESTNAME2@hee.nhs.uk";
   @MockBean
   private HeeUserRepository heeUserRepositoryMock;
   @MockBean
