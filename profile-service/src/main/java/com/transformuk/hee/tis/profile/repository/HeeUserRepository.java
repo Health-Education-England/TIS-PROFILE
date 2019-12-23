@@ -106,4 +106,9 @@ public interface HeeUserRepository extends JpaRepository<HeeUser, String>,
    */
   Page<HeeUser> findByNameIgnoreCaseContaining(Pageable page, String name);
 
+  /**
+   * Find HeeUsers ingore case
+   * @return
+   */
+  List<HeeUser> findByNameIgnoreCase(String name);
 }

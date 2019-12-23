@@ -55,6 +55,7 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
   private static final String TRAINEE_DBC_REGISTER_ENDPOINT = "/api/trainee-id/{designatedBodyCode}/register";
   private static final Map<Class, ParameterizedTypeReference> classToParamTypeRefMap;
   private static final String SINGLE_USER_ENDPOINT = "/api/single-hee-users";
+  private static final String USER_IGNORE_CASE_ENDPOINT = "/api/hee-users/{username}/ignore-case";
 
   static {
     classToParamTypeRefMap = Maps.newHashMap();
@@ -190,6 +191,16 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
     return responseEntity.getBody();
   }
 
+  public List<HeeUserDTO> getUsersByNameIgnoreCase(String username) {
+    UriComponents uriComponents = fromHttpUrl(serviceUrl + USER_IGNORE_CASE_ENDPOINT)
+        .buildAndExpand(username);
+
+    ParameterizedTypeReference<List<HeeUserDTO>> responseType = getHeeUserDtosReference();
+    ResponseEntity<List<HeeUserDTO>> responseEntity = profileRestTemplate.exchange(uriComponents.encode().toUri(),
+        HttpMethod.GET, null, responseType);
+    return responseEntity.getBody();
+  }
+
   @Override
   public boolean deleteUser(String username) {
     ResponseEntity<Void> exchange = profileRestTemplate
@@ -221,6 +232,11 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
 
   private ParameterizedTypeReference<HeeUserDTO> getHeeUserDtoReference() {
     return new ParameterizedTypeReference<HeeUserDTO>() {
+    };
+  }
+
+  private ParameterizedTypeReference<List<HeeUserDTO>> getHeeUserDtosReference() {
+    return new ParameterizedTypeReference<List<HeeUserDTO>>() {
     };
   }
 

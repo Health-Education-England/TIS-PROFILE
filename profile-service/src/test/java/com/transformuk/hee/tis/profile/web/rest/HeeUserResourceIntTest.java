@@ -292,6 +292,18 @@ public class HeeUserResourceIntTest {
 
   @Test
   @Transactional
+  public void getHeeUserByNameIgnoreCase() throws Exception {
+    String username = "Abc";
+    heeUser.setName(username);
+    heeUserRepository.saveAndFlush(heeUser);
+    restHeeUserMockMvc.perform(get("/api/hee-users/{username}/ignore-case", "abc"))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+        .andExpect(jsonPath("$.[*].name").value(username));
+  }
+
+  @Test
+  @Transactional
   public void updateHeeUser() throws Exception {
     // Initialize the database
     heeUserRepository.saveAndFlush(heeUser);

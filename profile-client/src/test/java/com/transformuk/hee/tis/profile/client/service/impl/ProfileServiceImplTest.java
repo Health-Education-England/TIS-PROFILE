@@ -6,8 +6,10 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.web.util.UriComponentsBuilder.fromHttpUrl;
 
 import com.google.common.collect.Lists;
 import com.transformuk.hee.tis.profile.dto.PagedTraineeIdResponse;
@@ -40,6 +42,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponents;
 
 
 @RunWith(BlockJUnit4ClassRunner.class)
@@ -73,6 +76,8 @@ public class ProfileServiceImplTest {
   private ArgumentCaptor<ParameterizedTypeReference<Page<HeeUserDTO>>> parameterizedTypeReferenceArgumentCaptor;
   @Captor
   private ArgumentCaptor<ParameterizedTypeReference<HeeUserDTO>> parameterizedTypeReferenceArgumentCaptorSingleDTO;
+  @Captor
+  private ArgumentCaptor<ParameterizedTypeReference<List<HeeUserDTO>>> parameterizedTypeReferenceArgumentCaptorListDTO;
 
   @Before
   public void setUp() throws Exception {
@@ -193,6 +198,22 @@ public class ProfileServiceImplTest {
     verify(profileRestTemplate)
         .exchange(PROFILE_URL + "/api/hee-users?search=Username", HttpMethod.GET, null,
             capturedParamValue);
+  }
+
+  @Test
+  public void getUserByNameIngoreCaseShouldReturnHeeUserDTOs() {
+    HeeUserDTO heeUserDTO = new HeeUserDTO();
+    heeUserDTO.setName("Abc");
+    List<HeeUserDTO> heeUserDTOS = Lists.newArrayList(heeUserDTO);
+    UriComponents uriComponents = fromHttpUrl(PROFILE_URL + "/api/hee-users/" + "Abc"  + "/ignore-case").build();
+
+    when(profileRestTemplate
+        .exchange(eq(uriComponents.encode().toUri()), eq(HttpMethod.GET), eq(null),
+            parameterizedTypeReferenceArgumentCaptorListDTO.capture()))
+        .thenReturn(new ResponseEntity<>(heeUserDTOS, HttpStatus.OK));
+
+    List<HeeUserDTO> result = profileServiceImpl.getUsersByNameIgnoreCase("Abc");
+    assertEquals(result, heeUserDTOS);
   }
 
   @Test

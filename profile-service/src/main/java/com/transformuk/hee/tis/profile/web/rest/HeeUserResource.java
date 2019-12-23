@@ -17,6 +17,7 @@ import io.github.jhipster.web.util.ResponseUtil;
 import io.swagger.annotations.ApiParam;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import javax.validation.Valid;
@@ -184,6 +185,20 @@ public class HeeUserResource {
     return ResponseUtil.wrapOrNotFound(Optional.ofNullable(heeUserDTO));
   }
 
+  /**
+   * GET /hee-users/:name/ignore-case : get the heeUser by name ignore case
+   *
+   * @param name the name of the heeUserDTO to retrieve
+   * @return the list of ResponseEntity with status 200 (OK)
+   */
+  @GetMapping("/hee-users/{name:.+}/ignore-case")
+  @Timed
+  @PreAuthorize("hasAuthority('profile:view:entities')")
+  public ResponseEntity<List<HeeUserDTO>> getHeeUsersByNameIgnoreCase(@PathVariable String name) {
+    log.debug("REST request to get HeeUser by name ignore case : {}", name);
+    List<HeeUserDTO> heeUserDTOs = userService.findUsersByNameIgnoreCase(name);
+    return new ResponseEntity<>(heeUserDTOs, HttpStatus.OK);
+  }
 
   @GetMapping("/single-hee-users")
   @Timed
