@@ -55,6 +55,7 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
   private static final String TRAINEE_DBC_REGISTER_ENDPOINT = "/api/trainee-id/{designatedBodyCode}/register";
   private static final Map<Class, ParameterizedTypeReference> classToParamTypeRefMap;
   private static final String SINGLE_USER_ENDPOINT = "/api/single-hee-users";
+  private static final String USER_IGNORE_CASE_ENDPOINT = "/api/hee-users/{username}/ignore-case";
 
   static {
     classToParamTypeRefMap = Maps.newHashMap();
@@ -96,6 +97,7 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
    * @param pageable Pageable object that defines the size and page number to return
    * @return Paged object containing trainee id's, pages and totals
    */
+  @Override
   public Page<TraineeId> getPagedTraineeIds(String dbc, Pageable pageable) {
     UriComponents uriComponents = fromHttpUrl(serviceUrl + TRAINEE_MAPPINGS_ENDPOINT)
         .queryParam(PAGE_QUERY_PARAM, pageable.getPageNumber())
@@ -113,6 +115,7 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
    *
    * @return List of {@link TraineeId}
    */
+  @Override
   public List<TraineeProfileDto> getTraineeIdsForGmcNumbers(String designatedBodyCode,
       List<RegistrationRequest> registrationRequests) {
     HttpEntity<List<RegistrationRequest>> requestEntity = new HttpEntity<>(registrationRequests);
@@ -130,6 +133,7 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
    * @param designatedBodyCode the designated body code of the officer you wish to search for
    * @return The UserProfile of the revalidation officer for the designated body code
    */
+  @Override
   public UserProfile getRODetails(String designatedBodyCode) {
     String url = serviceUrl + USERS_RO_USER_ENDPOINT + designatedBodyCode;
     LOG.info("GetRODetails --> {}", url);
@@ -146,6 +150,7 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
    * @param permissions         submit_to_gmc permissions
    * @return json representation of AuthService's getUser's end point response.
    */
+  @Override
   public JSONObject getAllUsers(String permissions, String... designatedBodyCodes) {
     UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(serviceUrl + USERS_ENDPOINT)
         .queryParam("offset", offset)
@@ -157,6 +162,7 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
     return responseEntity.getBody();
   }
 
+  @Override
   public Page<HeeUserDTO> getAllAdminUsers(Pageable pageable, String username) {
     ParameterizedTypeReference<CustomPageable<HeeUserDTO>> typeReference = getHeeUserDtoListReference();
     String searchParam = StringUtils.EMPTY;
@@ -182,11 +188,24 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
     return responseEntity.getBody();
   }
 
+  @Override
   public HeeUserDTO getSingleAdminUser(String username) {
     ParameterizedTypeReference<HeeUserDTO> typeReference = getHeeUserDtoReference();
     String url = serviceUrl + SINGLE_USER_ENDPOINT + "?username=" + username;
     ResponseEntity<HeeUserDTO> responseEntity = profileRestTemplate.exchange(url,
         HttpMethod.GET, null, typeReference);
+    return responseEntity.getBody();
+  }
+
+  @Override
+  public List<HeeUserDTO> getUsersByNameIgnoreCase(String username) {
+    UriComponents uriComponents = fromHttpUrl(serviceUrl + USER_IGNORE_CASE_ENDPOINT)
+        .buildAndExpand(username);
+
+    ParameterizedTypeReference<List<HeeUserDTO>> responseType = getHeeUserDtosReference();
+    ResponseEntity<List<HeeUserDTO>> responseEntity = profileRestTemplate
+        .exchange(uriComponents.encode().toUri(),
+            HttpMethod.GET, null, responseType);
     return responseEntity.getBody();
   }
 
@@ -221,6 +240,11 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
 
   private ParameterizedTypeReference<HeeUserDTO> getHeeUserDtoReference() {
     return new ParameterizedTypeReference<HeeUserDTO>() {
+    };
+  }
+
+  private ParameterizedTypeReference<List<HeeUserDTO>> getHeeUserDtosReference() {
+    return new ParameterizedTypeReference<List<HeeUserDTO>>() {
     };
   }
 

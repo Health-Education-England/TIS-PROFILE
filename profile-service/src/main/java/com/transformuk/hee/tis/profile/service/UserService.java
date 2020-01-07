@@ -44,4 +44,11 @@ public class UserService {
     HeeUserDTO heeUserDTO = heeUserMapper.heeUserToHeeUserDTO(heeUser.orElse(null));
     return heeUserDTO;
   }
+
+  @Transactional(readOnly = true)
+  public List<HeeUserDTO> findUsersByNameIgnoreCase(String name) {
+    List<HeeUser> heeUsers = heeUserRepository.findByNameIgnoreCase(name);
+    List<HeeUserDTO> heeUserDTOs = heeUserMapper.heeUsersToHeeUserDTOs(heeUsers);
+    return heeUserDTOs;
+  }
 }
