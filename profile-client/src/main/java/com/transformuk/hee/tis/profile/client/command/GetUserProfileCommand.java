@@ -4,15 +4,19 @@ import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.netflix.hystrix.HystrixCommandKey;
 import com.transformuk.hee.tis.security.model.UserProfile;
-import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Hystrix command that makes a request to the profile service.
@@ -30,16 +34,22 @@ public class GetUserProfileCommand extends HystrixCommand<Optional<UserProfile>>
 
 
   private RestTemplate restTemplate;
+  private String host;
   private String urlEndpoint;
   private String securityToken;
+  private boolean useServiceDiscovery;
+  private DiscoveryClient discoveryClient;
 
-  public GetUserProfileCommand(RestTemplate restTemplate, String urlEndpoint,
-      String securityToken) {
+  public GetUserProfileCommand(RestTemplate restTemplate, String host, String urlEndpoint,
+                               String securityToken, boolean useServiceDiscovery, DiscoveryClient discoveryClient) {
     super(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(GROUP_KEY))
         .andCommandKey(HystrixCommandKey.Factory.asKey(COMMAND_KEY)));
     this.restTemplate = restTemplate;
+    this.host = host;
     this.urlEndpoint = urlEndpoint;
     this.securityToken = securityToken;
+    this.useServiceDiscovery = useServiceDiscovery;
+    this.discoveryClient = discoveryClient;
   }
 
   /**
@@ -53,20 +63,37 @@ public class GetUserProfileCommand extends HystrixCommand<Optional<UserProfile>>
    */
   @Override
   protected Optional<UserProfile> run() throws Exception {
+    return runInternal(generateUrl(0));
+  }
+
+  private Optional<UserProfile> runInternal(String url) {
     HttpHeaders headers = new HttpHeaders();
     headers.set(OIDC_TOKEN_HEADER, securityToken);
     headers.set(AUTH_TOKEN_HEADER, AUTH_TOKEN_BEARER + securityToken);
     HttpEntity<?> entity = new HttpEntity<String>(headers);
     try {
       ResponseEntity<UserProfile> responseEntity = restTemplate
-          .exchange(urlEndpoint, HttpMethod.GET, entity,
+          .exchange(url, HttpMethod.GET, entity,
               UserProfile.class);
       return Optional.of(responseEntity.getBody());
     } catch (HttpClientErrorException e) {
       LOG.debug("A client error occurred during a rest call to [{}]", urlEndpoint);
       LOG.debug("HTTP Status and body [{},{}]", e.getStatusCode(), e.getResponseBodyAsString());
     }
+
     return Optional.empty();
+  }
+
+  private String generateUrl(int instanceIdx) {
+    if (useServiceDiscovery) {
+      List<ServiceInstance> instances = discoveryClient.getInstances("PROFILE");
+      ServiceInstance serviceInstance = instances.get(instanceIdx);
+      String host = serviceInstance.getHost();
+      int port = serviceInstance.getPort();
+      return "http://" + host + ":" + port + "/profile" + urlEndpoint;
+    } else {
+      return host + urlEndpoint;
+    }
   }
 
   /**
@@ -76,6 +103,12 @@ public class GetUserProfileCommand extends HystrixCommand<Optional<UserProfile>>
    */
   @Override
   protected Optional<UserProfile> getFallback() {
+    LOG.warn("In fallback method of get user profile");
+    if (useServiceDiscovery) {
+      LOG.info("Making another Profile call as previous one failed");
+      runInternal(generateUrl(1));
+    }
+    LOG.warn("Not using service discovery so falling back to previous behaviour");
     return Optional.empty();
   }
 }

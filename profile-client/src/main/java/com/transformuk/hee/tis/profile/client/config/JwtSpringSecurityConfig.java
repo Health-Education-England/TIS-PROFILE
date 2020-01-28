@@ -3,7 +3,9 @@ package com.transformuk.hee.tis.profile.client.config;
 import com.transformuk.hee.tis.profile.client.service.impl.JwtProfileServiceImpl;
 import com.transformuk.hee.tis.security.config.TisSecurityConfig;
 import com.transformuk.hee.tis.security.service.JwtProfileService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -23,6 +25,9 @@ public class JwtSpringSecurityConfig {
   @Value("${PROFILE_REST_TIMEOUT:30000}")
   private int timeout;
 
+  @Autowired
+  private DiscoveryClient discoveryClient;
+
   @Bean
   public JwtProfileService jwtProfileService() {
     RestTemplate restTemplate = new RestTemplate();
@@ -31,6 +36,6 @@ public class JwtSpringSecurityConfig {
     factory.setConnectTimeout(timeout);
     restTemplate.setRequestFactory(factory);
 
-    return new JwtProfileServiceImpl(restTemplate);
+    return new JwtProfileServiceImpl(restTemplate, discoveryClient);
   }
 }

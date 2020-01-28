@@ -3,9 +3,6 @@ package com.transformuk.hee.tis.profile.repository;
 import com.transformuk.hee.tis.profile.ProfileApp;
 import com.transformuk.hee.tis.profile.domain.HeeUser;
 import com.transformuk.hee.tis.profile.domain.UserTrust;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 import org.assertj.core.util.Lists;
 import org.h2.util.StringUtils;
 import org.junit.After;
@@ -18,11 +15,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ProfileApp.class)
+@ActiveProfiles("test")
 public class HeeUserRepositoryTest {
 
   public static final String TRUST_NAME_1 = "St Georges";

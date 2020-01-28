@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -33,16 +34,21 @@ public class JwtProfileServiceImpl implements JwtProfileService {
   @Value("${profile.service.jwt.cache.ttl}")
   private int ttlDuration;
 
+  @Value("${profile.service.use.sd}")
+  private boolean useServiceDiscovery;
+
   private RestTemplate restTemplate;
   private Cache<String, Optional<UserProfile>> userProfileCache;
+  private DiscoveryClient discoveryClient;
 
-  public JwtProfileServiceImpl(RestTemplate restTemplate) {
+  public JwtProfileServiceImpl(RestTemplate restTemplate, DiscoveryClient discoveryClient) {
     this.restTemplate = restTemplate;
     userProfileCache = CacheBuilder.newBuilder()
         .maximumSize(maxCacheSize)
         .expireAfterWrite(ttlDuration, TimeUnit.SECONDS)
         .removalListener((value) -> LOG.debug("{} was just removed from the cache", value.getKey()))
         .build();
+    this.discoveryClient = discoveryClient;
   }
 
   /**
@@ -59,8 +65,10 @@ public class JwtProfileServiceImpl implements JwtProfileService {
 
     Optional<UserProfile> optionalUserProfile = userProfileCache.getIfPresent(securityToken);
     if (optionalUserProfile != null) {
+      LOG.debug("Found user profile in the cache, returning that...");
       return optionalUserProfile;
     } else {
+      LOG.debug("No cache for user found making request");
       optionalUserProfile = getUserProfile(securityToken);
       userProfileCache.put(securityToken, optionalUserProfile);
       return optionalUserProfile;
@@ -68,7 +76,8 @@ public class JwtProfileServiceImpl implements JwtProfileService {
   }
 
   protected Optional<UserProfile> getUserProfile(String securityToken) {
-    return new GetUserProfileCommand(restTemplate, serviceUrl + USER_INFO_ENDPOINT, securityToken)
+    return new GetUserProfileCommand(restTemplate, serviceUrl, USER_INFO_ENDPOINT, securityToken,
+        useServiceDiscovery, discoveryClient)
         .execute();
   }
 
