@@ -17,6 +17,7 @@ import org.springframework.boot.actuate.autoconfigure.MetricFilterAutoConfigurat
 import org.springframework.boot.actuate.autoconfigure.MetricRepositoryAutoConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
@@ -39,6 +40,7 @@ import org.springframework.web.servlet.DispatcherServlet;
         "classpath:/config/referenceclientapplication.properties"
     }
 )
+@EnableDiscoveryClient
 public class ProfileApp {
 
   public static final String SERVICE_NAME = "tis-profile";

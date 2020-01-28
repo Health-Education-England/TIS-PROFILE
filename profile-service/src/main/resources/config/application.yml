@@ -74,7 +74,10 @@ spring:
         port: 25
         username:
         password:
-
+eureka:
+  client:
+    healthcheck:
+      enabled: true
 
 flyway:
     baseline-description: #
