@@ -32,6 +32,7 @@ public class HeeUserDTO implements Serializable {
   private Boolean isTemporaryPassword;
 
   private Set<RoleDTO> roles;
+  private Set<String> entities;
   private Set<String> designatedBodyCodes;
   private Set<UserTrustDTO> associatedTrusts;
   private Set<UserProgrammeDTO> associatedProgrammes;
@@ -136,6 +137,14 @@ public class HeeUserDTO implements Serializable {
     this.roles = roles;
   }
 
+  public Set<String> getEntities() {
+    return entities;
+  }
+
+  public void setEntities(Set<String> entities) {
+    this.entities = entities;
+  }
+
   public Set<String> getDesignatedBodyCodes() {
     return designatedBodyCodes;
   }
@@ -194,6 +203,7 @@ public class HeeUserDTO implements Serializable {
         ", emailAddress='" + emailAddress + '\'' +
         ", active=" + active +
         ", roles=" + roles +
+        ", entities=" + entities +
         ", designatedBodyCodes=" + designatedBodyCodes +
         ", associatedTrusts=" + associatedTrusts +
         ", associatedProgrammes=" + associatedProgrammes +

@@ -46,6 +46,7 @@ public class UserProfileAssembler {
     Set<Role> roles = user.getRoles();
     userProfile.setRoles(roles.stream().map(Role::getName).collect(toSet()));
     userProfile.setPermissions(getPermissions(roles));
+    userProfile.setAssignedEntities(user.getEntities());
 
     //Set user permission policies, a combination of policies attached to the user Roles, and
     //policies specific to the user

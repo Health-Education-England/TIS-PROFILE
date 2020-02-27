@@ -49,6 +49,7 @@ public class HeeUser implements Serializable {
   private Boolean isTemporaryPassword;
 
   private Set<Role> roles;
+  private Set<String> entities;
   private Set<String> designatedBodyCodes;
 
   private Set<UserTrust> associatedTrusts = new HashSet<>();
@@ -197,6 +198,20 @@ public class HeeUser implements Serializable {
 
   public void setDesignatedBodyCodes(Set<String> designatedBodyCodes) {
     this.designatedBodyCodes = designatedBodyCodes;
+  }
+
+  @ElementCollection(fetch = EAGER)
+  @CollectionTable(name = "UserOrganisationalEntity", joinColumns = @JoinColumn(name = "userName"))
+  @Column(name = "organisationalEntityName")
+  public Set<String> getEntities() {
+    if (CollectionUtils.isEmpty(this.entities)) {
+      this.entities = Sets.newHashSet(HeeUser.NONE);
+    }
+    return entities;
+  }
+
+  public void setEntities(Set<String> entities) {
+    this.entities = entities;
   }
 
   @OneToMany(fetch = LAZY, mappedBy = "heeUser", cascade = CascadeType.ALL)

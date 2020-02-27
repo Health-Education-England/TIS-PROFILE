@@ -34,6 +34,7 @@ public interface HeeUserRepository extends JpaRepository<HeeUser, String>,
   List<HeeUser> findRVOfficerByDesignatedBodyCode(@Param("dbc") String designatedBodyCodes);
 
   @Query("select u from HeeUser u " +
+      "left outer join fetch u.entities " +
       "left outer join fetch u.designatedBodyCodes " +
       "left outer join fetch u.associatedTrusts " +
       "left outer join fetch u.associatedProgrammes " +
