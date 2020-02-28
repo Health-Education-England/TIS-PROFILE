@@ -30,7 +30,6 @@
     <frontend.maven.plugin.version>1.3</frontend.maven.plugin.version>
     <hibernate.version>5.2.8.Final</hibernate.version>
     <hikaricp.version>2.6.0</hikaricp.version>
-    <jacoco-maven-plugin.version>0.7.9</jacoco-maven-plugin.version>
     <java.version>1.8</java.version>
     <javassist.version>3.21.0-GA</javassist.version>
     <javax.servlet.version>4.0.0-b03</javax.servlet.version>
@@ -38,7 +37,7 @@
     <jjwt.version>0.7.0</jjwt.version>
     <logstash-logback-encoder.version>4.8</logstash-logback-encoder.version>
     <m2e.apt.activation>jdt_apt</m2e.apt.activation>
-    <mapstruct.version>1.1.0.Final</mapstruct.version>
+    <mapstruct.version>1.3.0.Final</mapstruct.version>
     <maven-compiler-plugin.version>3.6.0</maven-compiler-plugin.version>
     <maven-enforcer-plugin.version>1.4.1</maven-enforcer-plugin.version>
     <maven-resources-plugin.version>3.0.1</maven-resources-plugin.version>
@@ -50,58 +49,20 @@
     <node.version>v6.10.0</node.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <!-- Sonar properties -->
     <project.testresult.directory>${project.build.directory}/test-results</project.testresult.directory>
     <prometheus-simpleclient.version>0.0.20</prometheus-simpleclient.version>
     <run.addResources>false</run.addResources>
     <scala-maven-plugin.version>3.2.2</scala-maven-plugin.version>
     <scala.version>2.12.1</scala.version>
-    <sonar-maven-plugin.version>3.2</sonar-maven-plugin.version>
-
-    <sonar.exclusions>src/main/webapp/content/**/*.*, src/main/webapp/bower_components/**/*.*,
-      src/main/webapp/i18n/*.js, ui-build/profile/**/*.*
-    </sonar.exclusions>
-
-    <sonar.issue.ignore.multicriteria>S3437,UndocumentedApi,BoldAndItalicTagsCheck</sonar.issue.ignore.multicriteria>
-
-    <!-- Rule https://sonarqube.com/coding_rules#rule_key=Web%3ABoldAndItalicTagsCheck is ignored. Even if we agree that using the "i" tag is an awful practice, this is what is recommended by http://fontawesome.io/examples/ -->
-    <sonar.issue.ignore.multicriteria.BoldAndItalicTagsCheck.resourceKey>src/main/webapp/app/**/*.*
-    </sonar.issue.ignore.multicriteria.BoldAndItalicTagsCheck.resourceKey>
-    <sonar.issue.ignore.multicriteria.BoldAndItalicTagsCheck.ruleKey>Web:BoldAndItalicTagsCheck
-    </sonar.issue.ignore.multicriteria.BoldAndItalicTagsCheck.ruleKey>
-    <!-- Rule https://sonarqube.com/coding_rules#rule_key=squid%3AS3437 is ignored, as a JPA-managed field cannot be transient -->
-    <sonar.issue.ignore.multicriteria.S3437.resourceKey>src/main/java/**/*
-    </sonar.issue.ignore.multicriteria.S3437.resourceKey>
-    <sonar.issue.ignore.multicriteria.S3437.ruleKey>squid:S3437</sonar.issue.ignore.multicriteria.S3437.ruleKey>
-    <!-- Rule http://sonarqube.com/coding_rules#rule_key=squid%3AUndocumentedApi is ignored, as we want to follow "clean code" guidelines and classes, methods and arguments names should be self-explanatory -->
-    <sonar.issue.ignore.multicriteria.UndocumentedApi.resourceKey>src/main/java/**/*
-    </sonar.issue.ignore.multicriteria.UndocumentedApi.resourceKey>
-    <sonar.issue.ignore.multicriteria.UndocumentedApi.ruleKey>squid:UndocumentedApi
-    </sonar.issue.ignore.multicriteria.UndocumentedApi.ruleKey>
-
-    <sonar.jacoco.itReportPath>${project.testresult.directory}/coverage/jacoco/jacoco-it.exec
-    </sonar.jacoco.itReportPath>
-    <sonar.jacoco.reportPath>${project.testresult.directory}/coverage/jacoco/jacoco.exec</sonar.jacoco.reportPath>
-    <sonar.java.codeCoveragePlugin>jacoco</sonar.java.codeCoveragePlugin>
-
-    <sonar.javascript.jstestdriver.reportsPath>${project.testresult.directory}/karma
-    </sonar.javascript.jstestdriver.reportsPath>
-    <!-- For Sonar < 6.2 -->
-    <sonar.javascript.lcov.reportPath>${project.testresult.directory}/coverage/report-lcov/lcov.info
-    </sonar.javascript.lcov.reportPath>
-    <!-- For Sonar >= 6.2 -->
-    <sonar.javascript.lcov.reportPaths>${project.testresult.directory}/coverage/report-lcov/lcov.info
-    </sonar.javascript.lcov.reportPaths>
-
-    <sonar.sources>${project.basedir}/src/main/</sonar.sources>
-    <sonar.surefire.reportsPath>${project.testresult.directory}/surefire-reports</sonar.surefire.reportsPath>
-    <sonar.tests>${project.basedir}/src/test/</sonar.tests>
 
     <!-- Spring properties -->
     <springfox.version>2.6.1</springfox.version>
     <undertow.version>1.4.10.Final</undertow.version>
     <validation-api.version>1.1.0.Final</validation-api.version>
     <yarn.version>v0.21.3</yarn.version>
+
+    <!-- This is required as the minimum is set to 0.8 by tis-parent. -->
+    <jacoco.minimum>0.0</jacoco.minimum>
   </properties>
 
   <dependencies>
@@ -551,40 +512,6 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.jacoco</groupId>
-        <artifactId>jacoco-maven-plugin</artifactId>
-        <version>${jacoco-maven-plugin.version}</version>
-        <executions>
-          <execution>
-            <id>pre-unit-tests</id>
-            <goals>
-              <goal>prepare-agent</goal>
-            </goals>
-            <configuration>
-              <!-- Sets the path to the file which contains the execution data. -->
-              <destFile>${project.testresult.directory}/coverage/jacoco/jacoco.exec</destFile>
-            </configuration>
-          </execution>
-          <!-- Ensures that the code coverage report for unit tests is created after unit tests have been run -->
-          <execution>
-            <id>post-unit-test</id>
-            <phase>test</phase>
-            <goals>
-              <goal>report</goal>
-            </goals>
-            <configuration>
-              <dataFile>${project.testresult.directory}/coverage/jacoco/jacoco.exec</dataFile>
-              <outputDirectory>${project.testresult.directory}/coverage/jacoco</outputDirectory>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.sonarsource.scanner.maven</groupId>
-        <artifactId>sonar-maven-plugin</artifactId>
-        <version>${sonar-maven-plugin.version}</version>
-      </plugin>
-      <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
         <configuration>
@@ -596,34 +523,26 @@ Enable the line below to have remote debugging of your application on port 5005
 -->
         </configuration>
       </plugin>
-      <!-- jhipster-needle-maven-add-plugin -->
-
-      <!-- Checkstyle can be provided by tis-parent 3.0.2+ but requires additional migration. -->
       <plugin>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <groupId>org.apache.maven.plugins</groupId>
-        <version>3.0.0</version>
-        <configuration>
-          <configLocation>google_checks.xml</configLocation>
-          <consoleOutput>true</consoleOutput>
-        </configuration>
-        <dependencies>
-          <dependency>
-            <groupId>com.puppycrawl.tools</groupId>
-            <artifactId>checkstyle</artifactId>
-            <version>8.22</version>
-          </dependency>
-        </dependencies>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.8.5</version>
         <executions>
           <execution>
-            <id>validate</id>
-            <phase>validate</phase>
             <goals>
-              <goal>check</goal>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>report</id>
+            <phase>test</phase>
+            <goals>
+              <goal>report</goal>
             </goals>
           </execution>
         </executions>
       </plugin>
+      <!-- jhipster-needle-maven-add-plugin -->
     </plugins>
   </build>
   <profiles>
