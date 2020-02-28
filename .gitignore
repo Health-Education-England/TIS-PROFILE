@@ -1,47 +1,42 @@
-# Created by .ignore support plugin (hsz.mobi)
-*/target/
+# Created by https://www.gitignore.io/api/java,maven
+# Edit at https://www.gitignore.io/?templates=java,maven
+
+### Java ###
+# Compiled class file
 *.class
+
+# Log file
+*.log
+
+# BlueJ files
+*.ctxt
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
 *.tar.gz
-node_modules
-profile-service/node_modules
-profile-ui/node
-profile-ui/node_modules
-profile-ui/yarn.lock
-profile-ui/ui-build
-*/node/*
-.DS_Store
-.tmp/
-*/js/tests/
-*/js/app/scripts/templates.js
-*/js/app/components/masthead/
-*/js/app/components/server-error-modal/
-*/js/app/components/common/
-*/js/app/scripts/services/
-*/js/app/components/common/common.i18n.en.json
-*/js/app/components/version-indicator/
-*/js/bower_components/
-*/js/app/components/common/date-picker/
-*/js/app/scripts/services/configuration-service.js
-*/npm-debug.log
-*/js/app/styles/main.css
-*/js/app/styles/main.css.map
-*/src/main/resources/static/
-*/bdd/dist/
-*/bdd/e2e/reports/
-*/bdd/node_modules/
-*/bdd/phantomjsdriver.log
-*/bower_components/
+*.rar
 
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
 
-# IDEA files #
-######################
-.idea/
-**/*.iml
+### Maven ###
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+.flattened-pom.xml
 
-.settings
-.project
-*/.classpath
-*/.project
-*/.settings
-*/.factorypath
-*/pom.xml.bak
+# End of https://www.gitignore.io/api/java,maven
