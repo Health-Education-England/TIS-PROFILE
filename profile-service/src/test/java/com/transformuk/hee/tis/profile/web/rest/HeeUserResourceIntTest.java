@@ -30,7 +30,9 @@ import com.transformuk.hee.tis.profile.ProfileApp;
 import com.transformuk.hee.tis.profile.domain.HeeUser;
 import com.transformuk.hee.tis.profile.repository.HeeUserRepository;
 import com.transformuk.hee.tis.profile.repository.PermissionRepository;
+import com.transformuk.hee.tis.profile.repository.UserOrganisationalEntityRepository;
 import com.transformuk.hee.tis.profile.repository.UserTrustRepository;
+import com.transformuk.hee.tis.profile.service.UserOrganizationalEntityService;
 import com.transformuk.hee.tis.profile.service.UserProgrammeService;
 import com.transformuk.hee.tis.profile.service.UserService;
 import com.transformuk.hee.tis.profile.service.UserTrustService;
@@ -96,6 +98,12 @@ public class HeeUserResourceIntTest {
   private UserProgrammeService userProgrammeService;
 
   @Autowired
+  private UserOrganizationalEntityService userOrganizationalEntityService;
+
+  @Autowired
+  private UserOrganisationalEntityRepository userOrganisationalEntityRepository;
+
+  @Autowired
   private EntityManager em;
 
   @Autowired
@@ -111,7 +119,7 @@ public class HeeUserResourceIntTest {
     MockitoAnnotations.initMocks(this);
     HeeUserResource heeUserResource = new HeeUserResource(heeUserRepository, heeUserMapper,
         heeUserValidator, userTrustRepository, userTrustService, userProgrammeService,
-        userService);
+        userService, userOrganizationalEntityService, userOrganisationalEntityRepository);
     this.restHeeUserMockMvc = MockMvcBuilders.standaloneSetup(heeUserResource)
         .setCustomArgumentResolvers(pageableArgumentResolver)
         .setControllerAdvice(exceptionTranslator)

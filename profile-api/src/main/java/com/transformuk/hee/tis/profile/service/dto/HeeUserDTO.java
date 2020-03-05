@@ -35,6 +35,7 @@ public class HeeUserDTO implements Serializable {
   private Set<String> designatedBodyCodes;
   private Set<UserTrustDTO> associatedTrusts;
   private Set<UserProgrammeDTO> associatedProgrammes;
+  private Set<UserOrganisationalEntityDTO> associatedOrganisationalEntities;
 
   public HeeUserDTO() {
   }
@@ -160,6 +161,14 @@ public class HeeUserDTO implements Serializable {
     this.associatedProgrammes = associatedProgrammes;
   }
 
+  public Set<UserOrganisationalEntityDTO> getAssociatedOrganisationalEntities() {
+    return associatedOrganisationalEntities;
+  }
+
+  public void setAssociatedOrganisationalEntities(Set<UserOrganisationalEntityDTO> associatedOrganisationalEntities) {
+    this.associatedOrganisationalEntities = associatedOrganisationalEntities;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -197,6 +206,7 @@ public class HeeUserDTO implements Serializable {
         ", designatedBodyCodes=" + designatedBodyCodes +
         ", associatedTrusts=" + associatedTrusts +
         ", associatedProgrammes=" + associatedProgrammes +
+        ", associatedOrganisationalEntities=" + associatedOrganisationalEntities +
         '}';
   }
 }

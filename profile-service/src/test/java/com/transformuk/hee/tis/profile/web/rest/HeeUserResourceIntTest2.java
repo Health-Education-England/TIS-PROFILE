@@ -10,7 +10,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.google.common.collect.Lists;
 import com.transformuk.hee.tis.profile.ProfileApp;
 import com.transformuk.hee.tis.profile.repository.HeeUserRepository;
+import com.transformuk.hee.tis.profile.repository.UserOrganisationalEntityRepository;
 import com.transformuk.hee.tis.profile.repository.UserTrustRepository;
+import com.transformuk.hee.tis.profile.service.UserOrganizationalEntityService;
 import com.transformuk.hee.tis.profile.service.UserProgrammeService;
 import com.transformuk.hee.tis.profile.service.UserService;
 import com.transformuk.hee.tis.profile.service.UserTrustService;
@@ -54,6 +56,10 @@ public class HeeUserResourceIntTest2 {
   private UserTrustService userTrustServiceMock;
   @MockBean
   private UserProgrammeService userProgrammeService;
+  @Autowired
+  private UserOrganizationalEntityService userOrganizationalEntityServiceMock;
+  @Autowired
+  private UserOrganisationalEntityRepository userOrganisationalEntityRepositoryMock;
   @MockBean
   private UserService userServiceMock;
 
@@ -77,7 +83,9 @@ public class HeeUserResourceIntTest2 {
         userTrustRepositoryMock,
         userTrustServiceMock,
         userProgrammeService,
-        userServiceMock);
+        userServiceMock,
+        userOrganizationalEntityServiceMock,
+        userOrganisationalEntityRepositoryMock);
     this.restHeeUserMockMvc = MockMvcBuilders.standaloneSetup(heeUserResource)
         .setCustomArgumentResolvers(pageableArgumentResolver)
         .setControllerAdvice(exceptionTranslator)

@@ -53,6 +53,7 @@ public class HeeUser implements Serializable {
 
   private Set<UserTrust> associatedTrusts = new HashSet<>();
   private Set<UserProgramme> associatedProgrammes = new HashSet<>();
+  private Set<UserOrganisationalEntity> associatedOrganisationalEntities = new HashSet<>();
 
   public HeeUser() {
     super();
@@ -235,6 +236,25 @@ public class HeeUser implements Serializable {
   public void removeAssociatedProgramme(UserProgramme userProgramme) {
     userProgramme.setHeeUser(null);
     this.associatedProgrammes.remove(userProgramme);
+  }
+
+  @OneToMany(fetch = LAZY, mappedBy = "heeUser", cascade = CascadeType.ALL)
+  public Set<UserOrganisationalEntity> getAssociatedOrganisationalEntities() {
+    return associatedOrganisationalEntities;
+  }
+
+  public void setAssociatedOrganisationalEntities(Set<UserOrganisationalEntity> associatedOrganisationalEntities) {
+    this.associatedOrganisationalEntities = associatedOrganisationalEntities;
+  }
+
+  public void addUserOrganisationalEntity(UserOrganisationalEntity userOrganisationalEntity) {
+    this.associatedOrganisationalEntities.add(userOrganisationalEntity);
+    userOrganisationalEntity.setHeeUser(this);
+  }
+
+  public void removeUserOrganisationalEntity(UserOrganisationalEntity userOrganisationalEntity) {
+    userOrganisationalEntity.setHeeUser(null);
+    this.associatedOrganisationalEntities.remove(userOrganisationalEntity);
   }
 
   @Override

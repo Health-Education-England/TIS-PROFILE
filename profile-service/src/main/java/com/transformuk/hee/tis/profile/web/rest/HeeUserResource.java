@@ -2,10 +2,13 @@ package com.transformuk.hee.tis.profile.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import com.transformuk.hee.tis.profile.domain.HeeUser;
+import com.transformuk.hee.tis.profile.domain.UserOrganisationalEntity;
 import com.transformuk.hee.tis.profile.domain.UserProgramme;
 import com.transformuk.hee.tis.profile.domain.UserTrust;
 import com.transformuk.hee.tis.profile.repository.HeeUserRepository;
+import com.transformuk.hee.tis.profile.repository.UserOrganisationalEntityRepository;
 import com.transformuk.hee.tis.profile.repository.UserTrustRepository;
+import com.transformuk.hee.tis.profile.service.UserOrganizationalEntityService;
 import com.transformuk.hee.tis.profile.service.UserProgrammeService;
 import com.transformuk.hee.tis.profile.service.UserService;
 import com.transformuk.hee.tis.profile.service.UserTrustService;
@@ -55,13 +58,20 @@ public class HeeUserResource {
   private final UserTrustService userTrustService;
   private final UserService userService;
   private final UserProgrammeService userProgrammeService;
+  private final UserOrganizationalEntityService userOrganizationalEntityService;
+  private final UserOrganisationalEntityRepository userOrganisationalEntityRepository;
 
   private HeeUserValidator heeUserValidator;
 
-  public HeeUserResource(HeeUserRepository heeUserRepository, HeeUserMapper heeUserMapper,
-      HeeUserValidator heeUserValidator,
-      UserTrustRepository userTrustRepository, UserTrustService userTrustService,
-      UserProgrammeService userProgrammeService, UserService userService) {
+  public HeeUserResource(HeeUserRepository heeUserRepository,
+    HeeUserMapper heeUserMapper,
+    HeeUserValidator heeUserValidator,
+    UserTrustRepository userTrustRepository,
+    UserTrustService userTrustService,
+    UserProgrammeService userProgrammeService,
+    UserService userService,
+    UserOrganizationalEntityService userOrganizationalEntityService,
+    UserOrganisationalEntityRepository userOrganisationalEntityRepository) {
     this.heeUserRepository = heeUserRepository;
     this.heeUserMapper = heeUserMapper;
     this.heeUserValidator = heeUserValidator;
@@ -69,6 +79,8 @@ public class HeeUserResource {
     this.userTrustService = userTrustService;
     this.userProgrammeService = userProgrammeService;
     this.userService = userService;
+    this.userOrganizationalEntityService = userOrganizationalEntityService;
+    this.userOrganisationalEntityRepository = userOrganisationalEntityRepository;
   }
 
   /**
@@ -107,8 +119,16 @@ public class HeeUserResource {
         userProgramme.setHeeUser(heeUser);
       }
     }
+
+    Set<UserOrganisationalEntity> associatedOrganisationalEntities = heeUser.getAssociatedOrganisationalEntities();
+    if (CollectionUtils.isNotEmpty(associatedOrganisationalEntities)) {
+      for (UserOrganisationalEntity userOrganisationalEntity : associatedOrganisationalEntities) {
+        userOrganisationalEntity.setHeeUser(heeUser);
+      }
+    }
     heeUser = heeUserRepository.save(heeUser);
     userTrustRepository.save(associatedTrusts);
+    userOrganisationalEntityRepository.save(associatedOrganisationalEntities);
     HeeUserDTO result = heeUserMapper.heeUserToHeeUserDTO(heeUser);
     return ResponseEntity.created(new URI("/api/hee-users/" + result.getName()))
         .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getName()))
@@ -142,9 +162,11 @@ public class HeeUserResource {
     //fix bi directional link to trusts
     heeUser.getAssociatedTrusts().forEach(a -> a.setHeeUser(heeUser));
     heeUser.getAssociatedProgrammes().forEach(a -> a.setHeeUser(heeUser));
+    heeUser.getAssociatedOrganisationalEntities().forEach(a -> a.setHeeUser(heeUser));
     heeUserRepository.save(heeUser);
     userTrustService.assignTrustsToUser(heeUserDTO);
     userProgrammeService.assignProgrammesToUser(heeUserDTO);
+    userOrganizationalEntityService.assignOrganisationalEntitiesToUser(heeUserDTO);
     HeeUserDTO result = heeUserMapper.heeUserToHeeUserDTO(
         heeUserRepository.findByNameWithTrustsAndProgrammes(heeUserDTO.getName()).orElse(null));
     return ResponseEntity.ok()

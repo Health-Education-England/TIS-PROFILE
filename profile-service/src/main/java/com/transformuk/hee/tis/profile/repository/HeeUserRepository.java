@@ -94,6 +94,7 @@ public interface HeeUserRepository extends JpaRepository<HeeUser, String>,
   @Query(value = "SELECT u FROM HeeUser u " +
       "LEFT JOIN FETCH u.associatedTrusts " +
       "LEFT JOIN FETCH u.associatedProgrammes " +
+      "LEFT JOIN FETCH u.associatedOrganisationalEntities " +
       "where u.name = :name")
   Optional<HeeUser> findByNameWithTrustsAndProgrammes(@Param("name") String name);
 

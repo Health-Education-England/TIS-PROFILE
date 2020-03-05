@@ -3,11 +3,13 @@ package com.transformuk.hee.tis.profile.service.mapper;
 import com.transformuk.hee.tis.profile.domain.HeeUser;
 import com.transformuk.hee.tis.profile.domain.Permission;
 import com.transformuk.hee.tis.profile.domain.Role;
+import com.transformuk.hee.tis.profile.domain.UserOrganisationalEntity;
 import com.transformuk.hee.tis.profile.domain.UserProgramme;
 import com.transformuk.hee.tis.profile.domain.UserTrust;
 import com.transformuk.hee.tis.profile.dto.PermissionDTO;
 import com.transformuk.hee.tis.profile.dto.RoleDTO;
 import com.transformuk.hee.tis.profile.service.dto.HeeUserDTO;
+import com.transformuk.hee.tis.profile.service.dto.UserOrganisationalEntityDTO;
 import com.transformuk.hee.tis.profile.service.dto.UserProgrammeDTO;
 import com.transformuk.hee.tis.profile.service.dto.UserTrustDTO;
 import java.util.Arrays;
@@ -40,6 +42,10 @@ public interface HeeUserMapper {
   UserProgramme map(UserProgrammeDTO userProgrammeDTO);
 
   UserProgrammeDTO map(UserProgramme userProgramme);
+
+  UserOrganisationalEntity map(UserOrganisationalEntityDTO userOrganisationalEntityDTO);
+
+  UserOrganisationalEntityDTO map(UserOrganisationalEntity userOrganisationalEntity);
 
 
   @Mapping(target = "actions",
