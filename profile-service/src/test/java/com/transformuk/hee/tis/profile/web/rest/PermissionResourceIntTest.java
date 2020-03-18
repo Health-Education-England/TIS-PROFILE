@@ -220,7 +220,7 @@ public class PermissionResourceIntTest {
     // Get the permission
     restPermissionMockMvc.perform(delete("/api/permissions/{id}", permission.getName())
         .accept(TestUtil.APPLICATION_JSON_UTF8))
-        .andExpect(status().isOk());
+        .andExpect(status().isNoContent());
 
     // Validate the database is empty
     List<com.transformuk.hee.tis.profile.domain.Permission> permissionList = permissionRepository

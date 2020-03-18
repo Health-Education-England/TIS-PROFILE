@@ -139,8 +139,7 @@ public class PermissionResource {
   public ResponseEntity<Void> deletePermission(@PathVariable String name) {
     log.debug("REST request to delete Permission : {}", name);
     permissionRepository.delete(name);
-    return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, name))
-        .build();
+    return ResponseEntity.noContent().build();
   }
 
 }
