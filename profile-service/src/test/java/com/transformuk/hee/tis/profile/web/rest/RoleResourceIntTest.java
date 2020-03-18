@@ -273,7 +273,7 @@ public class RoleResourceIntTest {
     // Get the role
     restRoleMockMvc.perform(delete("/api/roles/{id}", role.getName())
         .accept(TestUtil.APPLICATION_JSON_UTF8))
-        .andExpect(status().isOk());
+        .andExpect(status().isNoContent());
 
     // Validate the database is empty
     List<Role> roleList = roleRepository.findAll();

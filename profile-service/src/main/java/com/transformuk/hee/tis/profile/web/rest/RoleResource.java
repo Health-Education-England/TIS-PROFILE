@@ -160,8 +160,7 @@ public class RoleResource {
     roleValidator.validateBeforeDelete(name);
 
     roleRepository.delete(name);
-    return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, name))
-        .build();
+    return ResponseEntity.noContent().build();
   }
 
   private void validateRole(Role role) {
