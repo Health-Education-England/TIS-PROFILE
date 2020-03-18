@@ -47,7 +47,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class HeeUserResource {
 
   private static final String ENTITY_NAME = "heeUser";
-  private static final String REALM_LIN = "lin";
   private final Logger log = LoggerFactory.getLogger(HeeUserResource.class);
   private final HeeUserRepository heeUserRepository;
   private final HeeUserMapper heeUserMapper;
@@ -222,8 +221,7 @@ public class HeeUserResource {
   public ResponseEntity<Void> deleteHeeUser(@PathVariable String name) {
     log.debug("REST request to delete HeeUser : {}", name);
     heeUserRepository.delete(name);
-    return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, name))
-        .build();
+    return ResponseEntity.noContent().build();
   }
 
   private void validateHeeUser(HeeUser heeUser) {

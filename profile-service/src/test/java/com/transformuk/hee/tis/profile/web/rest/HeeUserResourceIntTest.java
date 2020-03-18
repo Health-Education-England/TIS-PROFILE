@@ -374,7 +374,7 @@ public class HeeUserResourceIntTest {
     // Get the heeUser
     restHeeUserMockMvc.perform(delete("/api/hee-users/{id}", heeUser.getName())
         .accept(TestUtil.APPLICATION_JSON_UTF8))
-        .andExpect(status().isOk());
+        .andExpect(status().isNoContent());
 
     // Validate the database is empty
     List<HeeUser> heeUserList = heeUserRepository.findAll();
