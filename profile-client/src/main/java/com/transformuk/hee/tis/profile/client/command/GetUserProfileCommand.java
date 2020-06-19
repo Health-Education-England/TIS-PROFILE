@@ -68,14 +68,4 @@ public class GetUserProfileCommand extends HystrixCommand<Optional<UserProfile>>
     }
     return Optional.empty();
   }
-
-  /**
-   * If an exception occurs that wasn't handled in the try catch block use the following fallback
-   *
-   * @return An empty optional denoting no user profile available
-   */
-  @Override
-  protected Optional<UserProfile> getFallback() {
-    return Optional.empty();
-  }
 }

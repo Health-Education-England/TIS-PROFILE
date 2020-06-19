@@ -68,8 +68,13 @@ public class JwtProfileServiceImpl implements JwtProfileService {
   }
 
   protected Optional<UserProfile> getUserProfile(String securityToken) {
-    return new GetUserProfileCommand(restTemplate, serviceUrl + USER_INFO_ENDPOINT, securityToken)
-        .execute();
+    try {
+      return new GetUserProfileCommand(restTemplate, serviceUrl + USER_INFO_ENDPOINT, securityToken)
+          .execute();
+    } catch (Exception e) {
+      LOG.error("Exception thrown from profile command {}", e.getMessage());
+      throw e;
+    }
   }
 
   public void setUserProfileCache(Cache<String, Optional<UserProfile>> userProfileCache) {
