@@ -1,18 +1,19 @@
 package com.transformuk.hee.tis.profile.client.service.impl;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.transformuk.hee.tis.profile.client.command.GetUserProfileCommand;
 import com.transformuk.hee.tis.security.model.UserProfile;
 import com.transformuk.hee.tis.security.service.JwtProfileService;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * Service that's used within the context of a microservices spring security.
@@ -68,13 +69,8 @@ public class JwtProfileServiceImpl implements JwtProfileService {
   }
 
   protected Optional<UserProfile> getUserProfile(String securityToken) {
-    try {
-      return new GetUserProfileCommand(restTemplate, serviceUrl + USER_INFO_ENDPOINT, securityToken)
-          .execute();
-    } catch (Exception e) {
-      LOG.error("Exception thrown from profile command {}", e.getMessage());
-      throw e;
-    }
+    return new GetUserProfileCommand(restTemplate, serviceUrl + USER_INFO_ENDPOINT, securityToken)
+        .execute();
   }
 
   public void setUserProfileCache(Cache<String, Optional<UserProfile>> userProfileCache) {
