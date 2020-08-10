@@ -80,7 +80,7 @@ node {
           sh "docker build -t ${containerRegistryLocaltion}/${dockerImageName}:$buildVersion -f ./profile-service/Dockerfile ./profile-service"
           sh "docker push ${containerRegistryLocaltion}/${dockerImageName}:$buildVersion"
 
-          sh "docker tag ${containerRegistryLocaltion}/${dockerImageName}:$buildVersion ${containerRegistryLocaltion}/tcs:latest"
+          sh "docker tag ${containerRegistryLocaltion}/${dockerImageName}:$buildVersion ${containerRegistryLocaltion}/${dockerImageName}:latest"
           sh "docker push ${containerRegistryLocaltion}/${dockerImageName}:latest"
 
           sh "docker rmi ${containerRegistryLocaltion}/${dockerImageName}:latest"
