@@ -5,6 +5,7 @@ def utils = new hee.tis.utils()
 node {
 
     def service = "profile"
+    def containerRegistryLocaltion = "430723991443.dkr.ecr.eu-west-2.amazonaws.com"
 
     deleteDir()
 
@@ -61,16 +62,29 @@ node {
           imageName = env.ARTIFACT_ID
           imageVersionTag = env.GIT_COMMIT
 
-          if (fileExists("$workspace/$service-service/pom.xml")) {
-            workspace = "$workspace/$service-service"
-            env.WORKSPACE= workspace
-            sh 'cd "$workspace"'
-
-            imageName = service
-            env.IMAGE_NAME = imageName
+          if (isService) {
+              imageName = service
+              env.IMAGE_NAME = imageName
           }
 
-          sh "ansible-playbook -i $env.DEVOPS_BASE/ansible/inventory/dev $env.DEVOPS_BASE/ansible/tasks/spring-boot-build.yml"
+          //urghhh
+          sh "mvn package -DskipTests"
+          sh "cp ./profile-service/target/profile-service-*.war ./profile-service/target/app.jar"
+
+          def dockerImageName = "profile"
+          def containerRegistryLocaltion = "430723991443.dkr.ecr.eu-west-2.amazonaws.com"
+
+          // log into aws docker
+          sh "aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin 430723991443.dkr.ecr.eu-west-2.amazonaws.com"
+
+          sh "docker build -t ${containerRegistryLocaltion}/${dockerImageName}:$buildVersion -f ./profile-service/Dockerfile ./profile-service"
+          sh "docker push ${containerRegistryLocaltion}/${dockerImageName}:$buildVersion"
+
+          sh "docker tag ${containerRegistryLocaltion}/${dockerImageName}:$buildVersion ${containerRegistryLocaltion}/tcs:latest"
+          sh "docker push ${containerRegistryLocaltion}/${dockerImageName}:latest"
+
+          sh "docker rmi ${containerRegistryLocaltion}/${dockerImageName}:latest"
+          sh "docker rmi ${containerRegistryLocaltion}/${dockerImageName}:$buildVersion"
 
           println "[Jenkinsfile INFO] Stage Dockerize completed..."
         }
