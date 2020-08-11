@@ -19,7 +19,7 @@ node {
     def repository = "${env.GIT_COMMIT}".split("TIS-")[-1].split(".git")[0]
     def buildNumber = env.BUILD_NUMBER
     def buildVersion = env.GIT_COMMIT
-    def imageName = ""
+
     def imageVersionTag = ""
 
     println "[Jenkinsfile INFO] Commit Hash is ${GIT_COMMIT}"
@@ -56,13 +56,7 @@ node {
           env.GROUP_ID = utils.getMvnToPom(workspace, 'groupId')
           env.ARTIFACT_ID = utils.getMvnToPom(workspace, 'artifactId')
           env.PACKAGING = utils.getMvnToPom(workspace, 'packaging')
-          imageName = env.ARTIFACT_ID
           imageVersionTag = env.GIT_COMMIT
-
-          if (isService) {
-              imageName = service
-              env.IMAGE_NAME = imageName
-          }
 
           //urghhh
           sh "mvn package -DskipTests"
