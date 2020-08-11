@@ -24,8 +24,6 @@ node {
 
     println "[Jenkinsfile INFO] Commit Hash is ${GIT_COMMIT}"
 
-    try {
-
         milestone 1
 
 
@@ -41,6 +39,8 @@ node {
           }
         }
 
+        milestone 2
+
         stage('Analyze Quality') {
           withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
             if (env.CHANGE_ID) {
@@ -50,8 +50,6 @@ node {
             }
           }
         }
-
-        milestone 2
 
         stage('Dockerise') {
           env.VERSION = utils.getMvnToPom(workspace, 'version')
@@ -88,11 +86,6 @@ node {
           println "[Jenkinsfile INFO] Stage Dockerize completed..."
         }
 
-    } catch (err) {
-
-        throw err
-
-    } finally {
 
         if (env.BRANCH_NAME == "master") {
 
@@ -123,6 +116,4 @@ node {
             }
 
         }
-
-    }
 }
