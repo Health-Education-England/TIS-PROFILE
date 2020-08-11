@@ -5,7 +5,6 @@ def utils = new hee.tis.utils()
 node {
 
     def service = "profile"
-    def containerRegistryLocaltion = "430723991443.dkr.ecr.eu-west-2.amazonaws.com"
 
     deleteDir()
 
