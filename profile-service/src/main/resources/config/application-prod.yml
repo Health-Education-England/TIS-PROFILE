@@ -14,15 +14,6 @@ spring:
     mail:
         host: ${DBHOST}
 
-jhipster:
-    http:
-        cache: # Used by the CachingHttpHeadersFilter
-            timeToLiveInDays: 1461
-    security:
-        authentication:
-            jwt:
-                secret: 20fb0c95203947e254dd09243256257d9abc1f9a
-
 logging:
     level:
         com.transformuk: ${LOGGING_LEVEL}
