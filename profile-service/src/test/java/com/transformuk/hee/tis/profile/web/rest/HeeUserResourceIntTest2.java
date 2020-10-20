@@ -1,12 +1,5 @@
 package com.transformuk.hee.tis.profile.web.rest;
 
-import static org.hamcrest.Matchers.hasItems;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.google.common.collect.Lists;
 import com.transformuk.hee.tis.profile.ProfileApp;
 import com.transformuk.hee.tis.profile.repository.HeeUserRepository;
@@ -14,6 +7,7 @@ import com.transformuk.hee.tis.profile.repository.UserTrustRepository;
 import com.transformuk.hee.tis.profile.service.UserProgrammeService;
 import com.transformuk.hee.tis.profile.service.UserService;
 import com.transformuk.hee.tis.profile.service.UserTrustService;
+import com.transformuk.hee.tis.profile.service.dto.BasicHeeUserDTO;
 import com.transformuk.hee.tis.profile.service.dto.HeeUserDTO;
 import com.transformuk.hee.tis.profile.service.mapper.HeeUserMapper;
 import com.transformuk.hee.tis.profile.validators.HeeUserValidator;
@@ -35,6 +29,14 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.hamcrest.Matchers.hasItems;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ProfileApp.class)
@@ -130,5 +132,25 @@ public class HeeUserResourceIntTest2 {
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
         .andExpect(jsonPath("$.firstName").value(TESTNAME_1));
+  }
+
+  @Test
+  public void getUsersByRolesShouldReturnAllOfThemByTheirRoles() throws Exception {
+    BasicHeeUserDTO basicHeeUserDTO1 = new BasicHeeUserDTO();
+    BasicHeeUserDTO basicHeeUserDTO2 = new BasicHeeUserDTO();
+    basicHeeUserDTO1.setName(TESTNAME_1);
+    basicHeeUserDTO2.setName(TESTNAME_2);
+    List<BasicHeeUserDTO> basicHeeUserDTOList = new ArrayList<>();
+    basicHeeUserDTOList.add(basicHeeUserDTO1);
+    basicHeeUserDTOList.add(basicHeeUserDTO2);
+    List<String> roleNames = new ArrayList<>();
+    roleNames.add("HEEAdminRevalidation");
+    roleNames.add("RVAdmin");
+
+    when(userServiceMock.findUsersByRoles(roleNames)).thenReturn(basicHeeUserDTOList);
+
+    restHeeUserMockMvc.perform(get("/api/hee-users-with-roles/{roleNames}", roleNames)
+            .contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(status().isOk());
   }
 }

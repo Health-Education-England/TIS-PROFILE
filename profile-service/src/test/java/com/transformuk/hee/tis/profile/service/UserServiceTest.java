@@ -1,22 +1,14 @@
 package com.transformuk.hee.tis.profile.service;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import com.google.common.collect.Sets;
 import com.transformuk.hee.tis.profile.domain.HeeUser;
+import com.transformuk.hee.tis.profile.domain.Role;
 import com.transformuk.hee.tis.profile.domain.UserTrust;
 import com.transformuk.hee.tis.profile.repository.HeeUserRepository;
+import com.transformuk.hee.tis.profile.service.dto.BasicHeeUserDTO;
 import com.transformuk.hee.tis.profile.service.dto.HeeUserDTO;
 import com.transformuk.hee.tis.profile.service.dto.UserTrustDTO;
 import com.transformuk.hee.tis.profile.service.mapper.HeeUserMapper;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 import org.assertj.core.util.Lists;
 import org.junit.Assert;
 import org.junit.Before;
@@ -27,6 +19,12 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
+import java.util.*;
+
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserServiceTest {
@@ -80,6 +78,20 @@ public class UserServiceTest {
     heeUser1WithTrusts.setAssociatedTrusts(userTrusts1);
     heeUser2EmptyTrusts.setAssociatedTrusts(userTrusts2);
     heeUser3NullTrusts.setAssociatedTrusts(userTrusts3);
+
+    Role role1 = new Role();
+    role1.setName("HEE Admin Revalidation");
+
+    Role role2 = new Role();
+    role2.setName("HEE Admin");
+
+    Role role3 = new Role();
+    role3.setName("RVAdmin");
+
+
+    heeUser1WithTrusts.setRoles(new HashSet<Role>(Arrays.asList(role1, role2, role3)));
+    heeUser2EmptyTrusts.setRoles(new HashSet<Role>(Arrays.asList(role1, role2)));
+    heeUser3NullTrusts.setRoles(new HashSet<Role>(Arrays.asList(role1)));
 
     // DTOs
     heeUser1WithTrustsDTO.setFirstName(FIRST_NAME_1);
@@ -180,5 +192,19 @@ public class UserServiceTest {
 
     verify(heeUserMapperMock).heeUserToHeeUserDTO(foundUserMock.orElse(null));
     verify(heeUserRepositoryMock).findByNameWithTrustsAndProgrammes(USERNAME);
+  }
+
+  @Test
+  public void findUsersByRolesShouldReturnBasicHeeUserDTOList() {
+    heeUser1WithTrusts.setName(FIRST_NAME_1);
+    BasicHeeUserDTO basicHeeUserDto = new BasicHeeUserDTO();
+    basicHeeUserDto.setName(heeUser1WithTrusts.getName());
+    List<HeeUser> foundUserMock = Arrays.asList(heeUser1WithTrusts);
+    when(heeUserRepositoryMock.findHeeUsersByRoleNames(Arrays.asList("HEE Admin Revalidation")))
+            .thenReturn(foundUserMock);
+    when(heeUserMapperMock.heeUsersToBasicHeeUserDTOs(foundUserMock))
+            .thenReturn(Arrays.asList(basicHeeUserDto));
+    List<BasicHeeUserDTO> result = testObj.findUsersByRoles(Arrays.asList("HEE Admin Revalidation"));
+    Assert.assertEquals(FIRST_NAME_1, result.get(0).getName());
   }
 }
