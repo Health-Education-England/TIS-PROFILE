@@ -2,6 +2,7 @@ package com.transformuk.hee.tis.profile.service;
 
 import com.transformuk.hee.tis.profile.domain.HeeUser;
 import com.transformuk.hee.tis.profile.repository.HeeUserRepository;
+import com.transformuk.hee.tis.profile.service.dto.BasicHeeUserDTO;
 import com.transformuk.hee.tis.profile.service.dto.HeeUserDTO;
 import com.transformuk.hee.tis.profile.service.mapper.HeeUserMapper;
 import java.util.List;
@@ -49,6 +50,13 @@ public class UserService {
   public List<HeeUserDTO> findUsersByNameIgnoreCase(String name) {
     List<HeeUser> heeUsers = heeUserRepository.findByNameIgnoreCase(name);
     List<HeeUserDTO> heeUserDTOs = heeUserMapper.heeUsersToHeeUserDTOs(heeUsers);
+    return heeUserDTOs;
+  }
+
+  @Transactional(readOnly = true)
+  public List<BasicHeeUserDTO> findUsersByRoles(List<String> roleNames) {
+    List<HeeUser> heeUsers = heeUserRepository.findHeeUsersByRoleNames(roleNames);
+    List<BasicHeeUserDTO> heeUserDTOs = heeUserMapper.heeUsersToBasicHeeUserDTOs(heeUsers);
     return heeUserDTOs;
   }
 }

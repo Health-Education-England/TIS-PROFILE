@@ -7,6 +7,7 @@ import com.transformuk.hee.tis.profile.domain.UserProgramme;
 import com.transformuk.hee.tis.profile.domain.UserTrust;
 import com.transformuk.hee.tis.profile.dto.PermissionDTO;
 import com.transformuk.hee.tis.profile.dto.RoleDTO;
+import com.transformuk.hee.tis.profile.service.dto.BasicHeeUserDTO;
 import com.transformuk.hee.tis.profile.service.dto.HeeUserDTO;
 import com.transformuk.hee.tis.profile.service.dto.UserProgrammeDTO;
 import com.transformuk.hee.tis.profile.service.dto.UserTrustDTO;
@@ -24,6 +25,8 @@ public interface HeeUserMapper {
   HeeUserDTO heeUserToHeeUserDTO(HeeUser heeUser);
 
   List<HeeUserDTO> heeUsersToHeeUserDTOs(List<HeeUser> heeUsers);
+
+  List<BasicHeeUserDTO> heeUsersToBasicHeeUserDTOs(List<HeeUser> heeUsers);
 
   HeeUser heeUserDTOToHeeUser(HeeUserDTO heeUserDTO);
 

@@ -9,6 +9,7 @@ import com.transformuk.hee.tis.profile.repository.UserTrustRepository;
 import com.transformuk.hee.tis.profile.service.UserProgrammeService;
 import com.transformuk.hee.tis.profile.service.UserService;
 import com.transformuk.hee.tis.profile.service.UserTrustService;
+import com.transformuk.hee.tis.profile.service.dto.BasicHeeUserDTO;
 import com.transformuk.hee.tis.profile.service.dto.HeeUserDTO;
 import com.transformuk.hee.tis.profile.service.mapper.HeeUserMapper;
 import com.transformuk.hee.tis.profile.validators.HeeUserValidator;
@@ -222,6 +223,15 @@ public class HeeUserResource {
     log.debug("REST request to delete HeeUser : {}", name);
     heeUserRepository.delete(name);
     return ResponseEntity.noContent().build();
+  }
+
+  @GetMapping("/hee-users-with-roles/{roleNames}")
+  @Timed
+  @PreAuthorize("hasAuthority('profile:view:entities')")
+  public ResponseEntity<List<BasicHeeUserDTO>> getUsersByRoles(@PathVariable List<String> roleNames) {
+    log.debug("REST request to get HeeUsers with roles : {}", roleNames);
+    List<BasicHeeUserDTO> heeUserDTOs = userService.findUsersByRoles(roleNames);
+    return ResponseUtil.wrapOrNotFound(Optional.ofNullable(heeUserDTOs));
   }
 
   private void validateHeeUser(HeeUser heeUser) {
