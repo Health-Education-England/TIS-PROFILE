@@ -41,16 +41,6 @@ node {
 
         milestone 2
 
-        stage('Analyze Quality') {
-          withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
-            if (env.CHANGE_ID) {
-              sh "'${mvn}' sonar:sonar -Dsonar.login='${SONAR_TOKEN}' -Dsonar.pullrequest.key=$env.CHANGE_ID"
-            } else {
-              sh "'${mvn}' sonar:sonar -Dsonar.login='${SONAR_TOKEN}' -Dsonar.branch.name=$env.BRANCH_NAME"
-            }
-          }
-        }
-
         stage('Dockerise') {
           env.VERSION = utils.getMvnToPom(workspace, 'version')
           env.GROUP_ID = utils.getMvnToPom(workspace, 'groupId')
