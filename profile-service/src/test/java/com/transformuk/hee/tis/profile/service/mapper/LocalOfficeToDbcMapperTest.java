@@ -3,6 +3,7 @@ package com.transformuk.hee.tis.profile.service.mapper;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.google.common.collect.Sets;
+import java.util.Collections;
 import java.util.Set;
 import org.junit.Test;
 
@@ -25,6 +26,14 @@ public class LocalOfficeToDbcMapperTest {
     assertThat(response)
         .contains("1-AIIDSI", "1-AIIDNQ", "1-AIIDQQ", "1-AIIDR8", "1-AIIDWA", "1-AIIDVS",
             "1-AIIDWI", "LDN-MOCK-DBC");
+  }
+
+  @Test
+  public void shouldMapNimdtaLocalOffice() {
+    Set<String> map = LocalOfficeToDbcMapper.map(Collections.singleton("1-25U-830"));
+
+    assertThat(map).hasSize(1);
+    assertThat(map).contains("Northern Ireland Medical and Dental Training Agency");
   }
 
   @Test

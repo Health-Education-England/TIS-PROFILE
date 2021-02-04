@@ -33,6 +33,7 @@ public class LocalOfficeToDbcMapper {
       .put("South West", Lists.newArrayList("1-AIIDMQ"))
       .put("Wessex", Lists.newArrayList("1-AIIDHJ"))
       .put("North West", Lists.newArrayList("1-AIIDNQ"))
+      .put("1-25U-830", Lists.newArrayList("Northern Ireland Medical and Dental Training Agency"))
       .build();
 
   public static Set<String> map(Set<String> localOffices) {
