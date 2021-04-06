@@ -202,7 +202,3 @@ logging:
         com.transformuk: debug
 
 application:
-
-sentry:
-    dsn: ${SENTRY_DSN:}
-    environment: ${SENTRY_ENVIRONMENT:}

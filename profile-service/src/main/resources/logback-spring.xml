@@ -1,15 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+  <property name="LOG_FILE_NAME" value="auth.log"/>
   <include resource="org/springframework/boot/logging/logback/base.xml"/>
-  <appender name="SENTRY" class="io.sentry.logback.SentryAppender">
-    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-      <level>WARN</level>
-    </filter>
-  </appender>
-
-  <root level="INFO">
-    <appender-ref ref="CONSOLE"/>
-    <appender-ref ref="FILE"/>
-    <appender-ref ref="SENTRY"/>
-  </root>
+  <include resource="audit-logback.xml"/>
+  <logger name="com.transformuk.hee.tis" level="INFO"/>
 </configuration>
