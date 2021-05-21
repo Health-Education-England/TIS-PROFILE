@@ -4,13 +4,18 @@ import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.netflix.hystrix.HystrixCommandKey;
 import com.transformuk.hee.tis.security.model.UserProfile;
+import java.util.Map;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.json.JsonParser;
+import org.springframework.boot.json.JsonParserFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.jwt.Jwt;
+import org.springframework.security.jwt.JwtHelper;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
@@ -27,7 +32,8 @@ public class GetUserProfileCommand extends HystrixCommand<Optional<UserProfile>>
   private static final String OIDC_TOKEN_HEADER = "OIDC_access_token";
   private static final String AUTH_TOKEN_HEADER = "Authorization";
   private static final String AUTH_TOKEN_BEARER = "Bearer ";
-
+  private static final String TOKEN_ISSUER = "iss";
+  private static final String TOKEN_ISSUER_HEADER = "Token-Issuer";
 
   private RestTemplate restTemplate;
   private String urlEndpoint;
@@ -49,13 +55,14 @@ public class GetUserProfileCommand extends HystrixCommand<Optional<UserProfile>>
    * circuit breaker client errors should not contribute to the error count
    *
    * @return Optional user profile if its there
-   * @throws Exception HTTP 5xx or other exceptions that can occur during th rest call
    */
   @Override
-  protected Optional<UserProfile> run() throws Exception {
+  protected Optional<UserProfile> run() {
     HttpHeaders headers = new HttpHeaders();
     headers.set(OIDC_TOKEN_HEADER, securityToken);
     headers.set(AUTH_TOKEN_HEADER, AUTH_TOKEN_BEARER + securityToken);
+    setTokenIssuerHeader(headers);
+
     HttpEntity<?> entity = new HttpEntity<String>(headers);
     try {
       ResponseEntity<UserProfile> responseEntity = restTemplate
@@ -67,5 +74,21 @@ public class GetUserProfileCommand extends HystrixCommand<Optional<UserProfile>>
       LOG.debug("HTTP Status and body [{},{}]", e.getStatusCode(), e.getResponseBodyAsString());
     }
     return Optional.empty();
+  }
+
+  /**
+   * Set the token issuer header if one can be determined, otherwise nothing is added.
+   *
+   * @param headers The headers to add to.
+   */
+  private void setTokenIssuerHeader(HttpHeaders headers) {
+    Jwt jwt = JwtHelper.decode(securityToken);
+    JsonParser jsonParser = JsonParserFactory.getJsonParser();
+    Map<String, Object> claims = jsonParser.parseMap(jwt.getClaims());
+    Object issuer = claims.get(TOKEN_ISSUER);
+
+    if (issuer instanceof String) {
+      headers.set(TOKEN_ISSUER_HEADER, (String) issuer);
+    }
   }
 }
