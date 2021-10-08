@@ -1,5 +1,7 @@
 package com.transformuk.hee.tis.profile.web.rest;
 
+import static uk.nhs.tis.StringConverter.getConverter;
+
 import com.codahale.metrics.annotation.Timed;
 import com.transformuk.hee.tis.profile.domain.HeeUser;
 import com.transformuk.hee.tis.profile.domain.UserProgramme;
@@ -39,7 +41,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import static uk.nhs.tis.StringConverter.getConverter;
 
 /**
  * REST controller for managing HeeUser.
