@@ -40,7 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ProfileApp.class)
-public class HeeUserResourceIntTest2 {
+public class HeeUserResourceInt2Test {
 
   private static final String TESTNAME_1 = "TESTNAME1";
   private static final String TESTNAME_2 = "TESTNAME2@hee.nhs.uk";
