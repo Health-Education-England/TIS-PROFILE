@@ -39,6 +39,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import static uk.nhs.tis.StringConverter.getConverter;
 
 /**
  * REST controller for managing HeeUser.
@@ -204,6 +205,7 @@ public class HeeUserResource {
   @Timed
   @PreAuthorize("hasAuthority('profile:view:entities')")
   public ResponseEntity<HeeUserDTO> getSingleHeeUser(@RequestParam String username) {
+    username = getConverter(username).decodeUrl().toString();
     log.debug("REST request to get HeeUser : {}", username);
     HeeUserDTO heeUserDTO = userService.findSingleUserWithTrustAndProgrammes(username);
     return ResponseUtil.wrapOrNotFound(Optional.ofNullable(heeUserDTO));
