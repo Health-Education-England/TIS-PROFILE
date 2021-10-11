@@ -40,10 +40,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ProfileApp.class)
-public class HeeUserResourceIntTest2 {
+public class HeeUserResourceInt2Test {
 
   private static final String TESTNAME_1 = "TESTNAME1";
   private static final String TESTNAME_2 = "TESTNAME2@hee.nhs.uk";
+  private static final char CTRL_A = '\u0001';
   @MockBean
   private HeeUserRepository heeUserRepositoryMock;
   @MockBean
@@ -132,6 +133,21 @@ public class HeeUserResourceIntTest2 {
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
         .andExpect(jsonPath("$.firstName").value(TESTNAME_1));
+  }
+
+  @Test
+  public void getSingleHeeUserShouldRemoveInvalidCharactersFromSearchString() throws Exception {
+    HeeUserDTO heeUserDTO = new HeeUserDTO();
+    heeUserDTO.setFirstName(TESTNAME_1);
+    heeUserDTO.setName(TESTNAME_2);
+
+    when(userServiceMock.findSingleUserWithTrustAndProgrammes(TESTNAME_2)).thenReturn(heeUserDTO);
+
+    restHeeUserMockMvc.perform(get("/api/single-hee-users/?username=" + TESTNAME_2 + CTRL_A)
+                    .contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(jsonPath("$.firstName").value(TESTNAME_1));
   }
 
   @Test

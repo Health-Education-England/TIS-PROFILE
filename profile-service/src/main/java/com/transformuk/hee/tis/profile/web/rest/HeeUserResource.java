@@ -1,5 +1,7 @@
 package com.transformuk.hee.tis.profile.web.rest;
 
+import static uk.nhs.tis.StringConverter.getConverter;
+
 import com.codahale.metrics.annotation.Timed;
 import com.transformuk.hee.tis.profile.domain.HeeUser;
 import com.transformuk.hee.tis.profile.domain.UserProgramme;
@@ -204,6 +206,7 @@ public class HeeUserResource {
   @Timed
   @PreAuthorize("hasAuthority('profile:view:entities')")
   public ResponseEntity<HeeUserDTO> getSingleHeeUser(@RequestParam String username) {
+    username = getConverter(username).decodeUrl().toString();
     log.debug("REST request to get HeeUser : {}", username);
     HeeUserDTO heeUserDTO = userService.findSingleUserWithTrustAndProgrammes(username);
     return ResponseUtil.wrapOrNotFound(Optional.ofNullable(heeUserDTO));

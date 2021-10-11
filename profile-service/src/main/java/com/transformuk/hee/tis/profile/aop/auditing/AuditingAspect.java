@@ -84,6 +84,8 @@ public class AuditingAspect {
    */
   @Before("execution(* com.transformuk.hee.tis.profile.web.rest.*.update*(..))")
   public void auditUpdateBeforeExecution(JoinPoint joinPoint) throws Throwable {
+    // TODO: Review auditing implementation, increased accessibility via reflection
+    // is flagged as a potential issue.
     // store old value to map, wait until the update process
     UserProfile userPofile = getProfileFromContext();
     if (!userPofile.getUserName().equalsIgnoreCase(ETL_USERNAME)) {
