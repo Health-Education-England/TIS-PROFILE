@@ -1,10 +1,10 @@
 -- Get rid of the existing roles and detach them from the users
 
-DELETE Role, UserRole
-FROM Role
-	INNER JOIN UserRole
-	ON Role.name = UserRole.roleName
-WHERE Role.name
+DELETE `Role`, `UserRole`
+FROM `Role`
+	INNER JOIN `UserRole`
+	ON `Role`.`name` = `UserRole`.`roleName`
+WHERE `Role`.`name`
   IN
   ('RevalSiteAdmin',
 	'RevalSuperAdmin',
