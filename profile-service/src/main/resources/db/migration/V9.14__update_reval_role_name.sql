@@ -21,16 +21,16 @@ UPDATE `UserRole`
 SET `roleName` = 'RevalObserver'
 WHERE `roleName`='RevalTISAdmin3';
 
-UPDATE `UserRole`
-SET `roleName` = 'HEE User Admin'
-WHERE `roleName`='RevalSiteAdmin';
-
--- handle existing super admin user, it is a combination of HEE User Admin and Reval Approver
+-- handle existing RevalSiteAdmin, which is a HEE User Admin
+-- and RevalSuperAdmin user, it is a combination of HEE User Admin and Reval Approver.
+-- both of these roles will not be published to reval users
 
 DELETE
 FROM `UserRole`
 WHERE `roleName`
-IN ('RevalSuperAdmin');
+IN
+  ('RevalSuperAdmin',
+  'RevalSiteAdmin');
 
 -- delete the existing old roles
 
