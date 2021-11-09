@@ -90,7 +90,7 @@ public class ProfileServiceImplTest {
   @Test
   public void shouldGetAllTraineeIdMappings() {
     // given
-    Pageable pageable = new PageRequest(0, 100);
+    Pageable pageable = PageRequest.of(0, 100);
     List<TraineeId> traineeIds = newArrayList(new TraineeId(999L, "1234567	"));
     PagedTraineeIdResponse response = new PagedTraineeIdResponse(traineeIds, 1);
     given(profileRestTemplate.getForObject(any(URI.class), eq(PagedTraineeIdResponse.class)))
@@ -180,7 +180,7 @@ public class ProfileServiceImplTest {
     heeUserDTO1.setFirstName(FIRSTNAME1);
     List<HeeUserDTO> heeUserDTOS = Lists.newArrayList(heeUserDTO, heeUserDTO1);
     Page<HeeUserDTO> heeUserDTOSPage = new PageImpl<>(heeUserDTOS);
-    PageRequest pageRequest = new PageRequest(0, 11);
+    PageRequest pageRequest = PageRequest.of(0, 11);
 
     given(profileRestTemplate
         .exchange(eq(PROFILE_URL + "/api/hee-users?search=Username"), eq(HttpMethod.GET), eq(null),
@@ -224,7 +224,7 @@ public class ProfileServiceImplTest {
     heeUserDTO1.setFirstName(FIRSTNAME1);
     List<HeeUserDTO> heeUserDTOS = Lists.newArrayList(heeUserDTO, heeUserDTO1);
     Page<HeeUserDTO> heeUserDTOSPage = new PageImpl<>(heeUserDTOS);
-    PageRequest pageRequest = new PageRequest(0, 11);
+    PageRequest pageRequest = PageRequest.of(0, 11);
 
     given(profileRestTemplate
         .exchange(eq(PROFILE_URL + "/api/hee-users?search=Username&page=0&size=11"),
@@ -252,7 +252,7 @@ public class ProfileServiceImplTest {
     heeUserDTO1.setFirstName(FIRSTNAME1);
     List<HeeUserDTO> heeUserDTOS = Lists.newArrayList(heeUserDTO, heeUserDTO1);
     Page<HeeUserDTO> heeUserDTOSPage = new PageImpl<>(heeUserDTOS);
-    PageRequest pageRequest = new PageRequest(0, 11);
+    PageRequest pageRequest = PageRequest.of(0, 11);
 
     given(profileRestTemplate
         .exchange(eq(PROFILE_URL + "/api/hee-users?page=0&size=11"), eq(HttpMethod.GET), eq(null),
