@@ -1,2 +1,2 @@
 INSERT INTO Role
-VALUES("RevalBeta");
+VALUES('RevalBeta');
