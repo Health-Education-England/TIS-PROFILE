@@ -10,16 +10,7 @@ import java.util.Set;
 public class JwtAuthToken {
 
   private String username;
-  private List<String> cn = new ArrayList<>();
   private Set<String> roles = new HashSet<>();
-
-  public List<String> getCn() {
-    return cn;
-  }
-
-  public void setCn(List<String> cn) {
-    this.cn = cn;
-  }
 
   public Set<String> getRoles() {
     return roles;

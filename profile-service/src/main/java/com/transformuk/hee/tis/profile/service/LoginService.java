@@ -99,10 +99,8 @@ public class LoginService {
     Jwt jwt = JwtHelper.decode(token);
     Map<String, Object> claims = jsonParser.parseMap(jwt.getClaims());
     String userName = getString(claims, "preferred_username");
-    String cn = getString(claims, "name");
     JwtAuthToken profile = new JwtAuthToken();
     profile.setUsername(userName);
-    profile.setCn(asList(cn));
     return profile;
   }
 
