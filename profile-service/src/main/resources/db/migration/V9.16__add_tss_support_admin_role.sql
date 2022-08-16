@@ -1,3 +1,3 @@
 INSERT INTO `Role` (`name`)
-VALUES ('TssSupportAdmin')
+VALUES ('TSS Support Admin')
 ON DUPLICATE KEY UPDATE `name` = `name`;
