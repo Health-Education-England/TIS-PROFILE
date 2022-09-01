@@ -58,36 +58,6 @@ public class TraineeProfileServiceTest {
   }
 
   @Test
-  public void shouldSkipDuplicateIds() {
-    RegistrationRequest request = new RegistrationRequest();
-    request.setGmcNumber(EXISTING_GMC_NUMBER);
-
-    RegistrationRequest dupeRequest1 = new RegistrationRequest();
-    dupeRequest1.setGmcNumber("dupedGmc");
-    RegistrationRequest dupeRequest2 = new RegistrationRequest();
-    dupeRequest2.setGmcNumber("dupedGmc");
-
-    List<String> gmcNumbers = newArrayList(EXISTING_GMC_NUMBER);
-    TraineeProfile existingTraineeProfile = new TraineeProfile(1L, EXISTING_GMC_NUMBER);
-    existingTraineeProfile.setActive(true);
-    existingTraineeProfile.setDesignatedBodyCode(DBC);
-
-    // given
-    given(traineeProfileRepository.findByDesignatedBodyCode(DBC))
-        .willReturn(newArrayList(existingTraineeProfile));
-    given(traineeProfileRepository.findByGmcNumberIn(gmcNumbers))
-        .willReturn(newArrayList(existingTraineeProfile));
-
-    // when
-    List<TraineeProfile> traineeProfiles = service.findOrCreate(DBC,
-        newArrayList(request, dupeRequest1, dupeRequest2));
-
-    // then
-    assertThat(traineeProfiles).isEqualTo(newArrayList(existingTraineeProfile));
-    verify(traineeProfileRepository, times(1)).findByGmcNumberIn(gmcNumbers);
-  }
-
-  @Test
   public void shouldCreateIfNotExists() {
     RegistrationRequest request = new RegistrationRequest();
     request.setGmcNumber(EXISTING_GMC_NUMBER);
