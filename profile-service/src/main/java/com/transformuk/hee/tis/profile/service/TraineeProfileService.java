@@ -11,8 +11,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +27,8 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 public class TraineeProfileService {
+
+  private final Logger log = LoggerFactory.getLogger(TraineeProfileService.class);
 
   private TraineeProfileRepository traineeProfileRepository;
 
@@ -42,7 +47,17 @@ public class TraineeProfileService {
   @Transactional
   public List<TraineeProfile> findOrCreate(String dbc, List<RegistrationRequest> requests) {
     Map<String, RegistrationRequest> requestMap = requests.stream()
-        .collect(toMap(t -> t.getGmcNumber(), v -> v));
+        .collect(Collectors.groupingBy(RegistrationRequest::getGmcNumber))
+        .entrySet()
+        .stream().filter(e -> {
+          if (e.getValue().size() > 1) {
+            log.error("Duplicate GMC number '{}' found and skipped.", e.getKey());
+            return false;
+          }
+          return true;
+        })
+        .collect(toMap(Entry::getKey, e -> e.getValue().get(0)));
+
     List<TraineeProfile> dbProfiles = Lists.newArrayList();
     String[] gmcNumbers = requestMap.keySet().toArray(new String[0]);
     final int batchSize = 1000;
