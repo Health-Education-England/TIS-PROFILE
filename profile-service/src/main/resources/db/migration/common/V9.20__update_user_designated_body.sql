@@ -1,0 +1,13 @@
+UPDATE `UserDesignatedBody` set `designatedBodyCode` = '1-1RSG4X0' where `designatedBodyCode` = '1-AIIDQQ';
+UPDATE `UserDesignatedBody` set `designatedBodyCode` = '1-1RSSPZ7' where `designatedBodyCode` = '1-AIIDSA';
+UPDATE `UserDesignatedBody` set `designatedBodyCode` = '1-1RSSQ05' where `designatedBodyCode` = '1-AIIDWT';
+UPDATE `UserDesignatedBody` set `designatedBodyCode` = '1-1RSSQ1B' where `designatedBodyCode` = '1-AIIDSI';
+UPDATE `UserDesignatedBody` set `designatedBodyCode` = '1-1RSSQ2H' where `designatedBodyCode` = '1-AIIDNQ';
+UPDATE `UserDesignatedBody` set `designatedBodyCode` = '1-1RSSQ5L' where `designatedBodyCode` = '1-AIIDWI';
+UPDATE `UserDesignatedBody` set `designatedBodyCode` = '1-1RSSQ6R' where `designatedBodyCode` = '1-AIIDH1';
+UPDATE `UserDesignatedBody` set `designatedBodyCode` = '1-1RUZUSF' where `designatedBodyCode` = '1-AIIDHJ';
+UPDATE `UserDesignatedBody` set `designatedBodyCode` = '1-1RUZUVB' where `designatedBodyCode` = '1-AIIDMQ';
+UPDATE `UserDesignatedBody` set `designatedBodyCode` = '1-1RUZUYF' where `designatedBodyCode` = '1-AIIDMY';
+UPDATE `UserDesignatedBody` set `designatedBodyCode` = '1-1RUZV1D' where `designatedBodyCode` = '1-AIIDR8';
+UPDATE `UserDesignatedBody` set `designatedBodyCode` = '1-1RUZV4H' where `designatedBodyCode` = '1-AIIDVS';
+UPDATE `UserDesignatedBody` set `designatedBodyCode` = '1-1RUZV6H' where `designatedBodyCode` = '1-AIIDWA';
