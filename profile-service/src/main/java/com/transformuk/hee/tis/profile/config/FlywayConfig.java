@@ -21,7 +21,7 @@ public class FlywayConfig {
   private String user;
 
   @Value("${flyway.locations}")
-  private String migrationFilesLocations;
+  private String[] migrationFilesLocations;
 
   @Value("${flyway.schemas}")
   private String schemas;
@@ -39,7 +39,7 @@ public class FlywayConfig {
   Flyway flyway() {
     Flyway flyway = new Flyway();
     flyway.setBaselineOnMigrate(baseLineOnMigrate);
-    flyway.setLocations(migrationFilesLocations.split(","));
+    flyway.setLocations(migrationFilesLocations);
     flyway.setDataSource(url, user, password);
     flyway.setCleanOnValidationError(cleanOnValidationError);
     flyway.setOutOfOrder(outOfOrder);
