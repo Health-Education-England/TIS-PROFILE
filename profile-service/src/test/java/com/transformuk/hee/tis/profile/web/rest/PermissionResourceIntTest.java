@@ -129,7 +129,7 @@ public class PermissionResourceIntTest {
     int databaseSizeBeforeCreate = permissionRepository.findAll().size();
 
     // Create the Permission with an existing ID
-    this.permission.setName("revalidation:data:sync");
+    this.permission.setName("revalidation:see:dbc:trainees");
     PermissionDTO permission = permissionMapper.permissionToPermissionDTO(this.permission);
 
     // Creating a permission with the same name will do nothing but not fail
