@@ -12,7 +12,7 @@
 
   <groupId>com.transformuk.hee.tis</groupId>
   <artifactId>profile-service</artifactId>
-  <version>3.5.1</version>
+  <version>3.5.2</version>
   <packaging>war</packaging>
   <name>profile-service</name>
 
@@ -242,8 +242,9 @@
       <version>${javax.servlet.version}</version>
     </dependency>
     <dependency>
-      <groupId>mysql</groupId>
-      <artifactId>mysql-connector-java</artifactId>
+      <groupId>com.mysql</groupId>
+      <artifactId>mysql-connector-j</artifactId>
+      <version>8.3.0</version>
     </dependency>
     <!-- Spring Cloud -->
     <dependency>
