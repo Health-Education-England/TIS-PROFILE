@@ -572,13 +572,13 @@ Enable the line below to have remote debugging of your application on port 5005
         <!-- default Spring profiles -->
         <spring.profiles.active>dev</spring.profiles.active>
       </properties>
-      <dependencies>
-        <dependency>
-          <groupId>org.springframework.boot</groupId>
-          <artifactId>spring-boot-devtools</artifactId>
-          <optional>true</optional>
-        </dependency>
-      </dependencies>
+<!--      <dependencies>-->
+<!--        <dependency>-->
+<!--          <groupId>org.springframework.boot</groupId>-->
+<!--          <artifactId>spring-boot-devtools</artifactId>-->
+<!--          <optional>true</optional>-->
+<!--        </dependency>-->
+<!--      </dependencies>-->
     </profile>
     <profile>
       <id>prod</id>
