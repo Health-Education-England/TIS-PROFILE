@@ -99,6 +99,9 @@ public class LoginService {
     Jwt jwt = JwtHelper.decode(token);
     Map<String, Object> claims = jsonParser.parseMap(jwt.getClaims());
     String userName = getString(claims, "preferred_username");
+    if (userName == null) {
+      userName = getString(claims, "email");
+    }
     JwtAuthToken profile = new JwtAuthToken();
     profile.setUsername(userName);
     return profile;
