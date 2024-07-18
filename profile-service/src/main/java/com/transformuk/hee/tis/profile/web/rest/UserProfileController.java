@@ -68,19 +68,27 @@ public class UserProfileController {
    * <p>
    * So all this does for now is just return the user based on the token provided
    *
-   * @param token
+   * Both token headers are included to support both Keycloak and Cognito simultaneously.
+   * TODO: remove OIDC_access_token once fully migrated.
+   *
+   * @param oidcAccessToken
+   * @param authorizationToken
    * @return
    */
   @CrossOrigin
   @RequestMapping(path = "/userupdate", method = GET, produces = APPLICATION_JSON_VALUE)
   @Deprecated
   public ResponseEntity<UserProfile> amendUser(
-      @RequestHeader(value = "OIDC_access_token") String token) {
-    HttpStatus httpStatus;
+          @RequestHeader(value = "OIDC_access_token", required = false) String oidcAccessToken,
+          @RequestHeader(value = "Authorization", required = false) String authorizationToken) {
+    if (oidcAccessToken == null && authorizationToken == null) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+    }
+
+    String token = authorizationToken != null ? authorizationToken : oidcAccessToken;
     HeeUser user = loginService.getUserByToken(token);
-    httpStatus = HttpStatus.OK;
     UserProfile userProfile = assembler.toUserProfile(user);
-    return new ResponseEntity<>(userProfile, httpStatus);
+    return new ResponseEntity<>(userProfile, HttpStatus.OK);
   }
 
   @ApiOperation(value = "Returns list of users by exact matching of given designatedBodyCodes",

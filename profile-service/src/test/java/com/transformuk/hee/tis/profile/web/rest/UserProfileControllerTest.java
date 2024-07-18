@@ -3,6 +3,7 @@ package com.transformuk.hee.tis.profile.web.rest;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 import static org.mockito.internal.util.collections.Sets.newSet;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -84,6 +85,34 @@ public class UserProfileControllerTest {
         .setMessageConverters(jacksonMessageConverter).build();
   }
 
+  @Test
+  public void shouldReturnUnauthorizedWhenNoToken() throws Exception {
+    this.mvc.perform(get("/api/userupdate"))
+            .andExpect(status().isUnauthorized());
+  }
+
+  @Test
+  public void shouldPreferAuthorizationTokenWhenAvailable() throws Exception {
+    given(loginService.getUserByToken("authToken")).willReturn(getUser());
+
+    this.mvc.perform(get("/api/userupdate")
+                    .header("OIDC_access_token", "oidcToken")
+                    .header("Authorization", "authToken"))
+            .andExpect(status().isOk());
+
+    verify(loginService).getUserByToken("authToken");
+  }
+
+  @Test
+  public void shouldUseOidcAccessTokenWhenAuthorizationTokenNotAvailable() throws Exception {
+    given(loginService.getUserByToken("oidcToken")).willReturn(getUser());
+
+    this.mvc.perform(get("/api/userupdate")
+                    .header("OIDC_access_token", "oidcToken"))
+            .andExpect(status().isOk());
+
+    verify(loginService).getUserByToken("oidcToken");
+  }
 
   @Test
   public void shouldReturnUserProfileDetails() throws Exception {
