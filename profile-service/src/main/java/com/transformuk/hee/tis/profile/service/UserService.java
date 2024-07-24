@@ -7,7 +7,8 @@ import com.transformuk.hee.tis.profile.service.dto.HeeUserDTO;
 import com.transformuk.hee.tis.profile.service.mapper.HeeUserMapper;
 import java.util.List;
 import java.util.Optional;
-import net.logstash.logback.encoder.org.apache.commons.lang3.StringUtils;
+
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;

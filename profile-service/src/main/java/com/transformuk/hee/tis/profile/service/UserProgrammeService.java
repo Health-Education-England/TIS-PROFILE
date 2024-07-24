@@ -30,11 +30,11 @@ public class UserProgrammeService {
     }
     List<UserProgramme> userProgrammes = userProgrammeRepository.findByHeeUser(heeUser);
     if (CollectionUtils.isNotEmpty(userProgrammes)) {
-      userProgrammeRepository.delete(userProgrammes);
+      userProgrammeRepository.deleteAll(userProgrammes);
     }
 
     if (CollectionUtils.isNotEmpty(associatedProgrammes)) {
-      userProgrammeRepository.save(associatedProgrammes);
+      userProgrammeRepository.saveAll(associatedProgrammes);
     }
   }
 }

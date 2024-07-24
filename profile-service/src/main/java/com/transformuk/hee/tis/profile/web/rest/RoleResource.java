@@ -1,6 +1,5 @@
 package com.transformuk.hee.tis.profile.web.rest;
 
-import com.codahale.metrics.annotation.Timed;
 import com.transformuk.hee.tis.profile.domain.Role;
 import com.transformuk.hee.tis.profile.dto.RoleDTO;
 import com.transformuk.hee.tis.profile.repository.RoleRepository;
@@ -8,7 +7,7 @@ import com.transformuk.hee.tis.profile.service.mapper.RoleMapper;
 import com.transformuk.hee.tis.profile.validators.RoleValidator;
 import com.transformuk.hee.tis.profile.web.rest.util.HeaderUtil;
 import com.transformuk.hee.tis.profile.web.rest.util.PaginationUtil;
-import io.github.jhipster.web.util.ResponseUtil;
+import io.micrometer.core.annotation.Timed;
 import io.swagger.annotations.ApiParam;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -140,9 +139,9 @@ public class RoleResource {
   @PreAuthorize("hasAuthority('profile:view:entities')")
   public ResponseEntity<RoleDTO> getRole(@PathVariable String name) {
     log.debug("REST request to get Role : {}", name);
-    Role role = roleRepository.findOne(name);
+    Role role = roleRepository.getById(name);
     RoleDTO roleDTO = roleMapper.roleToRoleDTO(role);
-    return ResponseUtil.wrapOrNotFound(Optional.ofNullable(roleDTO));
+    return ResponseEntity.of(Optional.ofNullable(roleDTO));
   }
 
   /**
@@ -159,14 +158,12 @@ public class RoleResource {
     //validate before delete
     roleValidator.validateBeforeDelete(name);
 
-    roleRepository.delete(name);
+    roleRepository.deleteById(name);
     return ResponseEntity.noContent().build();
   }
 
   private void validateRole(Role role) {
     //validate permissions
     roleValidator.validatePermissions(role.getPermissions());
-
   }
-
 }

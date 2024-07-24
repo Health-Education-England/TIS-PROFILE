@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import org.assertj.core.util.Lists;
-import org.h2.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -131,7 +131,7 @@ public class HeeUserRepositoryTest {
   @Transactional
   @Test
   public void getAllUsersShouldAllowForLazyFetchOfAssociatedTrusts() {
-    Pageable pageable = new PageRequest(0, 100);
+    Pageable pageable = PageRequest.of(0, 100);
     Page<HeeUser> result = heeUserRepository.findAll(pageable);
 
     Assert.assertNotNull(result);
@@ -170,10 +170,10 @@ public class HeeUserRepositoryTest {
     user1.setName("Bob");
     user2.setName("James");
     user3.setName("aBo");
-    heeUserRepository.save(Lists.newArrayList(user1, user2, user3));
+    heeUserRepository.saveAll(Lists.newArrayList(user1, user2, user3));
     heeUserRepository.flush();
 
-    Pageable page = new PageRequest(0, 100);
+    Pageable page = PageRequest.of(0, 100);
 
     Page<HeeUser> results = heeUserRepository
         .findByNameIgnoreCaseContaining(page, NAME_SEARCH_STRING);

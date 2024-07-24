@@ -69,7 +69,7 @@ public class TraineeProfileServiceTest {
     // given
     given(traineeProfileRepository.findByGmcNumberIn(gmcNumbers))
         .willReturn(newArrayList(existingTraineeProfile));
-    given(traineeProfileRepository.save(anyListOf(TraineeProfile.class))).willReturn(newArrayList
+    given(traineeProfileRepository.saveAll(anyListOf(TraineeProfile.class))).willReturn(newArrayList
         (existingTraineeProfile, newTraineeProfile));
 
     // when
@@ -81,7 +81,7 @@ public class TraineeProfileServiceTest {
 
   @Test
   public void shouldReturnMappings() {
-    Pageable pageable = new PageRequest(0, 100);
+    Pageable pageable = PageRequest.of(0, 100);
     TraineeProfile existingTraineeProfile = new TraineeProfile(1L, EXISTING_GMC_NUMBER);
     Page<TraineeProfile> page = new PageImpl<>(newArrayList(existingTraineeProfile));
     // given

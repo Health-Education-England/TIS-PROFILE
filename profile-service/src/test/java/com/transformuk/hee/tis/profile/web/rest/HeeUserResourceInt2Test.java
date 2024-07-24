@@ -89,7 +89,7 @@ public class HeeUserResourceInt2Test {
 
   @Test
   public void getAllHeeUsersShouldReturnPageOfHeeUsers() throws Exception {
-    Pageable page = new PageRequest(0, 10);
+    Pageable page = PageRequest.of(0, 10);
     HeeUserDTO heeUserDTO1 = new HeeUserDTO();
     HeeUserDTO heeUserDTO2 = new HeeUserDTO();
     heeUserDTO1.setFirstName(TESTNAME_1);

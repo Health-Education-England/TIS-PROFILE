@@ -4,8 +4,6 @@
 # This configuration will be overriden by the Spring profile you use,
 # for example application-dev.yml if you use the "dev" profile.
 #
-# More information on profiles: https://jhipster.github.io/profiles/
-# More information on configuration properties: https://jhipster.github.io/common-application-properties/
 # ===================================================================
 
 # ===================================================================
@@ -31,9 +29,12 @@ spring:
         - prometheus
     application:
         name: profile
+    main:
+        allow-bean-definition-overriding: true
     jackson:
-        serialization.write_dates_as_timestamps: false
-        serialization.indent_output: true
+        serialization:
+            indent_output: true
+            write_dates_as_timestamps: false
     jpa:
         database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
         database: MYSQL
@@ -125,78 +126,16 @@ info:
         version: #project.version#
 
 # ===================================================================
-# JHipster specific properties
-#
-# Full profile is available at: https://jhipster.github.io/common-application-properties/
-# ===================================================================
-
-jhipster:
-    async:
-        core-pool-size: 2
-        max-pool-size: 50
-        queue-capacity: 10000
-        # By default CORS is disabled. Uncomment to enable.
-        #cors:
-        #allowed-origins: "*"
-        #allowed-methods: GET, PUT, POST, DELETE, OPTIONS
-        #allowed-headers: "*"
-        #exposed-headers:
-        #allow-credentials: true
-        #max-age: 1800
-    swagger:
-        default-include-pattern: /api/.*
-        title: profile API
-        description: profile API documentation
-        version: 1.0.0
-        terms-of-service-url:
-        contact-name:
-        contact-url:
-        contact-email:
-        license:
-        license-url:
-    ribbon:
-        display-on-active-profiles: dev
-    http:
-        version: V_1_1 # To use HTTP/2 you will need SSL support (see above the "server.ssl" configuration)
-    security:
-        authentication:
-            jwt:
-                secret: my-secret-token-to-change-in-production
-                # Token is valid 24 hours
-                token-validity-in-seconds: 86400
-                token-validity-in-seconds-for-remember-me: 2592000
-    metrics: # DropWizard Metrics configuration, used by MetricsConfiguration
-        jmx.enabled: true
-        graphite: # Use the "graphite" Maven profile to have the Graphite dependencies
-            enabled: false
-            host: localhost
-            port: 2003
-            prefix: profile
-        prometheus: # Use the "prometheus" Maven profile to have the Prometheus dependencies
-            enabled: true
-            endpoint: /management/prometheus
-        logs: # Reports Dropwizard metrics in the logs
-            enabled: true
-            reportFrequency: 60 # in seconds
-    logging:
-        logstash: # Forward logs to logstash over a socket, used by LoggingConfiguration
-            enabled: false
-            host: localhost
-            port: 5000
-            queue-size: 512
-
-# ===================================================================
 # Application specific properties
-# Add your own application properties here, see the ApplicationProperties class
-# to have type-safe configuration, like in the JHipsterProperties above
+# Add your own application properties here.  See the ApplicationProperties class
 #
 # More documentation is available at:
-# https://jhipster.github.io/common-application-properties/
+# https://docs.spring.io/spring-boot/docs/2.5.2/reference/htmlsingle/#features.external-config
 # ===================================================================
 
 #log settings
 logging:
-    file: ${LOG_DIR:${HOME}}/auth.log
+    file: ${LOG_DIR:%HOME%}/auth.log
     level:
         root: info
         com.transformuk: debug

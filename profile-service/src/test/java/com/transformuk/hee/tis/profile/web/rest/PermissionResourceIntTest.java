@@ -113,7 +113,7 @@ public class PermissionResourceIntTest {
         .findAll();
     assertThat(permissionList).hasSize(databaseSizeBeforeCreate + 1);
     com.transformuk.hee.tis.profile.domain.Permission testPermission = permissionRepository
-        .findOne(this.permission.getName());
+        .getById(this.permission.getName());
     assertThat(testPermission.getName()).isEqualTo(DEFAULT_NAME);
     assertThat(testPermission.getDescription()).isEqualTo(DEFAULT_DESC);
     assertThat(testPermission.getType()).isEqualTo(DEFAULT_TYPE);

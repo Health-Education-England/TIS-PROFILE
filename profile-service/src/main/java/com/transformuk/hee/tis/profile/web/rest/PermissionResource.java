@@ -1,13 +1,12 @@
 package com.transformuk.hee.tis.profile.web.rest;
 
-import com.codahale.metrics.annotation.Timed;
 import com.transformuk.hee.tis.profile.domain.Permission;
 import com.transformuk.hee.tis.profile.dto.PermissionDTO;
 import com.transformuk.hee.tis.profile.repository.PermissionRepository;
 import com.transformuk.hee.tis.profile.service.mapper.PermissionMapper;
 import com.transformuk.hee.tis.profile.web.rest.util.HeaderUtil;
 import com.transformuk.hee.tis.profile.web.rest.util.PaginationUtil;
-import io.github.jhipster.web.util.ResponseUtil;
+import io.micrometer.core.annotation.Timed;
 import io.swagger.annotations.ApiParam;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -122,9 +121,9 @@ public class PermissionResource {
   @PreAuthorize("hasAuthority('profile:view:entities')")
   public ResponseEntity<PermissionDTO> getPermission(@PathVariable String name) {
     log.debug("REST request to get Permission : {}", name);
-    Permission permission = permissionRepository.findOne(name);
+    Permission permission = permissionRepository.getById(name);
     PermissionDTO permissionDTO = permissionMapper.permissionToPermissionDTO(permission);
-    return ResponseUtil.wrapOrNotFound(Optional.ofNullable(permissionDTO));
+    return ResponseEntity.of(Optional.ofNullable(permissionDTO));
   }
 
   /**
@@ -138,8 +137,7 @@ public class PermissionResource {
   @PreAuthorize("hasAuthority('profile:delete:entities')")
   public ResponseEntity<Void> deletePermission(@PathVariable String name) {
     log.debug("REST request to delete Permission : {}", name);
-    permissionRepository.delete(name);
+    permissionRepository.deleteById(name);
     return ResponseEntity.noContent().build();
   }
-
 }

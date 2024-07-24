@@ -1,14 +1,13 @@
 package com.transformuk.hee.tis.profile.web.rest;
 
-import com.codahale.metrics.annotation.Timed;
 import com.transformuk.hee.tis.profile.domain.JsonPatch;
 import com.transformuk.hee.tis.profile.repository.JsonPatchRepository;
 import com.transformuk.hee.tis.profile.service.mapper.JsonPatchMapper;
 import com.transformuk.hee.tis.profile.web.rest.util.HeaderUtil;
 import com.transformuk.hee.tis.profile.web.rest.util.PaginationUtil;
 import com.transformuk.hee.tis.reference.api.dto.JsonPatchDTO;
-import io.github.jhipster.web.util.ResponseUtil;
 import io.jsonwebtoken.lang.Collections;
+import io.micrometer.core.annotation.Timed;
 import io.swagger.annotations.ApiParam;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -17,6 +16,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
 import org.apache.commons.lang3.StringUtils;
+import org.jboss.resteasy.spi.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -152,9 +152,9 @@ public class JsonPatchResource {
   @Timed
   public ResponseEntity<JsonPatchDTO> getJsonPatch(@PathVariable Long id) {
     log.debug("REST request to get JsonPatch : {}", id);
-    JsonPatch jsonPatch = jsonPatchRepository.findOne(id);
+    JsonPatch jsonPatch = jsonPatchRepository.getById(id);
     JsonPatchDTO jsonPatchDTO = jsonPatchMapper.jsonPatchToJsonPatchDTO(jsonPatch);
-    return ResponseUtil.wrapOrNotFound(Optional.ofNullable(jsonPatchDTO));
+    return ResponseEntity.of(Optional.ofNullable(jsonPatchDTO));
   }
 
   /**
@@ -168,7 +168,7 @@ public class JsonPatchResource {
   @PreAuthorize("hasAuthority('reference:delete:entities')")
   public ResponseEntity<Void> deleteJsonPatch(@PathVariable Long id) {
     log.debug("REST request to delete JsonPatch : {}", id);
-    JsonPatch jsonPatch = jsonPatchRepository.findOne(id);
+    JsonPatch jsonPatch = jsonPatchRepository.getById(id);
     jsonPatch.setEnabled(false);
     jsonPatchRepository.save(jsonPatch);
     return ResponseEntity.ok()
@@ -207,7 +207,7 @@ public class JsonPatchResource {
     }
     List<JsonPatch> jsonPatches = jsonPatchMapper.jsonPatchDTOsToJsonPatches(jsonPatchDTOs);
     jsonPatches.forEach(jsonPatch -> jsonPatch.setEnabled(false));
-    jsonPatches = jsonPatchRepository.save(jsonPatches);
+    jsonPatches = jsonPatchRepository.saveAll(jsonPatches);
     List<JsonPatchDTO> results = jsonPatchMapper.jsonPatchesToJsonPatchDTOs(jsonPatches);
     List<Long> ids = results.stream().map(c -> c.getId()).collect(Collectors.toList());
     return ResponseEntity.ok()

@@ -2,8 +2,8 @@ package com.transformuk.hee.tis.profile.web.rest;
 
 import static java.util.stream.Collectors.toList;
 import static org.slf4j.LoggerFactory.getLogger;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
@@ -23,7 +23,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -92,12 +92,12 @@ public class UserProfileController {
   @CrossOrigin
   @RequestMapping(path = "/users", method = GET, produces = APPLICATION_JSON_VALUE)
   @PreAuthorize("hasAuthority('profile:get:users')")
-  public Resource<UserListResponse> getUsers(
+  public EntityModel<UserListResponse> getUsers(
       @RequestParam(value = "designatedBodyCode") Set<String> designatedBodyCodes,
       @RequestParam(value = "permissions", required = false) String permissions) {
     List<HeeUser> users = loginService.getUsers(designatedBodyCodes, permissions);
     UserListResponse response = toUserListResponse(users);
-    Resource<UserListResponse> resource = new Resource<>(response);
+    EntityModel<UserListResponse> resource = new EntityModel<>(response);
     resource.add(
         linkTo(methodOn(UserProfileController.class).getUsers(designatedBodyCodes, permissions))
             .withSelfRel());
