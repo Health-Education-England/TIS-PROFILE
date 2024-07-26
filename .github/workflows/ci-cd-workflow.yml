@@ -19,7 +19,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Set up JDK
+      - name: Set up build JDK
         uses: actions/setup-java@v3
         with:
           cache: maven
@@ -58,6 +58,19 @@ jobs:
 
       - name: Run tests
         run: mvn test
+
+      - name: Set up analysis JDK
+        uses: actions/setup-java@v3
+        with:
+          cache: maven
+          distribution: adopt
+          java-version: 17
+
+      - name: maven-settings-xml-action
+        uses: whelk-io/maven-settings-xml-action@v21
+        with:
+          servers: '[{ "id": "codeartifact", "username": "aws", "password": "${env.CODEARTIFACT_AUTH_TOKEN}" }]'
+          repositories: '[{ "id": "codeartifact", "url": "https://hee-430723991443.d.codeartifact.eu-west-1.amazonaws.com/maven/Health-Education-England/" }]'
 
       - name: Run quality analysis
         env:
