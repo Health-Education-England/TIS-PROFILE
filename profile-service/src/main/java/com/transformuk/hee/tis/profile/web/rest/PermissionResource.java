@@ -54,7 +54,7 @@ public class PermissionResource {
    *
    * @param permissionDTO the permissionDTO to create
    * @return the ResponseEntity with status 201 (Created) and with body the new permissionDTO, or
-   * with status 400 (Bad Request) if the permission has already an ID
+   *     with status 400 (Bad Request) if the permission has already an ID
    * @throws URISyntaxException if the Location URI syntax is incorrect
    */
   @PostMapping("/permissions")
@@ -67,7 +67,7 @@ public class PermissionResource {
     permission = permissionRepository.save(permission);
     PermissionDTO result = permissionMapper.permissionToPermissionDTO(permission);
     return ResponseEntity.created(new URI("/api/permissions/" + result.getName()))
-        .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getName().toString()))
+        .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getName()))
         .body(result);
   }
 
@@ -78,8 +78,8 @@ public class PermissionResource {
    *
    * @param permission the permission to update
    * @return the ResponseEntity with status 200 (OK) and with body the updated permission, or with
-   * status 400 (Bad Request) if the permission is not valid, or with status 500 (Internal Server
-   * Error) if the permission couldnt be updated
+   *     status 400 (Bad Request) if the permission is not valid, or with status 500 (Internal
+   *     Server Error) if the permission couldnt be updated
    * @throws URISyntaxException if the Location URI syntax is incorrect
    */
   @PutMapping("/permissions")
@@ -114,16 +114,15 @@ public class PermissionResource {
    *
    * @param name the id of the permissionDTO to retrieve
    * @return the ResponseEntity with status 200 (OK) and with body the permissionDTO, or with status
-   * 404 (Not Found)
+   *     404 (Not Found)
    */
   @GetMapping("/permissions/{name}")
   @Timed
   @PreAuthorize("hasAuthority('profile:view:entities')")
   public ResponseEntity<PermissionDTO> getPermission(@PathVariable String name) {
     log.debug("REST request to get Permission : {}", name);
-    Permission permission = permissionRepository.getById(name);
-    PermissionDTO permissionDTO = permissionMapper.permissionToPermissionDTO(permission);
-    return ResponseEntity.of(Optional.ofNullable(permissionDTO));
+    Optional<Permission> permission = permissionRepository.findById(name);
+    return ResponseEntity.of(permission.map(permissionMapper::permissionToPermissionDTO));
   }
 
   /**

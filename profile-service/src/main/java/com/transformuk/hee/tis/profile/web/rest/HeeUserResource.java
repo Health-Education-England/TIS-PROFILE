@@ -77,7 +77,7 @@ public class HeeUserResource {
    *
    * @param heeUserDTO the heeUserDTO to create
    * @return the ResponseEntity with status 201 (Created) and with body the new heeUserDTO, or with
-   * status 400 (Bad Request) if the heeUser has already an ID
+   *     status 400 (Bad Request) if the heeUser has already an ID
    * @throws URISyntaxException if the Location URI syntax is incorrect
    */
   @PostMapping("/hee-users")
@@ -121,8 +121,8 @@ public class HeeUserResource {
    *
    * @param heeUserDTO the heeUserDTO to update
    * @return the ResponseEntity with status 200 (OK) and with body the updated heeUserDTO, or with
-   * status 400 (Bad Request) if the heeUserDTO is not valid, or with status 500 (Internal Server
-   * Error) if the heeUserDTO couldnt be updated
+   *     status 400 (Bad Request) if the heeUserDTO is not valid, or with status 500 (Internal
+   *     Server Error) if the heeUserDTO couldnt be updated
    * @throws URISyntaxException if the Location URI syntax is incorrect
    */
   @PutMapping("/hee-users")
@@ -132,8 +132,8 @@ public class HeeUserResource {
       throws URISyntaxException {
     log.debug("REST request to update HeeUser : {}", heeUserDTO);
 
-    HeeUser dbHeeUser = heeUserRepository.getById(heeUserDTO.getName());
-    if (dbHeeUser == null || dbHeeUser.getName() == null) {
+    Optional<HeeUser> dbHeeUser = heeUserRepository.findById(heeUserDTO.getName());
+    if (!dbHeeUser.isPresent()) {
       return createHeeUser(heeUserDTO);
     }
     HeeUser heeUser = heeUserMapper.heeUserDTOToHeeUser(heeUserDTO);
@@ -149,7 +149,7 @@ public class HeeUserResource {
     HeeUserDTO result = heeUserMapper.heeUserToHeeUserDTO(
         heeUserRepository.findByNameWithTrustsAndProgrammes(heeUserDTO.getName()).orElse(null));
     return ResponseEntity.ok()
-        .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, heeUserDTO.getName().toString()))
+        .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, heeUserDTO.getName()))
         .body(result);
   }
 
@@ -175,7 +175,7 @@ public class HeeUserResource {
    *
    * @param name the name of the heeUserDTO to retrieve
    * @return the ResponseEntity with status 200 (OK) and with body the heeUserDTO, or with status
-   * 404 (Not Found)
+   *     404 (Not Found)
    */
   @GetMapping("/hee-users/{name:.+}")
   @Timed
@@ -230,7 +230,8 @@ public class HeeUserResource {
   @GetMapping("/hee-users-with-roles/{roleNames}")
   @Timed
   @PreAuthorize("hasAuthority('profile:view:entities')")
-  public ResponseEntity<List<BasicHeeUserDTO>> getUsersByRoles(@PathVariable List<String> roleNames) {
+  public ResponseEntity<List<BasicHeeUserDTO>> getUsersByRoles(
+      @PathVariable List<String> roleNames) {
     log.debug("REST request to get HeeUsers with roles : {}", roleNames);
     List<BasicHeeUserDTO> heeUserDTOs = userService.findUsersByRoles(roleNames);
     return ResponseEntity.of(Optional.ofNullable(heeUserDTOs));
