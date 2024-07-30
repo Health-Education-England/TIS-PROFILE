@@ -57,7 +57,7 @@ public class HeeUserResource {
   private final UserService userService;
   private final UserProgrammeService userProgrammeService;
 
-  private HeeUserValidator heeUserValidator;
+  private final HeeUserValidator heeUserValidator;
 
   public HeeUserResource(HeeUserRepository heeUserRepository, HeeUserMapper heeUserMapper,
       HeeUserValidator heeUserValidator,
@@ -158,7 +158,6 @@ public class HeeUserResource {
    *
    * @param pageable the pagination information
    * @return the ResponseEntity with status 200 (OK) and the list of heeUsers in body
-   * @throws URISyntaxException if there is an error to generate the pagination HTTP headers
    */
   @GetMapping("/hee-users")
   @Timed

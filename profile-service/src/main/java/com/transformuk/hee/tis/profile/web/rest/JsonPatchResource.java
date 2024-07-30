@@ -108,7 +108,6 @@ public class JsonPatchResource {
    *
    * @param pageable the pagination information
    * @return the ResponseEntity with status 200 (OK) and the list of jsonPatches in body
-   * @throws URISyntaxException if there is an error to generate the pagination HTTP headers
    */
   @GetMapping("/jsonPatches")
   @Timed
@@ -124,8 +123,8 @@ public class JsonPatchResource {
    * GET //jsonPatches/updateType/:tableDtoName : get the "updateType" and "tableDtoName"
    * jsonPatches
    *
-   * @param tableDtoName
-   * @return
+   * @param tableDtoName the table to search for patches against
+   * @return objects describing patch operations
    */
   @GetMapping("/jsonPatches/updateType/{tableDtoName}")
   @Timed
@@ -178,13 +177,12 @@ public class JsonPatchResource {
    * @return the ResponseEntity with status 200 (OK) and with body the updated countryDTOS, or with
    *     status 400 (Bad Request) if the countryDTOS is not valid, or with status 500 (Internal
    *     Server Error) if the countryDTOS couldnt be updated
-   * @throws URISyntaxException if the Location URI syntax is incorrect
    */
   @PutMapping("/bulk-jsonPatches")
   @Timed
   @PreAuthorize("hasAuthority('reference:add:modify:entities')")
   public ResponseEntity<List<JsonPatchDTO>> bulkDeleteJsonPatch(
-      @Valid @RequestBody List<JsonPatchDTO> jsonPatchDTOs) throws URISyntaxException {
+      @Valid @RequestBody List<JsonPatchDTO> jsonPatchDTOs) {
     log.debug("REST request to bulk update JsonPatchDTO : {}", jsonPatchDTOs);
     if (Collections.isEmpty(jsonPatchDTOs)) {
       return ResponseEntity.badRequest()
@@ -205,7 +203,7 @@ public class JsonPatchResource {
     jsonPatches.forEach(jsonPatch -> jsonPatch.setEnabled(false));
     jsonPatches = jsonPatchRepository.saveAll(jsonPatches);
     List<JsonPatchDTO> results = jsonPatchMapper.jsonPatchesToJsonPatchDTOs(jsonPatches);
-    List<Long> ids = results.stream().map(c -> c.getId()).collect(Collectors.toList());
+    List<Long> ids = results.stream().map(JsonPatchDTO::getId).collect(Collectors.toList());
     return ResponseEntity.ok()
         .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, StringUtils.join(ids, ",")))
         .body(results);

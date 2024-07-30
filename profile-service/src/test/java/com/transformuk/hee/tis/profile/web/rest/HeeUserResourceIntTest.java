@@ -247,16 +247,16 @@ public class HeeUserResourceIntTest {
     restHeeUserMockMvc.perform(get("/api/hee-users?sort=name,desc"))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-        .andExpect(jsonPath("$.content.[*].name").value(hasItem(DEFAULT_NAME.toString())))
+        .andExpect(jsonPath("$.content.[*].name").value(hasItem(DEFAULT_NAME)))
         .andExpect(
-            jsonPath("$.content.[*].firstName").value(hasItem(DEFAULT_FIRST_NAME.toString())))
-        .andExpect(jsonPath("$.content.[*].lastName").value(hasItem(DEFAULT_LAST_NAME.toString())))
-        .andExpect(jsonPath("$.content.[*].gmcId").value(hasItem(DEFAULT_GMC_ID.toString())))
+            jsonPath("$.content.[*].firstName").value(hasItem(DEFAULT_FIRST_NAME)))
+        .andExpect(jsonPath("$.content.[*].lastName").value(hasItem(DEFAULT_LAST_NAME)))
+        .andExpect(jsonPath("$.content.[*].gmcId").value(hasItem(DEFAULT_GMC_ID)))
         .andExpect(
-            jsonPath("$.content.[*].phoneNumber").value(hasItem(DEFAULT_PHONE_NUMBER.toString())))
+            jsonPath("$.content.[*].phoneNumber").value(hasItem(DEFAULT_PHONE_NUMBER)))
         .andExpect(
-            jsonPath("$.content.[*].emailAddress").value(hasItem(DEFAULT_EMAIL_ADDRESS.toString())))
-        .andExpect(jsonPath("$.content.[*].active").value(hasItem(DEFAULT_ACTIVE.booleanValue())))
+            jsonPath("$.content.[*].emailAddress").value(hasItem(DEFAULT_EMAIL_ADDRESS)))
+        .andExpect(jsonPath("$.content.[*].active").value(hasItem(DEFAULT_ACTIVE)))
         .andExpect(jsonPath("$.size").value(20))
         .andExpect(jsonPath("$.totalPages").value(1));
   }
@@ -271,13 +271,13 @@ public class HeeUserResourceIntTest {
     restHeeUserMockMvc.perform(get("/api/hee-users/{id}", heeUser.getName()))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-        .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()))
-        .andExpect(jsonPath("$.firstName").value(DEFAULT_FIRST_NAME.toString()))
-        .andExpect(jsonPath("$.lastName").value(DEFAULT_LAST_NAME.toString()))
-        .andExpect(jsonPath("$.gmcId").value(DEFAULT_GMC_ID.toString()))
-        .andExpect(jsonPath("$.phoneNumber").value(DEFAULT_PHONE_NUMBER.toString()))
-        .andExpect(jsonPath("$.emailAddress").value(DEFAULT_EMAIL_ADDRESS.toString()))
-        .andExpect(jsonPath("$.active").value(DEFAULT_ACTIVE.booleanValue()));
+        .andExpect(jsonPath("$.name").value(DEFAULT_NAME))
+        .andExpect(jsonPath("$.firstName").value(DEFAULT_FIRST_NAME))
+        .andExpect(jsonPath("$.lastName").value(DEFAULT_LAST_NAME))
+        .andExpect(jsonPath("$.gmcId").value(DEFAULT_GMC_ID))
+        .andExpect(jsonPath("$.phoneNumber").value(DEFAULT_PHONE_NUMBER))
+        .andExpect(jsonPath("$.emailAddress").value(DEFAULT_EMAIL_ADDRESS))
+        .andExpect(jsonPath("$.active").value(DEFAULT_ACTIVE));
   }
 
   @Test

@@ -56,7 +56,6 @@ public class HeeUserRepositoryTest {
   @Autowired
   private UserTrustRepository userTrustRepository;
 
-  private HeeUser heeUserWithTrust, heeUserWithEmptyTrust, heeUserWithNullTrust;
   private UserTrust userTrust1, userTrust2;
 
   @Before
@@ -70,7 +69,7 @@ public class HeeUserRepositoryTest {
   }
 
   private void createHeeUsers() {
-    heeUserWithTrust = new HeeUser();
+    HeeUser heeUserWithTrust = new HeeUser();
     heeUserWithTrust.setActive(true);
     heeUserWithTrust.setGmcId(GMC_ID_1);
     heeUserWithTrust.setEmailAddress(EMAIL_1);
@@ -81,7 +80,7 @@ public class HeeUserRepositoryTest {
     heeUserWithTrust.addAssociatedTrust(userTrust1);
     heeUserWithTrust.addAssociatedTrust(userTrust2);
 
-    heeUserWithEmptyTrust = new HeeUser();
+    HeeUser heeUserWithEmptyTrust = new HeeUser();
     heeUserWithEmptyTrust.setActive(true);
     heeUserWithEmptyTrust.setGmcId(GMC_ID_2);
     heeUserWithEmptyTrust.setEmailAddress(EMAIL_2);
@@ -90,7 +89,7 @@ public class HeeUserRepositoryTest {
     heeUserWithEmptyTrust.setName(NAME_2);
     heeUserWithEmptyTrust.setPhoneNumber(PHONE_NUMBER_2);
 
-    heeUserWithNullTrust = new HeeUser();
+    HeeUser heeUserWithNullTrust = new HeeUser();
     heeUserWithNullTrust.setActive(true);
     heeUserWithNullTrust.setGmcId(GMC_ID_3);
     heeUserWithNullTrust.setEmailAddress(EMAIL_3);
@@ -100,9 +99,9 @@ public class HeeUserRepositoryTest {
     heeUserWithNullTrust.setPhoneNumber(PHONE_NUMBER_3);
     heeUserWithNullTrust.setAssociatedTrusts(null);
 
-    heeUserWithTrust = heeUserRepository.saveAndFlush(heeUserWithTrust);
-    heeUserWithEmptyTrust = heeUserRepository.saveAndFlush(heeUserWithEmptyTrust);
-    heeUserWithNullTrust = heeUserRepository.saveAndFlush(heeUserWithNullTrust);
+    heeUserRepository.saveAndFlush(heeUserWithTrust);
+    heeUserRepository.saveAndFlush(heeUserWithEmptyTrust);
+    heeUserRepository.saveAndFlush(heeUserWithNullTrust);
 
     userTrustRepository.saveAndFlush(userTrust1);
     userTrustRepository.saveAndFlush(userTrust2);

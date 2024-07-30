@@ -17,7 +17,6 @@ import com.transformuk.hee.tis.profile.web.rest.errors.ExceptionTranslator;
 import com.transformuk.hee.tis.reference.api.dto.JsonPatchDTO;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.EntityManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -61,9 +60,6 @@ public class JsonPatchResourceIntTest {
 
   @Autowired
   private ExceptionTranslator exceptionTranslator;
-
-  @Autowired
-  private EntityManager em;
 
   private MockMvc restCountryMockMvc;
 
@@ -172,9 +168,9 @@ public class JsonPatchResourceIntTest {
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
         .andExpect(jsonPath("$.[*].id").value(hasItem(jsonPatch.getId().intValue())))
-        .andExpect(jsonPath("$.[*].tableDtoName").value(hasItem(DEFAULT_TABLE_DTO_NAME.toString())))
-        .andExpect(jsonPath("$.[*].patchId").value(hasItem(DEFAULT_PATCH_ID.toString())))
-        .andExpect(jsonPath("$.[*].patch").value(hasItem(DEFAULT_PATCH.toString())))
+        .andExpect(jsonPath("$.[*].tableDtoName").value(hasItem(DEFAULT_TABLE_DTO_NAME)))
+        .andExpect(jsonPath("$.[*].patchId").value(hasItem(DEFAULT_PATCH_ID)))
+        .andExpect(jsonPath("$.[*].patch").value(hasItem(DEFAULT_PATCH)))
         .andExpect(jsonPath("$.[*].enabled").value(hasItem(true)));
   }
 
@@ -189,9 +185,9 @@ public class JsonPatchResourceIntTest {
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
         .andExpect(jsonPath("$.id").value(jsonPatch.getId().intValue()))
-        .andExpect(jsonPath("$.tableDtoName").value(DEFAULT_TABLE_DTO_NAME.toString()))
-        .andExpect(jsonPath("$.patchId").value(DEFAULT_PATCH_ID.toString()))
-        .andExpect(jsonPath("$.patch").value(DEFAULT_PATCH.toString()))
+        .andExpect(jsonPath("$.tableDtoName").value(DEFAULT_TABLE_DTO_NAME))
+        .andExpect(jsonPath("$.patchId").value(DEFAULT_PATCH_ID))
+        .andExpect(jsonPath("$.patch").value(DEFAULT_PATCH))
         .andExpect(jsonPath("$.enabled").value(true));
   }
 
