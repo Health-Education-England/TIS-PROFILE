@@ -23,14 +23,12 @@ import com.transformuk.hee.tis.profile.validators.RoleValidator;
 import com.transformuk.hee.tis.profile.web.rest.errors.ExceptionTranslator;
 import java.util.Collections;
 import java.util.List;
-import javax.persistence.EntityManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
-import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -77,9 +75,6 @@ public class RoleResourceIntTest {
   @Autowired
   private HeeUserRepository heeUserRepository;
 
-  @Autowired
-  private EntityManager em;
-
   private MockMvc restRoleMockMvc;
 
   private Role role;
@@ -118,7 +113,7 @@ public class RoleResourceIntTest {
     // Create the Role
     RoleDTO roleDTO = roleMapper.roleToRoleDTO(role);
     restRoleMockMvc.perform(post("/api/roles")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.JSON)
             .content(TestUtil.convertObjectToJsonBytes(roleDTO)))
         .andExpect(status().isCreated());
 
@@ -145,7 +140,7 @@ public class RoleResourceIntTest {
 
     RoleDTO roleDTO = roleMapper.roleToRoleDTO(role);
     restRoleMockMvc.perform(post("/api/roles")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.JSON)
             .content(TestUtil.convertObjectToJsonBytes(roleDTO)))
         .andExpect(status().is4xxClientError());
 
@@ -168,7 +163,7 @@ public class RoleResourceIntTest {
 
     // Creating a role with the same name will do nothing but not fail
     restRoleMockMvc.perform(post("/api/roles")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.JSON)
             .content(TestUtil.convertObjectToJsonBytes(roleDTO)))
         .andExpect(status().isCreated());
 
@@ -189,7 +184,7 @@ public class RoleResourceIntTest {
     RoleDTO roleDTO = roleMapper.roleToRoleDTO(role);
 
     restRoleMockMvc.perform(post("/api/roles")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.JSON)
             .content(TestUtil.convertObjectToJsonBytes(roleDTO)))
         .andExpect(status().isBadRequest());
 
@@ -211,7 +206,7 @@ public class RoleResourceIntTest {
     // Get all the roleList
     restRoleMockMvc.perform(get("/api/roles?size=" + resultSize))
         .andExpect(status().isOk())
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(content().contentType(TestUtil.JSON))
         .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)));
   }
 
@@ -224,7 +219,7 @@ public class RoleResourceIntTest {
     // Get the role
     restRoleMockMvc.perform(get("/api/roles/{id}", role.getName()))
         .andExpect(status().isOk())
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(content().contentType(TestUtil.JSON))
         .andExpect(jsonPath("$.name").value(DEFAULT_NAME));
   }
 
@@ -247,7 +242,7 @@ public class RoleResourceIntTest {
 
     // If the entity doesn't have an ID, it will be created instead of just being updated
     restRoleMockMvc.perform(put("/api/roles")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.JSON)
             .content(TestUtil.convertObjectToJsonBytes(roleDTO)))
         .andExpect(status().isCreated());
 
@@ -267,7 +262,7 @@ public class RoleResourceIntTest {
 
     // Get the role
     restRoleMockMvc.perform(delete("/api/roles/{id}", role.getName())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(TestUtil.JSON))
         .andExpect(status().isNoContent());
 
     // Validate the database is empty
@@ -282,7 +277,7 @@ public class RoleResourceIntTest {
     // Initialize the database
     roleRepository.saveAndFlush(role);
     //create User with same role associated with it
-    HeeUser heeUser = TestUtil.createEntityHeeUser(em);
+    HeeUser heeUser = TestUtil.createEntityHeeUser();
     heeUser.setRoles(Collections.singleton(role));
     heeUser.setActive(TestUtil.UPDATED_ACTIVE);
     heeUserRepository.saveAndFlush(heeUser);
@@ -291,7 +286,7 @@ public class RoleResourceIntTest {
 
     // Get the role
     restRoleMockMvc.perform(delete("/api/roles/{id}", role.getName())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(TestUtil.JSON))
         .andExpect(status().is4xxClientError());
 
     // Validate the database is empty

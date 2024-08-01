@@ -22,7 +22,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
-import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -101,7 +100,7 @@ public class PermissionResourceIntTest {
     // Create the Permission
     PermissionDTO permissionDto = permissionMapper.permissionToPermissionDTO(this.permission);
     restPermissionMockMvc.perform(post("/api/permissions")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.JSON)
             .content(TestUtil.convertObjectToJsonBytes(permissionDto)))
         .andExpect(status().isCreated());
 
@@ -131,7 +130,7 @@ public class PermissionResourceIntTest {
 
     // Creating a permissionDto with the same name will do nothing but not fail
     restPermissionMockMvc.perform(post("/api/permissions")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.JSON)
             .content(TestUtil.convertObjectToJsonBytes(permissionDto)))
         .andExpect(status().isCreated());
 
@@ -152,7 +151,7 @@ public class PermissionResourceIntTest {
     PermissionDTO permissionDto = permissionMapper.permissionToPermissionDTO(this.permission);
 
     restPermissionMockMvc.perform(post("/api/permissions")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.JSON)
             .content(TestUtil.convertObjectToJsonBytes(permissionDto)))
         .andExpect(status().isBadRequest());
 
@@ -170,7 +169,7 @@ public class PermissionResourceIntTest {
     // Get all the permissionList
     restPermissionMockMvc.perform(get("/api/permissions?sort=name,asc"))
         .andExpect(status().isOk())
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(content().contentType(TestUtil.JSON))
         .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
         .andExpect(jsonPath("$.[*].type").value(hasItem(DEFAULT_TYPE.toString())))
         .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESC)))
@@ -189,7 +188,7 @@ public class PermissionResourceIntTest {
     // Get the permission
     restPermissionMockMvc.perform(get("/api/permissions/{id}", permission.getName()))
         .andExpect(status().isOk())
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(content().contentType(TestUtil.JSON))
         .andExpect(jsonPath("$.name").value(DEFAULT_NAME))
         .andExpect(jsonPath("$.type").value(DEFAULT_TYPE.toString()))
         .andExpect(jsonPath("$.description").value(DEFAULT_DESC))
@@ -216,7 +215,7 @@ public class PermissionResourceIntTest {
 
     // Get the permission
     restPermissionMockMvc.perform(delete("/api/permissions/{id}", permission.getName())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(TestUtil.JSON))
         .andExpect(status().isNoContent());
 
     // Validate the database is empty

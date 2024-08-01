@@ -65,8 +65,8 @@ public class JsonPatchResource {
       throws URISyntaxException {
     log.debug("REST request to save jsonPatch : {}", jsonPatchDTO);
     if (jsonPatchDTO.getId() != null) {
-      return ResponseEntity.badRequest().headers(HeaderUtil
-              .createFailureAlert(ENTITY_NAME, "idexists", "A new jsonPatch cannot already have an ID"))
+      return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(
+              ENTITY_NAME, "idexists", "A new jsonPatch cannot already have an ID"))
           .body(null);
     }
     JsonPatch jsonPatch = jsonPatchMapper.jsonPatchDTOToJsonPatch(jsonPatchDTO);
@@ -123,8 +123,8 @@ public class JsonPatchResource {
    * GET //jsonPatches/updateType/:tableDtoName : get the "updateType" and "tableDtoName"
    * jsonPatches
    *
-   * @param tableDtoName the table to search for patches against
-   * @return objects describing patch operations
+   * @param tableDtoName The table/DTO to return patches for
+   * @return A list of patch operations in date order
    */
   @GetMapping("/jsonPatches/updateType/{tableDtoName}")
   @Timed

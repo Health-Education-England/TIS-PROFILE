@@ -32,7 +32,6 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
     database: H2
     open-in-view: false
-    show-sql: true
     hibernate:
       ddl-auto: none
       naming:

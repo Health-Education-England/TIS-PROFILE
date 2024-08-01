@@ -39,14 +39,12 @@ import com.transformuk.hee.tis.profile.service.mapper.HeeUserMapper;
 import com.transformuk.hee.tis.profile.validators.HeeUserValidator;
 import com.transformuk.hee.tis.profile.web.rest.errors.ExceptionTranslator;
 import java.util.List;
-import javax.persistence.EntityManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
-import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -95,9 +93,6 @@ public class HeeUserResourceIntTest {
   private UserProgrammeService userProgrammeService;
 
   @Autowired
-  private EntityManager em;
-
-  @Autowired
   private UserService userService;
 
   private MockMvc restHeeUserMockMvc;
@@ -118,7 +113,7 @@ public class HeeUserResourceIntTest {
 
   @Before
   public void initTest() {
-    heeUser = createEntityHeeUser(em);
+    heeUser = createEntityHeeUser();
     heeUser.setDesignatedBodyCodes(Sets.newHashSet("NONE"));
   }
 
@@ -133,7 +128,7 @@ public class HeeUserResourceIntTest {
     // Create the HeeUser
     HeeUserDTO heeUserDTO = heeUserMapper.heeUserToHeeUserDTO(heeUser);
     restHeeUserMockMvc.perform(post("/api/hee-users")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.JSON)
             .content(TestUtil.convertObjectToJsonBytes(heeUserDTO)))
         .andExpect(status().isCreated());
 
@@ -162,7 +157,7 @@ public class HeeUserResourceIntTest {
     // Create the HeeUser
     HeeUserDTO heeUserDTO = heeUserMapper.heeUserToHeeUserDTO(heeUser);
     restHeeUserMockMvc.perform(post("/api/hee-users")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.JSON)
             .content(TestUtil.convertObjectToJsonBytes(heeUserDTO)))
         .andExpect(status().is4xxClientError())
         .andExpect(jsonPath("$.message").value("isTemporaryPassword should be true or false"));
@@ -184,7 +179,7 @@ public class HeeUserResourceIntTest {
     // Create the HeeUser
     HeeUserDTO heeUserDTO = heeUserMapper.heeUserToHeeUserDTO(heeUser);
     restHeeUserMockMvc.perform(post("/api/hee-users")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.JSON)
             .content(TestUtil.convertObjectToJsonBytes(heeUserDTO)))
         .andExpect(status().is4xxClientError())
         .andExpect(jsonPath("$.message").value("Password should be minimum 8 chars long"));
@@ -209,7 +204,7 @@ public class HeeUserResourceIntTest {
 
     // A user with the same name will update the existing user
     restHeeUserMockMvc.perform(post("/api/hee-users")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.JSON)
             .content(TestUtil.convertObjectToJsonBytes(heeUserDTO)))
         .andExpect(status().isCreated());
 
@@ -229,7 +224,7 @@ public class HeeUserResourceIntTest {
     HeeUserDTO heeUserDTO = heeUserMapper.heeUserToHeeUserDTO(heeUser);
 
     restHeeUserMockMvc.perform(post("/api/hee-users")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.JSON)
             .content(TestUtil.convertObjectToJsonBytes(heeUserDTO)))
         .andExpect(status().isBadRequest());
 
@@ -246,7 +241,7 @@ public class HeeUserResourceIntTest {
     // Get all the heeUserList
     restHeeUserMockMvc.perform(get("/api/hee-users?sort=name,desc"))
         .andExpect(status().isOk())
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(content().contentType(TestUtil.JSON))
         .andExpect(jsonPath("$.content.[*].name").value(hasItem(DEFAULT_NAME)))
         .andExpect(
             jsonPath("$.content.[*].firstName").value(hasItem(DEFAULT_FIRST_NAME)))
@@ -270,7 +265,7 @@ public class HeeUserResourceIntTest {
     // Get the heeUser
     restHeeUserMockMvc.perform(get("/api/hee-users/{id}", heeUser.getName()))
         .andExpect(status().isOk())
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(content().contentType(TestUtil.JSON))
         .andExpect(jsonPath("$.name").value(DEFAULT_NAME))
         .andExpect(jsonPath("$.firstName").value(DEFAULT_FIRST_NAME))
         .andExpect(jsonPath("$.lastName").value(DEFAULT_LAST_NAME))
@@ -296,7 +291,7 @@ public class HeeUserResourceIntTest {
     heeUserRepository.saveAndFlush(heeUser);
     restHeeUserMockMvc.perform(get("/api/hee-users/{username}/ignore-case", "abc"))
         .andExpect(status().isOk())
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(content().contentType(TestUtil.JSON))
         .andExpect(jsonPath("$.[*].name").value(username));
   }
 
@@ -320,7 +315,7 @@ public class HeeUserResourceIntTest {
     HeeUserDTO heeUserDTO = heeUserMapper.heeUserToHeeUserDTO(updatedHeeUser);
 
     restHeeUserMockMvc.perform(put("/api/hee-users")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.JSON)
             .content(TestUtil.convertObjectToJsonBytes(heeUserDTO)))
         .andExpect(status().isOk());
 
@@ -354,7 +349,7 @@ public class HeeUserResourceIntTest {
 
     // If the entity doesn't have an ID, it will be created instead of just being updated
     restHeeUserMockMvc.perform(put("/api/hee-users")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .contentType(TestUtil.JSON)
             .content(TestUtil.convertObjectToJsonBytes(heeUserDTO)))
         .andExpect(status().is2xxSuccessful());
 
@@ -373,7 +368,7 @@ public class HeeUserResourceIntTest {
 
     // Get the heeUser
     restHeeUserMockMvc.perform(delete("/api/hee-users/{id}", heeUser.getName())
-            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(TestUtil.JSON))
         .andExpect(status().isNoContent());
 
     // Validate the database is empty
