@@ -16,6 +16,7 @@ import static com.transformuk.hee.tis.profile.web.rest.TestUtil.UPDATED_NAME;
 import static com.transformuk.hee.tis.profile.web.rest.TestUtil.UPDATED_PHONE_NUMBER;
 import static com.transformuk.hee.tis.profile.web.rest.TestUtil.createEntityHeeUser;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -35,10 +36,12 @@ import com.transformuk.hee.tis.profile.service.UserProgrammeService;
 import com.transformuk.hee.tis.profile.service.UserService;
 import com.transformuk.hee.tis.profile.service.UserTrustService;
 import com.transformuk.hee.tis.profile.service.dto.HeeUserDTO;
+import com.transformuk.hee.tis.profile.service.dto.UserTrustDTO;
 import com.transformuk.hee.tis.profile.service.mapper.HeeUserMapper;
 import com.transformuk.hee.tis.profile.validators.HeeUserValidator;
 import com.transformuk.hee.tis.profile.web.rest.errors.ExceptionTranslator;
 import java.util.List;
+import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -305,18 +308,25 @@ public class HeeUserResourceIntTest {
 
     // Update the heeUser
     HeeUser updatedHeeUser = heeUserRepository.getById(heeUser.getName());
-    updatedHeeUser
-        .firstName(UPDATED_FIRST_NAME)
-        .lastName(UPDATED_LAST_NAME)
-        .gmcId(UPDATED_GMC_ID)
-        .phoneNumber(UPDATED_PHONE_NUMBER)
-        .emailAddress(UPDATED_EMAIL_ADDRESS)
-        .active(UPDATED_ACTIVE);
-    HeeUserDTO heeUserDTO = heeUserMapper.heeUserToHeeUserDTO(updatedHeeUser);
+    HeeUserDTO heeUserDto = heeUserMapper.heeUserToHeeUserDTO(updatedHeeUser);
+    heeUserDto.setFirstName(UPDATED_FIRST_NAME);
+    heeUserDto.setLastName(UPDATED_LAST_NAME);
+    heeUserDto.setGmcId(UPDATED_GMC_ID);
+    heeUserDto.setPhoneNumber(UPDATED_PHONE_NUMBER);
+    heeUserDto.setEmailAddress(UPDATED_EMAIL_ADDRESS);
+    heeUserDto.setActive(UPDATED_ACTIVE);
+    UserTrustDTO trustDto = new UserTrustDTO();
+    final String UPDATED_TRUST_CODE = "Ed";
+    final long UPDATED_TRUST_ID = 2L;
+    final String UPDATED_TRUST_NAME = "Kitten";
+    trustDto.setTrustCode(UPDATED_TRUST_CODE);
+    trustDto.setTrustId(UPDATED_TRUST_ID);
+    trustDto.setTrustName(UPDATED_TRUST_NAME);
+    heeUserDto.setAssociatedTrusts(Set.of(trustDto));
 
     restHeeUserMockMvc.perform(put("/api/hee-users")
             .contentType(TestUtil.JSON)
-            .content(TestUtil.convertObjectToJsonBytes(heeUserDTO)))
+            .content(TestUtil.convertObjectToJsonBytes(heeUserDto)))
         .andExpect(status().isOk());
 
     // Validate the HeeUser in the database
@@ -330,6 +340,8 @@ public class HeeUserResourceIntTest {
     assertThat(testHeeUser.getPhoneNumber()).isEqualTo(UPDATED_PHONE_NUMBER);
     assertThat(testHeeUser.getEmailAddress()).isEqualTo(UPDATED_EMAIL_ADDRESS);
     assertThat(testHeeUser.isActive()).isEqualTo(UPDATED_ACTIVE);
+    assertThat(testHeeUser.getAssociatedTrusts()).extracting("trustCode", "trustId", "trustName")
+        .contains(tuple(UPDATED_TRUST_CODE, UPDATED_TRUST_ID, UPDATED_TRUST_NAME));
 
     assertThat(permissionRepository.findAll()).hasSize(databasePermissionSizeBeforeCreate);
   }

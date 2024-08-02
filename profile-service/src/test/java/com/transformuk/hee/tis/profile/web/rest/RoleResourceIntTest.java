@@ -14,6 +14,7 @@ import com.transformuk.hee.tis.profile.ProfileApp;
 import com.transformuk.hee.tis.profile.domain.HeeUser;
 import com.transformuk.hee.tis.profile.domain.Permission;
 import com.transformuk.hee.tis.profile.domain.Role;
+import com.transformuk.hee.tis.profile.dto.PermissionDTO;
 import com.transformuk.hee.tis.profile.dto.RoleDTO;
 import com.transformuk.hee.tis.profile.repository.HeeUserRepository;
 import com.transformuk.hee.tis.profile.repository.PermissionRepository;
@@ -23,6 +24,9 @@ import com.transformuk.hee.tis.profile.validators.RoleValidator;
 import com.transformuk.hee.tis.profile.web.rest.errors.ExceptionTranslator;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -250,6 +254,37 @@ public class RoleResourceIntTest {
     List<Role> roleList = roleRepository.findAll();
     assertThat(roleList).hasSize(databaseSizeBeforeUpdate + 1);
     assertThat(permissionRepository.findAll()).hasSize(dbPermissionSizeBeforeCreate);
+  }
+
+  @Test
+  @Transactional
+  public void updateExistingRole() throws Exception {
+    roleRepository.saveAndFlush(role);
+    int databaseSizeBeforeUpdate = roleRepository.findAll().size();
+    Permission permission = PermissionResourceIntTest.createEntity();
+    permission = permissionRepository.saveAndFlush(permission);
+    int dbPermissionSizeBeforeCreate = permissionRepository.findAll().size();
+
+    // Create the Role
+    RoleDTO roleDto = roleMapper.roleToRoleDTO(role);
+    PermissionDTO permissionDto = new PermissionDTO();
+    permissionDto.setName(permission.getName());
+    List<String> permissionList = Stream.of(permission.getActions()).collect(Collectors.toList());
+    permissionDto.setActions(permissionList);
+    roleDto.setPermissions(Set.of(permissionDto));
+
+    // If the entity doesn't have an ID, it will be created instead of just being updated
+    restRoleMockMvc.perform(put("/api/roles")
+            .contentType(TestUtil.JSON)
+            .content(TestUtil.convertObjectToJsonBytes(roleDto)))
+        .andExpect(status().isOk());
+
+    // Validate the Role in the database
+    List<Role> roleList = roleRepository.findAll();
+    assertThat(roleList).hasSize(databaseSizeBeforeUpdate);
+    assertThat(permissionRepository.findAll()).hasSize(dbPermissionSizeBeforeCreate);
+    Role actualRole = roleRepository.findByName(roleDto.getName());
+    assertThat(actualRole.getPermissions()).containsOnly(permission);
   }
 
   @Test
