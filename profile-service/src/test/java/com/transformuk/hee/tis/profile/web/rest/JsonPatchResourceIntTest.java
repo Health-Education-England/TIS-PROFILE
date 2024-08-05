@@ -15,17 +15,16 @@ import com.transformuk.hee.tis.profile.repository.JsonPatchRepository;
 import com.transformuk.hee.tis.profile.service.mapper.JsonPatchMapper;
 import com.transformuk.hee.tis.profile.web.rest.errors.ExceptionTranslator;
 import com.transformuk.hee.tis.reference.api.dto.JsonPatchDTO;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.EntityManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
-import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -63,9 +62,6 @@ public class JsonPatchResourceIntTest {
   @Autowired
   private ExceptionTranslator exceptionTranslator;
 
-  @Autowired
-  private EntityManager em;
-
   private MockMvc restCountryMockMvc;
 
   private JsonPatch jsonPatch;
@@ -76,19 +72,17 @@ public class JsonPatchResourceIntTest {
    * This is a static method, as tests for other entities might also need it, if they test an entity
    * which requires the current entity.
    */
-  public static JsonPatch createEntity(EntityManager em) {
-    JsonPatch jsonPatch = new JsonPatch()
+  public static JsonPatch createEntity() {
+    return new JsonPatch()
         .tableDtoName(DEFAULT_TABLE_DTO_NAME)
         .patchId(DEFAULT_PATCH_ID)
         .patch(DEFAULT_PATCH)
         .enabled(true)
         .dateAdded(new Date());
-    return jsonPatch;
   }
 
   @Before
   public void setup() {
-    MockitoAnnotations.initMocks(this);
     JsonPatchResource jsonPatchResource = new JsonPatchResource(jsonPatchRepository,
         jsonPatchMapper);
     this.restCountryMockMvc = MockMvcBuilders.standaloneSetup(jsonPatchResource)
@@ -99,7 +93,7 @@ public class JsonPatchResourceIntTest {
 
   @Before
   public void initTest() {
-    jsonPatch = createEntity(em);
+    jsonPatch = createEntity();
   }
 
   @Test
@@ -110,8 +104,8 @@ public class JsonPatchResourceIntTest {
     // Create the JsonPatch
     JsonPatchDTO jsonPatchDTO = jsonPatchMapper.jsonPatchToJsonPatchDTO(jsonPatch);
     restCountryMockMvc.perform(post("/api/jsonPatches")
-        .contentType(TestUtil.APPLICATION_JSON_UTF8)
-        .content(TestUtil.convertObjectToJsonBytes(jsonPatchDTO)))
+            .contentType(TestUtil.JSON)
+            .content(TestUtil.convertObjectToJsonBytes(jsonPatchDTO)))
         .andExpect(status().isCreated());
 
     // Validate the JsonPatch in the database
@@ -136,8 +130,8 @@ public class JsonPatchResourceIntTest {
 
     // An entity with an existing ID cannot be created, so this API call must fail
     restCountryMockMvc.perform(post("/api/jsonPatches")
-        .contentType(TestUtil.APPLICATION_JSON_UTF8)
-        .content(TestUtil.convertObjectToJsonBytes(jsonPatchDTO)))
+            .contentType(TestUtil.JSON)
+            .content(TestUtil.convertObjectToJsonBytes(jsonPatchDTO)))
         .andExpect(status().isBadRequest());
 
     // Validate the Alice in the database
@@ -156,8 +150,8 @@ public class JsonPatchResourceIntTest {
     JsonPatchDTO jsonPatchDTO = jsonPatchMapper.jsonPatchToJsonPatchDTO(jsonPatch);
 
     restCountryMockMvc.perform(post("/api/jsonPatches")
-        .contentType(TestUtil.APPLICATION_JSON_UTF8)
-        .content(TestUtil.convertObjectToJsonBytes(jsonPatchDTO)))
+            .contentType(TestUtil.JSON)
+            .content(TestUtil.convertObjectToJsonBytes(jsonPatchDTO)))
         .andExpect(status().isBadRequest());
 
     List<JsonPatch> jsonPatchList = jsonPatchRepository.findAll();
@@ -173,11 +167,29 @@ public class JsonPatchResourceIntTest {
     // Get all the jsonPatchList
     restCountryMockMvc.perform(get("/api/jsonPatches?sort=id,desc"))
         .andExpect(status().isOk())
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+        .andExpect(content().contentType(TestUtil.JSON))
         .andExpect(jsonPath("$.[*].id").value(hasItem(jsonPatch.getId().intValue())))
-        .andExpect(jsonPath("$.[*].tableDtoName").value(hasItem(DEFAULT_TABLE_DTO_NAME.toString())))
-        .andExpect(jsonPath("$.[*].patchId").value(hasItem(DEFAULT_PATCH_ID.toString())))
-        .andExpect(jsonPath("$.[*].patch").value(hasItem(DEFAULT_PATCH.toString())))
+        .andExpect(jsonPath("$.[*].tableDtoName").value(hasItem(DEFAULT_TABLE_DTO_NAME)))
+        .andExpect(jsonPath("$.[*].patchId").value(hasItem(DEFAULT_PATCH_ID)))
+        .andExpect(jsonPath("$.[*].patch").value(hasItem(DEFAULT_PATCH)))
+        .andExpect(jsonPath("$.[*].enabled").value(hasItem(true)));
+  }
+
+  @Test
+  @Transactional
+  public void getUpdateTypeJsonPatches() throws Exception {
+    // Initialize the database
+    jsonPatchRepository.saveAndFlush(jsonPatch);
+
+    // Get all the jsonPatchList
+    restCountryMockMvc.perform(
+            get("/api/jsonPatches/updateType/{table}?sort=id,desc", DEFAULT_TABLE_DTO_NAME))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(TestUtil.JSON))
+        .andExpect(jsonPath("$.[*].id").value(hasItem(jsonPatch.getId().intValue())))
+        .andExpect(jsonPath("$.[*].tableDtoName").value(hasItem(DEFAULT_TABLE_DTO_NAME)))
+        .andExpect(jsonPath("$.[*].patchId").value(hasItem(DEFAULT_PATCH_ID)))
+        .andExpect(jsonPath("$.[*].patch").value(hasItem(DEFAULT_PATCH)))
         .andExpect(jsonPath("$.[*].enabled").value(hasItem(true)));
   }
 
@@ -190,11 +202,11 @@ public class JsonPatchResourceIntTest {
     // Get the jsonPatch
     restCountryMockMvc.perform(get("/api/jsonPatches/{id}", jsonPatch.getId()))
         .andExpect(status().isOk())
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+        .andExpect(content().contentType(TestUtil.JSON))
         .andExpect(jsonPath("$.id").value(jsonPatch.getId().intValue()))
-        .andExpect(jsonPath("$.tableDtoName").value(DEFAULT_TABLE_DTO_NAME.toString()))
-        .andExpect(jsonPath("$.patchId").value(DEFAULT_PATCH_ID.toString()))
-        .andExpect(jsonPath("$.patch").value(DEFAULT_PATCH.toString()))
+        .andExpect(jsonPath("$.tableDtoName").value(DEFAULT_TABLE_DTO_NAME))
+        .andExpect(jsonPath("$.patchId").value(DEFAULT_PATCH_ID))
+        .andExpect(jsonPath("$.patch").value(DEFAULT_PATCH))
         .andExpect(jsonPath("$.enabled").value(true));
   }
 
@@ -214,15 +226,15 @@ public class JsonPatchResourceIntTest {
     int databaseSizeBeforeUpdate = jsonPatchRepository.findAll().size();
 
     // Update the jsonPatch
-    JsonPatch updateJsonPatch = jsonPatchRepository.findOne(jsonPatch.getId());
+    JsonPatch updateJsonPatch = jsonPatchRepository.getById(jsonPatch.getId());
     updateJsonPatch
         .patchId(UPDATED_DEFAULT_PATCH_ID)
         .patch(UPDATED_DEFAULT_PATCH);
     JsonPatchDTO jsonPatchDTO = jsonPatchMapper.jsonPatchToJsonPatchDTO(updateJsonPatch);
 
     restCountryMockMvc.perform(put("/api/jsonPatches")
-        .contentType(TestUtil.APPLICATION_JSON_UTF8)
-        .content(TestUtil.convertObjectToJsonBytes(jsonPatchDTO)))
+            .contentType(TestUtil.JSON)
+            .content(TestUtil.convertObjectToJsonBytes(jsonPatchDTO)))
         .andExpect(status().isOk());
 
     // Validate the JsonPatch in the database
@@ -235,6 +247,60 @@ public class JsonPatchResourceIntTest {
 
   @Test
   @Transactional
+  public void bulkSoftDeleteJsonPatch() throws Exception {
+    // Initialize the database
+    jsonPatchRepository.saveAndFlush(jsonPatch);
+    int databaseSizeBeforeUpdate = jsonPatchRepository.findAll().size();
+
+    // Update the jsonPatch
+    JsonPatch updateJsonPatch = jsonPatchRepository.getById(jsonPatch.getId());
+    updateJsonPatch
+        .patchId(UPDATED_DEFAULT_PATCH_ID)
+        .patch(UPDATED_DEFAULT_PATCH);
+    JsonPatchDTO jsonPatchDto = jsonPatchMapper.jsonPatchToJsonPatchDTO(updateJsonPatch);
+
+    restCountryMockMvc.perform(put("/api/bulk-jsonPatches")
+            .contentType(TestUtil.JSON)
+            .content(TestUtil.convertObjectToJsonBytes(Collections.singletonList(jsonPatchDto))))
+        .andExpect(status().isOk());
+
+    // Validate the JsonPatch in the database
+    List<JsonPatch> jsonPatchList = jsonPatchRepository.findAll();
+    assertThat(jsonPatchList).hasSize(databaseSizeBeforeUpdate);
+    JsonPatch testJsonPatch = jsonPatchList.get(jsonPatchList.size() - 1);
+    assertThat(testJsonPatch.getPatchId()).isEqualTo(UPDATED_DEFAULT_PATCH_ID);
+    assertThat(testJsonPatch.getPatch()).isEqualTo(UPDATED_DEFAULT_PATCH);
+    assertThat(testJsonPatch.getEnabled()).isFalse();
+  }
+
+  @Test
+  @Transactional
+  public void bulkSoftDeleteBadRequest() throws Exception {
+    // Initialize the database
+    JsonPatchDTO patchWithoutId = jsonPatchMapper.jsonPatchToJsonPatchDTO(createEntity());
+    jsonPatchRepository.saveAndFlush(jsonPatch);
+    int databaseSizeBeforeUpdate = jsonPatchRepository.findAll().size();
+
+    // Update the jsonPatch
+    JsonPatch updateJsonPatch = jsonPatchRepository.getById(jsonPatch.getId());
+    JsonPatchDTO jsonPatchDto = jsonPatchMapper.jsonPatchToJsonPatchDTO(updateJsonPatch);
+
+    restCountryMockMvc.perform(put("/api/bulk-jsonPatches")
+            .contentType(TestUtil.JSON)
+            .content(TestUtil.convertObjectToJsonBytes(Arrays.asList(jsonPatchDto, patchWithoutId))))
+        .andExpect(status().isBadRequest());
+
+    // Validate the JsonPatch in the database
+    List<JsonPatch> jsonPatchList = jsonPatchRepository.findAll();
+    assertThat(jsonPatchList).hasSize(databaseSizeBeforeUpdate);
+    JsonPatch testJsonPatch = jsonPatchList.get(jsonPatchList.size() - 1);
+    assertThat(testJsonPatch.getPatchId()).isEqualTo(DEFAULT_PATCH_ID);
+    assertThat(testJsonPatch.getPatch()).isEqualTo(DEFAULT_PATCH);
+    assertThat(testJsonPatch.getEnabled()).isTrue();
+  }
+
+  @Test
+  @Transactional
   public void updateNonExistingJsonPatch() throws Exception {
     int databaseSizeBeforeUpdate = jsonPatchRepository.findAll().size();
 
@@ -243,8 +309,8 @@ public class JsonPatchResourceIntTest {
 
     // If the entity doesn't have an ID, it will be created instead of just being updated
     restCountryMockMvc.perform(put("/api/jsonPatches")
-        .contentType(TestUtil.APPLICATION_JSON_UTF8)
-        .content(TestUtil.convertObjectToJsonBytes(jsonPatchDTO)))
+            .contentType(TestUtil.JSON)
+            .content(TestUtil.convertObjectToJsonBytes(jsonPatchDTO)))
         .andExpect(status().isCreated());
 
     // Validate the JsonPatch in the database
@@ -261,7 +327,7 @@ public class JsonPatchResourceIntTest {
 
     // Get the jsonPatch
     restCountryMockMvc.perform(put("/api/jsonPatches/{id}", jsonPatch.getId())
-        .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .accept(TestUtil.JSON))
         .andExpect(status().isOk());
 
     // Validate the database is soft deleted
