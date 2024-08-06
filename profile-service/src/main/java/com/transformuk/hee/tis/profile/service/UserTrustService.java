@@ -30,11 +30,11 @@ public class UserTrustService {
     }
     List<UserTrust> userTrusts = userTrustRepository.findByHeeUser(heeUser);
     if (CollectionUtils.isNotEmpty(userTrusts)) {
-      userTrustRepository.deleteAll(userTrusts);
+      userTrustRepository.delete(userTrusts);
     }
 
     if (CollectionUtils.isNotEmpty(associatedTrusts)) {
-      userTrustRepository.saveAll(associatedTrusts);
+      userTrustRepository.save(associatedTrusts);
     }
   }
 }

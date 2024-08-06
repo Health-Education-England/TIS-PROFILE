@@ -1,13 +1,14 @@
 package com.transformuk.hee.tis.profile.web.rest;
 
+import com.codahale.metrics.annotation.Timed;
 import com.transformuk.hee.tis.profile.domain.JsonPatch;
 import com.transformuk.hee.tis.profile.repository.JsonPatchRepository;
 import com.transformuk.hee.tis.profile.service.mapper.JsonPatchMapper;
 import com.transformuk.hee.tis.profile.web.rest.util.HeaderUtil;
 import com.transformuk.hee.tis.profile.web.rest.util.PaginationUtil;
 import com.transformuk.hee.tis.reference.api.dto.JsonPatchDTO;
+import io.github.jhipster.web.util.ResponseUtil;
 import io.jsonwebtoken.lang.Collections;
-import io.micrometer.core.annotation.Timed;
 import io.swagger.annotations.ApiParam;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -55,7 +56,7 @@ public class JsonPatchResource {
    *
    * @param jsonPatchDTO the JsonPatchDTO to create
    * @return the ResponseEntity with status 201 (Created) and with body the new JsonPatchDTO, or
-   *     with status 400 (Bad Request) if the jsonPatch has already an ID
+   * with status 400 (Bad Request) if the jsonPatch has already an ID
    * @throws URISyntaxException if the Location URI syntax is incorrect
    */
   @PostMapping("/jsonPatches")
@@ -65,8 +66,8 @@ public class JsonPatchResource {
       throws URISyntaxException {
     log.debug("REST request to save jsonPatch : {}", jsonPatchDTO);
     if (jsonPatchDTO.getId() != null) {
-      return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(
-              ENTITY_NAME, "idexists", "A new jsonPatch cannot already have an ID"))
+      return ResponseEntity.badRequest().headers(HeaderUtil
+          .createFailureAlert(ENTITY_NAME, "idexists", "A new jsonPatch cannot already have an ID"))
           .body(null);
     }
     JsonPatch jsonPatch = jsonPatchMapper.jsonPatchDTOToJsonPatch(jsonPatchDTO);
@@ -82,8 +83,8 @@ public class JsonPatchResource {
    *
    * @param jsonPatchDTO the jsonPatchDTO to update
    * @return the ResponseEntity with status 200 (OK) and with body the updated jsonPatchDTO, or with
-   *     status 400 (Bad Request) if the jsonPatchDTO is not valid, or with status 500 (Internal
-   *     Server Error) if the jsonPatchDTO couldnt be updated
+   * status 400 (Bad Request) if the jsonPatchDTO is not valid, or with status 500 (Internal Server
+   * Error) if the jsonPatchDTO couldnt be updated
    * @throws URISyntaxException if the Location URI syntax is incorrect
    */
   @PutMapping("/jsonPatches")
@@ -108,6 +109,7 @@ public class JsonPatchResource {
    *
    * @param pageable the pagination information
    * @return the ResponseEntity with status 200 (OK) and the list of jsonPatches in body
+   * @throws URISyntaxException if there is an error to generate the pagination HTTP headers
    */
   @GetMapping("/jsonPatches")
   @Timed
@@ -123,8 +125,8 @@ public class JsonPatchResource {
    * GET //jsonPatches/updateType/:tableDtoName : get the "updateType" and "tableDtoName"
    * jsonPatches
    *
-   * @param tableDtoName The table/DTO to return patches for
-   * @return A list of patch operations in date order
+   * @param tableDtoName
+   * @return
    */
   @GetMapping("/jsonPatches/updateType/{tableDtoName}")
   @Timed
@@ -132,9 +134,11 @@ public class JsonPatchResource {
       @PathVariable String tableDtoName) {
     log.debug("REST request to get a page of jsonPatches");
     List<JsonPatch> jsonPatches = jsonPatchRepository
-        .findByTableDtoNameAndPatchIdIsNotNullOrderByDateAddedAsc(tableDtoName);
+        .findByTableDtoNameAndPatchIdIsNotNullOrderByDateAddedAsc(
+            tableDtoName);
     return new ResponseEntity<>(jsonPatchMapper.jsonPatchesToJsonPatchDTOs(jsonPatches),
         HttpStatus.OK);
+
   }
 
   /**
@@ -142,14 +146,15 @@ public class JsonPatchResource {
    *
    * @param id the id of the jsonPatchDTO to retrieve
    * @return the ResponseEntity with status 200 (OK) and with body the JsonPatchDTO, or with status
-   *     404 (Not Found)
+   * 404 (Not Found)
    */
   @GetMapping("/jsonPatches/{id}")
   @Timed
   public ResponseEntity<JsonPatchDTO> getJsonPatch(@PathVariable Long id) {
     log.debug("REST request to get JsonPatch : {}", id);
-    Optional<JsonPatch> jsonPatch = jsonPatchRepository.findById(id);
-    return ResponseEntity.of(jsonPatch.map(jsonPatchMapper::jsonPatchToJsonPatchDTO));
+    JsonPatch jsonPatch = jsonPatchRepository.findOne(id);
+    JsonPatchDTO jsonPatchDTO = jsonPatchMapper.jsonPatchToJsonPatchDTO(jsonPatch);
+    return ResponseUtil.wrapOrNotFound(Optional.ofNullable(jsonPatchDTO));
   }
 
   /**
@@ -163,7 +168,7 @@ public class JsonPatchResource {
   @PreAuthorize("hasAuthority('reference:delete:entities')")
   public ResponseEntity<Void> deleteJsonPatch(@PathVariable Long id) {
     log.debug("REST request to delete JsonPatch : {}", id);
-    JsonPatch jsonPatch = jsonPatchRepository.getById(id);
+    JsonPatch jsonPatch = jsonPatchRepository.findOne(id);
     jsonPatch.setEnabled(false);
     jsonPatchRepository.save(jsonPatch);
     return ResponseEntity.ok()
@@ -175,14 +180,15 @@ public class JsonPatchResource {
    *
    * @param jsonPatchDTOs List of the jsonPatchDTOs to update
    * @return the ResponseEntity with status 200 (OK) and with body the updated countryDTOS, or with
-   *     status 400 (Bad Request) if the countryDTOS is not valid, or with status 500 (Internal
-   *     Server Error) if the countryDTOS couldnt be updated
+   * status 400 (Bad Request) if the countryDTOS is not valid, or with status 500 (Internal Server
+   * Error) if the countryDTOS couldnt be updated
+   * @throws URISyntaxException if the Location URI syntax is incorrect
    */
   @PutMapping("/bulk-jsonPatches")
   @Timed
   @PreAuthorize("hasAuthority('reference:add:modify:entities')")
   public ResponseEntity<List<JsonPatchDTO>> bulkDeleteJsonPatch(
-      @Valid @RequestBody List<JsonPatchDTO> jsonPatchDTOs) {
+      @Valid @RequestBody List<JsonPatchDTO> jsonPatchDTOs) throws URISyntaxException {
     log.debug("REST request to bulk update JsonPatchDTO : {}", jsonPatchDTOs);
     if (Collections.isEmpty(jsonPatchDTOs)) {
       return ResponseEntity.badRequest()
@@ -201,9 +207,9 @@ public class JsonPatchResource {
     }
     List<JsonPatch> jsonPatches = jsonPatchMapper.jsonPatchDTOsToJsonPatches(jsonPatchDTOs);
     jsonPatches.forEach(jsonPatch -> jsonPatch.setEnabled(false));
-    jsonPatches = jsonPatchRepository.saveAll(jsonPatches);
+    jsonPatches = jsonPatchRepository.save(jsonPatches);
     List<JsonPatchDTO> results = jsonPatchMapper.jsonPatchesToJsonPatchDTOs(jsonPatches);
-    List<Long> ids = results.stream().map(JsonPatchDTO::getId).collect(Collectors.toList());
+    List<Long> ids = results.stream().map(c -> c.getId()).collect(Collectors.toList());
     return ResponseEntity.ok()
         .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, StringUtils.join(ids, ",")))
         .body(results);

@@ -4,15 +4,15 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.5.2</version>
+    <artifactId>tis-parent</artifactId>
+    <groupId>com.transformuk.hee</groupId>
+    <version>2.1.0</version>
     <relativePath/>
   </parent>
 
   <groupId>com.transformuk.hee.tis</groupId>
   <artifactId>profile-service</artifactId>
-  <version>3.5.2</version>
+  <version>3.5.1</version>
   <packaging>war</packaging>
   <name>profile-service</name>
 
@@ -28,12 +28,14 @@
     <commons-lang.version>3.12.0</commons-lang.version>
     <docker-maven-plugin.version>1.2.2</docker-maven-plugin.version>
     <frontend.maven.plugin.version>1.3</frontend.maven.plugin.version>
-    <hibernate.version>5.3.34.Final</hibernate.version>
-    <hibernate.validator.version>5.3.6.Final</hibernate.validator.version>
-    <java.version>11</java.version>
+    <hibernate.version>5.2.8.Final</hibernate.version>
+    <hikaricp.version>2.6.0</hikaricp.version>
+    <java.version>1.8</java.version>
     <javassist.version>3.21.0-GA</javassist.version>
     <javax.servlet.version>4.0.1</javax.servlet.version>
+    <jhipster.server.version>1.1.0</jhipster.server.version>
     <jjwt.version>0.9.1</jjwt.version>
+    <logstash-logback-encoder.version>6.6</logstash-logback-encoder.version>
     <m2e.apt.activation>jdt_apt</m2e.apt.activation>
     <mapstruct.version>1.4.2.Final</mapstruct.version>
     <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
@@ -43,16 +45,19 @@
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
     <maven.version>3.0.0</maven.version>
+    <metrics-spring.version>3.1.3</metrics-spring.version>
     <node.version>v6.10.0</node.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <project.testresult.directory>${project.build.directory}/test-results</project.testresult.directory>
+    <prometheus-simpleclient.version>0.12.0</prometheus-simpleclient.version>
     <run.addResources>false</run.addResources>
     <scala-maven-plugin.version>3.2.2</scala-maven-plugin.version>
     <scala.version>2.12.1</scala.version>
 
     <!-- Spring properties -->
     <springfox.version>2.6.1</springfox.version>
+    <undertow.version>1.4.10.Final</undertow.version>
     <validation-api.version>1.1.0.Final</validation-api.version>
     <yarn.version>v0.21.3</yarn.version>
 
@@ -61,6 +66,22 @@
   </properties>
 
   <dependencies>
+
+    <dependency>
+      <groupId>io.prometheus</groupId>
+      <artifactId>simpleclient</artifactId>
+      <version>${prometheus-simpleclient.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.prometheus</groupId>
+      <artifactId>simpleclient_dropwizard</artifactId>
+      <version>${prometheus-simpleclient.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.prometheus</groupId>
+      <artifactId>simpleclient_servlet</artifactId>
+      <version>${prometheus-simpleclient.version}</version>
+    </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.datatype</groupId>
       <artifactId>jackson-datatype-hibernate5</artifactId>
@@ -87,6 +108,31 @@
       <artifactId>h2</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>com.jayway.jsonpath</groupId>
+      <artifactId>json-path</artifactId>
+      <scope>test</scope>
+      <!-- parent POM declares this dependency in default (compile) scope -->
+    </dependency>
+    <dependency>
+      <groupId>com.ryantenney.metrics</groupId>
+      <artifactId>metrics-spring</artifactId>
+      <version>${metrics-spring.version}</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>metrics-annotation</artifactId>
+          <groupId>com.codahale.metrics</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>metrics-core</artifactId>
+          <groupId>com.codahale.metrics</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>metrics-healthchecks</artifactId>
+          <groupId>com.codahale.metrics</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
 
     <!-- TIS shared modules -->
     <dependency>
@@ -97,7 +143,7 @@
     <dependency>
       <groupId>com.transformuk.hee</groupId>
       <artifactId>profile-api</artifactId>
-      <version>2.4.6</version>
+      <version>2.4.5</version>
     </dependency>
     <dependency>
       <groupId>com.transformuk.hee</groupId>
@@ -129,6 +175,40 @@
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
       <version>${commons-io.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.dropwizard.metrics</groupId>
+      <artifactId>metrics-annotation</artifactId>
+      <version>${dropwizard-metrics.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.dropwizard.metrics</groupId>
+      <artifactId>metrics-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.dropwizard.metrics</groupId>
+      <artifactId>metrics-json</artifactId>
+      <version>${dropwizard-metrics.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.dropwizard.metrics</groupId>
+      <artifactId>metrics-jvm</artifactId>
+      <version>${dropwizard-metrics.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.dropwizard.metrics</groupId>
+      <artifactId>metrics-servlet</artifactId>
+      <version>${dropwizard-metrics.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.dropwizard.metrics</groupId>
+      <artifactId>metrics-servlets</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>io.github.jhipster</groupId>
+      <artifactId>jhipster</artifactId>
+      <version>${jhipster.server.version}</version>
     </dependency>
     <dependency>
       <groupId>io.jsonwebtoken</groupId>
@@ -167,6 +247,25 @@
     </dependency>
     <!-- Spring Cloud -->
     <dependency>
+      <groupId>net.logstash.logback</groupId>
+      <artifactId>logstash-logback-encoder</artifactId>
+      <version>${logstash-logback-encoder.version}</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>logback-core</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-classic</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>logback-access</artifactId>
+          <groupId>ch.qos.logback</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
       <version>${commons-lang.version}</version>
@@ -189,12 +288,10 @@
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-envers</artifactId>
-      <version>${hibernate.version}</version>
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-validator</artifactId>
-      <version>${hibernate.validator.version}</version>
     </dependency>
     <dependency>
       <groupId>org.mapstruct</groupId>
@@ -233,8 +330,13 @@
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-cloud-connectors</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-data-jpa</artifactId>
     </dependency>
+
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-hateoas</artifactId>
@@ -255,28 +357,10 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>com.vaadin.external.google</groupId>
-          <artifactId>android-json</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.junit.vintage</groupId>
-      <artifactId>junit-vintage-engine</artifactId>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-undertow</artifactId>
-      <exclusions>
-        <!-- Exclude web sockets -->
-        <exclusion>
-          <artifactId>undertow-websockets-jsr</artifactId>
-          <groupId>io.undertow</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -293,14 +377,20 @@
       <artifactId>spring-boot-test</artifactId>
       <scope>test</scope>
     </dependency>
+
     <dependency>
       <groupId>org.springframework.data</groupId>
       <artifactId>spring-data-envers</artifactId>
+      <version>1.1.0.RELEASE</version>
     </dependency>
     <!-- security -->
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-data</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-jwt</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.security</groupId>
@@ -318,6 +408,7 @@
       <artifactId>sentry-spring</artifactId>
       <version>1.7.30</version>
     </dependency>
+    <!-- jhipster-needle-maven-add-dependency -->
   </dependencies>
   <build>
     <defaultGoal>spring-boot:run</defaultGoal>
@@ -367,13 +458,13 @@
         <configuration>
           <rules>
             <requireMavenVersion>
-              <message>You are running an older version of Maven. This build requires at least Maven
+              <message>You are running an older version of Maven. JHipster requires at least Maven
                 ${maven.version}
               </message>
               <version>[${maven.version},)</version>
             </requireMavenVersion>
             <requireJavaVersion>
-              <message>You are running an older version of Java. This build requires at least JDK
+              <message>You are running an older version of Java. JHipster requires at least JDK
                 ${java.version}
               </message>
               <version>[${java.version}.0,)</version>
@@ -429,6 +520,13 @@
         </configuration>
       </plugin>
       <plugin>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>2.1.1</version>
+        <configuration>
+          <attachClasses>true</attachClasses>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
         <configuration>
@@ -459,6 +557,7 @@ Enable the line below to have remote debugging of your application on port 5005
           </execution>
         </executions>
       </plugin>
+      <!-- jhipster-needle-maven-add-plugin -->
     </plugins>
   </build>
   <profiles>
@@ -507,6 +606,41 @@ Enable the line below to have remote debugging of your application on port 5005
         <!-- default Spring profiles -->
         <spring.profiles.active>prod</spring.profiles.active>
       </properties>
+    </profile>
+    <profile>
+      <!--
+  Profile for monitoring the application with Graphite.
+-->
+      <id>graphite</id>
+      <dependencies>
+        <dependency>
+          <groupId>io.dropwizard.metrics</groupId>
+          <artifactId>metrics-graphite</artifactId>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <!--
+  Profile for monitoring the application with Prometheus.
+-->
+      <id>prometheus</id>
+      <dependencies>
+        <dependency>
+          <groupId>io.prometheus</groupId>
+          <artifactId>simpleclient</artifactId>
+          <version>${prometheus-simpleclient.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>io.prometheus</groupId>
+          <artifactId>simpleclient_dropwizard</artifactId>
+          <version>${prometheus-simpleclient.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>io.prometheus</groupId>
+          <artifactId>simpleclient_servlet</artifactId>
+          <version>${prometheus-simpleclient.version}</version>
+        </dependency>
+      </dependencies>
     </profile>
     <profile>
       <!--

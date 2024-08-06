@@ -100,7 +100,7 @@ public class TraineeProfileControllerTest {
   @Test
   public void shouldReturnExistingTraineeIds() throws Exception {
     //Given
-    Pageable pageable = PageRequest.of(0, 10);
+    Pageable pageable = new PageRequest(0, 10);
     TraineeProfile existingTraineeProfile = new TraineeProfile(1L, GMC_NUMBER);
     Page<TraineeProfile> page = new PageImpl<>(newArrayList(existingTraineeProfile));
 

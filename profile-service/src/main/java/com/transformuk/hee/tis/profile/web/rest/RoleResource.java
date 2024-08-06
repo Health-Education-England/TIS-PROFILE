@@ -1,5 +1,6 @@
 package com.transformuk.hee.tis.profile.web.rest;
 
+import com.codahale.metrics.annotation.Timed;
 import com.transformuk.hee.tis.profile.domain.Role;
 import com.transformuk.hee.tis.profile.dto.RoleDTO;
 import com.transformuk.hee.tis.profile.repository.RoleRepository;
@@ -7,7 +8,7 @@ import com.transformuk.hee.tis.profile.service.mapper.RoleMapper;
 import com.transformuk.hee.tis.profile.validators.RoleValidator;
 import com.transformuk.hee.tis.profile.web.rest.util.HeaderUtil;
 import com.transformuk.hee.tis.profile.web.rest.util.PaginationUtil;
-import io.micrometer.core.annotation.Timed;
+import io.github.jhipster.web.util.ResponseUtil;
 import io.swagger.annotations.ApiParam;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -58,7 +59,7 @@ public class RoleResource {
    *
    * @param roleDTO the roleDTO to create
    * @return the ResponseEntity with status 201 (Created) and with body the new roleDTO, or with
-   *     status 400 (Bad Request) if the role has already an ID
+   * status 400 (Bad Request) if the role has already an ID
    * @throws URISyntaxException if the Location URI syntax is incorrect
    */
   @PostMapping("/roles")
@@ -74,7 +75,7 @@ public class RoleResource {
     role = roleRepository.save(role);
     RoleDTO result = roleMapper.roleToRoleDTO(role);
     return ResponseEntity.created(new URI("/api/roles/" + result.getName()))
-        .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getName()))
+        .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getName().toString()))
         .body(result);
   }
 
@@ -85,8 +86,8 @@ public class RoleResource {
    *
    * @param roleDTO the roleDTO to update
    * @return the ResponseEntity with status 200 (OK) and with body the updated roleDTO, or with
-   *     status 400 (Bad Request) if the roleDTO is not valid, or with status 500 (Internal Server
-   *     Error) if the roleDTO couldnt be updated
+   * status 400 (Bad Request) if the roleDTO is not valid, or with status 500 (Internal Server
+   * Error) if the roleDTO couldnt be updated
    * @throws URISyntaxException if the Location URI syntax is incorrect
    */
   @PutMapping("/roles")
@@ -105,7 +106,7 @@ public class RoleResource {
     role = roleRepository.save(role);
     RoleDTO result = roleMapper.roleToRoleDTO(role);
     return ResponseEntity.ok()
-        .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, roleDTO.getName()))
+        .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, roleDTO.getName().toString()))
         .body(result);
   }
 
@@ -132,15 +133,16 @@ public class RoleResource {
    *
    * @param name the name of the roleDTO to retrieve
    * @return the ResponseEntity with status 200 (OK) and with body the roleDTO, or with status 404
-   *     (Not Found)
+   * (Not Found)
    */
   @GetMapping("/roles/{name}")
   @Timed
   @PreAuthorize("hasAuthority('profile:view:entities')")
   public ResponseEntity<RoleDTO> getRole(@PathVariable String name) {
     log.debug("REST request to get Role : {}", name);
-    Optional<Role> role = roleRepository.findById(name);
-    return ResponseEntity.of(role.map(roleMapper::roleToRoleDTO));
+    Role role = roleRepository.findOne(name);
+    RoleDTO roleDTO = roleMapper.roleToRoleDTO(role);
+    return ResponseUtil.wrapOrNotFound(Optional.ofNullable(roleDTO));
   }
 
   /**
@@ -157,12 +159,14 @@ public class RoleResource {
     //validate before delete
     roleValidator.validateBeforeDelete(name);
 
-    roleRepository.deleteById(name);
+    roleRepository.delete(name);
     return ResponseEntity.noContent().build();
   }
 
   private void validateRole(Role role) {
     //validate permissions
     roleValidator.validatePermissions(role.getPermissions());
+
   }
+
 }

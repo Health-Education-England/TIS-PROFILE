@@ -67,5 +67,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     httpSecurity
         .addFilterBefore(authenticationTokenFilterBean(),
             UsernamePasswordAuthenticationFilter.class);
+
   }
 }

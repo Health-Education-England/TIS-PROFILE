@@ -14,7 +14,6 @@ import com.transformuk.hee.tis.profile.ProfileApp;
 import com.transformuk.hee.tis.profile.domain.HeeUser;
 import com.transformuk.hee.tis.profile.domain.Permission;
 import com.transformuk.hee.tis.profile.domain.Role;
-import com.transformuk.hee.tis.profile.dto.PermissionDTO;
 import com.transformuk.hee.tis.profile.dto.RoleDTO;
 import com.transformuk.hee.tis.profile.repository.HeeUserRepository;
 import com.transformuk.hee.tis.profile.repository.PermissionRepository;
@@ -22,17 +21,18 @@ import com.transformuk.hee.tis.profile.repository.RoleRepository;
 import com.transformuk.hee.tis.profile.service.mapper.RoleMapper;
 import com.transformuk.hee.tis.profile.validators.RoleValidator;
 import com.transformuk.hee.tis.profile.web.rest.errors.ExceptionTranslator;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import javax.persistence.EntityManager;
+import org.assertj.core.util.Sets;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
+import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -49,6 +49,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class RoleResourceIntTest {
 
   private static final String DEFAULT_NAME = "AAAAAAAAAA";
+  private static final String UPDATED_NAME = "BBBBBBBBBB";
   private static final String DEFAULT_PERMISSION_NAME = "default:view";
   private static final String DEFAULT_PERMISSION_PRINCIPAL = "principal";
   private static final String DEFAULT_PERMISSION_RESOURCE = "resource";
@@ -79,6 +80,9 @@ public class RoleResourceIntTest {
   @Autowired
   private HeeUserRepository heeUserRepository;
 
+  @Autowired
+  private EntityManager em;
+
   private MockMvc restRoleMockMvc;
 
   private Role role;
@@ -89,13 +93,15 @@ public class RoleResourceIntTest {
    * This is a static method, as tests for other entities might also need it, if they test an entity
    * which requires the current entity.
    */
-  public static Role createEntity() {
-    return new Role()
+  public static Role createEntity(EntityManager em) {
+    Role role = new Role()
         .name(DEFAULT_NAME);
+    return role;
   }
 
   @Before
   public void setup() {
+    MockitoAnnotations.initMocks(this);
     RoleResource roleResource = new RoleResource(roleRepository, roleMapper, roleValidator);
     this.restRoleMockMvc = MockMvcBuilders.standaloneSetup(roleResource)
         .setCustomArgumentResolvers(pageableArgumentResolver)
@@ -105,7 +111,7 @@ public class RoleResourceIntTest {
 
   @Before
   public void initTest() {
-    role = createEntity();
+    role = createEntity(em);
   }
 
   @Test
@@ -117,16 +123,16 @@ public class RoleResourceIntTest {
     // Create the Role
     RoleDTO roleDTO = roleMapper.roleToRoleDTO(role);
     restRoleMockMvc.perform(post("/api/roles")
-            .contentType(TestUtil.JSON)
-            .content(TestUtil.convertObjectToJsonBytes(roleDTO)))
+        .contentType(TestUtil.APPLICATION_JSON_UTF8)
+        .content(TestUtil.convertObjectToJsonBytes(roleDTO)))
         .andExpect(status().isCreated());
 
     // Validate the Role in the database
     List<Role> roleList = roleRepository.findAll();
     assertThat(roleList).hasSize(databaseSizeBeforeCreate + 1);
-    Role testRole = roleRepository.getById(role.getName());
+    Role testRole = roleRepository.findOne(role.getName());
     assertThat(testRole.getName()).isEqualTo(DEFAULT_NAME);
-    assertThat(permissionRepository.findAll()).hasSize(dbPermissionSizeBeforeCreate);
+    assertThat(permissionRepository.findAll().size()).isEqualTo(dbPermissionSizeBeforeCreate);
   }
 
   @Test
@@ -140,18 +146,18 @@ public class RoleResourceIntTest {
     permission.setResource(DEFAULT_PERMISSION_RESOURCE);
     permission.setActions(DEFAULT_PERMISSION_ACTIONS);
     permission.setEffect(DEFAULT_PERMISSION_EFFECT);
-    role.setPermissions(Collections.singleton(permission));
+    role.setPermissions(Sets.newHashSet(Arrays.asList(permission)));
 
     RoleDTO roleDTO = roleMapper.roleToRoleDTO(role);
     restRoleMockMvc.perform(post("/api/roles")
-            .contentType(TestUtil.JSON)
-            .content(TestUtil.convertObjectToJsonBytes(roleDTO)))
+        .contentType(TestUtil.APPLICATION_JSON_UTF8)
+        .content(TestUtil.convertObjectToJsonBytes(roleDTO)))
         .andExpect(status().is4xxClientError());
 
     // Validate the Role in the database
     List<Role> roleList = roleRepository.findAll();
     assertThat(roleList).hasSize(databaseSizeBeforeCreate);
-    Role testRole = roleRepository.findByName(role.getName());
+    Role testRole = roleRepository.findOne(role.getName());
     assertThat(testRole).isNull();
   }
 
@@ -167,14 +173,14 @@ public class RoleResourceIntTest {
 
     // Creating a role with the same name will do nothing but not fail
     restRoleMockMvc.perform(post("/api/roles")
-            .contentType(TestUtil.JSON)
-            .content(TestUtil.convertObjectToJsonBytes(roleDTO)))
+        .contentType(TestUtil.APPLICATION_JSON_UTF8)
+        .content(TestUtil.convertObjectToJsonBytes(roleDTO)))
         .andExpect(status().isCreated());
 
     // Validate the Alice in the database
     List<Role> roleList = roleRepository.findAll();
     assertThat(roleList).hasSize(databaseSizeBeforeCreate);
-    assertThat(permissionRepository.findAll()).hasSize(dbPermissionSizeBeforeCreate);
+    assertThat(permissionRepository.findAll().size()).isEqualTo(dbPermissionSizeBeforeCreate);
   }
 
   @Test
@@ -188,8 +194,8 @@ public class RoleResourceIntTest {
     RoleDTO roleDTO = roleMapper.roleToRoleDTO(role);
 
     restRoleMockMvc.perform(post("/api/roles")
-            .contentType(TestUtil.JSON)
-            .content(TestUtil.convertObjectToJsonBytes(roleDTO)))
+        .contentType(TestUtil.APPLICATION_JSON_UTF8)
+        .content(TestUtil.convertObjectToJsonBytes(roleDTO)))
         .andExpect(status().isBadRequest());
 
     List<Role> roleList = roleRepository.findAll();
@@ -210,8 +216,8 @@ public class RoleResourceIntTest {
     // Get all the roleList
     restRoleMockMvc.perform(get("/api/roles?size=" + resultSize))
         .andExpect(status().isOk())
-        .andExpect(content().contentType(TestUtil.JSON))
-        .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)));
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+        .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())));
   }
 
   @Test
@@ -223,8 +229,8 @@ public class RoleResourceIntTest {
     // Get the role
     restRoleMockMvc.perform(get("/api/roles/{id}", role.getName()))
         .andExpect(status().isOk())
-        .andExpect(content().contentType(TestUtil.JSON))
-        .andExpect(jsonPath("$.name").value(DEFAULT_NAME));
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+        .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()));
   }
 
   @Test
@@ -246,45 +252,14 @@ public class RoleResourceIntTest {
 
     // If the entity doesn't have an ID, it will be created instead of just being updated
     restRoleMockMvc.perform(put("/api/roles")
-            .contentType(TestUtil.JSON)
-            .content(TestUtil.convertObjectToJsonBytes(roleDTO)))
+        .contentType(TestUtil.APPLICATION_JSON_UTF8)
+        .content(TestUtil.convertObjectToJsonBytes(roleDTO)))
         .andExpect(status().isCreated());
 
     // Validate the Role in the database
     List<Role> roleList = roleRepository.findAll();
     assertThat(roleList).hasSize(databaseSizeBeforeUpdate + 1);
-    assertThat(permissionRepository.findAll()).hasSize(dbPermissionSizeBeforeCreate);
-  }
-
-  @Test
-  @Transactional
-  public void updateExistingRole() throws Exception {
-    roleRepository.saveAndFlush(role);
-    int databaseSizeBeforeUpdate = roleRepository.findAll().size();
-    Permission permission = PermissionResourceIntTest.createEntity();
-    permission = permissionRepository.saveAndFlush(permission);
-    int dbPermissionSizeBeforeCreate = permissionRepository.findAll().size();
-
-    // Create the Role
-    RoleDTO roleDto = roleMapper.roleToRoleDTO(role);
-    PermissionDTO permissionDto = new PermissionDTO();
-    permissionDto.setName(permission.getName());
-    List<String> permissionList = Stream.of(permission.getActions()).collect(Collectors.toList());
-    permissionDto.setActions(permissionList);
-    roleDto.setPermissions(Set.of(permissionDto));
-
-    // If the entity doesn't have an ID, it will be created instead of just being updated
-    restRoleMockMvc.perform(put("/api/roles")
-            .contentType(TestUtil.JSON)
-            .content(TestUtil.convertObjectToJsonBytes(roleDto)))
-        .andExpect(status().isOk());
-
-    // Validate the Role in the database
-    List<Role> roleList = roleRepository.findAll();
-    assertThat(roleList).hasSize(databaseSizeBeforeUpdate);
-    assertThat(permissionRepository.findAll()).hasSize(dbPermissionSizeBeforeCreate);
-    Role actualRole = roleRepository.findByName(roleDto.getName());
-    assertThat(actualRole.getPermissions()).containsOnly(permission);
+    assertThat(permissionRepository.findAll().size()).isEqualTo(dbPermissionSizeBeforeCreate);
   }
 
   @Test
@@ -297,13 +272,13 @@ public class RoleResourceIntTest {
 
     // Get the role
     restRoleMockMvc.perform(delete("/api/roles/{id}", role.getName())
-            .accept(TestUtil.JSON))
+        .accept(TestUtil.APPLICATION_JSON_UTF8))
         .andExpect(status().isNoContent());
 
     // Validate the database is empty
     List<Role> roleList = roleRepository.findAll();
     assertThat(roleList).hasSize(databaseSizeBeforeDelete - 1);
-    assertThat(permissionRepository.findAll()).hasSize(dbPermissionSizeBeforeCreate);
+    assertThat(permissionRepository.findAll().size()).isEqualTo(dbPermissionSizeBeforeCreate);
   }
 
   @Test
@@ -312,8 +287,8 @@ public class RoleResourceIntTest {
     // Initialize the database
     roleRepository.saveAndFlush(role);
     //create User with same role associated with it
-    HeeUser heeUser = TestUtil.createEntityHeeUser();
-    heeUser.setRoles(Collections.singleton(role));
+    HeeUser heeUser = TestUtil.createEntityHeeUser(em);
+    heeUser.setRoles(Sets.newHashSet(Arrays.asList(role)));
     heeUser.setActive(TestUtil.UPDATED_ACTIVE);
     heeUserRepository.saveAndFlush(heeUser);
 
@@ -321,7 +296,7 @@ public class RoleResourceIntTest {
 
     // Get the role
     restRoleMockMvc.perform(delete("/api/roles/{id}", role.getName())
-            .accept(TestUtil.JSON))
+        .accept(TestUtil.APPLICATION_JSON_UTF8))
         .andExpect(status().is4xxClientError());
 
     // Validate the database is empty
