@@ -6,8 +6,8 @@ import com.transformuk.hee.tis.profile.domain.UserTrust;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.util.Lists;
+import org.h2.util.StringUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -56,11 +56,12 @@ public class HeeUserRepositoryTest {
   @Autowired
   private UserTrustRepository userTrustRepository;
 
+  private HeeUser heeUserWithTrust, heeUserWithEmptyTrust, heeUserWithNullTrust;
   private UserTrust userTrust1, userTrust2;
 
   @Before
   public void setup() {
-    // clear the existing users that's brought in via the DML
+    // clear the existing users thats brought in via the DML
     heeUserRepository.deleteAll();
     userTrustRepository.deleteAll();
 
@@ -69,7 +70,7 @@ public class HeeUserRepositoryTest {
   }
 
   private void createHeeUsers() {
-    HeeUser heeUserWithTrust = new HeeUser();
+    heeUserWithTrust = new HeeUser();
     heeUserWithTrust.setActive(true);
     heeUserWithTrust.setGmcId(GMC_ID_1);
     heeUserWithTrust.setEmailAddress(EMAIL_1);
@@ -80,7 +81,7 @@ public class HeeUserRepositoryTest {
     heeUserWithTrust.addAssociatedTrust(userTrust1);
     heeUserWithTrust.addAssociatedTrust(userTrust2);
 
-    HeeUser heeUserWithEmptyTrust = new HeeUser();
+    heeUserWithEmptyTrust = new HeeUser();
     heeUserWithEmptyTrust.setActive(true);
     heeUserWithEmptyTrust.setGmcId(GMC_ID_2);
     heeUserWithEmptyTrust.setEmailAddress(EMAIL_2);
@@ -89,7 +90,7 @@ public class HeeUserRepositoryTest {
     heeUserWithEmptyTrust.setName(NAME_2);
     heeUserWithEmptyTrust.setPhoneNumber(PHONE_NUMBER_2);
 
-    HeeUser heeUserWithNullTrust = new HeeUser();
+    heeUserWithNullTrust = new HeeUser();
     heeUserWithNullTrust.setActive(true);
     heeUserWithNullTrust.setGmcId(GMC_ID_3);
     heeUserWithNullTrust.setEmailAddress(EMAIL_3);
@@ -99,9 +100,9 @@ public class HeeUserRepositoryTest {
     heeUserWithNullTrust.setPhoneNumber(PHONE_NUMBER_3);
     heeUserWithNullTrust.setAssociatedTrusts(null);
 
-    heeUserRepository.saveAndFlush(heeUserWithTrust);
-    heeUserRepository.saveAndFlush(heeUserWithEmptyTrust);
-    heeUserRepository.saveAndFlush(heeUserWithNullTrust);
+    heeUserWithTrust = heeUserRepository.saveAndFlush(heeUserWithTrust);
+    heeUserWithEmptyTrust = heeUserRepository.saveAndFlush(heeUserWithEmptyTrust);
+    heeUserWithNullTrust = heeUserRepository.saveAndFlush(heeUserWithNullTrust);
 
     userTrustRepository.saveAndFlush(userTrust1);
     userTrustRepository.saveAndFlush(userTrust2);
@@ -130,7 +131,7 @@ public class HeeUserRepositoryTest {
   @Transactional
   @Test
   public void getAllUsersShouldAllowForLazyFetchOfAssociatedTrusts() {
-    Pageable pageable = PageRequest.of(0, 100);
+    Pageable pageable = new PageRequest(0, 100);
     Page<HeeUser> result = heeUserRepository.findAll(pageable);
 
     Assert.assertNotNull(result);
@@ -148,9 +149,9 @@ public class HeeUserRepositoryTest {
     Assert.assertTrue(optionalUserTrust1.isPresent());
     Assert.assertEquals(TRUST_NAME_1, optionalUserTrust1.get().getTrustName());
 
-    Optional<UserTrust> optionalUserTrust2 = findTrust(TRUST_CODE_2, associatedTrusts);
-    Assert.assertTrue(optionalUserTrust2.isPresent());
-    Assert.assertEquals(TRUST_NAME_2, optionalUserTrust2.get().getTrustName());
+    Optional<UserTrust> optionalUserTrust_2 = findTrust(TRUST_CODE_2, associatedTrusts);
+    Assert.assertTrue(optionalUserTrust_2.isPresent());
+    Assert.assertEquals(TRUST_NAME_2, optionalUserTrust_2.get().getTrustName());
 
     Optional<HeeUser> optionalUserWithTrusts2 = findUserWithGMCId(GMC_ID_2, result.getContent());
     Assert.assertTrue(optionalUserWithTrusts2.isPresent());
@@ -167,18 +168,12 @@ public class HeeUserRepositoryTest {
 
     HeeUser user1 = new HeeUser(), user2 = new HeeUser(), user3 = new HeeUser();
     user1.setName("Bob");
-    user1.setLastName("");
-    user1.emailAddress("");
     user2.setName("James");
-    user2.setLastName("");
-    user2.emailAddress("");
     user3.setName("aBo");
-    user3.setLastName("");
-    user3.emailAddress("");
-    heeUserRepository.saveAll(Lists.newArrayList(user1, user2, user3));
+    heeUserRepository.save(Lists.newArrayList(user1, user2, user3));
     heeUserRepository.flush();
 
-    Pageable page = PageRequest.of(0, 100);
+    Pageable page = new PageRequest(0, 100);
 
     Page<HeeUser> results = heeUserRepository
         .findByNameIgnoreCaseContaining(page, NAME_SEARCH_STRING);

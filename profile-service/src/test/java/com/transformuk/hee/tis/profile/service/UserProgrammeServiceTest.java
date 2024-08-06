@@ -46,9 +46,9 @@ public class UserProgrammeServiceTest {
 
     testObj.assignProgrammesToUser(heeUserDTOMock);
 
-    verify(userProgrammeRepositoryMock).deleteAll(existingUserProgrammes);
+    verify(userProgrammeRepositoryMock).delete(existingUserProgrammes);
     verify(heeUserMock).addAssociatedProgramme(userProgrammeMock);
-    verify(userProgrammeRepositoryMock).saveAll(payloadUserProgrammes);
+    verify(userProgrammeRepositoryMock).save(payloadUserProgrammes);
   }
 
 }

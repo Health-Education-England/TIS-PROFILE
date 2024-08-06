@@ -9,8 +9,10 @@ import com.google.common.collect.Sets;
 import com.transformuk.hee.tis.profile.domain.HeeUser;
 import com.transformuk.hee.tis.profile.domain.Role;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
+import javax.persistence.EntityManager;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
 import org.springframework.http.MediaType;
@@ -47,17 +49,19 @@ public class TestUtil {
   /**
    * MediaType for JSON UTF8
    */
-  public static final MediaType JSON = MediaType.APPLICATION_JSON;
+  public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(
+      MediaType.APPLICATION_JSON.getType(),
+      MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
 
   /**
    * Convert an object to JSON byte array.
    *
    * @param object the object to convert
    * @return the JSON byte array
-   * @throws IOException Any Exception creating or using the mapper, including
-   *                     {@link com.fasterxml.jackson.core.JsonProcessingException }.
+   * @throws IOException
    */
-  public static byte[] convertObjectToJsonBytes(Object object) throws IOException {
+  public static byte[] convertObjectToJsonBytes(Object object)
+      throws IOException {
     ObjectMapper mapper = new ObjectMapper();
     mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
@@ -95,9 +99,11 @@ public class TestUtil {
   /**
    * Verifies the equals/hashcode contract on the domain object.
    */
-  public static void equalsVerifier(Class<?> clazz) throws Exception {
+  public static void equalsVerifier(Class clazz) throws Exception {
     Object domainObject1 = clazz.getConstructor().newInstance();
     assertThat(domainObject1.toString()).isNotNull();
+    assertThat(domainObject1).isEqualTo(domainObject1);
+    assertThat(domainObject1.hashCode()).isEqualTo(domainObject1.hashCode());
     // Test with an instance of another class
     Object testOtherObject = new Object();
     assertThat(domainObject1).isNotEqualTo(testOtherObject);
@@ -114,7 +120,7 @@ public class TestUtil {
    * This is a static method, as tests for other entities might also need it, if they test an entity
    * which requires the current entity.
    */
-  public static HeeUser createEntityHeeUser() {
+  public static HeeUser createEntityHeeUser(EntityManager em) {
     Role role = new Role();
     role.setName(DEFAULT_ROLE);
 

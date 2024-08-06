@@ -19,9 +19,11 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
+import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -71,14 +73,16 @@ public class PermissionResourceIntTest {
    * which requires the current entity.
    */
   public static com.transformuk.hee.tis.profile.domain.Permission createEntity() {
-    return new com.transformuk.hee.tis.profile.domain.Permission(
+    com.transformuk.hee.tis.profile.domain.Permission permission = new com.transformuk.hee.tis.profile.domain.Permission(
         DEFAULT_NAME, DEFAULT_TYPE, DEFAULT_DESC, DEFAULT_PRINCIPAL, DEFAULT_RESOURCE,
         DEFAULT_ACTIONS, DEFAULT_EFFECT
     );
+    return permission;
   }
 
   @Before
   public void setup() {
+    MockitoAnnotations.initMocks(this);
     PermissionResource permissionResource = new PermissionResource(permissionRepository,
         permissionMapper);
     this.restPermissionMockMvc = MockMvcBuilders.standaloneSetup(permissionResource)
@@ -98,10 +102,10 @@ public class PermissionResourceIntTest {
     int databaseSizeBeforeCreate = permissionRepository.findAll().size();
 
     // Create the Permission
-    PermissionDTO permissionDto = permissionMapper.permissionToPermissionDTO(this.permission);
+    PermissionDTO permission = permissionMapper.permissionToPermissionDTO(this.permission);
     restPermissionMockMvc.perform(post("/api/permissions")
-            .contentType(TestUtil.JSON)
-            .content(TestUtil.convertObjectToJsonBytes(permissionDto)))
+        .contentType(TestUtil.APPLICATION_JSON_UTF8)
+        .content(TestUtil.convertObjectToJsonBytes(permission)))
         .andExpect(status().isCreated());
 
     // Validate the Permission in the database
@@ -109,7 +113,7 @@ public class PermissionResourceIntTest {
         .findAll();
     assertThat(permissionList).hasSize(databaseSizeBeforeCreate + 1);
     com.transformuk.hee.tis.profile.domain.Permission testPermission = permissionRepository
-        .getById(this.permission.getName());
+        .findOne(this.permission.getName());
     assertThat(testPermission.getName()).isEqualTo(DEFAULT_NAME);
     assertThat(testPermission.getDescription()).isEqualTo(DEFAULT_DESC);
     assertThat(testPermission.getType()).isEqualTo(DEFAULT_TYPE);
@@ -126,12 +130,12 @@ public class PermissionResourceIntTest {
 
     // Create the Permission with an existing ID
     this.permission.setName("revalidation:see:dbc:trainees");
-    PermissionDTO permissionDto = permissionMapper.permissionToPermissionDTO(this.permission);
+    PermissionDTO permission = permissionMapper.permissionToPermissionDTO(this.permission);
 
-    // Creating a permissionDto with the same name will do nothing but not fail
+    // Creating a permission with the same name will do nothing but not fail
     restPermissionMockMvc.perform(post("/api/permissions")
-            .contentType(TestUtil.JSON)
-            .content(TestUtil.convertObjectToJsonBytes(permissionDto)))
+        .contentType(TestUtil.APPLICATION_JSON_UTF8)
+        .content(TestUtil.convertObjectToJsonBytes(permission)))
         .andExpect(status().isCreated());
 
     // Validate the Alice in the database
@@ -148,11 +152,11 @@ public class PermissionResourceIntTest {
     this.permission.setName(null);
 
     // Create the Permission, which fails.
-    PermissionDTO permissionDto = permissionMapper.permissionToPermissionDTO(this.permission);
+    PermissionDTO permission = permissionMapper.permissionToPermissionDTO(this.permission);
 
     restPermissionMockMvc.perform(post("/api/permissions")
-            .contentType(TestUtil.JSON)
-            .content(TestUtil.convertObjectToJsonBytes(permissionDto)))
+        .contentType(TestUtil.APPLICATION_JSON_UTF8)
+        .content(TestUtil.convertObjectToJsonBytes(permission)))
         .andExpect(status().isBadRequest());
 
     List<com.transformuk.hee.tis.profile.domain.Permission> permissionList = permissionRepository
@@ -169,7 +173,7 @@ public class PermissionResourceIntTest {
     // Get all the permissionList
     restPermissionMockMvc.perform(get("/api/permissions?sort=name,asc"))
         .andExpect(status().isOk())
-        .andExpect(content().contentType(TestUtil.JSON))
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
         .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
         .andExpect(jsonPath("$.[*].type").value(hasItem(DEFAULT_TYPE.toString())))
         .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESC)))
@@ -188,7 +192,7 @@ public class PermissionResourceIntTest {
     // Get the permission
     restPermissionMockMvc.perform(get("/api/permissions/{id}", permission.getName()))
         .andExpect(status().isOk())
-        .andExpect(content().contentType(TestUtil.JSON))
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
         .andExpect(jsonPath("$.name").value(DEFAULT_NAME))
         .andExpect(jsonPath("$.type").value(DEFAULT_TYPE.toString()))
         .andExpect(jsonPath("$.description").value(DEFAULT_DESC))
@@ -215,7 +219,7 @@ public class PermissionResourceIntTest {
 
     // Get the permission
     restPermissionMockMvc.perform(delete("/api/permissions/{id}", permission.getName())
-            .accept(TestUtil.JSON))
+        .accept(TestUtil.APPLICATION_JSON_UTF8))
         .andExpect(status().isNoContent());
 
     // Validate the database is empty

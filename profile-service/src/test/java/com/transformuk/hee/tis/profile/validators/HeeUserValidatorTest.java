@@ -14,8 +14,7 @@ import com.transformuk.hee.tis.reference.api.dto.DBCDTO;
 import com.transformuk.hee.tis.reference.api.enums.Status;
 import com.transformuk.hee.tis.reference.client.ReferenceService;
 import java.util.Set;
-
-import org.apache.commons.lang3.StringUtils;
+import net.logstash.logback.encoder.org.apache.commons.lang3.StringUtils;
 import org.assertj.core.util.Sets;
 import org.junit.Before;
 import org.junit.Test;
