@@ -68,9 +68,4 @@ server:
   port: 10344
   address: localhost
 
-logging:
-  level:
-    org.flywaydb: DEBUG
-    org.springframework.boot.autoconfigure.flyway: DEBUG
-
 application:
