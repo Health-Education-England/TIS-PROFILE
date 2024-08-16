@@ -1,6 +1,7 @@
 package com.transformuk.hee.tis.profile.client.service.impl;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +10,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+@JsonIgnoreProperties(ignoreUnknown = true, value = {"pageable"})
 public class CustomPageable<T> extends PageImpl<T> {
 
   public CustomPageable() {
