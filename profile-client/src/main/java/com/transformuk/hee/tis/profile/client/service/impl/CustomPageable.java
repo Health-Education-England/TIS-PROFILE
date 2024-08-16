@@ -10,7 +10,12 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-@JsonIgnoreProperties(ignoreUnknown = true, value = {"pageable"})
+/**
+ * Custom implementation of Spring Data {@link org.springframework.data.domain.Page}.
+ *
+ * @param <T> The DTO entity type of the content
+ */
+@JsonIgnoreProperties({"pageable"})
 public class CustomPageable<T> extends PageImpl<T> {
 
   public CustomPageable() {
