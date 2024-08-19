@@ -39,6 +39,8 @@ public class CustomPageable<T> extends PageImpl<T> {
   }
 
   /**
+   * Get URL parameters for requesting the next page.
+   *
    * @return URL parameter String for the next page.
    */
   public String getNextPageRequestParameters() {
@@ -51,6 +53,8 @@ public class CustomPageable<T> extends PageImpl<T> {
   }
 
   /**
+   * Get URL parameters for requesting the previous page.
+   *
    * @return URL parameter String for the previous page.
    */
   public String getPreviousPageRequestParameters() {
