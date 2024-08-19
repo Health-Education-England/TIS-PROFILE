@@ -38,6 +38,9 @@ public class CustomPageable<T> extends PageImpl<T> {
     super(content, PageRequest.of(page, size), total);
   }
 
+  /**
+   * @return URL parameter String for the next page.
+   */
   public String getNextPageRequestParameters() {
     String nextPage = StringUtils.EMPTY;
     if (this.hasNext()) {
@@ -47,6 +50,9 @@ public class CustomPageable<T> extends PageImpl<T> {
     return nextPage;
   }
 
+  /**
+   * @return URL parameter String for the previous page.
+   */
   public String getPreviousPageRequestParameters() {
     String previousPage = StringUtils.EMPTY;
     if (this.hasNext()) {
