@@ -67,18 +67,17 @@ public class UserProfileController {
    * <p>
    * Both token headers are included to support both Keycloak and Cognito simultaneously.
    * TODO: remove OIDC_access_token once fully migrated.
-   * <p>
    *
    * @param oidcAccessToken    Legacy parameter for the token used to obtain the user profile
    * @param authorizationToken Standard parameter for the token used to obtain the user profile
    * @return the user profile found for the supplied token
-   * @deprecated This endpoint is being marked as deprecated now as we should not be
-   *     creating/updating users here as we now have the User Management service. So all this does
-   *     for now is just return the user based on the token provided.
+   * @deprecated This endpoint is being marked as deprecated since service v3.0.0 commit 0d935220)
+   *     as we should not be creating/updating users here as we now have the User Management
+   *     service. So all this does for now is just return the user based on the token provided.
    */
   @CrossOrigin
   @GetMapping(path = "/userupdate", produces = APPLICATION_JSON_VALUE)
-  @Deprecated
+  @Deprecated(since = "3.0.0")
   public ResponseEntity<UserProfile> amendUser(
       @RequestHeader(value = "OIDC_access_token", required = false) String oidcAccessToken,
       @RequestHeader(value = "Authorization", required = false) String authorizationToken) {
