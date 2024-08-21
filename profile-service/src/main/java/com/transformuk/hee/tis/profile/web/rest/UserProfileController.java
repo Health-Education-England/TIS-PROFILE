@@ -5,7 +5,6 @@ import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import com.transformuk.hee.tis.profile.ProfileApp;
 import com.transformuk.hee.tis.profile.assembler.UserProfileAssembler;
@@ -28,6 +27,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -56,31 +56,39 @@ public class UserProfileController {
       @ApiResponse(code = 200, message = "Returns user profile successfully", response = UserProfile.class)
   })
   @CrossOrigin
-  @RequestMapping(path = "/userinfo", method = GET, produces = APPLICATION_JSON_VALUE)
+  @GetMapping(path = "/userinfo", produces = APPLICATION_JSON_VALUE)
   public UserProfile profile(@RequestHeader(value = "OIDC_access_token") String token) {
     HeeUser user = loginService.getUserByToken(token);
     return assembler.toUserProfile(user);
   }
 
   /**
-   * This endpoint is being marked as deprecated now as we should not be creating/updating users
-   * here as we now have the User Management service
+   * Get a User's Profile information for the supplied token.
    * <p>
-   * So all this does for now is just return the user based on the token provided
+   * Both token headers are included to support both Keycloak and Cognito simultaneously.
+   * TODO: remove OIDC_access_token once fully migrated.
    *
-   * @param token
-   * @return
+   * @param oidcAccessToken    Legacy parameter for the token used to obtain the user profile
+   * @param authorizationToken Standard parameter for the token used to obtain the user profile
+   * @return the user profile found for the supplied token
+   * @deprecated This endpoint is being marked as deprecated since service v3.0.0 commit 0d935220)
+   *     as we should not be creating/updating users here as we now have the User Management
+   *     service. So all this does for now is just return the user based on the token provided.
    */
   @CrossOrigin
-  @RequestMapping(path = "/userupdate", method = GET, produces = APPLICATION_JSON_VALUE)
-  @Deprecated
+  @GetMapping(path = "/userupdate", produces = APPLICATION_JSON_VALUE)
+  @Deprecated(since = "3.0.0")
   public ResponseEntity<UserProfile> amendUser(
-      @RequestHeader(value = "OIDC_access_token") String token) {
-    HttpStatus httpStatus;
+      @RequestHeader(value = "OIDC_access_token", required = false) String oidcAccessToken,
+      @RequestHeader(value = "Authorization", required = false) String authorizationToken) {
+    if (oidcAccessToken == null && authorizationToken == null) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+    }
+
+    String token = authorizationToken != null ? authorizationToken : oidcAccessToken;
     HeeUser user = loginService.getUserByToken(token);
-    httpStatus = HttpStatus.OK;
     UserProfile userProfile = assembler.toUserProfile(user);
-    return new ResponseEntity<>(userProfile, httpStatus);
+    return new ResponseEntity<>(userProfile, HttpStatus.OK);
   }
 
   @ApiOperation(value = "Returns list of users by exact matching of given designatedBodyCodes",
@@ -90,18 +98,16 @@ public class UserProfileController {
       @ApiResponse(code = 200, message = "User list returned", response = UserListResponse.class)
   })
   @CrossOrigin
-  @RequestMapping(path = "/users", method = GET, produces = APPLICATION_JSON_VALUE)
+  @GetMapping(path = "/users", produces = APPLICATION_JSON_VALUE)
   @PreAuthorize("hasAuthority('profile:get:users')")
   public EntityModel<UserListResponse> getUsers(
       @RequestParam(value = "designatedBodyCode") Set<String> designatedBodyCodes,
       @RequestParam(value = "permissions", required = false) String permissions) {
     List<HeeUser> users = loginService.getUsers(designatedBodyCodes, permissions);
     UserListResponse response = toUserListResponse(users);
-    EntityModel<UserListResponse> resource = new EntityModel<>(response);
-    resource.add(
+    return EntityModel.of(response,
         linkTo(methodOn(UserProfileController.class).getUsers(designatedBodyCodes, permissions))
             .withSelfRel());
-    return resource;
   }
 
   @ApiOperation(value = "Gets RevalidationOfficer deatils", response = UserProfile.class)
@@ -109,7 +115,7 @@ public class UserProfileController {
       @ApiResponse(code = 200, message = "Got user successfully", response = UserProfile.class)
   })
   @CrossOrigin
-  @RequestMapping(path = "/users/ro-user/{designatedBodyCode}", method = GET, produces = APPLICATION_JSON_VALUE)
+  @GetMapping(path = "/users/ro-user/{designatedBodyCode}", produces = APPLICATION_JSON_VALUE)
   @PreAuthorize("hasAuthority('profile:get:ro:user')")
   public UserProfile getROByDesignatedBodyCode(
       @PathVariable(value = "designatedBodyCode") String designatedBodyCode) {
