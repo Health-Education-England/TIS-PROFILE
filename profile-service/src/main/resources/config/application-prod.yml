@@ -1,22 +1,22 @@
 spring:
-    devtools:
-        restart:
-            enabled: false
-        livereload:
-            enabled: false
-    datasource:
-        url: jdbc:mysql://${DBHOST}:${DBPORT}/${DBNAME}?useUnicode=true&characterEncoding=utf8&useSSL=${USE_SSL}
-        username: ${DBUSER}
-        password: ${DBPASSWORD}
-    jpa:
-        properties:
-            hibernate.generate_statistics: false
-    mail:
-        host: ${DBHOST}
+  devtools:
+    restart:
+      enabled: false
+    livereload:
+      enabled: false
+  datasource:
+    url: jdbc:mysql://${DBHOST}:${DBPORT}/${DBNAME}?useUnicode=true&characterEncoding=utf8&useSSL=${USE_SSL}
+    username: ${DBUSER}
+    password: ${DBPASSWORD}
+  jpa:
+    properties:
+      hibernate.generate_statistics: false
+  mail:
+    host: ${DBHOST}
 
 logging:
-    level:
-        com.transformuk: ${LOGGING_LEVEL}
+  level:
+    com.transformuk: ${LOGGING_LEVEL}
 
 endpoints:
-    enabled: false # disable all monitoring endpoints
+  enabled: false # disable all monitoring endpoints
