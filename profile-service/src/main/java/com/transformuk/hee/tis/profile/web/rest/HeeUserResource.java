@@ -2,7 +2,6 @@ package com.transformuk.hee.tis.profile.web.rest;
 
 import static uk.nhs.tis.StringConverter.getConverter;
 
-import com.codahale.metrics.annotation.Timed;
 import com.transformuk.hee.tis.profile.domain.HeeUser;
 import com.transformuk.hee.tis.profile.domain.UserProgramme;
 import com.transformuk.hee.tis.profile.domain.UserTrust;
@@ -16,7 +15,7 @@ import com.transformuk.hee.tis.profile.service.dto.HeeUserDTO;
 import com.transformuk.hee.tis.profile.service.mapper.HeeUserMapper;
 import com.transformuk.hee.tis.profile.validators.HeeUserValidator;
 import com.transformuk.hee.tis.profile.web.rest.util.HeaderUtil;
-import io.github.jhipster.web.util.ResponseUtil;
+import io.micrometer.core.annotation.Timed;
 import io.swagger.annotations.ApiParam;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -58,7 +57,7 @@ public class HeeUserResource {
   private final UserService userService;
   private final UserProgrammeService userProgrammeService;
 
-  private HeeUserValidator heeUserValidator;
+  private final HeeUserValidator heeUserValidator;
 
   public HeeUserResource(HeeUserRepository heeUserRepository, HeeUserMapper heeUserMapper,
       HeeUserValidator heeUserValidator,
@@ -78,7 +77,7 @@ public class HeeUserResource {
    *
    * @param heeUserDTO the heeUserDTO to create
    * @return the ResponseEntity with status 201 (Created) and with body the new heeUserDTO, or with
-   * status 400 (Bad Request) if the heeUser has already an ID
+   *     status 400 (Bad Request) if the heeUser has already an ID
    * @throws URISyntaxException if the Location URI syntax is incorrect
    */
   @PostMapping("/hee-users")
@@ -110,7 +109,7 @@ public class HeeUserResource {
       }
     }
     heeUser = heeUserRepository.save(heeUser);
-    userTrustRepository.save(associatedTrusts);
+    userTrustRepository.saveAll(associatedTrusts);
     HeeUserDTO result = heeUserMapper.heeUserToHeeUserDTO(heeUser);
     return ResponseEntity.created(new URI("/api/hee-users/" + result.getName()))
         .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getName()))
@@ -122,8 +121,8 @@ public class HeeUserResource {
    *
    * @param heeUserDTO the heeUserDTO to update
    * @return the ResponseEntity with status 200 (OK) and with body the updated heeUserDTO, or with
-   * status 400 (Bad Request) if the heeUserDTO is not valid, or with status 500 (Internal Server
-   * Error) if the heeUserDTO couldnt be updated
+   *     status 400 (Bad Request) if the heeUserDTO is not valid, or with status 500 (Internal
+   *     Server Error) if the heeUserDTO couldnt be updated
    * @throws URISyntaxException if the Location URI syntax is incorrect
    */
   @PutMapping("/hee-users")
@@ -133,8 +132,8 @@ public class HeeUserResource {
       throws URISyntaxException {
     log.debug("REST request to update HeeUser : {}", heeUserDTO);
 
-    HeeUser dbHeeUser = heeUserRepository.findOne(heeUserDTO.getName());
-    if (dbHeeUser == null || dbHeeUser.getName() == null) {
+    Optional<HeeUser> dbHeeUser = heeUserRepository.findById(heeUserDTO.getName());
+    if (!dbHeeUser.isPresent()) {
       return createHeeUser(heeUserDTO);
     }
     HeeUser heeUser = heeUserMapper.heeUserDTOToHeeUser(heeUserDTO);
@@ -150,7 +149,7 @@ public class HeeUserResource {
     HeeUserDTO result = heeUserMapper.heeUserToHeeUserDTO(
         heeUserRepository.findByNameWithTrustsAndProgrammes(heeUserDTO.getName()).orElse(null));
     return ResponseEntity.ok()
-        .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, heeUserDTO.getName().toString()))
+        .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, heeUserDTO.getName()))
         .body(result);
   }
 
@@ -159,7 +158,6 @@ public class HeeUserResource {
    *
    * @param pageable the pagination information
    * @return the ResponseEntity with status 200 (OK) and the list of heeUsers in body
-   * @throws URISyntaxException if there is an error to generate the pagination HTTP headers
    */
   @GetMapping("/hee-users")
   @Timed
@@ -176,7 +174,7 @@ public class HeeUserResource {
    *
    * @param name the name of the heeUserDTO to retrieve
    * @return the ResponseEntity with status 200 (OK) and with body the heeUserDTO, or with status
-   * 404 (Not Found)
+   *     404 (Not Found)
    */
   @GetMapping("/hee-users/{name:.+}")
   @Timed
@@ -184,7 +182,7 @@ public class HeeUserResource {
   public ResponseEntity<HeeUserDTO> getHeeUser(@PathVariable String name) {
     log.debug("REST request to get HeeUser : {}", name);
     HeeUserDTO heeUserDTO = userService.findSingleUserWithTrustAndProgrammes(name);
-    return ResponseUtil.wrapOrNotFound(Optional.ofNullable(heeUserDTO));
+    return ResponseEntity.of(Optional.ofNullable(heeUserDTO));
   }
 
   /**
@@ -209,7 +207,7 @@ public class HeeUserResource {
     username = getConverter(username).decodeUrl().toString();
     log.debug("REST request to get HeeUser : {}", username);
     HeeUserDTO heeUserDTO = userService.findSingleUserWithTrustAndProgrammes(username);
-    return ResponseUtil.wrapOrNotFound(Optional.ofNullable(heeUserDTO));
+    return ResponseEntity.of(Optional.ofNullable(heeUserDTO));
   }
 
 
@@ -224,17 +222,18 @@ public class HeeUserResource {
   @PreAuthorize("hasAuthority('profile:delete:entities')")
   public ResponseEntity<Void> deleteHeeUser(@PathVariable String name) {
     log.debug("REST request to delete HeeUser : {}", name);
-    heeUserRepository.delete(name);
+    heeUserRepository.deleteById(name);
     return ResponseEntity.noContent().build();
   }
 
   @GetMapping("/hee-users-with-roles/{roleNames}")
   @Timed
   @PreAuthorize("hasAuthority('profile:view:entities')")
-  public ResponseEntity<List<BasicHeeUserDTO>> getUsersByRoles(@PathVariable List<String> roleNames) {
+  public ResponseEntity<List<BasicHeeUserDTO>> getUsersByRoles(
+      @PathVariable List<String> roleNames) {
     log.debug("REST request to get HeeUsers with roles : {}", roleNames);
     List<BasicHeeUserDTO> heeUserDTOs = userService.findUsersByRoles(roleNames);
-    return ResponseUtil.wrapOrNotFound(Optional.ofNullable(heeUserDTOs));
+    return ResponseEntity.of(Optional.ofNullable(heeUserDTOs));
   }
 
   private void validateHeeUser(HeeUser heeUser) {
@@ -245,5 +244,4 @@ public class HeeUserResource {
     //Validate Role name
     heeUserValidator.validateRoles(heeUser.getRoles());
   }
-
 }

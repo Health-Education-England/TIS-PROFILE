@@ -1,5 +1,12 @@
 package com.transformuk.hee.tis.profile.web.rest;
 
+import static org.hamcrest.Matchers.hasItems;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.google.common.collect.Lists;
 import com.transformuk.hee.tis.profile.ProfileApp;
 import com.transformuk.hee.tis.profile.repository.HeeUserRepository;
@@ -12,10 +19,11 @@ import com.transformuk.hee.tis.profile.service.dto.HeeUserDTO;
 import com.transformuk.hee.tis.profile.service.mapper.HeeUserMapper;
 import com.transformuk.hee.tis.profile.validators.HeeUserValidator;
 import com.transformuk.hee.tis.profile.web.rest.errors.ExceptionTranslator;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -29,14 +37,6 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.hamcrest.Matchers.hasItems;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ProfileApp.class)
@@ -73,7 +73,6 @@ public class HeeUserResourceInt2Test {
 
   @Before
   public void setup() {
-    MockitoAnnotations.initMocks(this);
     HeeUserResource heeUserResource = new HeeUserResource(heeUserRepositoryMock,
         heeUserMapperMock,
         heeUserValidatorMock,
@@ -89,7 +88,7 @@ public class HeeUserResourceInt2Test {
 
   @Test
   public void getAllHeeUsersShouldReturnPageOfHeeUsers() throws Exception {
-    Pageable page = new PageRequest(0, 10);
+    Pageable page = PageRequest.of(0, 10);
     HeeUserDTO heeUserDTO1 = new HeeUserDTO();
     HeeUserDTO heeUserDTO2 = new HeeUserDTO();
     heeUserDTO1.setFirstName(TESTNAME_1);
@@ -99,9 +98,9 @@ public class HeeUserResourceInt2Test {
     when(userServiceMock.findAllUsersWithTrust(page, null)).thenReturn(heeUserList);
 
     restHeeUserMockMvc
-        .perform(get("/api/hee-users?size=10&page=0").contentType(MediaType.APPLICATION_JSON_UTF8))
+        .perform(get("/api/hee-users?size=10&page=0").contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.content.[*].firstName").value(hasItems(TESTNAME_1, TESTNAME_2)));
   }
 
@@ -114,9 +113,9 @@ public class HeeUserResourceInt2Test {
     when(userServiceMock.findSingleUserWithTrustAndProgrammes(TESTNAME_2)).thenReturn(heeUserDTO);
 
     restHeeUserMockMvc
-        .perform(get("/api/hee-users/" + TESTNAME_2).contentType(MediaType.APPLICATION_JSON_UTF8))
+        .perform(get("/api/hee-users/" + TESTNAME_2).contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.firstName").value(TESTNAME_1));
   }
 
@@ -129,9 +128,9 @@ public class HeeUserResourceInt2Test {
     when(userServiceMock.findSingleUserWithTrustAndProgrammes(TESTNAME_2)).thenReturn(heeUserDTO);
 
     restHeeUserMockMvc.perform(get("/api/single-hee-users/?username=" + TESTNAME_2)
-        .contentType(MediaType.APPLICATION_JSON_UTF8))
+            .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.firstName").value(TESTNAME_1));
   }
 
@@ -144,10 +143,10 @@ public class HeeUserResourceInt2Test {
     when(userServiceMock.findSingleUserWithTrustAndProgrammes(TESTNAME_2)).thenReturn(heeUserDTO);
 
     restHeeUserMockMvc.perform(get("/api/single-hee-users/?username=" + TESTNAME_2 + CTRL_A)
-                    .contentType(MediaType.APPLICATION_JSON_UTF8))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-            .andExpect(jsonPath("$.firstName").value(TESTNAME_1));
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.firstName").value(TESTNAME_1));
   }
 
   @Test
@@ -166,7 +165,7 @@ public class HeeUserResourceInt2Test {
     when(userServiceMock.findUsersByRoles(roleNames)).thenReturn(basicHeeUserDTOList);
 
     restHeeUserMockMvc.perform(get("/api/hee-users-with-roles/{roleNames}", roleNames)
-            .contentType(MediaType.APPLICATION_JSON_UTF8))
-            .andExpect(status().isOk());
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk());
   }
 }

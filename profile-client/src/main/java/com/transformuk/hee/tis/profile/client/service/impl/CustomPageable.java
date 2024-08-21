@@ -1,6 +1,7 @@
 package com.transformuk.hee.tis.profile.client.service.impl;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +10,12 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+/**
+ * Custom implementation of Spring Data {@link org.springframework.data.domain.Page}.
+ *
+ * @param <T> The DTO entity type of the content
+ */
+@JsonIgnoreProperties({"pageable"})
 public class CustomPageable<T> extends PageImpl<T> {
 
   public CustomPageable() {
@@ -31,6 +38,11 @@ public class CustomPageable<T> extends PageImpl<T> {
     super(content, PageRequest.of(page, size), total);
   }
 
+  /**
+   * Get URL parameters for requesting the next page.
+   *
+   * @return URL parameter String for the next page.
+   */
   public String getNextPageRequestParameters() {
     String nextPage = StringUtils.EMPTY;
     if (this.hasNext()) {
@@ -40,6 +52,11 @@ public class CustomPageable<T> extends PageImpl<T> {
     return nextPage;
   }
 
+  /**
+   * Get URL parameters for requesting the previous page.
+   *
+   * @return URL parameter String for the previous page.
+   */
   public String getPreviousPageRequestParameters() {
     String previousPage = StringUtils.EMPTY;
     if (this.hasNext()) {

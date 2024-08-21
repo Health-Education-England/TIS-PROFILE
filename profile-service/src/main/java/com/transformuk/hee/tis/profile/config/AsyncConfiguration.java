@@ -1,7 +1,5 @@
 package com.transformuk.hee.tis.profile.config;
 
-import io.github.jhipster.async.ExceptionHandlingAsyncTaskExecutor;
-import io.github.jhipster.config.JHipsterProperties;
 import java.util.concurrent.Executor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +10,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.scheduling.concurrent.DefaultManagedTaskExecutor;
+import org.springframework.security.task.DelegatingSecurityContextAsyncTaskExecutor;
 
 @Configuration
 @EnableAsync
@@ -21,22 +20,11 @@ public class AsyncConfiguration implements AsyncConfigurer {
 
   private final Logger log = LoggerFactory.getLogger(AsyncConfiguration.class);
 
-  private final JHipsterProperties jHipsterProperties;
-
-  public AsyncConfiguration(JHipsterProperties jHipsterProperties) {
-    this.jHipsterProperties = jHipsterProperties;
-  }
-
   @Override
   @Bean(name = "taskExecutor")
   public Executor getAsyncExecutor() {
     log.debug("Creating Async Task Executor");
-    ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-    executor.setCorePoolSize(jHipsterProperties.getAsync().getCorePoolSize());
-    executor.setMaxPoolSize(jHipsterProperties.getAsync().getMaxPoolSize());
-    executor.setQueueCapacity(jHipsterProperties.getAsync().getQueueCapacity());
-    executor.setThreadNamePrefix("profile-Executor-");
-    return new ExceptionHandlingAsyncTaskExecutor(executor);
+    return new DelegatingSecurityContextAsyncTaskExecutor(new DefaultManagedTaskExecutor());
   }
 
   @Override

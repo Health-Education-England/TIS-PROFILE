@@ -1,13 +1,12 @@
 package com.transformuk.hee.tis.profile.web.rest;
 
-import com.codahale.metrics.annotation.Timed;
 import com.transformuk.hee.tis.profile.domain.Permission;
 import com.transformuk.hee.tis.profile.dto.PermissionDTO;
 import com.transformuk.hee.tis.profile.repository.PermissionRepository;
 import com.transformuk.hee.tis.profile.service.mapper.PermissionMapper;
 import com.transformuk.hee.tis.profile.web.rest.util.HeaderUtil;
 import com.transformuk.hee.tis.profile.web.rest.util.PaginationUtil;
-import io.github.jhipster.web.util.ResponseUtil;
+import io.micrometer.core.annotation.Timed;
 import io.swagger.annotations.ApiParam;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -55,7 +54,7 @@ public class PermissionResource {
    *
    * @param permissionDTO the permissionDTO to create
    * @return the ResponseEntity with status 201 (Created) and with body the new permissionDTO, or
-   * with status 400 (Bad Request) if the permission has already an ID
+   *     with status 400 (Bad Request) if the permission has already an ID
    * @throws URISyntaxException if the Location URI syntax is incorrect
    */
   @PostMapping("/permissions")
@@ -68,7 +67,7 @@ public class PermissionResource {
     permission = permissionRepository.save(permission);
     PermissionDTO result = permissionMapper.permissionToPermissionDTO(permission);
     return ResponseEntity.created(new URI("/api/permissions/" + result.getName()))
-        .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getName().toString()))
+        .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getName()))
         .body(result);
   }
 
@@ -79,8 +78,8 @@ public class PermissionResource {
    *
    * @param permission the permission to update
    * @return the ResponseEntity with status 200 (OK) and with body the updated permission, or with
-   * status 400 (Bad Request) if the permission is not valid, or with status 500 (Internal Server
-   * Error) if the permission couldnt be updated
+   *     status 400 (Bad Request) if the permission is not valid, or with status 500 (Internal
+   *     Server Error) if the permission couldnt be updated
    * @throws URISyntaxException if the Location URI syntax is incorrect
    */
   @PutMapping("/permissions")
@@ -97,7 +96,6 @@ public class PermissionResource {
    *
    * @param pageable the pagination information
    * @return the ResponseEntity with status 200 (OK) and the list of permissions in body
-   * @throws URISyntaxException if there is an error to generate the pagination HTTP headers
    */
   @GetMapping("/permissions")
   @Timed
@@ -115,16 +113,15 @@ public class PermissionResource {
    *
    * @param name the id of the permissionDTO to retrieve
    * @return the ResponseEntity with status 200 (OK) and with body the permissionDTO, or with status
-   * 404 (Not Found)
+   *     404 (Not Found)
    */
   @GetMapping("/permissions/{name}")
   @Timed
   @PreAuthorize("hasAuthority('profile:view:entities')")
   public ResponseEntity<PermissionDTO> getPermission(@PathVariable String name) {
     log.debug("REST request to get Permission : {}", name);
-    Permission permission = permissionRepository.findOne(name);
-    PermissionDTO permissionDTO = permissionMapper.permissionToPermissionDTO(permission);
-    return ResponseUtil.wrapOrNotFound(Optional.ofNullable(permissionDTO));
+    Optional<Permission> permission = permissionRepository.findById(name);
+    return ResponseEntity.of(permission.map(permissionMapper::permissionToPermissionDTO));
   }
 
   /**
@@ -138,8 +135,7 @@ public class PermissionResource {
   @PreAuthorize("hasAuthority('profile:delete:entities')")
   public ResponseEntity<Void> deletePermission(@PathVariable String name) {
     log.debug("REST request to delete Permission : {}", name);
-    permissionRepository.delete(name);
+    permissionRepository.deleteById(name);
     return ResponseEntity.noContent().build();
   }
-
 }
