@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpClientErrorException;
 
 /**
@@ -33,12 +32,12 @@ public class HeeUserValidator {
   /**
    * Validates given dbc codes are exists and matches.
    *
-   * @param dbcCodes
+   * @param dbCodes Designated Body Codes to validate
    * @throws CustomParameterizedException if any errors
    */
-  public void validateDBCIds(Set<String> dbcCodes) {
-    if (!CollectionUtils.isEmpty(dbcCodes)) {
-      dbcCodes.forEach(dbcCode -> {
+  public void validateDbcIds(Set<String> dbCodes) {
+    if (!CollectionUtils.isEmpty(dbCodes)) {
+      dbCodes.forEach(dbcCode -> {
         try {
           // if designated body is None then don't validate
           if (!dbcCode.equalsIgnoreCase(HeeUser.NONE)) {
@@ -50,13 +49,12 @@ public class HeeUserValidator {
         }
       });
     }
-
   }
 
   /**
-   * Validates given role name are exists and matches
+   * Validates given role names exist and matches
    *
-   * @param roles
+   * @param roles Roles to validate
    * @throws CustomParameterizedException if any errors
    */
   public void validateRoles(Set<Role> roles) {
@@ -72,33 +70,9 @@ public class HeeUserValidator {
   }
 
   /**
-   * Validates given password for new users and it should be atleast 8 chars long
+   * Validates given gmc id for users shouldn't be greater than 7 chars long
    *
-   * @param password
-   */
-  public void validatePassword(String password) {
-    if (password == null || StringUtils.isEmpty(password) || password.length() < 8) {
-      throw new CustomParameterizedException("Password should be minimum 8 chars long",
-          ErrorConstants.ERR_VALIDATION);
-    }
-  }
-
-  /**
-   * Validates given password is Temporary for new users and it should be atleast 8 chars long
-   *
-   * @param isTemporaryPassword
-   */
-  public void validateIsTemporary(Boolean isTemporaryPassword) {
-    if (isTemporaryPassword == null) {
-      throw new CustomParameterizedException("isTemporaryPassword should be true or false",
-          ErrorConstants.ERR_VALIDATION);
-    }
-  }
-
-  /**
-   * Validates given gmc id for users and it shouldn't be greater than 7 chars long
-   *
-   * @param gmcId
+   * @param gmcId The identifier given to a doctor by the GMC
    */
   public void validateGmcId(String gmcId) {
     if (gmcId != null && gmcId.length() > 7) {
