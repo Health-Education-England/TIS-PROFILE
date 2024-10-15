@@ -32,8 +32,6 @@ import org.springframework.util.CollectionUtils;
 public class HeeUser implements Serializable {
 
   public static final String NONE = "None";
-  private static final UserTrust NULL_TRUST = null;
-  private static final UserProgramme NULL_PROGRAMME = null;
   private static final long serialVersionUID = 1L;
   private String name;
   private String firstName;
