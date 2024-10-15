@@ -17,7 +17,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up build JDK
         uses: actions/setup-java@v4
@@ -153,7 +153,7 @@ jobs:
 
       - name: Log in to Amazon ECR
         id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
+        uses: aws-actions/amazon-ecr-login@v2
 
       - name: Build, tag and push image to Amazon ECR
         env:
@@ -182,7 +182,7 @@ jobs:
 
       - name: Log in to Amazon ECR
         id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
+        uses: aws-actions/amazon-ecr-login@v2
 
       - name: Create pre-prod task definition
         run: sed 's/${environment}/preprod/g' .aws/task-definition-template.json > .aws/task-definition-preprod.json
@@ -233,7 +233,7 @@ jobs:
 
       - name: Log in to Amazon ECR
         id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
+        uses: aws-actions/amazon-ecr-login@v2
 
       - name: Create prod task definition
         run: sed 's/${environment}/prod/g' .aws/task-definition-template.json > .aws/task-definition-prod.json
@@ -284,7 +284,7 @@ jobs:
 
       - name: Log in to Amazon ECR
         id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
+        uses: aws-actions/amazon-ecr-login@v2
 
       - name: Create NIMDTA task definition
         run: sed 's/${environment}/nimdta/g' .aws/task-definition-template.json > .aws/task-definition-nimdta.json
