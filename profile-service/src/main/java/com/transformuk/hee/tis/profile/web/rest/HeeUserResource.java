@@ -87,11 +87,6 @@ public class HeeUserResource {
       throws URISyntaxException {
     log.debug("REST request to save HeeUser : {}", heeUserDTO);
     HeeUser heeUser = heeUserMapper.heeUserDTOToHeeUser(heeUserDTO);
-    heeUser.setPassword(heeUserDTO.getPassword());
-    //Validate password
-    heeUserValidator.validatePassword(heeUser.getPassword());
-    //Validate isTemporaryPassword
-    heeUserValidator.validateIsTemporary(heeUser.getTemporaryPassword());
     //Validate
     validateHeeUser(heeUser);
 
@@ -133,7 +128,7 @@ public class HeeUserResource {
     log.debug("REST request to update HeeUser : {}", heeUserDTO);
 
     Optional<HeeUser> dbHeeUser = heeUserRepository.findById(heeUserDTO.getName());
-    if (!dbHeeUser.isPresent()) {
+    if (dbHeeUser.isEmpty()) {
       return createHeeUser(heeUserDTO);
     }
     HeeUser heeUser = heeUserMapper.heeUserDTOToHeeUser(heeUserDTO);
@@ -240,7 +235,7 @@ public class HeeUserResource {
     //validate GMC id
     heeUserValidator.validateGmcId(heeUser.getGmcId());
     //Validate DBC code
-    heeUserValidator.validateDBCIds(heeUser.getDesignatedBodyCodes());
+    heeUserValidator.validateDbcIds(heeUser.getDesignatedBodyCodes());
     //Validate Role name
     heeUserValidator.validateRoles(heeUser.getRoles());
   }

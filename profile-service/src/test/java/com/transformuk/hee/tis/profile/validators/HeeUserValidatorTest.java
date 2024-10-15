@@ -1,6 +1,6 @@
 package com.transformuk.hee.tis.profile.validators;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -14,15 +14,13 @@ import com.transformuk.hee.tis.reference.api.dto.DBCDTO;
 import com.transformuk.hee.tis.reference.api.enums.Status;
 import com.transformuk.hee.tis.reference.client.ReferenceService;
 import java.util.Set;
-
-import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.util.Sets;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -31,29 +29,26 @@ public class HeeUserValidatorTest {
 
   private static final String DBC_ABBR = "DBC_ABBR";
   private static final String DBC = "DBC";
-  private static final String INVAlID_DBC = "INVALID";
+  private static final String INVALID_DBC = "INVALID";
   private static final long ID = 1L;
   private static final long ID_INVALID = 2L;
   private static final String DBC_NAME = "DBC_NAME";
   private static final String ROLENAME = "ROLENAME";
   private static final String PERMISSION_NAME = "PERMISSION_NAME";
   private static final String OTHER_PERMISSION = "OTHER_PERMISSION";
-  private static final String ACCEPTABLEPASSWORD = "ACCEPTABLEPASSWORD";
-  private static final String SHORTPW = "SHORTPW";
   private static final String GMC_ID = "1234567";
   private static final String GMC_ID_TOO_LONG = "12345678";
   @Mock
   RoleRepository roleRepositoryMock;
-  private Set<String> dbcCodes = Sets.newLinkedHashSet(DBC);
-  private Set<String> dbcCodes_invalid = Sets.newLinkedHashSet(INVAlID_DBC);
-  private Set<String> dbcCodes_none = Sets.newLinkedHashSet(HeeUser.NONE);
-  private DBCDTO dbcdto = new DBCDTO();
-  private DBCDTO dbcdto_invalid = new DBCDTO();
-  private Role role = new Role();
-  private Permission permission = new Permission();
-  private Permission permission1 = new Permission();
-  private Set<Role> roles = Sets.newLinkedHashSet(role);
-  private Set<Role> roles_null = Sets.newLinkedHashSet(null);
+  private final Set<String> dbcCodes = Sets.newLinkedHashSet(DBC);
+  private final Set<String> dbcCodesInvalid = Sets.newLinkedHashSet(INVALID_DBC);
+  private final Set<String> dbcCodesNone = Sets.newLinkedHashSet(HeeUser.NONE);
+  private final DBCDTO dbcDto = new DBCDTO();
+  private final DBCDTO dbcDtoInvalid = new DBCDTO();
+  private final Role role = new Role();
+  private final Permission permission = new Permission();
+  private final Permission permission1 = new Permission();
+  private final Set<Role> roles = Sets.newLinkedHashSet(role);
   @Mock
   private ReferenceService referenceServiceMock;
   @InjectMocks
@@ -61,15 +56,15 @@ public class HeeUserValidatorTest {
 
   @Before
   public void setup() {
-    dbcdto.setAbbr(DBC_ABBR);
-    dbcdto.setDbc(DBC);
-    dbcdto.setId(ID);
-    dbcdto.setName(DBC_NAME);
-    dbcdto.setStatus(Status.CURRENT);
+    dbcDto.setAbbr(DBC_ABBR);
+    dbcDto.setDbc(DBC);
+    dbcDto.setId(ID);
+    dbcDto.setName(DBC_NAME);
+    dbcDto.setStatus(Status.CURRENT);
 
-    dbcdto_invalid.setDbc(INVAlID_DBC);
-    dbcdto_invalid.setId(ID_INVALID);
-    dbcdto_invalid.setStatus(Status.CURRENT);
+    dbcDtoInvalid.setDbc(INVALID_DBC);
+    dbcDtoInvalid.setId(ID_INVALID);
+    dbcDtoInvalid.setStatus(Status.CURRENT);
 
     permission.setName(PERMISSION_NAME);
     permission1.setName(OTHER_PERMISSION);
@@ -79,44 +74,44 @@ public class HeeUserValidatorTest {
   }
 
   @Test
-  public void shouldValidateDBCIds() {
+  public void shouldValidateDbcIds() {
     // Given
     when(referenceServiceMock.getDBCByCode(DBC))
-        .thenReturn(new ResponseEntity<>(dbcdto, HttpStatus.OK));
+        .thenReturn(new ResponseEntity<>(dbcDto, HttpStatus.OK));
 
     // When
-    testObj.validateDBCIds(dbcCodes);
+    testObj.validateDbcIds(dbcCodes);
 
     // Then
     verify(referenceServiceMock).getDBCByCode(DBC);
   }
 
   @Test
-  public void shouldValidateInvalidDBCasEmptyReponse() {
+  public void shouldValidateInvalidDbcAsEmptyReponse() {
     // Given
-    when(referenceServiceMock.getDBCByCode(INVAlID_DBC))
-        .thenReturn(new ResponseEntity<DBCDTO>(HttpStatus.NOT_FOUND));
+    when(referenceServiceMock.getDBCByCode(INVALID_DBC))
+        .thenReturn(new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
     // When
-    testObj.validateDBCIds(dbcCodes_invalid);
+    testObj.validateDbcIds(dbcCodesInvalid);
 
     // Then
-    verify(referenceServiceMock).getDBCByCode(INVAlID_DBC);
+    verify(referenceServiceMock).getDBCByCode(INVALID_DBC);
   }
 
   @Test
   public void shouldValidateIfCodeIsNone() {
     // When
-    testObj.validateDBCIds(dbcCodes_none);
+    testObj.validateDbcIds(dbcCodesNone);
 
     // Then
     verify(referenceServiceMock, never()).getDBCByCode(any(String.class));
   }
 
   @Test
-  public void shouldValidateIfSetOfdbcCodesIsNull() {
+  public void shouldValidateIfSetOfDbcCodesIsNull() {
     // When
-    testObj.validateDBCIds(null);
+    testObj.validateDbcIds(null);
 
     // Then
     verify(referenceServiceMock, never()).getDBCByCode(any(String.class));
@@ -151,39 +146,9 @@ public class HeeUserValidatorTest {
   @Test
   public void shouldDealWithNullSetOfRoles() {
     // When
-    testObj.validateRoles(roles_null);
+    testObj.validateRoles(null);
     // Then
     verify(roleRepositoryMock, never()).findByName(any(String.class));
-  }
-
-  @Test
-  public void shouldValidateValidPassword() {
-    testObj.validatePassword(ACCEPTABLEPASSWORD);
-  }
-
-  @Test(expected = CustomParameterizedException.class)
-  public void shouldThrowExceptionIfPasswordTooShort() {
-    testObj.validatePassword(SHORTPW);
-  }
-
-  @Test(expected = CustomParameterizedException.class)
-  public void shouldThrowExceptionIfPasswordEmpty() {
-    testObj.validatePassword(StringUtils.EMPTY);
-  }
-
-  @Test(expected = CustomParameterizedException.class)
-  public void shouldThrowExceptionIfPasswordNull() {
-    testObj.validatePassword(null);
-  }
-
-  @Test
-  public void shouldValidateNonNullTemporaryPassword() {
-    testObj.validateIsTemporary(true);
-  }
-
-  @Test(expected = CustomParameterizedException.class)
-  public void shouldThrowExceptionWithNullTemporaryPassword() {
-    testObj.validateIsTemporary(null);
   }
 
   @Test

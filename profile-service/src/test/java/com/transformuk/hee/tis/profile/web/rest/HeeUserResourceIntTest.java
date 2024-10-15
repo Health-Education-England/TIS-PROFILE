@@ -63,8 +63,6 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest(classes = ProfileApp.class)
 public class HeeUserResourceIntTest {
 
-  private static final String DEFAULT_PASSWORD = "AAAAAAAAAA";
-
   @Autowired
   private HeeUserRepository heeUserRepository;
 
@@ -126,8 +124,6 @@ public class HeeUserResourceIntTest {
     int databaseSizeBeforeCreate = heeUserRepository.findAll().size();
     int databasePermissionSizeBeforeCreate = permissionRepository.findAll().size();
 
-    heeUser.setPassword(DEFAULT_PASSWORD);
-    heeUser.setTemporaryPassword(true);
     // Create the HeeUser
     HeeUserDTO heeUserDTO = heeUserMapper.heeUserToHeeUserDTO(heeUser);
     restHeeUserMockMvc.perform(post("/api/hee-users")
@@ -152,58 +148,12 @@ public class HeeUserResourceIntTest {
 
   @Test
   @Transactional
-  public void shouldValidateTemporaryPassword() throws Exception {
-    int databaseSizeBeforeCreate = heeUserRepository.findAll().size();
-    int databasePermissionSizeBeforeCreate = permissionRepository.findAll().size();
-
-    heeUser.setPassword(DEFAULT_PASSWORD);
-    // Create the HeeUser
-    HeeUserDTO heeUserDTO = heeUserMapper.heeUserToHeeUserDTO(heeUser);
-    restHeeUserMockMvc.perform(post("/api/hee-users")
-            .contentType(TestUtil.JSON)
-            .content(TestUtil.convertObjectToJsonBytes(heeUserDTO)))
-        .andExpect(status().is4xxClientError())
-        .andExpect(jsonPath("$.message").value("isTemporaryPassword should be true or false"));
-
-    // Validate the HeeUser in the database
-    List<HeeUser> heeUserList = heeUserRepository.findAll();
-    assertThat(heeUserList).hasSize(databaseSizeBeforeCreate);
-    assertThat(permissionRepository.findAll()).hasSize(databasePermissionSizeBeforeCreate);
-
-  }
-
-  @Test
-  @Transactional
-  public void shouldValidatePassword() throws Exception {
-    int databaseSizeBeforeCreate = heeUserRepository.findAll().size();
-    int databasePermissionSizeBeforeCreate = permissionRepository.findAll().size();
-
-    heeUser.setPassword(null);
-    // Create the HeeUser
-    HeeUserDTO heeUserDTO = heeUserMapper.heeUserToHeeUserDTO(heeUser);
-    restHeeUserMockMvc.perform(post("/api/hee-users")
-            .contentType(TestUtil.JSON)
-            .content(TestUtil.convertObjectToJsonBytes(heeUserDTO)))
-        .andExpect(status().is4xxClientError())
-        .andExpect(jsonPath("$.message").value("Password should be minimum 8 chars long"));
-
-    // Validate the HeeUser in the database
-    List<HeeUser> heeUserList = heeUserRepository.findAll();
-    assertThat(heeUserList).hasSize(databaseSizeBeforeCreate);
-    assertThat(permissionRepository.findAll()).hasSize(databasePermissionSizeBeforeCreate);
-
-  }
-
-  @Test
-  @Transactional
   public void createHeeUserWithExistingId() throws Exception {
     int databaseSizeBeforeCreate = heeUserRepository.findAll().size();
 
     // Create the HeeUser with an existing name
     heeUser.setName(DEFAULT_NAME);
     HeeUserDTO heeUserDTO = heeUserMapper.heeUserToHeeUserDTO(heeUser);
-    heeUserDTO.setPassword(DEFAULT_PASSWORD);
-    heeUserDTO.setTemporaryPassword(false);
 
     // A user with the same name will update the existing user
     restHeeUserMockMvc.perform(post("/api/hee-users")
@@ -356,8 +306,6 @@ public class HeeUserResourceIntTest {
     heeUserDTO.setName(UPDATED_NAME);
     heeUserDTO.setLastName(UPDATED_NAME);
     heeUserDTO.setEmailAddress("");
-    heeUserDTO.setPassword(DEFAULT_PASSWORD);
-    heeUserDTO.setTemporaryPassword(true);
 
     // If the entity doesn't have an ID, it will be created instead of just being updated
     restHeeUserMockMvc.perform(put("/api/hee-users")

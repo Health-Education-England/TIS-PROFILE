@@ -19,7 +19,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -33,8 +32,6 @@ import org.springframework.util.CollectionUtils;
 public class HeeUser implements Serializable {
 
   public static final String NONE = "None";
-  private static final UserTrust NULL_TRUST = null;
-  private static final UserProgramme NULL_PROGRAMME = null;
   private static final long serialVersionUID = 1L;
   private String name;
   private String firstName;
@@ -43,10 +40,6 @@ public class HeeUser implements Serializable {
   private String phoneNumber;
   private String emailAddress;
   private Boolean active;
-
-  private String password;
-
-  private Boolean isTemporaryPassword;
 
   private Set<Role> roles;
   private Set<String> designatedBodyCodes;
@@ -154,24 +147,6 @@ public class HeeUser implements Serializable {
 
   public void setActive(Boolean active) {
     this.active = active;
-  }
-
-  @Transient
-  public String getPassword() {
-    return password;
-  }
-
-  public void setPassword(String password) {
-    this.password = password;
-  }
-
-  @Transient
-  public Boolean getTemporaryPassword() {
-    return isTemporaryPassword;
-  }
-
-  public void setTemporaryPassword(Boolean temporaryPassword) {
-    isTemporaryPassword = temporaryPassword;
   }
 
   @ManyToMany(cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
