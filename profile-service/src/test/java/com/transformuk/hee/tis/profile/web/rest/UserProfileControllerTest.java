@@ -20,9 +20,9 @@ import com.transformuk.hee.tis.profile.service.LoginService;
 import com.transformuk.hee.tis.profile.web.rest.errors.ExceptionTranslator;
 import java.util.List;
 import java.util.Set;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
@@ -33,14 +33,14 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = ProfileApp.class)
 @ComponentScan("com.transformuk.hee.tis.profile.assembler")
-public class UserProfileControllerTest {
+class UserProfileControllerTest {
 
   private static final String GMC_ID = "123";
   private static final String DESIGNATED_BODY_CODE = "1-DGBODY";
@@ -75,55 +75,55 @@ public class UserProfileControllerTest {
   @Captor
   private ArgumentCaptor<AuditEvent> captor;
 
-  @Before
-  public void setup() {
+  @BeforeEach
+  void setup() {
     MockitoAnnotations.initMocks(this);
     UserProfileController profileController = new UserProfileController(loginService, assembler);
-    this.mvc = MockMvcBuilders.standaloneSetup(profileController)
+    mvc = MockMvcBuilders.standaloneSetup(profileController)
         .setCustomArgumentResolvers(pageableArgumentResolver)
         .setControllerAdvice(exceptionTranslator)
         .setMessageConverters(jacksonMessageConverter).build();
   }
 
   @Test
-  public void shouldReturnUnauthorizedWhenNoToken() throws Exception {
-    this.mvc.perform(get("/api/userupdate"))
-            .andExpect(status().isUnauthorized());
+  void shouldReturnUnauthorizedWhenNoToken() throws Exception {
+    mvc.perform(get("/api/userupdate"))
+        .andExpect(status().isUnauthorized());
   }
 
   @Test
-  public void shouldPreferAuthorizationTokenWhenAvailable() throws Exception {
+  void shouldPreferAuthorizationTokenWhenAvailable() throws Exception {
     given(loginService.getUserByToken("authToken")).willReturn(getUser());
 
-    this.mvc.perform(get("/api/userupdate")
-                    .header("OIDC_access_token", "oidcToken")
-                    .header("Authorization", "authToken"))
-            .andExpect(status().isOk());
+    mvc.perform(get("/api/userupdate")
+            .header("OIDC_access_token", "oidcToken")
+            .header("Authorization", "authToken"))
+        .andExpect(status().isOk());
 
     verify(loginService).getUserByToken("authToken");
   }
 
   @Test
-  public void shouldUseOidcAccessTokenWhenAuthorizationTokenNotAvailable() throws Exception {
+  void shouldUseOidcAccessTokenWhenAuthorizationTokenNotAvailable() throws Exception {
     given(loginService.getUserByToken("oidcToken")).willReturn(getUser());
 
-    this.mvc.perform(get("/api/userupdate")
-                    .header("OIDC_access_token", "oidcToken"))
-            .andExpect(status().isOk());
+    mvc.perform(get("/api/userupdate")
+            .header("OIDC_access_token", "oidcToken"))
+        .andExpect(status().isOk());
 
     verify(loginService).getUserByToken("oidcToken");
   }
 
   @Test
-  public void shouldReturnUserProfileDetails() throws Exception {
+  void shouldReturnUserProfileDetails() throws Exception {
     //Given
     HeeUser user = getUser();
 
     given(loginService.getUserByToken(TOKEN)).willReturn(user);
 
     // When & then
-    this.mvc.perform(get("/api/userinfo")
-        .header("OIDC_access_token", TOKEN))
+    mvc.perform(get("/api/userinfo")
+            .header("OIDC_access_token", TOKEN))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.userName").value(USER_NAME))
         .andExpect(jsonPath("$.gmcId").value(GMC_ID))
@@ -133,7 +133,7 @@ public class UserProfileControllerTest {
   }
 
   @Test
-  public void shouldGETListOfUsers() throws Exception {
+  void shouldGETListOfUsers() throws Exception {
     //Given
     HeeUser user = new HeeUser(USER_NAME);
     user.setGmcId("123");
@@ -142,8 +142,8 @@ public class UserProfileControllerTest {
     given(loginService.getUsers(newSet(DESIGNATED_BODY_CODE), null)).willReturn(userList);
 
     //When
-    this.mvc.perform(get("/api/users").param("designatedBodyCode",
-        DESIGNATED_BODY_CODE))
+    mvc.perform(get("/api/users").param("designatedBodyCode",
+            DESIGNATED_BODY_CODE))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.total").value(1))
         .andExpect(jsonPath("$.users[0].name").value("jamesh"))
@@ -151,7 +151,7 @@ public class UserProfileControllerTest {
   }
 
   @Test
-  public void shouldGETListOfUsersByPermissions() throws Exception {
+  void shouldGETListOfUsersByPermissions() throws Exception {
     //Given
     String permissions = "revalidation:submit:to:gmc,revalidation:submit:on:behalf:of:ro";
     HeeUser user = new HeeUser(USER_NAME);
@@ -161,9 +161,9 @@ public class UserProfileControllerTest {
     given(loginService.getUsers(newSet(DESIGNATED_BODY_CODE), permissions)).willReturn(userList);
 
     //When
-    this.mvc.perform(get("/api/users")
-        .param("designatedBodyCode", DESIGNATED_BODY_CODE)
-        .param("permissions", permissions))
+    mvc.perform(get("/api/users")
+            .param("designatedBodyCode", DESIGNATED_BODY_CODE)
+            .param("permissions", permissions))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.total").value(1))
         .andExpect(jsonPath("$.users[0].name").value("jamesh"))
@@ -171,28 +171,28 @@ public class UserProfileControllerTest {
   }
 
   @Test
-  public void shouldGetRoUserByDBC() throws Exception {
+  void shouldGetRoUserByDBC() throws Exception {
     //Given
     HeeUser user = getUser();
     given(loginService.getRVOfficer(DESIGNATED_BODY_CODE)).willReturn(user);
 
     //When
-    this.mvc.perform(get("/api/users/ro-user/" + DESIGNATED_BODY_CODE))
+    mvc.perform(get("/api/users/ro-user/" + DESIGNATED_BODY_CODE))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.userName").value(USER_NAME))
         .andExpect(jsonPath("$.gmcId").value(GMC_ID));
   }
 
   @Test
-  public void shouldReturnPermissionsAndRoles() throws Exception {
+  void shouldReturnPermissionsAndRoles() throws Exception {
     //Given
     HeeUser user = getUser();
 
     given(loginService.getUserByToken(TOKEN)).willReturn(user);
 
     //When
-    this.mvc.perform(get("/api/userinfo")
-        .header("OIDC_access_token", TOKEN))
+    mvc.perform(get("/api/userinfo")
+            .header("OIDC_access_token", TOKEN))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.userName").value(USER_NAME))
         .andExpect(jsonPath("$.roles").value(hasItems(ROLES)))
@@ -205,10 +205,10 @@ public class UserProfileControllerTest {
   }
 
   @Test
-  public void shouldFailAuthenticationWhenNoHeaders() throws Exception {
-    this.mvc.perform(get("/api/userinfo"))
-        .andExpect(status().is5xxServerError()).andExpect(jsonPath("$.message")
-        .value(containsString("error")));
+  void shouldFailAuthenticationWhenNoHeaders() throws Exception {
+    mvc.perform(get("/api/userinfo"))
+        .andExpect(status().isForbidden())
+        .andExpect(jsonPath("$.message").value(containsString("error")));
   }
 
 
