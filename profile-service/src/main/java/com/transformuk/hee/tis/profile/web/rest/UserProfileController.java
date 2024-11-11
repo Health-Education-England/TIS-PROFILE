@@ -53,8 +53,8 @@ public class UserProfileController {
 
   /**
    * Get User information for the supplied token.
-   * <p>
-   * Both token headers are included to support both Keycloak and Cognito simultaneously.
+   *
+   * <p>Both token headers are included to support both Keycloak and Cognito simultaneously.
    *
    * @param oidcAccessToken    Legacy parameter for the token used to obtain the user profile
    * @param authorizationToken Standard parameter for the token used to obtain the user profile
@@ -82,8 +82,8 @@ public class UserProfileController {
 
   /**
    * Get a User's Profile information for the supplied token.
-   * <p>
-   * Both token headers are included to support both Keycloak and Cognito simultaneously.
+   *
+   * <p>Both token headers are included to support both Keycloak and Cognito simultaneously.
    * TODO: remove OIDC_access_token once fully migrated.
    *
    * @param oidcAccessToken    Legacy parameter for the token used to obtain the user profile
