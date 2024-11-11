@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -50,6 +51,15 @@ public class UserProfileController {
     this.assembler = assembler;
   }
 
+  /**
+   * Get User information for the supplied token.
+   *
+   * <p>Both token headers are included to support both Keycloak and Cognito simultaneously.
+   *
+   * @param oidcAccessToken    Legacy parameter for the token used to obtain the user profile
+   * @param authorizationToken Standard parameter for the token used to obtain the user profile
+   * @return the user profile for the supplied token
+   */
   @ApiOperation(value = "Gets user profile", notes = "gets user profile with permissions", response = UserProfile
       .class)
   @ApiResponses(value = {
@@ -57,15 +67,23 @@ public class UserProfileController {
   })
   @CrossOrigin
   @GetMapping(path = "/userinfo", produces = APPLICATION_JSON_VALUE)
-  public UserProfile profile(@RequestHeader(value = "OIDC_access_token") String token) {
+  public UserProfile profile(
+      @RequestHeader(value = "OIDC_access_token", required = false) String oidcAccessToken,
+      @RequestHeader(value = "Authorization", required = false) String authorizationToken) {
+    if (oidcAccessToken == null && authorizationToken == null) {
+      throw new AccessDeniedException("User info cannot be provided for the request supplied.");
+    }
+
+    String token = authorizationToken != null ? authorizationToken.replaceFirst("^Bearer ", "")
+        : oidcAccessToken;
     HeeUser user = loginService.getUserByToken(token);
     return assembler.toUserProfile(user);
   }
 
   /**
    * Get a User's Profile information for the supplied token.
-   * <p>
-   * Both token headers are included to support both Keycloak and Cognito simultaneously.
+   *
+   * <p>Both token headers are included to support both Keycloak and Cognito simultaneously.
    * TODO: remove OIDC_access_token once fully migrated.
    *
    * @param oidcAccessToken    Legacy parameter for the token used to obtain the user profile
@@ -85,7 +103,8 @@ public class UserProfileController {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
     }
 
-    String token = authorizationToken != null ? authorizationToken : oidcAccessToken;
+    String token = authorizationToken != null ? authorizationToken.replaceFirst("^Bearer ", "")
+        : oidcAccessToken;
     HeeUser user = loginService.getUserByToken(token);
     UserProfile userProfile = assembler.toUserProfile(user);
     return new ResponseEntity<>(userProfile, HttpStatus.OK);
