@@ -1,6 +1,7 @@
 package com.transformuk.hee.tis.profile.config;
 
 import com.transformuk.hee.tis.profile.assembler.UserProfileAssembler;
+import com.transformuk.hee.tis.profile.repository.HeeUserRepository;
 import com.transformuk.hee.tis.profile.service.LoginService;
 import com.transformuk.hee.tis.profile.service.ProfileUserDetailsServiceImpl;
 import com.transformuk.hee.tis.security.JwtAuthenticationEntryPoint;
@@ -30,10 +31,12 @@ public class ProfileSecurityConfig {
   private LoginService loginService;
   @Autowired
   private UserProfileAssembler userProfileAssembler;
+  @Autowired
+  private  HeeUserRepository userRepository;
 
   @Bean
   public UserDetailsService userDetailsService() {
-    return new ProfileUserDetailsServiceImpl(loginService, userProfileAssembler);
+    return new ProfileUserDetailsServiceImpl(loginService, userProfileAssembler, userRepository);
   }
 
   @Bean

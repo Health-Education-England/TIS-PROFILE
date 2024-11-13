@@ -129,4 +129,9 @@ logging:
     root: info
     com.transformuk: debug
 
+aws:
+  region: eu-west-2
+  cognito:
+    user_pool_id:
+
 application:

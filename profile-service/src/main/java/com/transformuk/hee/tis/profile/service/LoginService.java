@@ -16,6 +16,7 @@ import javax.persistence.EntityNotFoundException;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.json.JsonParser;
 import org.springframework.boot.json.JsonParserFactory;
 import org.springframework.security.jwt.Jwt;
@@ -35,6 +36,11 @@ public class LoginService {
 
   private JsonParser jsonParser = JsonParserFactory.getJsonParser();
 
+  String jwkSetUri = "https://cognito-idp.<region>.amazonaws.com/<user_pool_id>/.well-known/jwks.json";
+
+  JwtUtil jwtUtil = new JwtUtil(jwkSetUri);
+
+
   public LoginService(HeeUserRepository userRepository) {
     this.userRepository = userRepository;
   }
@@ -44,12 +50,16 @@ public class LoginService {
    * @return {@link HeeUser} User associated with given unique user name
    */
   public HeeUser getUserByToken(String token) {
-    JwtAuthToken jwtAuthToken = decode(token);
-    HeeUser user = userRepository.findByActive(jwtAuthToken.getUsername());
+    System.out.println("Token in login service "+token);
+    String userTest = jwtUtil.getUsernameFromToken(token);
+    Map<String, Object> claims = jwtUtil.getAllClaimsFromToken(token);
+    String emailUser = (String) claims.get("email");
+    //JwtAuthToken jwtAuthToken = decode(token);
+    HeeUser user = userRepository.findByActive(emailUser);
     if (user == null) {
       throw new EntityNotFoundException(
-          format("User with username %s either not found or not active",
-              jwtAuthToken.getUsername()));
+          format("User with username %s either not found or not active"));//,
+              //jwtAuthToken.getUsername()));
     }
     return user;
   }
