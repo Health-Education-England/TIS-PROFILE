@@ -2,7 +2,6 @@ package com.transformuk.hee.tis.profile.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.hateoas.client.LinkDiscoverer;
 import org.springframework.hateoas.client.LinkDiscoverers;
 import org.springframework.hateoas.mediatype.collectionjson.CollectionJsonLinkDiscoverer;
 import org.springframework.plugin.core.SimplePluginRegistry;
@@ -12,17 +11,14 @@ import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
-
-import java.util.ArrayList;
-import java.util.List;
+import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
 
 /**
- * Configuration for swagger to auto generate our REST API documentation. For more info please {@see
- * http://swagger.io/getting-started/}
+ * Configuration for swagger to auto generate our REST API documentation. For more info please
+ * {@see http://swagger.io/getting-started/}
  */
 @Configuration
-@EnableSwagger2
+@EnableSwagger2WebMvc
 public class SwaggerDocumentationConfig {
 
   ApiInfo apiInfo() {
@@ -33,7 +29,8 @@ public class SwaggerDocumentationConfig {
         .licenseUrl("")
         .termsOfServiceUrl("")
         .version("1.0.0")
-        .contact(new Contact("Transform", "http://transformuk.com/", "info@transformuk,com"))
+        .contact(new Contact("Trainee Information Systems Team", "https://tis-support.hee.nhs.uk/",
+            "england.tis.team@nhs.net"))
         .build();
   }
 
@@ -49,8 +46,6 @@ public class SwaggerDocumentationConfig {
 
   @Bean
   public LinkDiscoverers discoverers() {
-    List<LinkDiscoverer> plugins = new ArrayList<>();
-    plugins.add(new CollectionJsonLinkDiscoverer());
-    return new LinkDiscoverers(SimplePluginRegistry.create(plugins));
+    return new LinkDiscoverers(SimplePluginRegistry.of(new CollectionJsonLinkDiscoverer()));
   }
 }
