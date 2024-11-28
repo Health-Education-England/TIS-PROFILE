@@ -54,7 +54,6 @@ class RoleRepositoryTest {
     assertEquals(allRoleSize - restrictedRoleSet.size(), result.getContent().size());
     List<String> roleNameList = result.getContent().stream().map(role -> role.getName())
         .collect(Collectors.toList());
-    assertThat(roleNameList).contains(ROLE_1);
-    assertThat(roleNameList).doesNotContain(RESTRICTED_ROLE_1);
+    assertThat(roleNameList).contains(ROLE_1).doesNotContain(RESTRICTED_ROLE_1);
   }
 }
