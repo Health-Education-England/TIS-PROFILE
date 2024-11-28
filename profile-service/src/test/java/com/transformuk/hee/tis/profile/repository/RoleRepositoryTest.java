@@ -1,13 +1,14 @@
 package com.transformuk.hee.tis.profile.repository;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.transformuk.hee.tis.profile.ProfileApp;
 import com.transformuk.hee.tis.profile.domain.Role;
-import java.util.Collection;
+import java.util.List;
 import java.util.Set;
-import org.junit.jupiter.api.AfterEach;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -23,44 +24,37 @@ import org.springframework.test.context.junit4.SpringRunner;
 class RoleRepositoryTest {
 
   private static final String ROLE_1 = "role1";
-  private static final String RESTRICTED_ROLE_1 = "RVOfficer";
-  private static final String RESTRICTED_ROLE_2 = "Machine User";
-  private static final String RESTRICTED_ROLE_3 = "HEE";
+  private static final String RESTRICTED_ROLE_1 = "Restricted role";
 
-  private static final Collection<String> restrictedRoles = Set.of(RESTRICTED_ROLE_1,
-      RESTRICTED_ROLE_2, RESTRICTED_ROLE_3);
+  private static final Set<String> restrictedRoleSet = Set.of(RESTRICTED_ROLE_1);
 
   @Autowired
   RoleRepository roleRepository;
 
-  private Role restrictedRole1, restrictedRole2, restrictedRole3, role1;
+  private Role restrictedRole1, role1;
 
   private void createRoles() {
     role1 = new Role(ROLE_1, null);
     restrictedRole1 = new Role(RESTRICTED_ROLE_1, null);
-    restrictedRole2 = new Role(RESTRICTED_ROLE_2, null);
-    restrictedRole3 = new Role(RESTRICTED_ROLE_3, null);
   }
 
   @BeforeEach
   public void setup() {
-    roleRepository.deleteAll();
     createRoles();
   }
 
   @Test
   void shouldFindByNameNotIn() {
-    roleRepository.saveAll(Set.of(role1, restrictedRole1, restrictedRole2, restrictedRole3));
+    roleRepository.saveAll(Set.of(role1, restrictedRole1));
+    int allRoleSize = roleRepository.findAll().size();
     Pageable pageable = PageRequest.of(0, 50);
-    Page<Role> result = roleRepository.findByNameNotIn(restrictedRoles, pageable);
+    Page<Role> result = roleRepository.findByNameNotIn(restrictedRoleSet, pageable);
 
     assertNotNull(result);
-    assertEquals(1, result.getContent().size());
-    assertEquals(ROLE_1, result.getContent().get(0).getName());
-  }
-
-  @AfterEach
-  public void teardown() {
-    roleRepository.deleteAll();
+    assertEquals(allRoleSize - restrictedRoleSet.size(), result.getContent().size());
+    List<String> roleNameList = result.getContent().stream().map(role -> role.getName())
+        .collect(Collectors.toList());
+    assertThat(roleNameList).contains(ROLE_1);
+    assertThat(roleNameList).doesNotContain(RESTRICTED_ROLE_1);
   }
 }
