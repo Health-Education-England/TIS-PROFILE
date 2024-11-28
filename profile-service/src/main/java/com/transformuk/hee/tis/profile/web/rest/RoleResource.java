@@ -13,6 +13,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +40,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class RoleResource {
 
   private static final String ENTITY_NAME = "role";
+  protected static final Set<String> restrictedRoles = Set.of("RVOfficer",
+      "Machine User", "HEE");
   private final Logger log = LoggerFactory.getLogger(RoleResource.class);
   private final RoleRepository roleRepository;
 
@@ -119,9 +122,15 @@ public class RoleResource {
   @GetMapping("/roles")
   @Timed
   @PreAuthorize("hasAuthority('profile:view:entities')")
-  public ResponseEntity<List<RoleDTO>> getAllRoles(@ApiParam Pageable pageable) {
+  public ResponseEntity<List<RoleDTO>> getAllRoles(@ApiParam Pageable pageable,
+      @ApiParam boolean excludeRestricted) {
     log.debug("REST request to get a page of Roles");
-    Page<Role> page = roleRepository.findAll(pageable);
+    Page<Role> page;
+    if (excludeRestricted) {
+      page = roleRepository.findByNameNotIn(restrictedRoles, pageable);
+    } else {
+      page = roleRepository.findAll(pageable);
+    }
     HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/roles");
     return new ResponseEntity<>(roleMapper.rolesToRoleDTOs(page.getContent()), headers,
         HttpStatus.OK);
