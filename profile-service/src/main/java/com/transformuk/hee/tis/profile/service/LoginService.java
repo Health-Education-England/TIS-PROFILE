@@ -32,11 +32,13 @@ public class LoginService {
 
   private static final Logger LOG = getLogger(LoginService.class);
   private final HeeUserRepository userRepository;
-
   private JsonParser jsonParser = JsonParserFactory.getJsonParser();
+  private final JwtUtil jwtUtil;
 
-  public LoginService(HeeUserRepository userRepository) {
+  public LoginService(HeeUserRepository userRepository,
+      JwtUtil jwtUtil) {
     this.userRepository = userRepository;
+    this.jwtUtil = jwtUtil;
   }
 
   /**
@@ -44,12 +46,13 @@ public class LoginService {
    * @return {@link HeeUser} User associated with given unique user name
    */
   public HeeUser getUserByToken(String token) {
-    JwtAuthToken jwtAuthToken = decode(token);
-    HeeUser user = userRepository.findByActive(jwtAuthToken.getUsername());
+    String userTest = jwtUtil.getUsernameFromToken(token);
+    Map<String, Object> claims = jwtUtil.getAllClaimsFromToken(token);
+    String emailUser = (String) claims.get("email");
+    HeeUser user = userRepository.findByActive(emailUser);
     if (user == null) {
       throw new EntityNotFoundException(
-          format("User with username %s either not found or not active",
-              jwtAuthToken.getUsername()));
+          format("No active user found with username %s"));//,
     }
     return user;
   }

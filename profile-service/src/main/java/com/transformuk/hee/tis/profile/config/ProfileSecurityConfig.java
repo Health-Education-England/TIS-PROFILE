@@ -1,6 +1,8 @@
 package com.transformuk.hee.tis.profile.config;
 
 import com.transformuk.hee.tis.profile.assembler.UserProfileAssembler;
+import com.transformuk.hee.tis.profile.repository.HeeUserRepository;
+import com.transformuk.hee.tis.profile.service.JwtUtil;
 import com.transformuk.hee.tis.profile.service.LoginService;
 import com.transformuk.hee.tis.profile.service.ProfileUserDetailsServiceImpl;
 import com.transformuk.hee.tis.security.JwtAuthenticationEntryPoint;
@@ -25,15 +27,14 @@ import org.springframework.context.annotation.FilterType;
         value = {TisSecurityConfig.class})
     })
 public class ProfileSecurityConfig {
-
-  @Autowired
   private LoginService loginService;
-  @Autowired
   private UserProfileAssembler userProfileAssembler;
+  private HeeUserRepository userRepository;
+  private JwtUtil jwtUtil;
 
   @Bean
   public UserDetailsService userDetailsService() {
-    return new ProfileUserDetailsServiceImpl(loginService, userProfileAssembler);
+    return new ProfileUserDetailsServiceImpl(loginService, userProfileAssembler, userRepository, jwtUtil);
   }
 
   @Bean

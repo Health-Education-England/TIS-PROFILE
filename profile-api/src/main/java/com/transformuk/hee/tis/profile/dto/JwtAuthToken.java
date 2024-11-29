@@ -10,6 +10,7 @@ import java.util.Set;
 public class JwtAuthToken {
 
   private String username;
+  private String email;
   private Set<String> roles = new HashSet<>();
 
   public Set<String> getRoles() {
@@ -26,5 +27,13 @@ public class JwtAuthToken {
 
   public void setUsername(String username) {
     this.username = username;
+  }
+
+  public String getEmail() {
+    return email;
+  }
+
+  public void setEmail(String email) {
+    this.email = email;
   }
 }
