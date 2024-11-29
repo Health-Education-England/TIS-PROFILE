@@ -2,6 +2,8 @@ package com.transformuk.hee.tis.profile.web.rest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.not;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -23,6 +25,7 @@ import com.transformuk.hee.tis.profile.service.mapper.RoleMapper;
 import com.transformuk.hee.tis.profile.validators.RoleValidator;
 import com.transformuk.hee.tis.profile.web.rest.errors.ExceptionTranslator;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -36,6 +39,7 @@ import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -206,12 +210,42 @@ public class RoleResourceIntTest {
     // Need to override default page size (20) as number of Roles increases
     String resultSize = Integer.toString(roleRepository.findAll().size());
 
+    Set<String> restrictedRoles = RoleResource.restrictedRoles;
+
     // When and Then
     // Get all the roleList
-    restRoleMockMvc.perform(get("/api/roles?size=" + resultSize))
+    ResultActions resultActions = restRoleMockMvc.perform(get("/api/roles?size=" + resultSize))
         .andExpect(status().isOk())
         .andExpect(content().contentType(TestUtil.JSON))
         .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)));
+
+    Iterator<String> iter = restrictedRoles.iterator();
+    while(iter.hasNext()) {
+      resultActions.andExpect(jsonPath("$.[*].name").value(hasItem(iter.next())));
+    }
+  }
+
+  @Test
+  @Transactional
+  public void getAllRolesExcludeRestrictedRoles() throws Exception {
+    // amount of all roles
+    int roleSize = roleRepository.findAll().size();
+    String roleSizeStr = Integer.toString(roleSize);
+
+    Set<String> restrictedRoles = RoleResource.restrictedRoles;
+    // amount of restricted roles
+    int restrictedRoleSize = restrictedRoles.size();
+
+    // When and Then
+    ResultActions resultActions = restRoleMockMvc.perform(get("/api/roles?excludeRestricted=true&size=" + roleSizeStr))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(TestUtil.JSON))
+        .andExpect(jsonPath("$.[*].name").value(hasSize(roleSize - restrictedRoleSize)));
+
+    Iterator<String> iter = restrictedRoles.iterator();
+    while(iter.hasNext()) {
+      resultActions.andExpect(jsonPath("$.[*].name").value(not(hasItem(iter.next()))));
+    }
   }
 
   @Test
