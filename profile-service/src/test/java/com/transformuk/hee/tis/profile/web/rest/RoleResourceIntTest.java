@@ -3,7 +3,6 @@ package com.transformuk.hee.tis.profile.web.rest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.hasValue;
 import static org.hamcrest.Matchers.not;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -211,12 +210,19 @@ public class RoleResourceIntTest {
     // Need to override default page size (20) as number of Roles increases
     String resultSize = Integer.toString(roleRepository.findAll().size());
 
+    Set<String> restrictedRoles = RoleResource.restrictedRoles;
+
     // When and Then
     // Get all the roleList
-    restRoleMockMvc.perform(get("/api/roles?size=" + resultSize))
+    ResultActions resultActions = restRoleMockMvc.perform(get("/api/roles?size=" + resultSize))
         .andExpect(status().isOk())
         .andExpect(content().contentType(TestUtil.JSON))
         .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)));
+
+    Iterator<String> iter = restrictedRoles.iterator();
+    while(iter.hasNext()) {
+      resultActions.andExpect(jsonPath("$.[*].name").value(hasItem(iter.next())));
+    }
   }
 
   @Test
@@ -238,7 +244,7 @@ public class RoleResourceIntTest {
 
     Iterator<String> iter = restrictedRoles.iterator();
     while(iter.hasNext()) {
-      resultActions.andExpect(jsonPath("$.[*].name").value(not(hasValue(iter.next()))));
+      resultActions.andExpect(jsonPath("$.[*].name").value(not(hasItem(iter.next()))));
     }
   }
 
