@@ -1,7 +1,9 @@
 package com.transformuk.hee.tis.profile.client.service.impl;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -21,6 +23,7 @@ import com.transformuk.hee.tis.profile.service.dto.HeeUserDTO;
 import com.transformuk.hee.tis.security.model.UserProfile;
 import java.net.URI;
 import java.util.List;
+import java.util.Set;
 import org.json.simple.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
@@ -78,6 +81,8 @@ public class ProfileServiceImplTest {
   private ArgumentCaptor<ParameterizedTypeReference<HeeUserDTO>> parameterizedTypeReferenceArgumentCaptorSingleDTO;
   @Captor
   private ArgumentCaptor<ParameterizedTypeReference<List<HeeUserDTO>>> parameterizedTypeReferenceArgumentCaptorListDTO;
+  @Captor
+  private ArgumentCaptor<ParameterizedTypeReference<Set<String>>> parameterizedTypeReferenceArgCaptorStringSet;
 
   @Before
   public void setUp() throws Exception {
@@ -201,7 +206,7 @@ public class ProfileServiceImplTest {
   }
 
   @Test
-  public void getUserByNameIngoreCaseShouldReturnHeeUserDTOs() {
+  public void getUserByNameIgnoreCaseShouldReturnHeeUserDTOs() {
     HeeUserDTO heeUserDTO = new HeeUserDTO();
     heeUserDTO.setName("Abc");
     List<HeeUserDTO> heeUserDTOS = Lists.newArrayList(heeUserDTO);
@@ -320,4 +325,17 @@ public class ProfileServiceImplTest {
     assertEquals(traineeProfileDto, traineeProfileList.get(0));
   }
 
+  @Test
+  public void shouldGetRestrictedRoleSet() {
+    Set<String> restrictedRoles = Set.of("role1", "role2", "rol3");
+    String url = PROFILE_URL + "/api/restricted-roles";
+
+    when(profileRestTemplate.exchange(eq(url), eq(HttpMethod.GET), eq(null),
+            parameterizedTypeReferenceArgCaptorStringSet.capture()))
+        .thenReturn(new ResponseEntity<>(restrictedRoles, HttpStatus.OK));
+
+    Set<String> result = profileServiceImpl.getRestrictedRoles();
+    assertEquals(restrictedRoles.size(), result.size());
+    assertThat(result, is(restrictedRoles));
+  }
 }

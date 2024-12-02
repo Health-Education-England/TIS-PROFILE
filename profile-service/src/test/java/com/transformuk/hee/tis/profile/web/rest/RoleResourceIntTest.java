@@ -1,6 +1,7 @@
 package com.transformuk.hee.tis.profile.web.rest;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.not;
@@ -247,6 +248,22 @@ public class RoleResourceIntTest {
       resultActions.andExpect(jsonPath("$.[*].name").value(not(hasItem(iter.next()))));
     }
   }
+
+  @Test
+  @Transactional
+  public void getRestrictedRoles() throws Exception {
+    Set<String> restrictedRoles = RoleResource.restrictedRoles;
+    // amount of restricted roles
+    int restrictedRoleSize = restrictedRoles.size();
+
+    // When and Then
+    restRoleMockMvc.perform(get("/api/restricted-roles"))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(TestUtil.JSON))
+        .andExpect(jsonPath("$").value(hasSize(restrictedRoleSize)))
+        .andExpect(jsonPath("$",containsInAnyOrder(restrictedRoles.toArray())));
+  }
+
 
   @Test
   @Transactional

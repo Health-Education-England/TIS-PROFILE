@@ -137,6 +137,20 @@ public class RoleResource {
   }
 
   /**
+   * GET  /restricted-roles : get all the restricted roles.
+   *
+   * @return the ResponseEntity with status 200 (OK) and the set of restricted roles
+   * @throws URISyntaxException if there is an error to generate the pagination HTTP headers
+   */
+  @GetMapping("/restricted-roles")
+  @Timed
+  @PreAuthorize("hasAuthority('profile:view:entities')")
+  public ResponseEntity<Set<String>> getRestrictedRoles() {
+    log.debug("REST request to get all restricted Roles");
+    return ResponseEntity.ok(restrictedRoles);
+  }
+
+  /**
    * GET  /roles/:name : get the "name" role.
    *
    * @param name the name of the roleDTO to retrieve
