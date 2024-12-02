@@ -257,7 +257,7 @@ public class RoleResourceIntTest {
     int restrictedRoleSize = restrictedRoles.size();
 
     // When and Then
-    ResultActions resultActions = restRoleMockMvc.perform(get("/api/restricted-roles"))
+    restRoleMockMvc.perform(get("/api/restricted-roles"))
         .andExpect(status().isOk())
         .andExpect(content().contentType(TestUtil.JSON))
         .andExpect(jsonPath("$").value(hasSize(restrictedRoleSize)))
