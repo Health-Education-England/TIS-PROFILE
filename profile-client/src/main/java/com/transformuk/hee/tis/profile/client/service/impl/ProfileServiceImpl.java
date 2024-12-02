@@ -19,6 +19,7 @@ import com.transformuk.hee.tis.profile.service.dto.HeeUserDTO;
 import com.transformuk.hee.tis.security.model.UserProfile;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
@@ -56,6 +57,7 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
   private static final Map<Class, ParameterizedTypeReference> classToParamTypeRefMap;
   private static final String SINGLE_USER_ENDPOINT = "/api/single-hee-users";
   private static final String USER_IGNORE_CASE_ENDPOINT = "/api/hee-users/{username}/ignore-case";
+  private static final String RESTRICTED_ROLES_ENDPOINT = "/api/restricted-roles";
 
   static {
     classToParamTypeRefMap = Maps.newHashMap();
@@ -228,6 +230,15 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
     return response.getBody();
   }
 
+  @Override
+  public Set<String> getRestrictedRoles() {
+    ParameterizedTypeReference<Set<String>> typeReference = getStringSetReference();
+    String url = serviceUrl + RESTRICTED_ROLES_ENDPOINT;
+    ResponseEntity<Set<String>> responseEntity = profileRestTemplate.exchange(url,
+        HttpMethod.GET, null, typeReference);
+    return responseEntity.getBody();
+  }
+
   private ParameterizedTypeReference<List<JsonPatchDTO>> getJsonPatchDtoReference() {
     return new ParameterizedTypeReference<List<JsonPatchDTO>>() {
     };
@@ -245,6 +256,11 @@ public class ProfileServiceImpl extends AbstractClientService implements Profile
 
   private ParameterizedTypeReference<List<HeeUserDTO>> getHeeUserDtosReference() {
     return new ParameterizedTypeReference<List<HeeUserDTO>>() {
+    };
+  }
+
+  private ParameterizedTypeReference<Set<String>> getStringSetReference() {
+    return new ParameterizedTypeReference<Set<String>>() {
     };
   }
 

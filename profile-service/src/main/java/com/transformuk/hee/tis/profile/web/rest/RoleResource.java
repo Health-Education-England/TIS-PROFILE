@@ -40,7 +40,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class RoleResource {
 
   private static final String ENTITY_NAME = "role";
-  protected static final Set<String> restrictedRoles = Set.of("RVOfficer",
+  protected static Set<String> restrictedRoles = Set.of("RVOfficer",
       "Machine User", "HEE");
   private final Logger log = LoggerFactory.getLogger(RoleResource.class);
   private final RoleRepository roleRepository;
@@ -134,6 +134,20 @@ public class RoleResource {
     HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/roles");
     return new ResponseEntity<>(roleMapper.rolesToRoleDTOs(page.getContent()), headers,
         HttpStatus.OK);
+  }
+
+  /**
+   * GET  /restricted-roles : get all the restricted roles.
+   *
+   * @return the ResponseEntity with status 200 (OK) and the set of restricted roles
+   * @throws URISyntaxException if there is an error to generate the pagination HTTP headers
+   */
+  @GetMapping("/restricted-roles")
+  @Timed
+  @PreAuthorize("hasAuthority('profile:view:entities')")
+  public ResponseEntity<Set<String>> getRestrictedRoles() {
+    log.debug("REST request to get all restricted Roles");
+    return ResponseEntity.ok(restrictedRoles);
   }
 
   /**

@@ -7,6 +7,7 @@ import com.transformuk.hee.tis.profile.dto.TraineeProfileDto;
 import com.transformuk.hee.tis.profile.service.dto.HeeUserDTO;
 import com.transformuk.hee.tis.security.model.UserProfile;
 import java.util.List;
+import java.util.Set;
 import org.json.simple.JSONObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,4 +32,6 @@ public interface ProfileService extends ClientService {
       List<RegistrationRequest> registrationRequests);
 
   boolean deleteUser(String username);
+
+  Set<String> getRestrictedRoles();
 }

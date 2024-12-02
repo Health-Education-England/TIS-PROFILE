@@ -250,6 +250,26 @@ public class RoleResourceIntTest {
 
   @Test
   @Transactional
+  public void getRestrictedRoles() throws Exception {
+    Set<String> restrictedRoles = RoleResource.restrictedRoles;
+    // amount of restricted roles
+    int restrictedRoleSize = restrictedRoles.size();
+
+    // When and Then
+    ResultActions resultActions = restRoleMockMvc.perform(get("/api/restricted-roles"))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(TestUtil.JSON))
+        .andExpect(jsonPath("$.[*]").value(hasSize(restrictedRoleSize)));
+
+    Iterator<String> iter = restrictedRoles.iterator();
+    while(iter.hasNext()) {
+      resultActions.andExpect(jsonPath("$.[*]").value(hasItem(iter.next())));
+    }
+  }
+
+
+  @Test
+  @Transactional
   public void getRole() throws Exception {
     // Initialize the database
     roleRepository.saveAndFlush(role);
