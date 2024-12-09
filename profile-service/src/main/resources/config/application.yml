@@ -92,7 +92,12 @@ spring:
     url: ${spring.datasource.url}
     user: ${spring.datasource.username}
     table: schema_version
-security:
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ""
   basic:
     enabled: false
   user:
@@ -130,3 +135,9 @@ logging:
     com.transformuk: debug
 
 application:
+
+profile:
+  service:
+    jwt:
+      jwk-set-uri: ""
+

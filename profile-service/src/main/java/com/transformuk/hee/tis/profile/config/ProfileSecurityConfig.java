@@ -10,7 +10,6 @@ import com.transformuk.hee.tis.security.JwtAuthenticationProvider;
 import com.transformuk.hee.tis.security.RestAccessDeniedHandler;
 import com.transformuk.hee.tis.security.config.TisSecurityConfig;
 import com.transformuk.hee.tis.security.service.UserDetailsService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.audit.AuditEventRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;

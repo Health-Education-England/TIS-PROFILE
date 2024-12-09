@@ -7,6 +7,8 @@ import com.transformuk.hee.tis.security.model.UserProfile;
 import com.transformuk.hee.tis.security.service.UserDetailsService;
 import java.util.Map;
 import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtValidators;
@@ -19,10 +21,20 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class ProfileUserDetailsServiceImpl implements UserDetailsService {
 
+  @Autowired
   private final LoginService loginService;
+  @Autowired
   private final UserProfileAssembler userProfileAssembler;
+  @Autowired
   private final JwtUtil jwtUtil;
+  @Autowired
   private final HeeUserRepository userRepository;
+
+  @Value("${profile.service.jwt.jwk-set-uri}")
+  private String jwkSetUri;
+
+  @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
+  private String issuerUri;
 
   public ProfileUserDetailsServiceImpl(LoginService loginService,
       UserProfileAssembler userProfileAssembler, HeeUserRepository userRepository,
@@ -46,11 +58,9 @@ public class ProfileUserDetailsServiceImpl implements UserDetailsService {
 
   @Bean
   public JwtDecoder jwtDecoder() {
-    NimbusJwtDecoder jwtDecoder = NimbusJwtDecoder.withJwkSetUri("")
-
+    NimbusJwtDecoder jwtDecoder = NimbusJwtDecoder.withJwkSetUri(jwkSetUri)
         .build();
-    jwtDecoder.setJwtValidator(JwtValidators.createDefaultWithIssuer(""));
+    jwtDecoder.setJwtValidator(JwtValidators.createDefaultWithIssuer(issuerUri));
     return jwtDecoder;
   }
-
 }

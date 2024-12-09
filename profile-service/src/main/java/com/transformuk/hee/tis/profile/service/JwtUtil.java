@@ -9,17 +9,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class JwtUtil {
-
   private final JwtDecoder jwtDecoder;
-  @Value("${profile.service.jwt.jwk-set-uri}")
-  private String jwkSetUri;
-
-  public JwtUtil() {
+  public JwtUtil( @Value("${profile.service.jwt.jwk-set-uri}") String jwkSetUri) {
     this.jwtDecoder = NimbusJwtDecoder.withJwkSetUri(jwkSetUri).build();
   }
 
   public String getUsernameFromToken(String token) {
-
     Jwt decodedJwt = jwtDecoder.decode(token);
     return decodedJwt.getClaimAsString("cognito:username");
   }
@@ -29,4 +24,3 @@ public class JwtUtil {
     return decodedJwt.getClaims();
   }
 }
-

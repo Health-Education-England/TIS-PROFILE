@@ -16,6 +16,7 @@ import javax.persistence.EntityNotFoundException;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.json.JsonParser;
 import org.springframework.boot.json.JsonParserFactory;
 import org.springframework.security.jwt.Jwt;
@@ -33,6 +34,7 @@ public class LoginService {
   private static final Logger LOG = getLogger(LoginService.class);
   private final HeeUserRepository userRepository;
   private JsonParser jsonParser = JsonParserFactory.getJsonParser();
+  @Autowired
   private final JwtUtil jwtUtil;
 
   public LoginService(HeeUserRepository userRepository,
@@ -52,7 +54,7 @@ public class LoginService {
     HeeUser user = userRepository.findByActive(emailUser);
     if (user == null) {
       throw new EntityNotFoundException(
-          format("No active user found with username %s"));//,
+          format("No active user found with {emailUser} %s"));
     }
     return user;
   }
