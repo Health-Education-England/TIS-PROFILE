@@ -97,7 +97,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ""
+          issuer-uri: "https://cognito-idp.eu-west-2.amazonaws.com/eu-west-2_u33BF2JoO"
   basic:
     enabled: false
   user:
@@ -139,5 +139,5 @@ application:
 profile:
   service:
     jwt:
-      jwk-set-uri: ""
+      jwk-set-uri: "https://cognito-idp.eu-west-2.amazonaws.com/eu-west-2_u33BF2JoO/.well-known/jwks.json"
 
