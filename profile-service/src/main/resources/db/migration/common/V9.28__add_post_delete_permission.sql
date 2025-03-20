@@ -1,19 +1,19 @@
 INSERT INTO `Role` (`name`)
-VALUES ('PostManagement')
+VALUES ('PostDelete')
 ON DUPLICATE KEY UPDATE `name` = `name`;
 
 INSERT INTO `Permission` (`name`, `type`, `description`, `principal`, `resource`, `actions`, `effect`)
 VALUES
-    ('post:delete:posts',
+    ('post:delete',
      'POST',
      'Can delete posts',
      'tis:profile::user:',
-     'post:delete:posts:',
+     'tis:post::delete:',
      'Delete',
      'Allow')
 ON DUPLICATE KEY UPDATE `name` = `name`;
 
 INSERT INTO `RolePermission` (`roleName`, `permissionName`)
 VALUES
-    ('PostManagement','post:delete:posts')
+    ('PostDelete','post:delete')
 ON DUPLICATE KEY UPDATE `roleName` = `roleName`;
