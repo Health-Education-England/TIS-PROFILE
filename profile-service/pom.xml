@@ -12,7 +12,7 @@
 
   <groupId>com.transformuk.hee.tis</groupId>
   <artifactId>profile-service</artifactId>
-  <version>3.9.0</version>
+  <version>3.10.0</version>
   <packaging>war</packaging>
   <name>profile-service</name>
 
@@ -97,7 +97,7 @@
     <dependency>
       <groupId>com.transformuk.hee</groupId>
       <artifactId>profile-api</artifactId>
-      <version>3.0.0</version>
+      <version>3.1.0</version>
     </dependency>
     <dependency>
       <groupId>com.transformuk.hee</groupId>
