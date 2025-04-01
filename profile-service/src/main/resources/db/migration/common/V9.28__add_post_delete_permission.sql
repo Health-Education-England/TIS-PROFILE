@@ -8,7 +8,7 @@ VALUES
      'POST',
      'Can delete posts',
      'tis:profile::user:',
-     'tis:post::delete:',
+     'tis:posts::post:',
      'Delete',
      'Allow')
 ON DUPLICATE KEY UPDATE `name` = `name`;
