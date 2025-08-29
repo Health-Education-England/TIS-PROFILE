@@ -3,19 +3,18 @@ package com.transformuk.hee.tis.profile.client.command;
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.netflix.hystrix.HystrixCommandKey;
+import com.nimbusds.jwt.JWT;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.JWTParser;
 import com.transformuk.hee.tis.security.model.UserProfile;
-import java.util.Map;
+import java.text.ParseException;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.json.JsonParser;
-import org.springframework.boot.json.JsonParserFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.jwt.Jwt;
-import org.springframework.security.jwt.JwtHelper;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
@@ -30,9 +29,6 @@ public class GetUserProfileCommand extends HystrixCommand<Optional<UserProfile>>
   private static final String GROUP_KEY = "PROFILE";
   private static final String COMMAND_KEY = "GET_USER_PROFILE";
   private static final String OIDC_TOKEN_HEADER = "OIDC_access_token";
-  private static final String AUTH_TOKEN_HEADER = "Authorization";
-  private static final String AUTH_TOKEN_BEARER = "Bearer ";
-  private static final String TOKEN_ISSUER = "iss";
   private static final String TOKEN_ISSUER_HEADER = "Token-Issuer";
 
   private RestTemplate restTemplate;
@@ -60,7 +56,7 @@ public class GetUserProfileCommand extends HystrixCommand<Optional<UserProfile>>
   protected Optional<UserProfile> run() {
     HttpHeaders headers = new HttpHeaders();
     headers.set(OIDC_TOKEN_HEADER, securityToken);
-    headers.set(AUTH_TOKEN_HEADER, AUTH_TOKEN_BEARER + securityToken);
+    headers.setBearerAuth(securityToken);
     setTokenIssuerHeader(headers);
 
     HttpEntity<?> entity = new HttpEntity<String>(headers);
@@ -82,13 +78,15 @@ public class GetUserProfileCommand extends HystrixCommand<Optional<UserProfile>>
    * @param headers The headers to add to.
    */
   private void setTokenIssuerHeader(HttpHeaders headers) {
-    Jwt jwt = JwtHelper.decode(securityToken);
-    JsonParser jsonParser = JsonParserFactory.getJsonParser();
-    Map<String, Object> claims = jsonParser.parseMap(jwt.getClaims());
-    Object issuer = claims.get(TOKEN_ISSUER);
-
-    if (issuer instanceof String) {
-      headers.set(TOKEN_ISSUER_HEADER, (String) issuer);
+    try {
+      JWT jwt = JWTParser.parse(securityToken);
+      JWTClaimsSet claims = jwt.getJWTClaimsSet();
+      String issuer = claims.getIssuer();
+      if (issuer != null) {
+        headers.set(TOKEN_ISSUER_HEADER, issuer);
+      }
+    } catch (ParseException e) {
+      LOG.debug("Token-Issuer header could not be set due to invalid token.");
     }
   }
 }

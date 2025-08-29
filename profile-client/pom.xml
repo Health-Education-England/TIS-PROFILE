@@ -6,7 +6,7 @@
 
   <groupId>com.transformuk.hee</groupId>
   <artifactId>profile-client</artifactId>
-  <version>3.4.0</version>
+  <version>3.4.1</version>
   <packaging>jar</packaging>
 
   <properties>
@@ -68,6 +68,11 @@
       <groupId>com.netflix.hystrix</groupId>
       <artifactId>hystrix-core</artifactId>
       <version>1.5.18</version>
+    </dependency>
+    <dependency>
+      <groupId>com.nimbusds</groupId>
+      <artifactId>nimbus-jose-jwt</artifactId>
+      <version>10.4.2</version>
     </dependency>
   </dependencies>
 
