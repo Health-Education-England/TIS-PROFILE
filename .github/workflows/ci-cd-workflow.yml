@@ -248,7 +248,7 @@ jobs:
 
       - name: Deploy Amazon ECS task definition
         id: ecs-deploy
-        uses: aws-actions/amazon-deploy-task-definition@v2
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
           service: tis-profile
@@ -299,7 +299,7 @@ jobs:
 
       - name: Deploy Amazon ECS task definition
         id: ecs-deploy
-        uses: aws-actions/amazon-deploy-task-definition@v2
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
           service: tis-profile
