@@ -25,6 +25,7 @@ jobs:
       ecr-repository: test
       project-prefix: "profile"
       artifact-modules:  "api,client"
+      dockerfile-path: "./profile-service/Dockerfile"
     secrets:
       sonar-token: ${{ secrets.SONAR_TOKEN }}
       reject-pat: ${{ secrets.PAT_REJECT_APPROVALS }}
