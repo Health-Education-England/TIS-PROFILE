@@ -26,6 +26,7 @@ jobs:
       project-prefix: "profile"
       artifact-modules:  "api,client"
       dockerfile-path: "./profile-service/Dockerfile"
+      app-artifact-path: "./profile-service/target/*.war"
     secrets:
       sonar-token: ${{ secrets.SONAR_TOKEN }}
       reject-pat: ${{ secrets.PAT_REJECT_APPROVALS }}
