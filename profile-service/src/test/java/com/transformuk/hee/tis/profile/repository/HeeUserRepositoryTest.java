@@ -357,8 +357,8 @@ public class HeeUserRepositoryTest {
         zaraIndex = i;
       }
     }
-    Assert.assertTrue("Anna should be present in the results", annaIndex != -1);
-    Assert.assertTrue("Zara should be present in the results", zaraIndex != -1);
+    Assert.assertNotEquals("Anna should be present in the results", -1, annaIndex);
+    Assert.assertNotEquals("Zara should be present in the results", -1, zaraIndex);
     Assert.assertTrue("Anna should appear before Zara", annaIndex < zaraIndex);
 
     heeUserRepository.deleteById("admin.zara");
