@@ -33,6 +33,7 @@ import com.transformuk.hee.tis.profile.repository.HeeUserRepository;
 import com.transformuk.hee.tis.profile.repository.PermissionRepository;
 import com.transformuk.hee.tis.profile.repository.UserTrustRepository;
 import com.transformuk.hee.tis.profile.service.UserProgrammeService;
+import com.transformuk.hee.tis.profile.service.LoginService;
 import com.transformuk.hee.tis.profile.service.UserService;
 import com.transformuk.hee.tis.profile.service.UserTrustService;
 import com.transformuk.hee.tis.profile.service.dto.HeeUserDTO;
@@ -96,6 +97,9 @@ public class HeeUserResourceIntTest {
   @Autowired
   private UserService userService;
 
+  @Autowired
+  private LoginService loginService;
+
   private MockMvc restHeeUserMockMvc;
 
   private HeeUser heeUser;
@@ -105,7 +109,7 @@ public class HeeUserResourceIntTest {
   public void setup() {
     HeeUserResource heeUserResource = new HeeUserResource(heeUserRepository, heeUserMapper,
         heeUserValidator, userTrustRepository, userTrustService, userProgrammeService,
-        userService);
+        userService, loginService);
     this.restHeeUserMockMvc = MockMvcBuilders.standaloneSetup(heeUserResource)
         .setCustomArgumentResolvers(pageableArgumentResolver)
         .setControllerAdvice(exceptionTranslator)

@@ -7,6 +7,7 @@ import com.transformuk.hee.tis.profile.domain.UserProgramme;
 import com.transformuk.hee.tis.profile.domain.UserTrust;
 import com.transformuk.hee.tis.profile.repository.HeeUserRepository;
 import com.transformuk.hee.tis.profile.repository.UserTrustRepository;
+import com.transformuk.hee.tis.profile.service.LoginService;
 import com.transformuk.hee.tis.profile.service.UserProgrammeService;
 import com.transformuk.hee.tis.profile.service.UserService;
 import com.transformuk.hee.tis.profile.service.UserTrustService;
@@ -37,6 +38,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -49,6 +51,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class HeeUserResource {
 
   private static final String ENTITY_NAME = "heeUser";
+  private static final String LTFT_ADMIN_ROLE = "LTFT Admin";
   private final Logger log = LoggerFactory.getLogger(HeeUserResource.class);
   private final HeeUserRepository heeUserRepository;
   private final HeeUserMapper heeUserMapper;
@@ -56,13 +59,15 @@ public class HeeUserResource {
   private final UserTrustService userTrustService;
   private final UserService userService;
   private final UserProgrammeService userProgrammeService;
+  private final LoginService loginService;
 
   private final HeeUserValidator heeUserValidator;
 
   public HeeUserResource(HeeUserRepository heeUserRepository, HeeUserMapper heeUserMapper,
       HeeUserValidator heeUserValidator,
       UserTrustRepository userTrustRepository, UserTrustService userTrustService,
-      UserProgrammeService userProgrammeService, UserService userService) {
+      UserProgrammeService userProgrammeService, UserService userService,
+      LoginService loginService) {
     this.heeUserRepository = heeUserRepository;
     this.heeUserMapper = heeUserMapper;
     this.heeUserValidator = heeUserValidator;
@@ -70,6 +75,7 @@ public class HeeUserResource {
     this.userTrustService = userTrustService;
     this.userProgrammeService = userProgrammeService;
     this.userService = userService;
+    this.loginService = loginService;
   }
 
   /**
@@ -229,6 +235,33 @@ public class HeeUserResource {
     log.debug("REST request to get HeeUsers with roles : {}", roleNames);
     List<BasicHeeUserDTO> heeUserDTOs = userService.findUsersByRoles(roleNames);
     return ResponseEntity.of(Optional.ofNullable(heeUserDTOs));
+  }
+
+  /**
+   * GET /hee-users/ltft-admins : get admins assignable to an LTFT application.
+   *
+   * <p>Returns active users with the "LTFT Admin" role who have the LTFT application's programme
+   * DBC.
+   *
+   * @param ltftDbc the designated body code of the LTFT application's programme
+   * @return the list of matching admin DTOs
+   */
+  @GetMapping("/hee-users/ltft-admins")
+  @Timed
+  @PreAuthorize("hasAuthority('profile:view:entities')")
+  public ResponseEntity<List<BasicHeeUserDTO>> getLtftAdmins(
+      @RequestParam String ltftDbc,
+      @RequestHeader(value = "Authorization") String authorizationToken) {
+    log.debug("REST request to get LTFT admins for DBC : {}", ltftDbc);
+    String token = authorizationToken.replaceFirst("^Bearer ", "");
+    HeeUser currentUser = loginService.getUserByToken(token);
+    if (!currentUser.getDesignatedBodyCodes().contains(ltftDbc)) {
+      log.info("User {} is not associated with DBC {}, access forbidden",
+          currentUser.getName(), ltftDbc);
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    }
+    List<BasicHeeUserDTO> admins = userService.findLtftAdmins(LTFT_ADMIN_ROLE, ltftDbc);
+    return ResponseEntity.ok(admins);
   }
 
   private void validateHeeUser(HeeUser heeUser) {

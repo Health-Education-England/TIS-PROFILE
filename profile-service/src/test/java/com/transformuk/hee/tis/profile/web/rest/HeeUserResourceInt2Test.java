@@ -11,6 +11,7 @@ import com.google.common.collect.Lists;
 import com.transformuk.hee.tis.profile.ProfileApp;
 import com.transformuk.hee.tis.profile.repository.HeeUserRepository;
 import com.transformuk.hee.tis.profile.repository.UserTrustRepository;
+import com.transformuk.hee.tis.profile.service.LoginService;
 import com.transformuk.hee.tis.profile.service.UserProgrammeService;
 import com.transformuk.hee.tis.profile.service.UserService;
 import com.transformuk.hee.tis.profile.service.UserTrustService;
@@ -59,6 +60,8 @@ public class HeeUserResourceInt2Test {
   private UserProgrammeService userProgrammeService;
   @MockBean
   private UserService userServiceMock;
+  @MockBean
+  private LoginService loginServiceMock;
 
   @Autowired
   private PageableArgumentResolver pageableArgumentResolver;
@@ -79,7 +82,8 @@ public class HeeUserResourceInt2Test {
         userTrustRepositoryMock,
         userTrustServiceMock,
         userProgrammeService,
-        userServiceMock);
+        userServiceMock,
+        loginServiceMock);
     this.restHeeUserMockMvc = MockMvcBuilders.standaloneSetup(heeUserResource)
         .setCustomArgumentResolvers(pageableArgumentResolver)
         .setControllerAdvice(exceptionTranslator)
