@@ -1,5 +1,6 @@
 package com.transformuk.hee.tis.profile.web.rest;
 
+import static com.google.common.collect.Sets.newHashSet;
 import static com.transformuk.hee.tis.profile.web.rest.TestUtil.DEFAULT_ACTIVE;
 import static com.transformuk.hee.tis.profile.web.rest.TestUtil.DEFAULT_EMAIL_ADDRESS;
 import static com.transformuk.hee.tis.profile.web.rest.TestUtil.DEFAULT_FIRST_NAME;
@@ -15,7 +16,6 @@ import static com.transformuk.hee.tis.profile.web.rest.TestUtil.UPDATED_LAST_NAM
 import static com.transformuk.hee.tis.profile.web.rest.TestUtil.UPDATED_NAME;
 import static com.transformuk.hee.tis.profile.web.rest.TestUtil.UPDATED_PHONE_NUMBER;
 import static com.transformuk.hee.tis.profile.web.rest.TestUtil.createEntityHeeUser;
-import static org.apache.commons.compress.utils.Sets.newHashSet;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.hamcrest.Matchers.hasItem;
@@ -134,7 +134,7 @@ public class HeeUserResourceIntTest {
   @Before
   public void initTest() {
     heeUser = createEntityHeeUser();
-    heeUser.setDesignatedBodyCodes(Sets.newHashSet("NONE"));
+    heeUser.setDesignatedBodyCodes(newHashSet("NONE"));
   }
 
   @Test
@@ -372,7 +372,7 @@ public class HeeUserResourceIntTest {
     ltftAdminRole.setPermissions(newHashSet(requesterPermission));
     roleRepository.saveAndFlush(ltftAdminRole);
 
-    // Save the requesting user with a different DBC, not matching ltftDbc
+    // Save the requesting user with the matching DBC so they are authorised to view admins
     HeeUser requester = new HeeUser();
     requester.setName("jamesh");
     requester.setLastName("Hudson");

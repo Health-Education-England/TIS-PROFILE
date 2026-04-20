@@ -1,5 +1,6 @@
 package com.transformuk.hee.tis.profile.web.rest;
 
+import static com.google.common.collect.Sets.newHashSet;
 import static org.hamcrest.Matchers.hasItems;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -8,7 +9,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.transformuk.hee.tis.profile.ProfileApp;
 import com.transformuk.hee.tis.profile.domain.HeeUser;
 import com.transformuk.hee.tis.profile.repository.HeeUserRepository;
@@ -182,7 +182,7 @@ public class HeeUserResourceInt2Test {
 
     HeeUser currentUser = new HeeUser();
     currentUser.setName(TESTNAME_1);
-    currentUser.setDesignatedBodyCodes(Sets.newHashSet(dbc));
+    currentUser.setDesignatedBodyCodes(newHashSet(dbc));
 
     BasicHeeUserDTO admin1 = new BasicHeeUserDTO();
     admin1.setName("admin1");
@@ -209,7 +209,7 @@ public class HeeUserResourceInt2Test {
 
     HeeUser currentUser = new HeeUser();
     currentUser.setName(TESTNAME_1);
-    currentUser.setDesignatedBodyCodes(Sets.newHashSet("1-OTHER"));
+    currentUser.setDesignatedBodyCodes(newHashSet("1-OTHER"));
 
     when(loginServiceMock.getUserByToken(token)).thenReturn(currentUser);
 
@@ -227,7 +227,7 @@ public class HeeUserResourceInt2Test {
 
     HeeUser currentUser = new HeeUser();
     currentUser.setName(TESTNAME_1);
-    currentUser.setDesignatedBodyCodes(Sets.newHashSet(dbc));
+    currentUser.setDesignatedBodyCodes(newHashSet(dbc));
 
     when(loginServiceMock.getUserByToken(token)).thenReturn(currentUser);
     when(userServiceMock.findLtftAdmins("NHSE LTFT Admin", dbc)).thenReturn(new ArrayList<>());

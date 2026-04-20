@@ -234,8 +234,8 @@ public class HeeUserRepositoryTest {
     Assert.assertEquals(1, results.size());
     Assert.assertEquals("admin.user", results.get(0).getName());
 
-    roleRepository.deleteById(LTFT_ADMIN_ROLE);
     heeUserRepository.deleteById("admin.user");
+    roleRepository.deleteById(LTFT_ADMIN_ROLE);
   }
 
   @Test
@@ -259,8 +259,8 @@ public class HeeUserRepositoryTest {
     Assert.assertTrue(results.stream()
         .noneMatch(u -> u.getName().equals("admin.other.dbc")));
 
-    roleRepository.deleteById(LTFT_ADMIN_ROLE);
     heeUserRepository.deleteById("admin.other.dbc");
+    roleRepository.deleteById(LTFT_ADMIN_ROLE);
   }
 
   @Test
@@ -284,8 +284,8 @@ public class HeeUserRepositoryTest {
     Assert.assertTrue(results.stream()
         .noneMatch(u -> u.getName().equals("admin.inactive")));
 
-    roleRepository.deleteById(LTFT_ADMIN_ROLE);
     heeUserRepository.deleteById("admin.inactive");
+    roleRepository.deleteById(LTFT_ADMIN_ROLE);
   }
 
   @Test
@@ -312,9 +312,9 @@ public class HeeUserRepositoryTest {
     Assert.assertTrue(results.stream()
         .noneMatch(u -> u.getName().equals("admin.other.role")));
 
+    heeUserRepository.deleteById("admin.other.role");
     roleRepository.deleteById(LTFT_ADMIN_ROLE);
     roleRepository.deleteById("Other Role");
-    heeUserRepository.deleteById("admin.other.role");
   }
 
   @Test
@@ -358,8 +358,8 @@ public class HeeUserRepositoryTest {
     }
     Assert.assertTrue("Anna should appear before Zara", annaIndex < zaraIndex);
 
-    roleRepository.deleteById(LTFT_ADMIN_ROLE);
     heeUserRepository.deleteById("admin.zara");
     heeUserRepository.deleteById("admin.anna");
+    roleRepository.deleteById(LTFT_ADMIN_ROLE);
   }
 }
