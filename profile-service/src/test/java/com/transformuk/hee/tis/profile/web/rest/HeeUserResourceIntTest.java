@@ -27,7 +27,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.google.common.collect.Sets;
 import com.transformuk.hee.tis.profile.ProfileApp;
 import com.transformuk.hee.tis.profile.domain.HeeUser;
 import com.transformuk.hee.tis.profile.domain.Permission;
@@ -358,9 +357,7 @@ public class HeeUserResourceIntTest {
   @Test
   @Transactional
   public void getLtftAdminsShouldReturnAdminsWhenRequesterHasMatchingDbc() throws Exception {
-    // findByActive requires inner join on roles AND permissions; use an existing seeded permission
-    Permission requesterPermission = permissionRepository.findById(REQUESTER_PERMISSION)
-        .orElseThrow(() -> new IllegalStateException("Permission not found: " + REQUESTER_PERMISSION));
+    Permission requesterPermission = getOrCreatePermission(REQUESTER_PERMISSION);
 
     Role requesterRole = new Role();
     requesterRole.setName(REQUESTER_ROLE);
@@ -404,9 +401,7 @@ public class HeeUserResourceIntTest {
   @Test
   @Transactional
   public void getLtftAdminsShouldReturnForbiddenWhenRequesterLacksDbc() throws Exception {
-    // findByActive requires inner join on roles AND permissions; use an existing seeded permission
-    Permission requesterPermission = permissionRepository.findById(REQUESTER_PERMISSION)
-        .orElseThrow(() -> new IllegalStateException("Permission not found: " + REQUESTER_PERMISSION));
+    Permission requesterPermission = getOrCreatePermission(REQUESTER_PERMISSION);
 
     Role requesterRole = new Role();
     requesterRole.setName(REQUESTER_ROLE);
@@ -431,9 +426,7 @@ public class HeeUserResourceIntTest {
   @Test
   @Transactional
   public void getLtftAdminsShouldReturnEmptyListWhenNoAdminsHaveMatchingDbc() throws Exception {
-    // findByActive requires inner join on roles AND permissions; use an existing seeded permission
-    Permission requesterPermission = permissionRepository.findById(REQUESTER_PERMISSION)
-        .orElseThrow(() -> new IllegalStateException("Permission not found: " + REQUESTER_PERMISSION));
+    Permission requesterPermission = getOrCreatePermission(REQUESTER_PERMISSION);
 
     Role requesterRole = new Role();
     requesterRole.setName(REQUESTER_ROLE);
@@ -478,5 +471,21 @@ public class HeeUserResourceIntTest {
   @Transactional
   public void equalsVerifier() throws Exception {
     TestUtil.equalsVerifier(HeeUser.class);
+  }
+
+  /**
+   * Helper function to get an existing Permission by name or create and save a new one if it
+   * doesn't exist.
+   *
+   * @param permissionName the name of the Permission to find or create.
+   * @return the existing or newly created Permission.
+   */
+  private Permission getOrCreatePermission(String permissionName) {
+    return permissionRepository.findById(permissionName)
+        .orElseGet(() -> {
+          Permission permission = new Permission();
+          permission.setName(permissionName);
+          return permissionRepository.saveAndFlush(permission);
+        });
   }
 }

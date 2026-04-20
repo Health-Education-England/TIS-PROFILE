@@ -1,6 +1,7 @@
 package com.transformuk.hee.tis.profile.repository;
 
-import static org.apache.commons.compress.utils.Sets.newHashSet;
+import static com.google.common.collect.Sets.newHashSet;
+
 import com.transformuk.hee.tis.profile.ProfileApp;
 import com.transformuk.hee.tis.profile.domain.HeeUser;
 import com.transformuk.hee.tis.profile.domain.Role;
@@ -356,6 +357,8 @@ public class HeeUserRepositoryTest {
         zaraIndex = i;
       }
     }
+    Assert.assertTrue("Anna should be present in the results", annaIndex != -1);
+    Assert.assertTrue("Zara should be present in the results", zaraIndex != -1);
     Assert.assertTrue("Anna should appear before Zara", annaIndex < zaraIndex);
 
     heeUserRepository.deleteById("admin.zara");
