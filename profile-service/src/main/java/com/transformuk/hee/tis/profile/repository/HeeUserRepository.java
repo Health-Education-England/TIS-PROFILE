@@ -120,20 +120,18 @@ public interface HeeUserRepository extends JpaRepository<HeeUser, String>,
   List<HeeUser> findHeeUsersByRoleNames(@Param("roleNames") List<String> roleNames);
 
   /**
-   * Finds active users with the specified role who have the given DBC.
+   * Finds active users with the specified role and DBC.
    *
    * @param roleName the role name to filter by
-   * @param ltftDbc the LTFT application's programme DBC
-   * @return list of matching users
+   * @param dbc the DBC with which they must be associated
+   * @return distinct list of matching users
    */
   @Query(value = "select distinct u.* from HeeUser u " +
       "inner join UserRole ur on ur.userName = u.name " +
       "inner join UserDesignatedBody udb on udb.userName = u.name " +
       "where u.active = true " +
       "and ur.roleName = :roleName " +
-      "and udb.designatedBodyCode = :ltftDbc " +
+      "and udb.designatedBodyCode = :dbc " +
       "order by u.firstName, u.lastName", nativeQuery = true)
-  List<HeeUser> findLtftAdminsByRoleAndDbc(
-      @Param("roleName") String roleName,
-      @Param("ltftDbc") String ltftDbc);
+  List<HeeUser> findByRoleAndDbc(@Param("roleName") String roleName, @Param("dbc") String dbc);
 }

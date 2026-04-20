@@ -70,7 +70,7 @@ public class UserService {
    */
   @Transactional(readOnly = true)
   public List<BasicHeeUserDTO> findLtftAdmins(String roleName, String ltftDbc) {
-    List<HeeUser> heeUsers = heeUserRepository.findLtftAdminsByRoleAndDbc(roleName, ltftDbc);
+    List<HeeUser> heeUsers = heeUserRepository.findByRoleAndDbc(roleName, ltftDbc);
     return heeUserMapper.heeUsersToBasicHeeUserDTOs(heeUsers);
   }
 }

@@ -29,8 +29,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.google.common.collect.Sets;
 import com.transformuk.hee.tis.profile.ProfileApp;
 import com.transformuk.hee.tis.profile.domain.HeeUser;
+import com.transformuk.hee.tis.profile.domain.Role;
 import com.transformuk.hee.tis.profile.repository.HeeUserRepository;
 import com.transformuk.hee.tis.profile.repository.PermissionRepository;
+import com.transformuk.hee.tis.profile.repository.RoleRepository;
 import com.transformuk.hee.tis.profile.repository.UserTrustRepository;
 import com.transformuk.hee.tis.profile.service.UserProgrammeService;
 import com.transformuk.hee.tis.profile.service.LoginService;
@@ -64,11 +66,20 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest(classes = ProfileApp.class)
 public class HeeUserResourceIntTest {
 
+  // JWT with preferred_username = "jamesh"
+  private static final String TOKEN =
+      "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJrcEk5UC1hQ3JaTXJ4cG5aeWNnNnlISk9VZ3g0a2hUYS04TlJyMkRhY0g0In0.eyJqdGkiOiI3ZjJiNzA4MC1lYjYxLTQ1YTgtYmUwNS0xYWFjODNkMTY3ZjciLCJleHAiOjE0Nzc1ODA5ODQsIm5iZiI6MCwiaWF0IjoxNDc3NTgwNjg0LCJpc3MiOiJodHRwczovL2Rldi1hcGkudHJhbnNmb3JtY2xvdWQubmV0L2F1dGgvcmVhbG1zL2xpbiIsImF1ZCI6ImFwaS1nYXRld2F5Iiwic3ViIjoiNGY5YWRhY2MtZjEyNC00M2FmLTkyZDMtYjVlZDc3NjhlYTU0IiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiYXBpLWdhdGV3YXkiLCJub25jZSI6IlA2NnVVT2JJTVBtY19Wb1RudmlYdk1KWE0zYks0RUo3WHJUeHpRbTN0ZUkiLCJhdXRoX3RpbWUiOjE0Nzc1ODA2ODQsInNlc3Npb25fc3RhdGUiOiIyNzg1NDE2Ny1hNWY0LTRkNTItOGQ3OC02OTY3M2ZmZTMwODgiLCJhY3IiOiIxIiwiY2xpZW50X3Nlc3Npb24iOiIyNjNmZDg1Ni02YmZjLTQ4ZWQtODZlNC1jMzFkOTdmYmNlZGMiLCJhbGxvd2VkLW9yaWdpbnMiOlsiaHR0cHM6Ly9kZXYtYXBpLnRyYW5zZm9ybWNsb3VkLm5ldCIsImh0dHBzOi8vYXBwcy5saW4ubmhzLnVrIiwiaHR0cDovL2xvY2FsaG9zdDo4MDg3IiwiaHR0cHM6Ly9zdGFnZS1hcHBzLmxpbi5uaHMudWsiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbIlJWQWRtaW4iLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJ2aWV3LXByb2ZpbGUiXX19LCJuYW1lIjoiSmFtZXMgSHVkc29uIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiamFtZXNoIiwiZ2l2ZW5fbmFtZSI6IkphbWVzIiwiZmFtaWx5X25hbWUiOiJIdWRzb24ifQ.VJ_8MDyM-1_MMlmhl4N-ZXHyq0G8AlaSLBR4eqlrXLD5CC29dW807WARalNGDqwlNSUuvK6tDiGRt5XKYWo6HDNBL-7Sp3QT2FXew6dD8zJwN8iR34aJGDGg94Kd0PkFESybqQFb4-sntCfKHQ3aRZkpD2WkyNZXEQEuDURYuqyJulqmKXqZxfnYWkd8JgSN1oTyUc4sFPWHjzI9A_y_0Tb13hAvFlPFWwKhCSSZqjRtC65JADOYMeIbyPCsSCKq0DqY2DCZpBivp5Wp0sZu0SSkww_rkwV5tql4gXV5kYmHWJa1rx_OmTAv6UKWYG4aFaqGmvcNhXkZGrweSCEmUw";
+  private static final String LTFT_ADMIN_ROLE = "NHSE LTFT Admin";
+  private static final String LTFT_DBC = "1-LTFT-TEST";
+
   @Autowired
   private HeeUserRepository heeUserRepository;
 
   @Autowired
   private PermissionRepository permissionRepository;
+
+  @Autowired
+  private RoleRepository roleRepository;
 
   @Autowired
   private HeeUserMapper heeUserMapper;
@@ -338,6 +349,96 @@ public class HeeUserResourceIntTest {
     // Validate the database is empty
     List<HeeUser> heeUserList = heeUserRepository.findAll();
     assertThat(heeUserList).hasSize(databaseSizeBeforeDelete - 1);
+  }
+
+  @Test
+  @Transactional
+  public void getLtftAdminsShouldReturnAdminsWhenRequesterHasMatchingDbc() throws Exception {
+    // Save the LTFT Admin role
+    Role ltftAdminRole = new Role();
+    ltftAdminRole.setName(LTFT_ADMIN_ROLE);
+    roleRepository.saveAndFlush(ltftAdminRole);
+
+    // Save the requesting user (decoded from TOKEN: preferred_username = "jamesh") with the DBC
+    HeeUser requester = new HeeUser();
+    requester.setName("jamesh");
+    requester.setLastName("Hudson");
+    requester.setEmailAddress("jamesh@hee.nhs.uk");
+    requester.setActive(true);
+    requester.setDesignatedBodyCodes(Sets.newHashSet(LTFT_DBC));
+    heeUserRepository.saveAndFlush(requester);
+
+    // Save an active LTFT admin with the matching role and DBC
+    HeeUser ltftAdmin = new HeeUser();
+    ltftAdmin.setName("ltft.admin.test");
+    ltftAdmin.setFirstName("Admin");
+    ltftAdmin.setLastName("User");
+    ltftAdmin.setEmailAddress("admin@hee.nhs.uk");
+    ltftAdmin.setActive(true);
+    ltftAdmin.setRoles(Sets.newHashSet(ltftAdminRole));
+    ltftAdmin.setDesignatedBodyCodes(Sets.newHashSet(LTFT_DBC));
+    heeUserRepository.saveAndFlush(ltftAdmin);
+
+    restHeeUserMockMvc.perform(get("/api/hee-users/ltft-admins")
+            .param("ltftDbc", LTFT_DBC)
+            .header("Authorization", "Bearer " + TOKEN))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(TestUtil.JSON))
+        .andExpect(jsonPath("$.[*].name").value(hasItem("ltft.admin.test")));
+  }
+
+  @Test
+  @Transactional
+  public void getLtftAdminsShouldReturnForbiddenWhenRequesterLacksDbc() throws Exception {
+    // Save the requesting user with a different DBC, not matching ltftDbc
+    HeeUser requester = new HeeUser();
+    requester.setName("jamesh");
+    requester.setLastName("Hudson");
+    requester.setEmailAddress("jamesh@hee.nhs.uk");
+    requester.setActive(true);
+    requester.setDesignatedBodyCodes(Sets.newHashSet("1-OTHER-DBC"));
+    heeUserRepository.saveAndFlush(requester);
+
+    restHeeUserMockMvc.perform(get("/api/hee-users/ltft-admins")
+            .param("ltftDbc", LTFT_DBC)
+            .header("Authorization", "Bearer " + TOKEN))
+        .andExpect(status().isForbidden());
+  }
+
+  @Test
+  @Transactional
+  public void getLtftAdminsShouldReturnEmptyListWhenNoAdminsHaveMatchingDbc() throws Exception {
+    // Save the LTFT Admin role
+    Role ltftAdminRole = new Role();
+    ltftAdminRole.setName(LTFT_ADMIN_ROLE);
+    roleRepository.saveAndFlush(ltftAdminRole);
+
+    // Requester has the DBC
+    HeeUser requester = new HeeUser();
+    requester.setName("jamesh");
+    requester.setLastName("Hudson");
+    requester.setEmailAddress("jamesh@hee.nhs.uk");
+    requester.setActive(true);
+    requester.setDesignatedBodyCodes(Sets.newHashSet(LTFT_DBC));
+    heeUserRepository.saveAndFlush(requester);
+
+    // LTFT admin only has a different DBC
+    HeeUser ltftAdmin = new HeeUser();
+    ltftAdmin.setName("ltft.admin.other");
+    ltftAdmin.setFirstName("Other");
+    ltftAdmin.setLastName("Admin");
+    ltftAdmin.setEmailAddress("other@hee.nhs.uk");
+    ltftAdmin.setActive(true);
+    ltftAdmin.setRoles(Sets.newHashSet(ltftAdminRole));
+    ltftAdmin.setDesignatedBodyCodes(Sets.newHashSet("1-OTHER-DBC"));
+    heeUserRepository.saveAndFlush(ltftAdmin);
+
+    restHeeUserMockMvc.perform(get("/api/hee-users/ltft-admins")
+            .param("ltftDbc", LTFT_DBC)
+            .header("Authorization", "Bearer " + TOKEN))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(TestUtil.JSON))
+        .andExpect(jsonPath("$").isEmpty());
   }
 
   @Test

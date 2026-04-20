@@ -207,4 +207,63 @@ public class UserServiceTest {
     List<BasicHeeUserDTO> result = testObj.findUsersByRoles(Arrays.asList("HEE Admin Revalidation"));
     Assert.assertEquals(FIRST_NAME_1, result.get(0).getName());
   }
+
+  @Test
+  public void findLtftAdminsShouldReturnMappedBasicHeeUserDTOs() {
+    String roleName = "NHSE LTFT Admin";
+    String dbc = "1-AIIDWX";
+
+    heeUser1WithTrusts.setName(FIRST_NAME_1);
+    heeUser2EmptyTrusts.setName(FIRST_NAME_2);
+    List<HeeUser> foundUsers = Arrays.asList(heeUser1WithTrusts, heeUser2EmptyTrusts);
+
+    BasicHeeUserDTO basicDto1 = new BasicHeeUserDTO();
+    basicDto1.setName(FIRST_NAME_1);
+    BasicHeeUserDTO basicDto2 = new BasicHeeUserDTO();
+    basicDto2.setName(FIRST_NAME_2);
+    List<BasicHeeUserDTO> mappedDtos = Arrays.asList(basicDto1, basicDto2);
+
+    when(heeUserRepositoryMock.findByRoleAndDbc(roleName, dbc)).thenReturn(foundUsers);
+    when(heeUserMapperMock.heeUsersToBasicHeeUserDTOs(foundUsers)).thenReturn(mappedDtos);
+
+    List<BasicHeeUserDTO> result = testObj.findLtftAdmins(roleName, dbc);
+
+    Assert.assertEquals(2, result.size());
+    Assert.assertEquals(FIRST_NAME_1, result.get(0).getName());
+    Assert.assertEquals(FIRST_NAME_2, result.get(1).getName());
+
+    verify(heeUserRepositoryMock).findByRoleAndDbc(roleName, dbc);
+    verify(heeUserMapperMock).heeUsersToBasicHeeUserDTOs(foundUsers);
+  }
+
+  @Test
+  public void findLtftAdminsShouldReturnEmptyListWhenNoUsersFound() {
+    String roleName = "NHSE LTFT Admin";
+    String dbc = "1-AIIDWX";
+
+    when(heeUserRepositoryMock.findByRoleAndDbc(roleName, dbc)).thenReturn(Collections.emptyList());
+    when(heeUserMapperMock.heeUsersToBasicHeeUserDTOs(Collections.emptyList()))
+        .thenReturn(Collections.emptyList());
+
+    List<BasicHeeUserDTO> result = testObj.findLtftAdmins(roleName, dbc);
+
+    Assert.assertNotNull(result);
+    Assert.assertTrue(result.isEmpty());
+
+    verify(heeUserRepositoryMock).findByRoleAndDbc(roleName, dbc);
+    verify(heeUserMapperMock).heeUsersToBasicHeeUserDTOs(Collections.emptyList());
+  }
+
+  @Test
+  public void findLtftAdminsShouldPassRoleNameAndDbcToRepository() {
+    String roleName = "NHSE LTFT Admin";
+    String dbc = "1-AIIDWX";
+
+    when(heeUserRepositoryMock.findByRoleAndDbc(roleName, dbc)).thenReturn(Collections.emptyList());
+    when(heeUserMapperMock.heeUsersToBasicHeeUserDTOs(any())).thenReturn(Collections.emptyList());
+
+    testObj.findLtftAdmins(roleName, dbc);
+
+    verify(heeUserRepositoryMock).findByRoleAndDbc(roleName, dbc);
+  }
 }
