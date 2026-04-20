@@ -8,7 +8,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.transformuk.hee.tis.profile.ProfileApp;
+import com.transformuk.hee.tis.profile.domain.HeeUser;
 import com.transformuk.hee.tis.profile.repository.HeeUserRepository;
 import com.transformuk.hee.tis.profile.repository.UserTrustRepository;
 import com.transformuk.hee.tis.profile.service.LoginService;
@@ -171,5 +173,71 @@ public class HeeUserResourceInt2Test {
     restHeeUserMockMvc.perform(get("/api/hee-users-with-roles/{roleNames}", roleNames)
             .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk());
+  }
+
+  @Test
+  public void getLtftAdminsShouldReturnAdminsWhenUserHasDbc() throws Exception {
+    String dbc = "1-AIIDWX";
+    String token = "someJwtToken";
+
+    HeeUser currentUser = new HeeUser();
+    currentUser.setName(TESTNAME_1);
+    currentUser.setDesignatedBodyCodes(Sets.newHashSet(dbc));
+
+    BasicHeeUserDTO admin1 = new BasicHeeUserDTO();
+    admin1.setName("admin1");
+    BasicHeeUserDTO admin2 = new BasicHeeUserDTO();
+    admin2.setName("admin2");
+    List<BasicHeeUserDTO> admins = Lists.newArrayList(admin1, admin2);
+
+    when(loginServiceMock.getUserByToken(token)).thenReturn(currentUser);
+    when(userServiceMock.findLtftAdmins("NHSE LTFT Admin", dbc)).thenReturn(admins);
+
+    restHeeUserMockMvc.perform(get("/api/hee-users/ltft-admins")
+            .param("ltftDbc", dbc)
+            .header("Authorization", "Bearer " + token)
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.[*].name").value(hasItems("admin1", "admin2")));
+  }
+
+  @Test
+  public void getLtftAdminsShouldReturnForbiddenWhenUserDoesNotHaveDbc() throws Exception {
+    String dbc = "1-AIIDWX";
+    String token = "someJwtToken";
+
+    HeeUser currentUser = new HeeUser();
+    currentUser.setName(TESTNAME_1);
+    currentUser.setDesignatedBodyCodes(Sets.newHashSet("1-OTHER"));
+
+    when(loginServiceMock.getUserByToken(token)).thenReturn(currentUser);
+
+    restHeeUserMockMvc.perform(get("/api/hee-users/ltft-admins")
+            .param("ltftDbc", dbc)
+            .header("Authorization", "Bearer " + token)
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isForbidden());
+  }
+
+  @Test
+  public void getLtftAdminsShouldReturnEmptyListWhenNoAdminsFound() throws Exception {
+    String dbc = "1-AIIDWX";
+    String token = "someJwtToken";
+
+    HeeUser currentUser = new HeeUser();
+    currentUser.setName(TESTNAME_1);
+    currentUser.setDesignatedBodyCodes(Sets.newHashSet(dbc));
+
+    when(loginServiceMock.getUserByToken(token)).thenReturn(currentUser);
+    when(userServiceMock.findLtftAdmins("NHSE LTFT Admin", dbc)).thenReturn(new ArrayList<>());
+
+    restHeeUserMockMvc.perform(get("/api/hee-users/ltft-admins")
+            .param("ltftDbc", dbc)
+            .header("Authorization", "Bearer " + token)
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$").isEmpty());
   }
 }

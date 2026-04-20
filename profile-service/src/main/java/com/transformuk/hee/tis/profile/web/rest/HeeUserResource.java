@@ -51,7 +51,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class HeeUserResource {
 
   private static final String ENTITY_NAME = "heeUser";
-  private static final String LTFT_ADMIN_ROLE = "LTFT Admin";
+  private static final String LTFT_ADMIN_ROLE = "NHSE LTFT Admin";
   private final Logger log = LoggerFactory.getLogger(HeeUserResource.class);
   private final HeeUserRepository heeUserRepository;
   private final HeeUserMapper heeUserMapper;
