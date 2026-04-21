@@ -1,7 +1,10 @@
 package com.transformuk.hee.tis.profile.repository;
 
+import static com.google.common.collect.Sets.newHashSet;
+
 import com.transformuk.hee.tis.profile.ProfileApp;
 import com.transformuk.hee.tis.profile.domain.HeeUser;
+import com.transformuk.hee.tis.profile.domain.Role;
 import com.transformuk.hee.tis.profile.domain.UserTrust;
 import java.util.List;
 import java.util.Optional;
@@ -50,11 +53,16 @@ public class HeeUserRepositoryTest {
   private static final String NAME_3 = "NAME 3";
   private static final String PHONE_NUMBER_3 = "03030303030";
   private static final String NAME_SEARCH_STRING = "Bo";
+  private static final String LTFT_ADMIN_ROLE = "NHSE LTFT Admin";
+  private static final String DBC_1 = "1-AIIDWX";
+  private static final String DBC_2 = "1-OTHER";
 
   @Autowired
   private HeeUserRepository heeUserRepository;
   @Autowired
   private UserTrustRepository userTrustRepository;
+  @Autowired
+  private RoleRepository roleRepository;
 
   private UserTrust userTrust1, userTrust2;
 
@@ -203,5 +211,158 @@ public class HeeUserRepositoryTest {
     return userTrusts.stream()
         .filter(ut -> StringUtils.equals(code, ut.getTrustCode()))
         .findAny();
+  }
+
+  @Test
+  public void findByRoleAndDbcShouldReturnActiveUsersMatchingRoleAndDbc() {
+    Role ltftAdminRole = new Role();
+    ltftAdminRole.setName(LTFT_ADMIN_ROLE);
+    roleRepository.saveAndFlush(ltftAdminRole);
+
+    HeeUser matchingUser = new HeeUser();
+    matchingUser.setName("admin.user");
+    matchingUser.setFirstName("Alice");
+    matchingUser.setLastName("Admin");
+    matchingUser.emailAddress("alice@hee.nhs.uk");
+    matchingUser.setActive(true);
+    matchingUser.setRoles(newHashSet(ltftAdminRole));
+    matchingUser.setDesignatedBodyCodes(newHashSet(DBC_1));
+    heeUserRepository.saveAndFlush(matchingUser);
+
+    List<HeeUser> results = heeUserRepository.findByRoleAndDbc(LTFT_ADMIN_ROLE, DBC_1);
+
+    Assert.assertNotNull(results);
+    Assert.assertEquals(1, results.size());
+    Assert.assertEquals("admin.user", results.get(0).getName());
+
+    heeUserRepository.deleteById("admin.user");
+    roleRepository.deleteById(LTFT_ADMIN_ROLE);
+  }
+
+  @Test
+  public void findByRoleAndDbcShouldNotReturnUsersWithDifferentDbc() {
+    Role ltftAdminRole = new Role();
+    ltftAdminRole.setName(LTFT_ADMIN_ROLE);
+    roleRepository.saveAndFlush(ltftAdminRole);
+
+    HeeUser userWithDifferentDbc = new HeeUser();
+    userWithDifferentDbc.setName("admin.other.dbc");
+    userWithDifferentDbc.setFirstName("Bob");
+    userWithDifferentDbc.setLastName("Admin");
+    userWithDifferentDbc.emailAddress("bob@hee.nhs.uk");
+    userWithDifferentDbc.setActive(true);
+    userWithDifferentDbc.setRoles(newHashSet(ltftAdminRole));
+    userWithDifferentDbc.setDesignatedBodyCodes(newHashSet(DBC_2));
+    heeUserRepository.saveAndFlush(userWithDifferentDbc);
+
+    List<HeeUser> results = heeUserRepository.findByRoleAndDbc(LTFT_ADMIN_ROLE, DBC_1);
+
+    Assert.assertTrue(results.stream()
+        .noneMatch(u -> u.getName().equals("admin.other.dbc")));
+
+    heeUserRepository.deleteById("admin.other.dbc");
+    roleRepository.deleteById(LTFT_ADMIN_ROLE);
+  }
+
+  @Test
+  public void findByRoleAndDbcShouldNotReturnInactiveUsers() {
+    Role ltftAdminRole = new Role();
+    ltftAdminRole.setName(LTFT_ADMIN_ROLE);
+    roleRepository.saveAndFlush(ltftAdminRole);
+
+    HeeUser inactiveUser = new HeeUser();
+    inactiveUser.setName("admin.inactive");
+    inactiveUser.setFirstName("Carol");
+    inactiveUser.setLastName("Admin");
+    inactiveUser.emailAddress("carol@hee.nhs.uk");
+    inactiveUser.setActive(false);
+    inactiveUser.setRoles(newHashSet(ltftAdminRole));
+    inactiveUser.setDesignatedBodyCodes(newHashSet(DBC_1));
+    heeUserRepository.saveAndFlush(inactiveUser);
+
+    List<HeeUser> results = heeUserRepository.findByRoleAndDbc(LTFT_ADMIN_ROLE, DBC_1);
+
+    Assert.assertTrue(results.stream()
+        .noneMatch(u -> u.getName().equals("admin.inactive")));
+
+    heeUserRepository.deleteById("admin.inactive");
+    roleRepository.deleteById(LTFT_ADMIN_ROLE);
+  }
+
+  @Test
+  public void findByRoleAndDbcShouldNotReturnUsersWithDifferentRole() {
+    Role ltftAdminRole = new Role();
+    ltftAdminRole.setName(LTFT_ADMIN_ROLE);
+    Role otherRole = new Role();
+    otherRole.setName("Other Role");
+    roleRepository.saveAndFlush(ltftAdminRole);
+    roleRepository.saveAndFlush(otherRole);
+
+    HeeUser userWithOtherRole = new HeeUser();
+    userWithOtherRole.setName("admin.other.role");
+    userWithOtherRole.setFirstName("Dave");
+    userWithOtherRole.setLastName("Admin");
+    userWithOtherRole.emailAddress("dave@hee.nhs.uk");
+    userWithOtherRole.setActive(true);
+    userWithOtherRole.setRoles(newHashSet(otherRole));
+    userWithOtherRole.setDesignatedBodyCodes(newHashSet(DBC_1));
+    heeUserRepository.saveAndFlush(userWithOtherRole);
+
+    List<HeeUser> results = heeUserRepository.findByRoleAndDbc(LTFT_ADMIN_ROLE, DBC_1);
+
+    Assert.assertTrue(results.stream()
+        .noneMatch(u -> u.getName().equals("admin.other.role")));
+
+    heeUserRepository.deleteById("admin.other.role");
+    roleRepository.deleteById(LTFT_ADMIN_ROLE);
+    roleRepository.deleteById("Other Role");
+  }
+
+  @Test
+  public void findByRoleAndDbcShouldReturnResultsOrderedByFirstNameThenLastName() {
+    Role ltftAdminRole = new Role();
+    ltftAdminRole.setName(LTFT_ADMIN_ROLE);
+    roleRepository.saveAndFlush(ltftAdminRole);
+
+    HeeUser userZara = new HeeUser();
+    userZara.setName("admin.zara");
+    userZara.setFirstName("Zara");
+    userZara.setLastName("Admin");
+    userZara.emailAddress("zara@hee.nhs.uk");
+    userZara.setActive(true);
+    userZara.setRoles(newHashSet(ltftAdminRole));
+    userZara.setDesignatedBodyCodes(newHashSet(DBC_1));
+
+    HeeUser userAnna = new HeeUser();
+    userAnna.setName("admin.anna");
+    userAnna.setFirstName("Anna");
+    userAnna.setLastName("Admin");
+    userAnna.emailAddress("anna@hee.nhs.uk");
+    userAnna.setActive(true);
+    userAnna.setRoles(newHashSet(ltftAdminRole));
+    userAnna.setDesignatedBodyCodes(newHashSet(DBC_1));
+
+    heeUserRepository.saveAndFlush(userZara);
+    heeUserRepository.saveAndFlush(userAnna);
+
+    List<HeeUser> results = heeUserRepository.findByRoleAndDbc(LTFT_ADMIN_ROLE, DBC_1);
+
+    Assert.assertTrue(results.size() >= 2);
+    int annaIndex = -1, zaraIndex = -1;
+    for (int i = 0; i < results.size(); i++) {
+      if ("admin.anna".equals(results.get(i).getName())) {
+        annaIndex = i;
+      }
+      if ("admin.zara".equals(results.get(i).getName())) {
+        zaraIndex = i;
+      }
+    }
+    Assert.assertNotEquals("Anna should be present in the results", -1, annaIndex);
+    Assert.assertNotEquals("Zara should be present in the results", -1, zaraIndex);
+    Assert.assertTrue("Anna should appear before Zara", annaIndex < zaraIndex);
+
+    heeUserRepository.deleteById("admin.zara");
+    heeUserRepository.deleteById("admin.anna");
+    roleRepository.deleteById(LTFT_ADMIN_ROLE);
   }
 }

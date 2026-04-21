@@ -60,4 +60,17 @@ public class UserService {
     List<BasicHeeUserDTO> heeUserDTOs = heeUserMapper.heeUsersToBasicHeeUserDTOs(heeUsers);
     return heeUserDTOs;
   }
+
+  /**
+   * Find LTFT admin candidates who have the specified role and the LTFT programme's DBC.
+   *
+   * @param roleName the role name to filter by
+   * @param ltftDbc the LTFT application's programme DBC
+   * @return list of matching admin DTOs
+   */
+  @Transactional(readOnly = true)
+  public List<BasicHeeUserDTO> findLtftAdmins(String roleName, String ltftDbc) {
+    List<HeeUser> heeUsers = heeUserRepository.findByRoleAndDbc(roleName, ltftDbc);
+    return heeUserMapper.heeUsersToBasicHeeUserDTOs(heeUsers);
+  }
 }
