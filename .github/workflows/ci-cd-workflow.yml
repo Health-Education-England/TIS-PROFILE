@@ -23,7 +23,7 @@ jobs:
         uses: actions/setup-java@v5
         with:
           cache: maven
-          distribution: adopt
+          distribution: temurin
           java-version: 11
 
       - name: Configure AWS credentials
@@ -63,8 +63,8 @@ jobs:
         uses: actions/setup-java@v5
         with:
           cache: maven
-          distribution: adopt
-          java-version: 17
+          distribution: temurin
+          java-version: 21
 
       - name: maven-settings-xml-action
         uses: whelk-io/maven-settings-xml-action@v22
