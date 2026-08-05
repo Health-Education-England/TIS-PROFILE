@@ -1,0 +1,13 @@
+UPDATE `Role` SET `name` = 'Admin (Regional Role)' WHERE `name`='HEE Admin';
+UPDATE `Role` SET `name` = 'Admin Revalidation (Regional Role)' WHERE `name`='HEE Admin Revalidation';
+UPDATE `Role` SET `name` = 'Admin Sensitive (Regional Role)' WHERE `name`='HEE Admin Sensitive';
+UPDATE `Role` SET `name` = 'Programme Admin (Educator Role)' WHERE `name`='HEE Programme Admin';
+UPDATE `Role` SET `name` = 'Programme Observer (Educator Role)' WHERE `name`='HEE Programme Observer';
+UPDATE `Role` SET `name` = 'TIS Admin (Regional Role)' WHERE `name`='HEE TIS Admin';
+UPDATE `Role` SET `name` = 'Trust Admin (Trust Role)' WHERE `name`='HEE Trust Admin';
+UPDATE `Role` SET `name` = 'Trust Observer (Trust Role)' WHERE `name`='HEE Trust Observer';
+UPDATE `Role` SET `name` = 'User Admin (Regional Role)' WHERE `name`='HEE User Admin';
+UPDATE `Role` SET `name` = 'Post Delete (Regional Role)' WHERE `name`='PostDelete';
+UPDATE `Role` SET `name` = 'Reval Admin (Regional Role)' WHERE `name`='RevalAdmin';
+UPDATE `Role` SET `name` = 'Reval Approver (Regional Role)' WHERE `name`='RevalApprover';
+UPDATE `Role` SET `name` = 'Reval Observer (Regional Role)' WHERE `name`='RevalObserver';
