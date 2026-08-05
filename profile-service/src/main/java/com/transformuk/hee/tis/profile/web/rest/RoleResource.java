@@ -43,7 +43,8 @@ public class RoleResource {
   protected static final Set<String> restrictedRoles = Set.of("RVOfficer", "Machine User",
       "HEE", "BulkUploadAdmin", "ETL", "ESR", "TcsAdmin", "TcsObserver", "ProfileAdmin",
       "ProfileObserver", "AssessmentsAdmin", "PCSAdmin", "PCSObserver", "PPAdmin", "PPObserver",
-      "HEE User Observer", "PersonAdmin", "ReferenceAdmin", "RevalBeta", "TSS Data Admin");
+      "HEE User Observer", "PersonAdmin", "ReferenceAdmin", "RevalBeta", "TSS Data Admin",
+      "SuperUser");
 
   private final Logger log = LoggerFactory.getLogger(RoleResource.class);
   private final RoleRepository roleRepository;
