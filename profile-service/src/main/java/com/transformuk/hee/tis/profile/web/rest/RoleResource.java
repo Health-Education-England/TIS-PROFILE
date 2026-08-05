@@ -40,8 +40,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class RoleResource {
 
   private static final String ENTITY_NAME = "role";
-  protected static final Set<String> restrictedRoles = Set.of("RVOfficer",
-      "Machine User", "HEE");
+  protected static final Set<String> restrictedRoles = Set.of("RVOfficer", "Machine User",
+      "HEE", "BulkUploadAdmin", "ETL", "ESR", "TcsAdmin", "TcsObserver", "ProfileAdmin",
+      "ProfileObserver", "AssessmentsAdmin", "PCSAdmin", "PCSObserver", "PPAdmin", "PPObserver",
+      "HEE User Observer", "PersonAdmin", "ReferenceAdmin", "RevalBeta", "TSS Data Admin");
+
   private final Logger log = LoggerFactory.getLogger(RoleResource.class);
   private final RoleRepository roleRepository;
 
