@@ -167,7 +167,7 @@ public class RoleResourceIntTest {
     int dbPermissionSizeBeforeCreate = permissionRepository.findAll().size();
 
     // Create the Role with an existing ID
-    role.setName("RevalAdmin");
+    role.setName("Reval Admin (Regional Role)");
     RoleDTO roleDTO = roleMapper.roleToRoleDTO(role);
 
     // Creating a role with the same name will do nothing but not fail

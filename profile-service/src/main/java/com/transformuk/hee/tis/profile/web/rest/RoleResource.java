@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * REST controller for managing Role.
@@ -80,7 +81,9 @@ public class RoleResource {
 
     role = roleRepository.save(role);
     RoleDTO result = roleMapper.roleToRoleDTO(role);
-    return ResponseEntity.created(new URI("/api/roles/" + result.getName()))
+    URI location = UriComponentsBuilder.fromPath("/api/roles/").pathSegment(result.getName())
+        .build().encode().toUri();
+    return ResponseEntity.created(location)
         .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getName()))
         .body(result);
   }

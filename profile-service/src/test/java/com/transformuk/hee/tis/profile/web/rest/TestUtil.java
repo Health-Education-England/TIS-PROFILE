@@ -40,8 +40,7 @@ public class TestUtil {
 
   public static final Boolean DEFAULT_ACTIVE = false;
   public static final Boolean UPDATED_ACTIVE = true;
-
-  public static final String DEFAULT_ROLE = "Hee Admin Revalidation";
+  public static final String DEFAULT_ROLE = "Admin Revalidation (Regional Role)";
   public static final String DEFAULT_DESIGNATED_CODE = "1-AIIDH1";
 
   /**
