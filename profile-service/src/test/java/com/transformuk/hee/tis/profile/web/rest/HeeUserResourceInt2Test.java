@@ -2,6 +2,7 @@ package com.transformuk.hee.tis.profile.web.rest;
 
 import static com.google.common.collect.Sets.newHashSet;
 import static org.hamcrest.Matchers.hasItems;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -22,6 +23,7 @@ import com.transformuk.hee.tis.profile.service.dto.BasicHeeUserDTO;
 import com.transformuk.hee.tis.profile.service.dto.HeeUserDTO;
 import com.transformuk.hee.tis.profile.service.mapper.HeeUserMapper;
 import com.transformuk.hee.tis.profile.validators.HeeUserValidator;
+import com.transformuk.hee.tis.profile.web.rest.errors.CustomParameterizedException;
 import com.transformuk.hee.tis.profile.web.rest.errors.ExceptionTranslator;
 import java.util.ArrayList;
 import java.util.List;
@@ -263,10 +265,16 @@ public class HeeUserResourceInt2Test {
     when(heeUserRepositoryMock.findById(TESTNAME_1)).thenReturn(Optional.of(existingUser));
     when(heeUserMapperMock.heeUserDTOToHeeUser(heeUserDTO)).thenReturn(heeUser);
 
+    final String errorMessage = "Email address does not match the existing user's email address";
+    doThrow(new CustomParameterizedException(errorMessage))
+        .when(heeUserValidatorMock)
+        .validateEmailAddressMatchesExisting(DIFFERENT_EMAIL, EXISTING_EMAIL);
+
     restHeeUserMockMvc.perform(put("/api/hee-users")
             .contentType(MediaType.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(heeUserDTO)))
-        .andExpect(status().isBadRequest());
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.message").value(errorMessage));
   }
 
   @Test
