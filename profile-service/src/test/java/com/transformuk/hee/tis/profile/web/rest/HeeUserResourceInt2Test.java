@@ -4,6 +4,7 @@ import static com.google.common.collect.Sets.newHashSet;
 import static org.hamcrest.Matchers.hasItems;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -24,6 +25,7 @@ import com.transformuk.hee.tis.profile.validators.HeeUserValidator;
 import com.transformuk.hee.tis.profile.web.rest.errors.ExceptionTranslator;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,6 +49,9 @@ public class HeeUserResourceInt2Test {
 
   private static final String TESTNAME_1 = "TESTNAME1";
   private static final String TESTNAME_2 = "TESTNAME2@hee.nhs.uk";
+  private static final String EXISTING_EMAIL = "existing@nhs.net";
+  private static final String DIFFERENT_EMAIL = "different@nhs.net";
+  private static final String UPDATED_FIRSTNAME = "UpdatedFirst";
   private static final char CTRL_A = '\u0001';
   @MockBean
   private HeeUserRepository heeUserRepositoryMock;
@@ -239,5 +244,60 @@ public class HeeUserResourceInt2Test {
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$").isEmpty());
+  }
+
+  @Test
+  public void updateHeeUserWithDifferentEmailShouldReturnBadRequest() throws Exception {
+    HeeUser existingUser = new HeeUser();
+    existingUser.setName(TESTNAME_1);
+    existingUser.setEmailAddress(EXISTING_EMAIL);
+
+    HeeUserDTO heeUserDTO = new HeeUserDTO();
+    heeUserDTO.setName(TESTNAME_1);
+    heeUserDTO.setEmailAddress(DIFFERENT_EMAIL);
+
+    HeeUser heeUser = new HeeUser();
+    heeUser.setName(TESTNAME_1);
+    heeUser.setEmailAddress(DIFFERENT_EMAIL);
+
+    when(heeUserRepositoryMock.findById(TESTNAME_1)).thenReturn(Optional.of(existingUser));
+    when(heeUserMapperMock.heeUserDTOToHeeUser(heeUserDTO)).thenReturn(heeUser);
+
+    restHeeUserMockMvc.perform(put("/api/hee-users")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(TestUtil.convertObjectToJsonBytes(heeUserDTO)))
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  public void updateHeeUserWithSameEmailShouldSucceed() throws Exception {
+    HeeUser existingUser = new HeeUser();
+    existingUser.setName(TESTNAME_1);
+    existingUser.setEmailAddress(EXISTING_EMAIL);
+    existingUser.setAssociatedTrusts(new java.util.HashSet<>());
+    existingUser.setAssociatedProgrammes(new java.util.HashSet<>());
+
+    HeeUserDTO heeUserDTO = new HeeUserDTO();
+    heeUserDTO.setName(TESTNAME_1);
+    heeUserDTO.setFirstName(UPDATED_FIRSTNAME);
+    heeUserDTO.setEmailAddress(EXISTING_EMAIL);
+
+    HeeUser heeUser = new HeeUser();
+    heeUser.setName(TESTNAME_1);
+    heeUser.setFirstName(UPDATED_FIRSTNAME);
+    heeUser.setEmailAddress(EXISTING_EMAIL);
+
+    when(heeUserRepositoryMock.findById(TESTNAME_1)).thenReturn(Optional.of(existingUser));
+    when(heeUserMapperMock.heeUserDTOToHeeUser(heeUserDTO)).thenReturn(heeUser);
+    when(heeUserRepositoryMock.save(heeUser)).thenReturn(heeUser);
+    when(heeUserRepositoryMock.findByNameWithTrustsAndProgrammes(TESTNAME_1))
+        .thenReturn(Optional.of(heeUser));
+    when(heeUserMapperMock.heeUserToHeeUserDTO(heeUser)).thenReturn(heeUserDTO);
+
+    restHeeUserMockMvc.perform(put("/api/hee-users")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(TestUtil.convertObjectToJsonBytes(heeUserDTO)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.firstName").value(UPDATED_FIRSTNAME));
   }
 }

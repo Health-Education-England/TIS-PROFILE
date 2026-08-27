@@ -281,7 +281,7 @@ public class HeeUserResourceIntTest {
     heeUserDto.setLastName(UPDATED_LAST_NAME);
     heeUserDto.setGmcId(UPDATED_GMC_ID);
     heeUserDto.setPhoneNumber(UPDATED_PHONE_NUMBER);
-    heeUserDto.setEmailAddress(UPDATED_EMAIL_ADDRESS);
+    heeUserDto.setEmailAddress(DEFAULT_EMAIL_ADDRESS);
     heeUserDto.setActive(UPDATED_ACTIVE);
     UserTrustDTO trustDto = new UserTrustDTO();
     final String UPDATED_TRUST_CODE = "Ed";
@@ -306,7 +306,7 @@ public class HeeUserResourceIntTest {
     assertThat(testHeeUser.getLastName()).isEqualTo(UPDATED_LAST_NAME);
     assertThat(testHeeUser.getGmcId()).isEqualTo(UPDATED_GMC_ID);
     assertThat(testHeeUser.getPhoneNumber()).isEqualTo(UPDATED_PHONE_NUMBER);
-    assertThat(testHeeUser.getEmailAddress()).isEqualTo(UPDATED_EMAIL_ADDRESS);
+    assertThat(testHeeUser.getEmailAddress()).isEqualTo(DEFAULT_EMAIL_ADDRESS);
     assertThat(testHeeUser.isActive()).isEqualTo(UPDATED_ACTIVE);
     assertThat(testHeeUser.getAssociatedTrusts()).extracting("trustCode", "trustId", "trustName")
         .contains(tuple(UPDATED_TRUST_CODE, UPDATED_TRUST_ID, UPDATED_TRUST_NAME));
@@ -334,6 +334,57 @@ public class HeeUserResourceIntTest {
     // Validate the HeeUser in the database
     List<HeeUser> heeUserList = heeUserRepository.findAll();
     assertThat(heeUserList).hasSize(databaseSizeBeforeUpdate + 1);
+  }
+
+  @Test
+  @Transactional
+  public void updateHeeUserWithDifferentEmailShouldReturnBadRequest() throws Exception {
+    // Initialize the database
+    heeUserRepository.saveAndFlush(heeUser);
+
+    // Attempt to update with a different email address
+    HeeUser updatedHeeUser = heeUserRepository.getById(heeUser.getName());
+    HeeUserDTO heeUserDto = heeUserMapper.heeUserToHeeUserDTO(updatedHeeUser);
+    heeUserDto.setFirstName(UPDATED_FIRST_NAME);
+    heeUserDto.setEmailAddress(UPDATED_EMAIL_ADDRESS); // different from existing email
+
+    restHeeUserMockMvc.perform(put("/api/hee-users")
+            .contentType(TestUtil.JSON)
+            .content(TestUtil.convertObjectToJsonBytes(heeUserDto)))
+        .andExpect(status().isBadRequest());
+
+    // Validate no changes were persisted
+    HeeUser unchanged = heeUserRepository.getById(DEFAULT_NAME);
+    assertThat(unchanged.getFirstName()).isEqualTo(DEFAULT_FIRST_NAME);
+    assertThat(unchanged.getEmailAddress()).isEqualTo(DEFAULT_EMAIL_ADDRESS);
+  }
+
+  @Test
+  @Transactional
+  public void updateHeeUserWithSameEmailShouldSucceed() throws Exception {
+    // Initialize the database
+    heeUserRepository.saveAndFlush(heeUser);
+    int databaseSizeBeforeUpdate = heeUserRepository.findAll().size();
+
+    // Update with the same email address
+    HeeUser updatedHeeUser = heeUserRepository.getById(heeUser.getName());
+    HeeUserDTO heeUserDto = heeUserMapper.heeUserToHeeUserDTO(updatedHeeUser);
+    heeUserDto.setFirstName(UPDATED_FIRST_NAME);
+    heeUserDto.setLastName(UPDATED_LAST_NAME);
+    heeUserDto.setEmailAddress(DEFAULT_EMAIL_ADDRESS); // same as existing email
+
+    restHeeUserMockMvc.perform(put("/api/hee-users")
+            .contentType(TestUtil.JSON)
+            .content(TestUtil.convertObjectToJsonBytes(heeUserDto)))
+        .andExpect(status().isOk());
+
+    // Validate new details are persisted
+    List<HeeUser> heeUserList = heeUserRepository.findAll();
+    assertThat(heeUserList).hasSize(databaseSizeBeforeUpdate);
+    HeeUser testHeeUser = heeUserRepository.getById(DEFAULT_NAME);
+    assertThat(testHeeUser.getFirstName()).isEqualTo(UPDATED_FIRST_NAME);
+    assertThat(testHeeUser.getLastName()).isEqualTo(UPDATED_LAST_NAME);
+    assertThat(testHeeUser.getEmailAddress()).isEqualTo(DEFAULT_EMAIL_ADDRESS);
   }
 
   @Test
