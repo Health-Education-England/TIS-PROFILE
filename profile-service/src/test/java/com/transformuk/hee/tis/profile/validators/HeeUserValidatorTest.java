@@ -1,5 +1,6 @@
 package com.transformuk.hee.tis.profile.validators;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -15,17 +16,17 @@ import com.transformuk.hee.tis.reference.api.enums.Status;
 import com.transformuk.hee.tis.reference.client.ReferenceService;
 import java.util.Set;
 import org.assertj.core.util.Sets;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-@RunWith(MockitoJUnitRunner.class)
-public class HeeUserValidatorTest {
+@ExtendWith(MockitoExtension.class)
+class HeeUserValidatorTest {
 
   private static final String DBC_ABBR = "DBC_ABBR";
   private static final String DBC = "DBC";
@@ -38,6 +39,8 @@ public class HeeUserValidatorTest {
   private static final String OTHER_PERMISSION = "OTHER_PERMISSION";
   private static final String GMC_ID = "1234567";
   private static final String GMC_ID_TOO_LONG = "12345678";
+  private static final String EXISTING_EMAIL = "existing@nhs.net";
+  private static final String DIFFERENT_EMAIL = "different@nhs.net";
   @Mock
   RoleRepository roleRepositoryMock;
   private final Set<String> dbcCodes = Sets.newLinkedHashSet(DBC);
@@ -54,8 +57,8 @@ public class HeeUserValidatorTest {
   @InjectMocks
   private HeeUserValidator testObj;
 
-  @Before
-  public void setup() {
+  @BeforeEach
+  void setup() {
     dbcDto.setAbbr(DBC_ABBR);
     dbcDto.setDbc(DBC);
     dbcDto.setId(ID);
@@ -74,7 +77,7 @@ public class HeeUserValidatorTest {
   }
 
   @Test
-  public void shouldValidateDbcIds() {
+  void shouldValidateDbcIds() {
     // Given
     when(referenceServiceMock.getDBCByCode(DBC))
         .thenReturn(new ResponseEntity<>(dbcDto, HttpStatus.OK));
@@ -87,7 +90,7 @@ public class HeeUserValidatorTest {
   }
 
   @Test
-  public void shouldValidateInvalidDbcAsEmptyReponse() {
+  void shouldValidateInvalidDbcAsEmptyReponse() {
     // Given
     when(referenceServiceMock.getDBCByCode(INVALID_DBC))
         .thenReturn(new ResponseEntity<>(HttpStatus.NOT_FOUND));
@@ -100,7 +103,7 @@ public class HeeUserValidatorTest {
   }
 
   @Test
-  public void shouldValidateIfCodeIsNone() {
+  void shouldValidateIfCodeIsNone() {
     // When
     testObj.validateDbcIds(dbcCodesNone);
 
@@ -109,7 +112,7 @@ public class HeeUserValidatorTest {
   }
 
   @Test
-  public void shouldValidateIfSetOfDbcCodesIsNull() {
+  void shouldValidateIfSetOfDbcCodesIsNull() {
     // When
     testObj.validateDbcIds(null);
 
@@ -118,7 +121,7 @@ public class HeeUserValidatorTest {
   }
 
   @Test
-  public void shouldValidateRoles() {
+  void shouldValidateRoles() {
     // Given
     when(roleRepositoryMock.findByName(role.getName())).thenReturn(role);
 
@@ -129,22 +132,21 @@ public class HeeUserValidatorTest {
     verify(roleRepositoryMock).findByName(role.getName());
   }
 
-  @Test(expected = CustomParameterizedException.class)
-  public void shouldThrowExceptionIfRoleNotFoundInRepository() {
+  @Test
+  void shouldThrowExceptionIfRoleNotFoundInRepository() {
     // Given
-    try {
       when(roleRepositoryMock.findByName(role.getName())).thenReturn(null);
 
-      // When
-      testObj.validateRoles(roles);
-    } finally {
+    // When/Then
+    assertThrows(CustomParameterizedException.class, () ->
+      testObj.validateRoles(roles));
+
       // Then
       verify(roleRepositoryMock).findByName(role.getName());
-    }
   }
 
   @Test
-  public void shouldDealWithNullSetOfRoles() {
+  void shouldDealWithNullSetOfRoles() {
     // When
     testObj.validateRoles(null);
     // Then
@@ -152,17 +154,29 @@ public class HeeUserValidatorTest {
   }
 
   @Test
-  public void shouldValidateGmcId() {
+  void shouldValidateGmcId() {
     testObj.validateGmcId(GMC_ID);
   }
 
   @Test
-  public void shouldValidateGmcIdIfNull() {
+  void shouldValidateGmcIdIfNull() {
     testObj.validateGmcId(null);
   }
 
-  @Test(expected = CustomParameterizedException.class)
-  public void shouldThrowExceptionIfGmcIdIsMoreThanSevenChars() {
-    testObj.validateGmcId(GMC_ID_TOO_LONG);
+  @Test
+  void shouldThrowExceptionIfGmcIdIsMoreThanSevenChars() {
+    assertThrows(CustomParameterizedException.class, () ->
+        testObj.validateGmcId(GMC_ID_TOO_LONG));
+  }
+
+  @Test
+  void shouldValidateMatchingEmailAddressOnUpdate() {
+    testObj.validateEmailAddressMatchesExisting(EXISTING_EMAIL, EXISTING_EMAIL);
+  }
+
+  @Test
+  void shouldThrowExceptionIfEmailAddressIsDifferentOnUpdate() {
+    assertThrows(CustomParameterizedException.class, () ->
+        testObj.validateEmailAddressMatchesExisting(DIFFERENT_EMAIL, EXISTING_EMAIL));
   }
 }

@@ -139,7 +139,7 @@ public class HeeUserResource {
     }
     HeeUser heeUser = heeUserMapper.heeUserDTOToHeeUser(heeUserDTO);
     //Validate
-    validateHeeUser(heeUser);
+    validateHeeUser(heeUser, dbHeeUser.get());
 
     //fix bi directional link to trusts
     heeUser.getAssociatedTrusts().forEach(a -> a.setHeeUser(heeUser));
@@ -265,6 +265,14 @@ public class HeeUserResource {
   }
 
   private void validateHeeUser(HeeUser heeUser) {
+    validateHeeUser(heeUser, null);
+  }
+
+  private void validateHeeUser(HeeUser heeUser, HeeUser existingHeeUser) {
+    if (existingHeeUser != null) {
+      heeUserValidator.validateEmailAddressMatchesExisting(
+          heeUser.getEmailAddress(), existingHeeUser.getEmailAddress());
+    }
     //validate GMC id
     heeUserValidator.validateGmcId(heeUser.getGmcId());
     //Validate DBC code

@@ -7,6 +7,7 @@ import com.transformuk.hee.tis.profile.web.rest.errors.CustomParameterizedExcept
 import com.transformuk.hee.tis.profile.web.rest.errors.ErrorConstants;
 import com.transformuk.hee.tis.reference.api.dto.DBCDTO;
 import com.transformuk.hee.tis.reference.client.ReferenceService;
+import java.util.Objects;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -77,6 +78,21 @@ public class HeeUserValidator {
   public void validateGmcId(String gmcId) {
     if (gmcId != null && gmcId.length() > 7) {
       throw new CustomParameterizedException("GMC Id shouldn't be greater than 7 chars long",
+          ErrorConstants.ERR_VALIDATION);
+    }
+  }
+
+  /**
+   * Validates that a user update does not change the email address.
+   *
+   * @param updatedEmailAddress Email from the update payload
+   * @param existingEmailAddress Email currently persisted for the user
+   */
+  public void validateEmailAddressMatchesExisting(String updatedEmailAddress,
+      String existingEmailAddress) {
+    if (!Objects.equals(updatedEmailAddress, existingEmailAddress)) {
+      throw new CustomParameterizedException(
+          "Email address does not match the existing user's email address",
           ErrorConstants.ERR_VALIDATION);
     }
   }
