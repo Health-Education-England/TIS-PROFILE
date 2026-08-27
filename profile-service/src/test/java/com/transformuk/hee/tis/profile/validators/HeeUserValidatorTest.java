@@ -40,7 +40,8 @@ class HeeUserValidatorTest {
   private static final String GMC_ID = "1234567";
   private static final String GMC_ID_TOO_LONG = "12345678";
   private static final String EXISTING_EMAIL = "existing@nhs.net";
-  private static final String DIFFERENT_EMAIL = "different@nhs.net";  @Mock
+  private static final String DIFFERENT_EMAIL = "different@nhs.net";
+  @Mock
   RoleRepository roleRepositoryMock;
   private final Set<String> dbcCodes = Sets.newLinkedHashSet(DBC);
   private final Set<String> dbcCodesInvalid = Sets.newLinkedHashSet(INVALID_DBC);
