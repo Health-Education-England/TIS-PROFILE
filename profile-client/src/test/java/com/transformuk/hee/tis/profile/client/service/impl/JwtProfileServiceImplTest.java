@@ -84,7 +84,6 @@ public class JwtProfileServiceImplTest {
   public void shouldNotLogSecurityTokenWhenCacheEntryIsRemoved() throws Exception {
 
     //Given
-    String securityToken = "VERY_SENSITIVE_USER_TOKEN";
     String tokenSuffix = securityToken.substring(securityToken.length() - 10);
 
     Logger logger = (Logger) LoggerFactory.getLogger(JwtProfileServiceImpl.class);
