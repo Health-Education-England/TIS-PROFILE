@@ -43,8 +43,9 @@ public class JwtProfileServiceImpl implements JwtProfileService {
         .expireAfterWrite(ttlDuration, TimeUnit.SECONDS)
         .removalListener(value -> {
           String token = String.valueOf(value.getKey());
-          LOG.debug("User profile cache entry removed, reason={} for token, userToken={}",
-              value.getCause(), token.substring(token.length() - 10));
+          String tokenTail = token.length() <= 10 ? token : token.substring(token.length() - 10);
+          LOG.debug("User profile cache entry removed, reason={} for token, userTokenTail={}",
+              value.getCause(), tokenTail);
         }).build();
   }
 

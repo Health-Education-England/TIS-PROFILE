@@ -92,31 +92,34 @@ public class JwtProfileServiceImplTest {
     appender.start();
     logger.addAppender(appender);
 
-    JwtProfileServiceImpl service = new JwtProfileServiceImpl(restTemplateMock);
+    try {
+      JwtProfileServiceImpl service = new JwtProfileServiceImpl(restTemplateMock);
 
-    Field cacheField = JwtProfileServiceImpl.class.getDeclaredField("userProfileCache");
+      Field cacheField = JwtProfileServiceImpl.class.getDeclaredField("userProfileCache");
 
-    cacheField.setAccessible(true);
+      cacheField.setAccessible(true);
 
-    Cache<String, Optional<UserProfile>> cache = (Cache<String, Optional<UserProfile>>) cacheField.get(
-        service);
+      Cache<String, Optional<UserProfile>> cache = (Cache<String, Optional<UserProfile>>) cacheField.get(
+          service);
 
-    cache.put(securityToken, Optional.of(new UserProfile()));
+      cache.put(securityToken, Optional.of(new UserProfile()));
 
-    //When
-    cache.invalidate(securityToken);
-    cache.cleanUp();
+      //When
+      cache.invalidate(securityToken);
+      cache.cleanUp();
 
-    //Then
-    boolean fullTokenLogged = appender.list.stream()
-        .anyMatch(event -> event.getFormattedMessage().contains(securityToken));
+      //Then
+      boolean fullTokenLogged = appender.list.stream()
+          .anyMatch(event -> event.getFormattedMessage().contains(securityToken));
 
-    boolean tokenSuffixLogged = appender.list.stream()
-        .anyMatch(event -> event.getFormattedMessage().contains(tokenSuffix));
+      boolean tokenSuffixLogged = appender.list.stream()
+          .anyMatch(event -> event.getFormattedMessage().contains(tokenSuffix));
 
-    assertFalse(fullTokenLogged);
-    Assert.assertTrue(tokenSuffixLogged);
-
-    logger.detachAppender(appender);
+      assertFalse(fullTokenLogged);
+      Assert.assertTrue(tokenSuffixLogged);
+    } finally {
+      logger.detachAppender(appender);
+      appender.stop();
+    }
   }
 }
