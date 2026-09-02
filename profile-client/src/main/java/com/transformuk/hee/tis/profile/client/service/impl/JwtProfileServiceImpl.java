@@ -41,8 +41,11 @@ public class JwtProfileServiceImpl implements JwtProfileService {
     userProfileCache = CacheBuilder.newBuilder()
         .maximumSize(maxCacheSize)
         .expireAfterWrite(ttlDuration, TimeUnit.SECONDS)
-        .removalListener((value) -> LOG.debug("{} was just removed from the cache", value.getKey()))
-        .build();
+        .removalListener(value -> {
+          String token = String.valueOf(value.getKey());
+          LOG.debug("User profile cache entry removed, reason={} for token, userToken={}",
+              value.getCause(), token.substring(token.length() - 10));
+        }).build();
   }
 
   /**
