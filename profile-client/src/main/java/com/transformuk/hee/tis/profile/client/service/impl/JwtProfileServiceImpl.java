@@ -9,6 +9,7 @@ import com.transformuk.hee.tis.security.model.UserProfile;
 import com.transformuk.hee.tis.security.service.JwtProfileService;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,6 +39,10 @@ public class JwtProfileServiceImpl implements JwtProfileService {
 
   public JwtProfileServiceImpl(RestTemplate restTemplate) {
     this.restTemplate = restTemplate;
+  }
+
+  @PostConstruct
+  void initializeCache() {
     userProfileCache = CacheBuilder.newBuilder()
         .maximumSize(maxCacheSize)
         .expireAfterWrite(ttlDuration, TimeUnit.SECONDS)
