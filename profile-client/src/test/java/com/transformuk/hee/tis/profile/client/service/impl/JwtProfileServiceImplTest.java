@@ -81,6 +81,29 @@ public class JwtProfileServiceImplTest {
   }
 
   @Test
+  public void initializeCacheShouldUseInjectedProperties() throws Exception {
+
+    Field maxCacheSizeField = JwtProfileServiceImpl.class.getDeclaredField("maxCacheSize");
+    maxCacheSizeField.setAccessible(true);
+    maxCacheSizeField.setLong(testObj, 1);
+
+    Field ttlDurationField = JwtProfileServiceImpl.class.getDeclaredField("ttlDuration");
+    ttlDurationField.setAccessible(true);
+    ttlDurationField.setInt(testObj, 60);
+
+    testObj.initUserProfileCache();
+
+    Field cacheField = JwtProfileServiceImpl.class.getDeclaredField("userProfileCache");
+    cacheField.setAccessible(true);
+    Cache<String, Optional<UserProfile>> cache = (Cache<String, Optional<UserProfile>>) cacheField.get(
+        testObj);
+    cache.put("first", Optional.empty());
+    cache.put("second", Optional.empty());
+
+    Assert.assertEquals(1, cache.size());
+  }
+
+  @Test
   public void shouldNotLogSecurityTokenWhenCacheEntryIsRemoved() throws Exception {
 
     //Given
@@ -94,6 +117,7 @@ public class JwtProfileServiceImplTest {
 
     try {
       JwtProfileServiceImpl service = new JwtProfileServiceImpl(restTemplateMock);
+      service.initUserProfileCache();
 
       Field cacheField = JwtProfileServiceImpl.class.getDeclaredField("userProfileCache");
 
