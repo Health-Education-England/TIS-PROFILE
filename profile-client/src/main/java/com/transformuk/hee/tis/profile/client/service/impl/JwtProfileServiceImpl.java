@@ -9,6 +9,7 @@ import com.transformuk.hee.tis.security.model.UserProfile;
 import com.transformuk.hee.tis.security.service.JwtProfileService;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,11 +39,19 @@ public class JwtProfileServiceImpl implements JwtProfileService {
 
   public JwtProfileServiceImpl(RestTemplate restTemplate) {
     this.restTemplate = restTemplate;
+  }
+
+  @PostConstruct
+  void initUserProfileCache() {
     userProfileCache = CacheBuilder.newBuilder()
         .maximumSize(maxCacheSize)
         .expireAfterWrite(ttlDuration, TimeUnit.SECONDS)
-        .removalListener((value) -> LOG.debug("{} was just removed from the cache", value.getKey()))
-        .build();
+        .removalListener(value -> {
+          String token = String.valueOf(value.getKey());
+          String tokenTail = token.length() <= 10 ? token : token.substring(token.length() - 10);
+          LOG.debug("User profile cache entry removed, reason={}, userTokenTail={}",
+              value.getCause(), tokenTail);
+        }).build();
   }
 
   /**
