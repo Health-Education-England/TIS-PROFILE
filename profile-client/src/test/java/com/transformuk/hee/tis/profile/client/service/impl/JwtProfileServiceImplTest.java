@@ -1,11 +1,12 @@
 package com.transformuk.hee.tis.profile.client.service.impl;
 
+import static ch.qos.logback.classic.Level.DEBUG;
 import static org.junit.Assert.assertFalse;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
-import static ch.qos.logback.classic.Level.DEBUG;
 
+import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
@@ -24,7 +25,6 @@ import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.client.RestTemplate;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JwtProfileServiceImplTest {
@@ -33,8 +33,6 @@ public class JwtProfileServiceImplTest {
   @InjectMocks
   private JwtProfileServiceImpl testObj;
 
-  @Mock
-  private RestTemplate restTemplateMock;
   @Mock
   private Cache<String, Optional<UserProfile>> userProfileCacheMock;
 
@@ -84,13 +82,7 @@ public class JwtProfileServiceImplTest {
   @Test
   public void initializeCacheShouldUseInjectedProperties() throws Exception {
 
-    Field maxCacheSizeField = JwtProfileServiceImpl.class.getDeclaredField("maxCacheSize");
-    maxCacheSizeField.setAccessible(true);
-    maxCacheSizeField.setLong(testObj, 1);
-
-    Field ttlDurationField = JwtProfileServiceImpl.class.getDeclaredField("ttlDuration");
-    ttlDurationField.setAccessible(true);
-    ttlDurationField.setInt(testObj, 60);
+    initializeInjectedFields();
 
     testObj.initUserProfileCache();
 
@@ -105,28 +97,29 @@ public class JwtProfileServiceImplTest {
   }
 
   @Test
-  public void shouldNotLogSecurityTokenWhenCacheEntryIsRemoved() throws Exception {
+  public void shouldNotLogSecurityTokenEntirelyWhenCacheEntryIsRemoved() throws Exception {
 
     //Given
     String tokenSuffix = securityToken.substring(securityToken.length() - 10);
 
     Logger logger = (Logger) LoggerFactory.getLogger(JwtProfileServiceImpl.class);
-    logger.setLevel(DEBUG);
+    Level originalLevel = logger.getLevel();
 
     ListAppender<ILoggingEvent> appender = new ListAppender<>();
     appender.start();
-    logger.addAppender(appender);
 
     try {
-      JwtProfileServiceImpl service = new JwtProfileServiceImpl(restTemplateMock);
-      service.initUserProfileCache();
+      logger.setLevel(DEBUG);
+      logger.addAppender(appender);
+
+      initializeInjectedFields();
+
+      testObj.initUserProfileCache();
 
       Field cacheField = JwtProfileServiceImpl.class.getDeclaredField("userProfileCache");
-
       cacheField.setAccessible(true);
-
       Cache<String, Optional<UserProfile>> cache = (Cache<String, Optional<UserProfile>>) cacheField.get(
-          service);
+          testObj);
 
       cache.put(securityToken, Optional.of(new UserProfile()));
 
@@ -146,6 +139,17 @@ public class JwtProfileServiceImplTest {
     } finally {
       logger.detachAppender(appender);
       appender.stop();
+      logger.setLevel(originalLevel);
     }
+  }
+
+  void initializeInjectedFields() throws Exception {
+    Field maxCacheSizeField = JwtProfileServiceImpl.class.getDeclaredField("maxCacheSize");
+    maxCacheSizeField.setAccessible(true);
+    maxCacheSizeField.setLong(testObj, 1);
+
+    Field ttlDurationField = JwtProfileServiceImpl.class.getDeclaredField("ttlDuration");
+    ttlDurationField.setAccessible(true);
+    ttlDurationField.setInt(testObj, 60);
   }
 }
