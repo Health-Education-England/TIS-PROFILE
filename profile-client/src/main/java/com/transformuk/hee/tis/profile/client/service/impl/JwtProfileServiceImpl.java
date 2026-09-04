@@ -49,7 +49,7 @@ public class JwtProfileServiceImpl implements JwtProfileService {
         .removalListener(value -> {
           String token = String.valueOf(value.getKey());
           String tokenTail = token.length() <= 10 ? token : token.substring(token.length() - 10);
-          LOG.debug("User profile cache entry removed, reason={} for token, userTokenTail={}",
+          LOG.debug("User profile cache entry removed, reason={}, userTokenTail={}",
               value.getCause(), tokenTail);
         }).build();
   }

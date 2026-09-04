@@ -4,6 +4,7 @@ import static org.junit.Assert.assertFalse;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
+import static ch.qos.logback.classic.Level.DEBUG;
 
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
@@ -110,6 +111,7 @@ public class JwtProfileServiceImplTest {
     String tokenSuffix = securityToken.substring(securityToken.length() - 10);
 
     Logger logger = (Logger) LoggerFactory.getLogger(JwtProfileServiceImpl.class);
+    logger.setLevel(DEBUG);
 
     ListAppender<ILoggingEvent> appender = new ListAppender<>();
     appender.start();
