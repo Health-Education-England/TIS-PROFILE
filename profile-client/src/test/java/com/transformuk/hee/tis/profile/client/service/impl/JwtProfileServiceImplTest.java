@@ -1,10 +1,19 @@
 package com.transformuk.hee.tis.profile.client.service.impl;
 
 import static ch.qos.logback.classic.Level.DEBUG;
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
+import static org.slf4j.LoggerFactory.getLogger;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
@@ -15,16 +24,13 @@ import com.transformuk.hee.tis.security.model.UserProfile;
 import java.lang.reflect.Field;
 import java.util.Optional;
 import java.util.UUID;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.slf4j.LoggerFactory;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JwtProfileServiceImplTest {
@@ -44,13 +50,12 @@ public class JwtProfileServiceImplTest {
     testObj.setUserProfileCache(userProfileCacheMock);
   }
 
-
   @Test(expected = NullPointerException.class)
   public void getProfileShouldThrowNPEWhenProvidedInvalidParam() {
     try {
       testObj.getProfile(null);
     } catch (Exception e) {
-      Mockito.verifyZeroInteractions(userProfileCacheMock);
+      verifyZeroInteractions(userProfileCacheMock);
       throw e;
     }
   }
@@ -58,25 +63,25 @@ public class JwtProfileServiceImplTest {
   @Test
   public void getProfileShouldMakeCommandCallWhenNoCachedDataAvailable() {
     when(userProfileCacheMock.getIfPresent(securityToken)).thenReturn(null);
-    Optional<UserProfile> optionalUserProfile = Optional.empty();
+    Optional<UserProfile> optionalUserProfile = empty();
     doReturn(optionalUserProfile).when(testObj).getUserProfile(securityToken);
 
     Optional<UserProfile> result = testObj.getProfile(securityToken);
 
-    Assert.assertSame(optionalUserProfile, result);
+    assertSame(optionalUserProfile, result);
   }
 
   @Test
   public void getProfileShouldUserProfileFromCache() {
 
     UserProfile userProfile = new UserProfile();
-    Optional<UserProfile> optionalUserProfile = Optional.of(userProfile);
+    Optional<UserProfile> optionalUserProfile = of(userProfile);
     when(userProfileCacheMock.getIfPresent(securityToken)).thenReturn(optionalUserProfile);
 
     Optional<UserProfile> result = testObj.getProfile(securityToken);
 
-    Mockito.verify(userProfileCacheMock, Mockito.never()).put(any(), any());
-    Assert.assertSame(optionalUserProfile, result);
+    verify(userProfileCacheMock, never()).put(any(), any());
+    assertSame(optionalUserProfile, result);
   }
 
   @Test
@@ -90,10 +95,10 @@ public class JwtProfileServiceImplTest {
     cacheField.setAccessible(true);
     Cache<String, Optional<UserProfile>> cache = (Cache<String, Optional<UserProfile>>) cacheField.get(
         testObj);
-    cache.put("first", Optional.empty());
-    cache.put("second", Optional.empty());
+    cache.put("first", empty());
+    cache.put("second", empty());
 
-    Assert.assertEquals(1, cache.size());
+    assertEquals(1, cache.size());
   }
 
   @Test
@@ -102,7 +107,7 @@ public class JwtProfileServiceImplTest {
     //Given
     String tokenSuffix = securityToken.substring(securityToken.length() - 10);
 
-    Logger logger = (Logger) LoggerFactory.getLogger(JwtProfileServiceImpl.class);
+    Logger logger = (Logger) getLogger(JwtProfileServiceImpl.class);
     Level originalLevel = logger.getLevel();
 
     ListAppender<ILoggingEvent> appender = new ListAppender<>();
@@ -121,7 +126,7 @@ public class JwtProfileServiceImplTest {
       Cache<String, Optional<UserProfile>> cache = (Cache<String, Optional<UserProfile>>) cacheField.get(
           testObj);
 
-      cache.put(securityToken, Optional.of(new UserProfile()));
+      cache.put(securityToken, of(new UserProfile()));
 
       //When
       cache.invalidate(securityToken);
@@ -135,7 +140,7 @@ public class JwtProfileServiceImplTest {
           .anyMatch(event -> event.getFormattedMessage().contains(tokenSuffix));
 
       assertFalse(fullTokenLogged);
-      Assert.assertTrue(tokenSuffixLogged);
+      assertTrue(tokenSuffixLogged);
     } finally {
       logger.detachAppender(appender);
       appender.stop();
