@@ -24,7 +24,7 @@
 
   <properties>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-    <sonar.login>${env.SONAR_TOKEN}</sonar.login>
+    <sonar.token>${env.SONAR_TOKEN}</sonar.token>
     <sonar.organization>health-education-england</sonar.organization>
     <sonar.projectKey>Health-Education-England_TIS-PROFILE</sonar.projectKey>
 
@@ -36,7 +36,7 @@
       <plugin>
         <groupId>org.sonarsource.scanner.maven</groupId>
         <artifactId>sonar-maven-plugin</artifactId>
-        <version>3.9.0.2155</version>
+        <version>5.8.0.7211</version>
       </plugin>
       <plugin>
         <artifactId>maven-checkstyle-plugin</artifactId>
