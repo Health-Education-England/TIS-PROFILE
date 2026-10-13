@@ -83,7 +83,7 @@ public class HeeUserResource {
    *
    * @param heeUserDTO the heeUserDTO to create
    * @return the ResponseEntity with status 201 (Created) and with body the new heeUserDTO, or with
-   * status 400 (Bad Request) if the heeUser has already an ID
+   *     status 400 (Bad Request) if the heeUser has already an ID
    * @throws URISyntaxException if the Location URI syntax is incorrect
    */
   @PostMapping("/hee-users")
@@ -122,8 +122,8 @@ public class HeeUserResource {
    *
    * @param heeUserDTO the heeUserDTO to update
    * @return the ResponseEntity with status 200 (OK) and with body the updated heeUserDTO, or with
-   * status 400 (Bad Request) if the heeUserDTO is not valid, or with status 500 (Internal Server
-   * Error) if the heeUserDTO couldnt be updated
+   *     status 400 (Bad Request) if the heeUserDTO is not valid, or with status 500 (Internal
+   *     Server Error) if the heeUserDTO couldnt be updated
    * @throws URISyntaxException if the Location URI syntax is incorrect
    */
   @PutMapping("/hee-users")
@@ -175,7 +175,7 @@ public class HeeUserResource {
    *
    * @param name the name of the heeUserDTO to retrieve
    * @return the ResponseEntity with status 200 (OK) and with body the heeUserDTO, or with status
-   * 404 (Not Found)
+   *     404 (Not Found)
    */
   @GetMapping("/hee-users/{name:.+}")
   @Timed
