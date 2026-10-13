@@ -109,21 +109,22 @@ public interface HeeUserRepository extends JpaRepository<HeeUser, String>,
 
   /**
    * Find HeeUsers ingore case
+   *
    * @return
    */
   List<HeeUser> findByNameIgnoreCase(String name);
 
   @Query(value = "select distinct u.* from HeeUser u " +
-          "inner join UserRole ur on ur.userName = u.name " +
-  "where ur.roleName IN (:roleNames)"+
-          "AND u.active=true", nativeQuery = true)
+      "inner join UserRole ur on ur.userName = u.name " +
+      "where ur.roleName IN (:roleNames)" +
+      "AND u.active=true", nativeQuery = true)
   List<HeeUser> findHeeUsersByRoleNames(@Param("roleNames") List<String> roleNames);
 
   /**
    * Finds active users with the specified role and DBC.
    *
    * @param roleName the role name to filter by
-   * @param dbc the DBC with which they must be associated
+   * @param dbc      the DBC with which they must be associated
    * @return distinct list of matching users
    */
   @Query(value = "select distinct u.* from HeeUser u " +
@@ -134,4 +135,29 @@ public interface HeeUserRepository extends JpaRepository<HeeUser, String>,
       "and udb.designatedBodyCode = :dbc " +
       "order by u.firstName, u.lastName", nativeQuery = true)
   List<HeeUser> findByRoleAndDbc(@Param("roleName") String roleName, @Param("dbc") String dbc);
+
+  /**
+   * Finds active users with all of the specified roles and the specified programme assigned.
+   *
+   * @param roleNames       the role names that must all be present
+   * @param programmeNumber the programme number that must be assigned
+   * @param roleCount       the number of roles expected
+   * @return distinct list of matching users
+   */
+  @Query(value = "select distinct u.* from HeeUser u " +
+      "where u.active = true " +
+      "and u.name in ( " +
+      "  select ur.userName from UserRole ur " +
+      "  where ur.roleName in (:roleNames) " +
+      "  group by ur.userName " +
+      "  having count(distinct ur.roleName) = :roleCount " +
+      ") " +
+      "and u.name in ( " +
+      "  select up.heeUser from UserProgramme up " +
+      "  where up.programmeNumber = :programmeNumber " +
+      ") " +
+      "order by u.firstName, u.lastName", nativeQuery = true)
+  List<HeeUser> findByRoleNamesAndProgrammeNumber(@Param("roleNames") List<String> roleNames,
+      @Param("programmeNumber") String programmeNumber,
+      @Param("roleCount") long roleCount);
 }

@@ -249,6 +249,40 @@ public class HeeUserResourceInt2Test {
   }
 
   @Test
+  public void getLtftReviewersShouldReturnReviewersForProgramme() throws Exception {
+    String programmeNumber = "10000123";
+
+    BasicHeeUserDTO reviewer1 = new BasicHeeUserDTO();
+    reviewer1.setName("reviewer1");
+    BasicHeeUserDTO reviewer2 = new BasicHeeUserDTO();
+    reviewer2.setName("reviewer2");
+    List<BasicHeeUserDTO> reviewers = Lists.newArrayList(reviewer1, reviewer2);
+
+    when(userServiceMock.findLtftReviewers(programmeNumber)).thenReturn(reviewers);
+
+    restHeeUserMockMvc.perform(get("/api/hee-users/ltft-reviewers")
+            .param("programmeNumber", programmeNumber)
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.[*].name").value(hasItems("reviewer1", "reviewer2")));
+  }
+
+  @Test
+  public void getLtftReviewersShouldReturnEmptyListWhenNoReviewersFound() throws Exception {
+    String programmeNumber = "10000123";
+
+    when(userServiceMock.findLtftReviewers(programmeNumber)).thenReturn(new ArrayList<>());
+
+    restHeeUserMockMvc.perform(get("/api/hee-users/ltft-reviewers")
+            .param("programmeNumber", programmeNumber)
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$").isEmpty());
+  }
+
+  @Test
   public void updateHeeUserWithDifferentEmailShouldReturnBadRequest() throws Exception {
     HeeUser existingUser = new HeeUser();
     existingUser.setName(TESTNAME_1);

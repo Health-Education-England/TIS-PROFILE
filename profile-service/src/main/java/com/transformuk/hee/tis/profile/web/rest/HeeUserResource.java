@@ -83,7 +83,7 @@ public class HeeUserResource {
    *
    * @param heeUserDTO the heeUserDTO to create
    * @return the ResponseEntity with status 201 (Created) and with body the new heeUserDTO, or with
-   *     status 400 (Bad Request) if the heeUser has already an ID
+   * status 400 (Bad Request) if the heeUser has already an ID
    * @throws URISyntaxException if the Location URI syntax is incorrect
    */
   @PostMapping("/hee-users")
@@ -122,8 +122,8 @@ public class HeeUserResource {
    *
    * @param heeUserDTO the heeUserDTO to update
    * @return the ResponseEntity with status 200 (OK) and with body the updated heeUserDTO, or with
-   *     status 400 (Bad Request) if the heeUserDTO is not valid, or with status 500 (Internal
-   *     Server Error) if the heeUserDTO couldnt be updated
+   * status 400 (Bad Request) if the heeUserDTO is not valid, or with status 500 (Internal Server
+   * Error) if the heeUserDTO couldnt be updated
    * @throws URISyntaxException if the Location URI syntax is incorrect
    */
   @PutMapping("/hee-users")
@@ -175,7 +175,7 @@ public class HeeUserResource {
    *
    * @param name the name of the heeUserDTO to retrieve
    * @return the ResponseEntity with status 200 (OK) and with body the heeUserDTO, or with status
-   *     404 (Not Found)
+   * 404 (Not Found)
    */
   @GetMapping("/hee-users/{name:.+}")
   @Timed
@@ -261,6 +261,26 @@ public class HeeUserResource {
       return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
     List<BasicHeeUserDTO> admins = userService.findLtftAdmins(LTFT_ADMIN_ROLE, ltftDbc);
+    return ResponseEntity.ok(admins);
+  }
+
+  /**
+   * GET /hee-users/ltft-reviewers : get reviewers assignable to an LTFT application.
+   *
+   * <p>Returns active users with the "LTFT Admin" and "HEE Programme Admin" roles who have the
+   * LTFT application's programme assigned.
+   *
+   * @param programmeNumber The programme number used to identify the assignable reviewers.
+   * @return the list of matching admin DTOs
+   */
+  @GetMapping("/hee-users/ltft-reviewers")
+  @Timed
+  @PreAuthorize("hasAuthority('profile:view:entities')")
+  public ResponseEntity<List<BasicHeeUserDTO>> getLtftReviewers(
+      @RequestParam String programmeNumber) {
+    log.debug("REST request to get LTFT reviewers for Programme : {}", programmeNumber);
+
+    List<BasicHeeUserDTO> admins = userService.findLtftReviewers(programmeNumber);
     return ResponseEntity.ok(admins);
   }
 
