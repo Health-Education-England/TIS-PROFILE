@@ -18,6 +18,8 @@ import static com.transformuk.hee.tis.profile.web.rest.TestUtil.UPDATED_PHONE_NU
 import static com.transformuk.hee.tis.profile.web.rest.TestUtil.createEntityHeeUser;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.containsInRelativeOrder;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -534,8 +536,42 @@ public class HeeUserResourceIntTest {
         .andExpect(status().isOk())
         .andExpect(content().contentType(TestUtil.JSON))
         .andExpect(jsonPath("$", hasSize(2)))
-        .andExpect(jsonPath("$.[0].name").value("reviewer.one"))
-        .andExpect(jsonPath("$.[1].name").value("reviewer.two"));
+        .andExpect(jsonPath("$.[*].name", containsInAnyOrder("reviewer.one", "reviewer.two")));
+  }
+
+  @Test
+  @Transactional
+  public void getLtftReviewersShouldReturnReviewersInAlphabeticalOrder() throws Exception {
+    Role ltftAdminRole = new Role();
+    ltftAdminRole.setName("NHSE LTFT Admin");
+    roleRepository.saveAndFlush(ltftAdminRole);
+
+    Role programmeAdminRole = new Role();
+    programmeAdminRole.setName("HEE Programme Admin");
+    roleRepository.saveAndFlush(programmeAdminRole);
+
+    UserProgramme reviewerProgramme = new UserProgramme();
+    reviewerProgramme.setProgrammeNumber("10000123");
+    reviewerProgramme.setProgrammeName("LTFT Programme");
+    reviewerProgramme.setProgrammeId(123L);
+
+    createUser("AAA", "AAA", true, newHashSet(ltftAdminRole, programmeAdminRole), newHashSet(),
+        newHashSet(reviewerProgramme));
+    createUser("BBB", "BBB", true, newHashSet(ltftAdminRole, programmeAdminRole), newHashSet(),
+        newHashSet(reviewerProgramme));
+    createUser("AAA", "BBB", true, newHashSet(ltftAdminRole, programmeAdminRole), newHashSet(),
+        newHashSet(reviewerProgramme));
+    createUser("BBB", "AAA", true, newHashSet(ltftAdminRole, programmeAdminRole), newHashSet(),
+        newHashSet(reviewerProgramme));
+
+    restHeeUserMockMvc.perform(get("/api/hee-users/ltft-reviewers")
+            .param("programmeNumber", "10000123")
+            .header("Authorization", "Bearer " + TOKEN))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(TestUtil.JSON))
+        .andExpect(jsonPath("$", hasSize(4)))
+        .andExpect(jsonPath("$.[*].name",
+            containsInRelativeOrder("aaa.aaa", "aaa.bbb", "bbb.aaa", "bbb.bbb")));
   }
 
   @Test
@@ -594,7 +630,8 @@ public class HeeUserResourceIntTest {
     notReviewerProgramme.setProgrammeNumber("10000456");
     notReviewerProgramme.setProgrammeName("Not LTFT Programme");
     notReviewerProgramme.setProgrammeId(456L);
-    createUser("Reviewer", "Matching", true, newHashSet(ltftAdminRole, programmeAdminRole),
+    createUser("Reviewer", "Different Programme", true,
+        newHashSet(ltftAdminRole, programmeAdminRole),
         newHashSet(),
         newHashSet(notReviewerProgramme));
 
