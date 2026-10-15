@@ -137,17 +137,17 @@ public class ManageRecordDTO implements Serializable {
 
   @Override
   public String toString() {
-    return "ManageRecordDTO{" +
-        "id=" + id +
-        ", tisId='" + tisId + "'" +
-        ", recordType='" + recordType + "'" +
-        ", role='" + role + "'" +
-        ", recordStatus='" + recordStatus + "'" +
-        ", inactiveFrom='" + inactiveFrom + "'" +
-        ", changedBy='" + changedBy + "'" +
-        ", inactiveReason='" + inactiveReason + "'" +
-        ", inactiveDate='" + inactiveDate + "'" +
-        ", deletionReason='" + deletionReason + "'" +
-        '}';
+    return "ManageRecordDTO{"
+        + "id=" + id
+        + ", tisId='" + tisId + "'"
+        + ", recordType='" + recordType + "'"
+        + ", role='" + role + "'"
+        + ", recordStatus='" + recordStatus + "'"
+        + ", inactiveFrom='" + inactiveFrom + "'"
+        + ", changedBy='" + changedBy + "'"
+        + ", inactiveReason='" + inactiveReason + "'"
+        + ", inactiveDate='" + inactiveDate + "'"
+        + ", deletionReason='" + deletionReason + "'"
+        + '}';
   }
 }

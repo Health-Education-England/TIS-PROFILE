@@ -234,16 +234,16 @@ public class HeeUser implements Serializable {
 
   @Override
   public String toString() {
-    return "HeeUser{" +
-        "name='" + name + "'" +
-        ", firstName='" + firstName + "'" +
-        ", lastName='" + lastName + "'" +
-        ", gmcId='" + gmcId + "'" +
-        ", phoneNumber='" + phoneNumber + "'" +
-        ", emailAddress='" + emailAddress + "'" +
-        ", active='" + active + "'" +
-        ", roles=" + roles +
-        ", designatedBodyCodes=" + designatedBodyCodes +
-        '}';
+    return "HeeUser{"
+        + "name='" + name + "'"
+        + ", firstName='" + firstName + "'"
+        + ", lastName='" + lastName + "'"
+        + ", gmcId='" + gmcId + "'"
+        + ", phoneNumber='" + phoneNumber + "'"
+        + ", emailAddress='" + emailAddress + "'"
+        + ", active='" + active + "'"
+        + ", roles=" + roles
+        + ", designatedBodyCodes=" + designatedBodyCodes
+        + '}';
   }
 }

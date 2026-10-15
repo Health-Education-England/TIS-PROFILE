@@ -109,14 +109,14 @@ public class GmcDetailsDTO implements Serializable {
 
   @Override
   public String toString() {
-    return "GmcDetailsDTO{" +
-        "id=" + id +
-        ", tisId='" + tisId + "'" +
-        ", gmcNumber='" + gmcNumber + "'" +
-        ", gmcStatus='" + gmcStatus + "'" +
-        ", gmcStartDate='" + gmcStartDate + "'" +
-        ", gmcExpiryDate='" + gmcExpiryDate + "'" +
-        ", designatedBodyCode='" + designatedBodyCode + "'" +
-        '}';
+    return "GmcDetailsDTO{"
+        + "id=" + id
+        + ", tisId='" + tisId + "'"
+        + ", gmcNumber='" + gmcNumber + "'"
+        + ", gmcStatus='" + gmcStatus + "'"
+        + ", gmcStartDate='" + gmcStartDate + "'"
+        + ", gmcExpiryDate='" + gmcExpiryDate + "'"
+        + ", designatedBodyCode='" + designatedBodyCode + "'"
+        + '}';
   }
 }

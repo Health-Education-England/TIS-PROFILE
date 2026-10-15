@@ -90,12 +90,12 @@ public class UserProgramme implements Serializable {
 
   @Override
   public String toString() {
-    return "UserProgramme{" +
-        "id=" + id +
-        ", heeUser=" + heeUser +
-        ", programmeId=" + programmeId +
-        ", programmeName='" + programmeName + '\'' +
-        ", programmeNumber='" + programmeNumber + '\'' +
-        '}';
+    return "UserProgramme{"
+        + "id=" + id
+        + ", heeUser=" + heeUser
+        + ", programmeId=" + programmeId
+        + ", programmeName='" + programmeName + '\''
+        + ", programmeNumber='" + programmeNumber + '\''
+        + '}';
   }
 }

@@ -56,9 +56,9 @@ public class TraineeId {
 
   @Override
   public String toString() {
-    return "TraineeId{" +
-        "gmcNumber='" + gmcNumber + '\'' +
-        ", tisId=" + tisId +
-        '}';
+    return "TraineeId{"
+        + "gmcNumber='" + gmcNumber + '\''
+        + ", tisId=" + tisId
+        + '}';
   }
 }

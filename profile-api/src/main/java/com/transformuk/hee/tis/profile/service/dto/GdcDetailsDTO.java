@@ -87,12 +87,12 @@ public class GdcDetailsDTO implements Serializable {
 
   @Override
   public String toString() {
-    return "GdcDetailsDTO{" +
-        "id=" + id +
-        ", tisId='" + tisId + "'" +
-        ", gdcNumber='" + gdcNumber + "'" +
-        ", gdcStatus='" + gdcStatus + "'" +
-        ", gdcStartDate='" + gdcStartDate + "'" +
-        '}';
+    return "GdcDetailsDTO{"
+        + "id=" + id
+        + ", tisId='" + tisId + "'"
+        + ", gdcNumber='" + gdcNumber + "'"
+        + ", gdcStatus='" + gdcStatus + "'"
+        + ", gdcStartDate='" + gdcStartDate + "'"
+        + '}';
   }
 }

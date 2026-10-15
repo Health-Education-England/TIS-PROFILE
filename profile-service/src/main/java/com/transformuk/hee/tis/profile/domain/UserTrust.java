@@ -91,12 +91,12 @@ public class UserTrust implements Serializable {
 
   @Override
   public String toString() {
-    return "UserTrust{" +
-        "id=" + id +
-        ", heeUser=" + heeUser +
-        ", trustId=" + trustId +
-        ", trustName='" + trustName + '\'' +
-        ", trustCode='" + trustCode + '\'' +
-        '}';
+    return "UserTrust{"
+        + "id=" + id
+        + ", heeUser=" + heeUser
+        + ", trustId=" + trustId
+        + ", trustName='" + trustName + '\''
+        + ", trustCode='" + trustCode + '\''
+        + '}';
   }
 }

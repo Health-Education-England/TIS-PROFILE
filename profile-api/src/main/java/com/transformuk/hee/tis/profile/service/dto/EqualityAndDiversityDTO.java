@@ -157,19 +157,19 @@ public class EqualityAndDiversityDTO implements Serializable {
 
   @Override
   public String toString() {
-    return "EqualityAndDiversityDTO{" +
-        "id=" + id +
-        ", tisId='" + tisId + "'" +
-        ", maritalStatus='" + maritalStatus + "'" +
-        ", dateOfBirth='" + dateOfBirth + "'" +
-        ", gender='" + gender + "'" +
-        ", nationality='" + nationality + "'" +
-        ", dualNationality='" + dualNationality + "'" +
-        ", sexualOrientation='" + sexualOrientation + "'" +
-        ", religiousBelief='" + religiousBelief + "'" +
-        ", ethnicOrigin='" + ethnicOrigin + "'" +
-        ", disability='" + disability + "'" +
-        ", disabilityDetails='" + disabilityDetails + "'" +
-        '}';
+    return "EqualityAndDiversityDTO{"
+        + "id=" + id
+        + ", tisId='" + tisId + "'"
+        + ", maritalStatus='" + maritalStatus + "'"
+        + ", dateOfBirth='" + dateOfBirth + "'"
+        + ", gender='" + gender + "'"
+        + ", nationality='" + nationality + "'"
+        + ", dualNationality='" + dualNationality + "'"
+        + ", sexualOrientation='" + sexualOrientation + "'"
+        + ", religiousBelief='" + religiousBelief + "'"
+        + ", ethnicOrigin='" + ethnicOrigin + "'"
+        + ", disability='" + disability + "'"
+        + ", disabilityDetails='" + disabilityDetails + "'"
+        + '}';
   }
 }

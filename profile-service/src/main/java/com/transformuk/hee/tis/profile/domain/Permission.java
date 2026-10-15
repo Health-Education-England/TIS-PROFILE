@@ -162,14 +162,14 @@ public class Permission implements Serializable {
 
   @Override
   public String toString() {
-    return "Permission{" +
-        "name='" + name + '\'' +
-        ", type=" + type +
-        ", description='" + description + '\'' +
-        ", principal='" + principal + '\'' +
-        ", resource='" + resource + '\'' +
-        ", actions='" + actions + '\'' +
-        ", effect='" + effect + '\'' +
-        '}';
+    return "Permission{"
+        + "name='" + name + '\''
+        + ", type=" + type
+        + ", description='" + description + '\''
+        + ", principal='" + principal + '\''
+        + ", resource='" + resource + '\''
+        + ", actions='" + actions + '\''
+        + ", effect='" + effect + '\''
+        + '}';
   }
 }
