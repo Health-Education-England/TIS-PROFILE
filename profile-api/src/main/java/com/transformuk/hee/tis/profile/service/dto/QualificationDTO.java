@@ -107,14 +107,14 @@ public class QualificationDTO implements Serializable {
 
   @Override
   public String toString() {
-    return "QualificationDTO{" +
-        "id=" + id +
-        ", tisId='" + tisId + "'" +
-        ", qualification='" + qualification + "'" +
-        ", qualificationType='" + qualificationType + "'" +
-        ", dateAttained='" + dateAttained + "'" +
-        ", medicalSchool='" + medicalSchool + "'" +
-        ", country='" + country + "'" +
-        '}';
+    return "QualificationDTO{"
+        + "id=" + id
+        + ", tisId='" + tisId + "'"
+        + ", qualification='" + qualification + "'"
+        + ", qualificationType='" + qualificationType + "'"
+        + ", dateAttained='" + dateAttained + "'"
+        + ", medicalSchool='" + medicalSchool + "'"
+        + ", country='" + country + "'"
+        + '}';
   }
 }

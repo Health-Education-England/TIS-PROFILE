@@ -162,18 +162,18 @@ public class HeeUserDTO implements Serializable {
 
   @Override
   public String toString() {
-    return "HeeUserDTO{" +
-        "name='" + name + '\'' +
-        ", firstName='" + firstName + '\'' +
-        ", lastName='" + lastName + '\'' +
-        ", gmcId='" + gmcId + '\'' +
-        ", phoneNumber='" + phoneNumber + '\'' +
-        ", emailAddress='" + emailAddress + '\'' +
-        ", active=" + active +
-        ", roles=" + roles +
-        ", designatedBodyCodes=" + designatedBodyCodes +
-        ", associatedTrusts=" + associatedTrusts +
-        ", associatedProgrammes=" + associatedProgrammes +
-        '}';
+    return "HeeUserDTO{"
+        + "name='" + name + '\''
+        + ", firstName='" + firstName + '\''
+        + ", lastName='" + lastName + '\''
+        + ", gmcId='" + gmcId + '\''
+        + ", phoneNumber='" + phoneNumber + '\''
+        + ", emailAddress='" + emailAddress + '\''
+        + ", active=" + active
+        + ", roles=" + roles
+        + ", designatedBodyCodes=" + designatedBodyCodes
+        + ", associatedTrusts=" + associatedTrusts
+        + ", associatedProgrammes=" + associatedProgrammes
+        + '}';
   }
 }

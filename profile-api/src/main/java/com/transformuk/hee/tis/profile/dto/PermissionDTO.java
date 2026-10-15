@@ -136,14 +136,14 @@ public class PermissionDTO implements Serializable {
 
   @Override
   public String toString() {
-    return "PermissionDTO{" +
-        "name='" + name + '\'' +
-        ", type=" + type +
-        ", description='" + description + '\'' +
-        ", principal='" + principal + '\'' +
-        ", resource='" + resource + '\'' +
-        ", actions=" + actions +
-        ", effect='" + effect + '\'' +
-        '}';
+    return "PermissionDTO{"
+        + "name='" + name + '\''
+        + ", type=" + type
+        + ", description='" + description + '\''
+        + ", principal='" + principal + '\''
+        + ", resource='" + resource + '\''
+        + ", actions=" + actions
+        + ", effect='" + effect + '\''
+        + '}';
   }
 }

@@ -52,8 +52,7 @@ public class RoleValidator {
       long noOfUsersHasRole = heeUserRepository.countByRolesNameAndActive(roleName, true);
       if (noOfUsersHasRole > 0) {
         throw new CustomParameterizedException(
-            "This role: " + roleName + " cann't be deleted as it's " +
-                "associated with users",
+            "This role: " + roleName + " can't be deleted as it's associated with users",
             ErrorConstants.ERR_VALIDATION);
       }
     }

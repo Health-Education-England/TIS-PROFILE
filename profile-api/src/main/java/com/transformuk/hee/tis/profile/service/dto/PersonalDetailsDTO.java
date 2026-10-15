@@ -197,23 +197,23 @@ public class PersonalDetailsDTO implements Serializable {
 
   @Override
   public String toString() {
-    return "PersonalDetailsDTO{" +
-        "id=" + id +
-        ", tisId='" + tisId + "'" +
-        ", surnameNb='" + surnameNb + "'" +
-        ", legalSurname='" + legalSurname + "'" +
-        ", forenames='" + forenames + "'" +
-        ", legalForenames='" + legalForenames + "'" +
-        ", knownAs='" + knownAs + "'" +
-        ", maidenName='" + maidenName + "'" +
-        ", initials='" + initials + "'" +
-        ", title='" + title + "'" +
-        ", telephoneNumber='" + telephoneNumber + "'" +
-        ", mobileNumber='" + mobileNumber + "'" +
-        ", emailAddress='" + emailAddress + "'" +
-        ", correspondenceAddress='" + correspondenceAddress + "'" +
-        ", correspondenceAddressPostCode='" + correspondenceAddressPostCode + "'" +
-        ", status='" + status + "'" +
-        '}';
+    return "PersonalDetailsDTO{"
+        + "id=" + id
+        + ", tisId='" + tisId + "'"
+        + ", surnameNb='" + surnameNb + "'"
+        + ", legalSurname='" + legalSurname + "'"
+        + ", forenames='" + forenames + "'"
+        + ", legalForenames='" + legalForenames + "'"
+        + ", knownAs='" + knownAs + "'"
+        + ", maidenName='" + maidenName + "'"
+        + ", initials='" + initials + "'"
+        + ", title='" + title + "'"
+        + ", telephoneNumber='" + telephoneNumber + "'"
+        + ", mobileNumber='" + mobileNumber + "'"
+        + ", emailAddress='" + emailAddress + "'"
+        + ", correspondenceAddress='" + correspondenceAddress + "'"
+        + ", correspondenceAddressPostCode='" + correspondenceAddressPostCode + "'"
+        + ", status='" + status + "'"
+        + '}';
   }
 }

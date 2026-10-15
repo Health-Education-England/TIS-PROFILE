@@ -128,13 +128,13 @@ public class JsonPatch implements Serializable {
 
   @Override
   public String toString() {
-    return "JsonPatch{" +
-        "id=" + id +
-        ", tableDtoName='" + tableDtoName + '\'' +
-        ", patchId='" + patchId + '\'' +
-        ", patch='" + patch + '\'' +
-        ", dateAdded=" + dateAdded +
-        ", enabled=" + enabled +
-        '}';
+    return "JsonPatch{"
+        + "id=" + id
+        + ", tableDtoName='" + tableDtoName + '\''
+        + ", patchId='" + patchId + '\''
+        + ", patch='" + patch + '\''
+        + ", dateAdded=" + dateAdded
+        + ", enabled=" + enabled
+        + '}';
   }
 }

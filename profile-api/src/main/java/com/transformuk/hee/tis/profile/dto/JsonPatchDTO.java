@@ -97,13 +97,13 @@ public class JsonPatchDTO implements Serializable {
 
   @Override
   public String toString() {
-    return "JsonPatchDTO{" +
-        "id=" + id +
-        ", tableDtoName='" + tableDtoName + '\'' +
-        ", patchId='" + patchId + '\'' +
-        ", patch='" + patch + '\'' +
-        ", dateAdded=" + dateAdded +
-        ", enabled=" + enabled +
-        '}';
+    return "JsonPatchDTO{"
+        + "id=" + id
+        + ", tableDtoName='" + tableDtoName + '\''
+        + ", patchId='" + patchId + '\''
+        + ", patch='" + patch + '\''
+        + ", dateAdded=" + dateAdded
+        + ", enabled=" + enabled
+        + '}';
   }
 }

@@ -1,5 +1,12 @@
 package com.transformuk.hee.tis.profile.service;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.google.common.collect.Sets;
 import com.transformuk.hee.tis.profile.domain.HeeUser;
 import com.transformuk.hee.tis.profile.domain.Role;
@@ -9,6 +16,12 @@ import com.transformuk.hee.tis.profile.service.dto.BasicHeeUserDTO;
 import com.transformuk.hee.tis.profile.service.dto.HeeUserDTO;
 import com.transformuk.hee.tis.profile.service.dto.UserTrustDTO;
 import com.transformuk.hee.tis.profile.service.mapper.HeeUserMapper;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import org.assertj.core.util.Lists;
 import org.junit.Assert;
 import org.junit.Before;
@@ -19,12 +32,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
-import java.util.*;
-
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserServiceTest {
@@ -87,7 +94,6 @@ public class UserServiceTest {
 
     Role role3 = new Role();
     role3.setName("RVAdmin");
-
 
     heeUser1WithTrusts.setRoles(new HashSet<Role>(Arrays.asList(role1, role2, role3)));
     heeUser2EmptyTrusts.setRoles(new HashSet<Role>(Arrays.asList(role1, role2)));
@@ -201,10 +207,11 @@ public class UserServiceTest {
     basicHeeUserDto.setName(heeUser1WithTrusts.getName());
     List<HeeUser> foundUserMock = Arrays.asList(heeUser1WithTrusts);
     when(heeUserRepositoryMock.findHeeUsersByRoleNames(Arrays.asList("HEE Admin Revalidation")))
-            .thenReturn(foundUserMock);
+        .thenReturn(foundUserMock);
     when(heeUserMapperMock.heeUsersToBasicHeeUserDTOs(foundUserMock))
-            .thenReturn(Arrays.asList(basicHeeUserDto));
-    List<BasicHeeUserDTO> result = testObj.findUsersByRoles(Arrays.asList("HEE Admin Revalidation"));
+        .thenReturn(Arrays.asList(basicHeeUserDto));
+    List<BasicHeeUserDTO> result = testObj.findUsersByRoles(
+        Arrays.asList("HEE Admin Revalidation"));
     Assert.assertEquals(FIRST_NAME_1, result.get(0).getName());
   }
 
@@ -265,5 +272,55 @@ public class UserServiceTest {
     testObj.findLtftAdmins(roleName, dbc);
 
     verify(heeUserRepositoryMock).findByRoleAndDbc(roleName, dbc);
+  }
+
+  @Test
+  public void findLtftReviewersShouldReturnMappedBasicHeeUserDTOs() {
+    String programmeNumber = "10000123";
+    List<String> requiredRoles = Arrays.asList("NHSE LTFT Admin", "HEE Programme Admin");
+
+    heeUser1WithTrusts.setName(FIRST_NAME_1);
+    heeUser2EmptyTrusts.setName(FIRST_NAME_2);
+    List<HeeUser> foundUsers = Arrays.asList(heeUser1WithTrusts, heeUser2EmptyTrusts);
+
+    BasicHeeUserDTO basicDto1 = new BasicHeeUserDTO();
+    basicDto1.setName(FIRST_NAME_1);
+    BasicHeeUserDTO basicDto2 = new BasicHeeUserDTO();
+    basicDto2.setName(FIRST_NAME_2);
+    List<BasicHeeUserDTO> mappedDtos = Arrays.asList(basicDto1, basicDto2);
+
+    when(heeUserRepositoryMock.findByRoleNamesAndProgrammeNumber(requiredRoles, programmeNumber,
+        requiredRoles.size())).thenReturn(foundUsers);
+    when(heeUserMapperMock.heeUsersToBasicHeeUserDTOs(foundUsers)).thenReturn(mappedDtos);
+
+    List<BasicHeeUserDTO> result = testObj.findLtftReviewers(programmeNumber);
+
+    Assert.assertEquals(2, result.size());
+    Assert.assertEquals(FIRST_NAME_1, result.get(0).getName());
+    Assert.assertEquals(FIRST_NAME_2, result.get(1).getName());
+
+    verify(heeUserRepositoryMock).findByRoleNamesAndProgrammeNumber(requiredRoles,
+        programmeNumber, requiredRoles.size());
+    verify(heeUserMapperMock).heeUsersToBasicHeeUserDTOs(foundUsers);
+  }
+
+  @Test
+  public void findLtftReviewersShouldReturnEmptyListWhenNoUsersFound() {
+    String programmeNumber = "10000123";
+    List<String> requiredRoles = Arrays.asList("NHSE LTFT Admin", "HEE Programme Admin");
+
+    when(heeUserRepositoryMock.findByRoleNamesAndProgrammeNumber(requiredRoles, programmeNumber,
+        requiredRoles.size())).thenReturn(Collections.emptyList());
+    when(heeUserMapperMock.heeUsersToBasicHeeUserDTOs(Collections.emptyList()))
+        .thenReturn(Collections.emptyList());
+
+    List<BasicHeeUserDTO> result = testObj.findLtftReviewers(programmeNumber);
+
+    Assert.assertNotNull(result);
+    Assert.assertTrue(result.isEmpty());
+
+    verify(heeUserRepositoryMock).findByRoleNamesAndProgrammeNumber(requiredRoles,
+        programmeNumber, requiredRoles.size());
+    verify(heeUserMapperMock).heeUsersToBasicHeeUserDTOs(Collections.emptyList());
   }
 }

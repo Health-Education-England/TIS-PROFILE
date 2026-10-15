@@ -93,15 +93,15 @@ public class UserInfoResponse {
 
   @Override
   public String toString() {
-    return "UserInfoResponse{" +
-        "name='" + name + '\'' +
-        ", firstName='" + firstName + '\'' +
-        ", lastName='" + lastName + '\'' +
-        ", fullName='" + fullName + '\'' +
-        ", gmcId='" + gmcId + '\'' +
-        ", designatedBodyCodes=" + designatedBodyCodes +
-        ", phoneNumber='" + phoneNumber + '\'' +
-        ", emailAddress='" + emailAddress + '\'' +
-        '}';
+    return "UserInfoResponse{"
+        + "name='" + name + '\''
+        + ", firstName='" + firstName + '\''
+        + ", lastName='" + lastName + '\''
+        + ", fullName='" + fullName + '\''
+        + ", gmcId='" + gmcId + '\''
+        + ", designatedBodyCodes=" + designatedBodyCodes
+        + ", phoneNumber='" + phoneNumber + '\''
+        + ", emailAddress='" + emailAddress + '\''
+        + '}';
   }
 }

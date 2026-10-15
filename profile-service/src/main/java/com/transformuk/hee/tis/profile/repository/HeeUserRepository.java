@@ -26,22 +26,22 @@ public interface HeeUserRepository extends JpaRepository<HeeUser, String>,
    * @param designatedBodyCodes
    * @return RO user details
    */
-  @Query("select u from HeeUser u " +
-      " join u.roles r " +
-      " left outer join fetch u.associatedTrusts " +
-      " left outer join fetch u.associatedProgrammes " +
-      " join u.designatedBodyCodes dbc " +
-      " where r.name='RVOfficer' and dbc = :dbc")
+  @Query("select u from HeeUser u "
+      + " join u.roles r "
+      + " left outer join fetch u.associatedTrusts "
+      + " left outer join fetch u.associatedProgrammes "
+      + " join u.designatedBodyCodes dbc "
+      + " where r.name='RVOfficer' and dbc = :dbc")
   List<HeeUser> findRVOfficerByDesignatedBodyCode(@Param("dbc") String designatedBodyCodes);
 
-  @Query("select u from HeeUser u " +
-      "left outer join fetch u.designatedBodyCodes " +
-      "left outer join fetch u.associatedTrusts " +
-      "left outer join fetch u.associatedProgrammes " +
-      "inner join fetch u.roles r " +
-      "inner join fetch r.permissions p " +
-      "where u.active = true " +
-      "and u.name = :userName")
+  @Query("select u from HeeUser u "
+      + "left outer join fetch u.designatedBodyCodes "
+      + "left outer join fetch u.associatedTrusts "
+      + "left outer join fetch u.associatedProgrammes "
+      + "inner join fetch u.roles r "
+      + "inner join fetch r.permissions p "
+      + "where u.active = true "
+      + "and u.name = :userName")
   HeeUser findByActive(@Param("userName") String userName);
 
   /**
@@ -51,15 +51,14 @@ public interface HeeUserRepository extends JpaRepository<HeeUser, String>,
    * @param permissions
    * @return
    */
-  @Query(value = "select distinct u.* from HeeUser u " +
-      "inner join UserRole ur on ur.userName = u.name " +
-      "inner join (" +
-      "select userName,GROUP_CONCAT(distinct designatedBodyCode order by designatedBodyCode) dbcs from UserDesignatedBody "
-      +
-      "group by userName) as usb on usb.userName = u.name and usb.dbcs = :designatedBodyCodes " +
-      "inner join RolePermission rp on rp.roleName = ur.roleName " +
-      "where u.active = true " +
-      "and rp.permissionName in (:permissions) order by u.firstName ",
+  @Query(value = "select distinct u.* from HeeUser u "
+      + "inner join UserRole ur on ur.userName = u.name "
+      + "inner join ("
+      + "select userName,GROUP_CONCAT(distinct designatedBodyCode order by designatedBodyCode) dbcs from UserDesignatedBody "
+      + "group by userName) as usb on usb.userName = u.name and usb.dbcs = :designatedBodyCodes "
+      + "inner join RolePermission rp on rp.roleName = ur.roleName "
+      + "where u.active = true "
+      + "and rp.permissionName in (:permissions) order by u.firstName ",
       nativeQuery = true)
   List<HeeUser> findDistinctByExactDesignatedBodyCodesAndPermissions(
       @Param("designatedBodyCodes") String designatedBodyCodes,
@@ -71,14 +70,13 @@ public interface HeeUserRepository extends JpaRepository<HeeUser, String>,
    * @param designatedBodyCodes
    * @return
    */
-  @Query(value = "select distinct u.* from HeeUser u " +
-      "inner join UserRole ur on ur.userName = u.name " +
-      "inner join (" +
-      "select userName,GROUP_CONCAT(distinct designatedBodyCode order by designatedBodyCode) dbcs from UserDesignatedBody "
-      +
-      "group by userName) as usb on usb.userName = u.name and usb.dbcs = :designatedBodyCodes " +
-      "where u.active = true " +
-      "order by u.firstName ",
+  @Query(value = "select distinct u.* from HeeUser u "
+      + "inner join UserRole ur on ur.userName = u.name "
+      + "inner join ("
+      + "select userName,GROUP_CONCAT(distinct designatedBodyCode order by designatedBodyCode) dbcs from UserDesignatedBody "
+      + "group by userName) as usb on usb.userName = u.name and usb.dbcs = :designatedBodyCodes "
+      + "where u.active = true "
+      + "order by u.firstName ",
       nativeQuery = true)
   List<HeeUser> findDistinctByExactDesignatedBodyCodes(
       @Param("designatedBodyCodes") String designatedBodyCodes);
@@ -92,10 +90,10 @@ public interface HeeUserRepository extends JpaRepository<HeeUser, String>,
   long countByRolesNameAndActive(@Param("roleName") String roleName,
       @Param("active") Boolean active);
 
-  @Query(value = "SELECT u FROM HeeUser u " +
-      "LEFT JOIN FETCH u.associatedTrusts " +
-      "LEFT JOIN FETCH u.associatedProgrammes " +
-      "where u.name = :name")
+  @Query(value = "SELECT u FROM HeeUser u "
+      + "LEFT JOIN FETCH u.associatedTrusts "
+      + "LEFT JOIN FETCH u.associatedProgrammes "
+      + "where u.name = :name")
   Optional<HeeUser> findByNameWithTrustsAndProgrammes(@Param("name") String name);
 
   /**
@@ -109,29 +107,55 @@ public interface HeeUserRepository extends JpaRepository<HeeUser, String>,
 
   /**
    * Find HeeUsers ingore case
+   *
    * @return
    */
   List<HeeUser> findByNameIgnoreCase(String name);
 
-  @Query(value = "select distinct u.* from HeeUser u " +
-          "inner join UserRole ur on ur.userName = u.name " +
-  "where ur.roleName IN (:roleNames)"+
-          "AND u.active=true", nativeQuery = true)
+  @Query(value = "select distinct u.* from HeeUser u "
+      + "inner join UserRole ur on ur.userName = u.name "
+      + "where ur.roleName IN (:roleNames)"
+      + "AND u.active=true", nativeQuery = true)
   List<HeeUser> findHeeUsersByRoleNames(@Param("roleNames") List<String> roleNames);
 
   /**
    * Finds active users with the specified role and DBC.
    *
    * @param roleName the role name to filter by
-   * @param dbc the DBC with which they must be associated
+   * @param dbc      the DBC with which they must be associated
    * @return distinct list of matching users
    */
-  @Query(value = "select distinct u.* from HeeUser u " +
-      "inner join UserRole ur on ur.userName = u.name " +
-      "inner join UserDesignatedBody udb on udb.userName = u.name " +
-      "where u.active = true " +
-      "and ur.roleName = :roleName " +
-      "and udb.designatedBodyCode = :dbc " +
-      "order by u.firstName, u.lastName", nativeQuery = true)
+  @Query(value = "select distinct u.* from HeeUser u "
+      + "inner join UserRole ur on ur.userName = u.name "
+      + "inner join UserDesignatedBody udb on udb.userName = u.name "
+      + "where u.active = true "
+      + "and ur.roleName = :roleName "
+      + "and udb.designatedBodyCode = :dbc "
+      + "order by u.firstName, u.lastName", nativeQuery = true)
   List<HeeUser> findByRoleAndDbc(@Param("roleName") String roleName, @Param("dbc") String dbc);
+
+  /**
+   * Finds active users with all of the specified roles and the specified programme assigned.
+   *
+   * @param roleNames       the role names that must all be present
+   * @param programmeNumber the programme number that must be assigned
+   * @param roleCount       the number of roles expected
+   * @return distinct list of matching users
+   */
+  @Query(value = "select distinct u.* from HeeUser u "
+      + "where u.active = true "
+      + "and u.name in ( "
+      + "  select ur.userName from UserRole ur "
+      + "  where ur.roleName in (:roleNames) "
+      + "  group by ur.userName "
+      + "  having count(distinct ur.roleName) = :roleCount "
+      + ") "
+      + "and u.name in ( "
+      + "  select up.heeUser from UserProgramme up "
+      + "  where up.programmeNumber = :programmeNumber "
+      + ") "
+      + "order by u.firstName, u.lastName", nativeQuery = true)
+  List<HeeUser> findByRoleNamesAndProgrammeNumber(@Param("roleNames") List<String> roleNames,
+      @Param("programmeNumber") String programmeNumber,
+      @Param("roleCount") long roleCount);
 }

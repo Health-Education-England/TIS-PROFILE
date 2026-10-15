@@ -117,15 +117,15 @@ public class ImmigrationDTO implements Serializable {
 
   @Override
   public String toString() {
-    return "ImmigrationDTO{" +
-        "id=" + id +
-        ", tisId='" + tisId + "'" +
-        ", eeaResident='" + eeaResident + "'" +
-        ", permitToWork='" + permitToWork + "'" +
-        ", settled='" + settled + "'" +
-        ", visaIssued='" + visaIssued + "'" +
-        ", visaValidTo='" + visaValidTo + "'" +
-        ", visaDetailsNumber='" + visaDetailsNumber + "'" +
-        '}';
+    return "ImmigrationDTO{"
+        + "id=" + id
+        + ", tisId='" + tisId + "'"
+        + ", eeaResident='" + eeaResident + "'"
+        + ", permitToWork='" + permitToWork + "'"
+        + ", settled='" + settled + "'"
+        + ", visaIssued='" + visaIssued + "'"
+        + ", visaValidTo='" + visaValidTo + "'"
+        + ", visaDetailsNumber='" + visaDetailsNumber + "'"
+        + '}';
   }
 }

@@ -88,12 +88,12 @@ public class TraineeProfile {
 
   @Override
   public String toString() {
-    return "TraineeProfileDto{" +
-        "active=" + active +
-        ", tisId=" + tisId +
-        ", gmcNumber='" + gmcNumber + '\'' +
-        ", designatedBodyCode='" + designatedBodyCode + '\'' +
-        ", dateAdded=" + dateAdded +
-        '}';
+    return "TraineeProfileDto{"
+        + "active=" + active
+        + ", tisId=" + tisId
+        + ", gmcNumber='" + gmcNumber + '\''
+        + ", designatedBodyCode='" + designatedBodyCode + '\''
+        + ", dateAdded=" + dateAdded
+        + '}';
   }
 }

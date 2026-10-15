@@ -30,8 +30,8 @@ public class UserDetails {
     this.roles = roles;
   }
 
-  @ApiModelProperty(value = "the aggregated Set of permissions for the user ," +
-      " with no duplicates corresponding to the roles")
+  @ApiModelProperty(value = "the aggregated Set of permissions for the user,"
+      + " with no duplicates corresponding to the roles")
   public Set<String> getPermissions() {
     return permissions;
   }
@@ -114,17 +114,17 @@ public class UserDetails {
 
   @Override
   public String toString() {
-    return "UserDetails{" +
-        "fullName='" + fullName + '\'' +
-        ", firstName='" + firstName + '\'' +
-        ", lastName='" + lastName + '\'' +
-        ", userName='" + userName + '\'' +
-        ", roles='" + roles + '\'' +
-        ", permissions='" + permissions + '\'' +
-        ", gmcId='" + gmcId + '\'' +
-        ", designatedBodyCode='" + designatedBodyCode + '\'' +
-        ", emailAddress='" + emailAddress + '\'' +
-        ", phoneNumber='" + phoneNumber + '\'' +
-        '}';
+    return "UserDetails{"
+        + "fullName='" + fullName + '\''
+        + ", firstName='" + firstName + '\''
+        + ", lastName='" + lastName + '\''
+        + ", userName='" + userName + '\''
+        + ", roles='" + roles + '\''
+        + ", permissions='" + permissions + '\''
+        + ", gmcId='" + gmcId + '\''
+        + ", designatedBodyCode='" + designatedBodyCode + '\''
+        + ", emailAddress='" + emailAddress + '\''
+        + ", phoneNumber='" + phoneNumber + '\''
+        + '}';
   }
 }

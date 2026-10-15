@@ -77,11 +77,11 @@ public class PersonDTO implements Serializable {
 
   @Override
   public String toString() {
-    return "PersonDTO{" +
-        "id=" + id +
-        ", tisId='" + tisId + "'" +
-        ", publicHealthId='" + publicHealthId + "'" +
-        ", active='" + active + "'" +
-        '}';
+    return "PersonDTO{"
+        + "id=" + id
+        + ", tisId='" + tisId + "'"
+        + ", publicHealthId='" + publicHealthId + "'"
+        + ", active='" + active + "'"
+        + '}';
   }
 }

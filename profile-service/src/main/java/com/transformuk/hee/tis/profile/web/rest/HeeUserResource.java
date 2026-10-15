@@ -264,6 +264,26 @@ public class HeeUserResource {
     return ResponseEntity.ok(admins);
   }
 
+  /**
+   * GET /hee-users/ltft-reviewers : get reviewers assignable to an LTFT application.
+   *
+   * <p>Returns active users with the "LTFT Admin" and "HEE Programme Admin" roles who have the
+   * LTFT application's programme assigned.
+   *
+   * @param programmeNumber The programme number used to identify the assignable reviewers.
+   * @return the list of matching admin DTOs
+   */
+  @GetMapping("/hee-users/ltft-reviewers")
+  @Timed
+  @PreAuthorize("hasAuthority('profile:view:entities')")
+  public ResponseEntity<List<BasicHeeUserDTO>> getLtftReviewers(
+      @RequestParam String programmeNumber) {
+    log.debug("REST request to get LTFT reviewers for Programme : {}", programmeNumber);
+
+    List<BasicHeeUserDTO> admins = userService.findLtftReviewers(programmeNumber);
+    return ResponseEntity.ok(admins);
+  }
+
   private void validateHeeUser(HeeUser heeUser) {
     validateHeeUser(heeUser, null);
   }

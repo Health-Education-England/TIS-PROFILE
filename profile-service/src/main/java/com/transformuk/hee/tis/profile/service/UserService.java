@@ -65,12 +65,31 @@ public class UserService {
    * Find LTFT admin candidates who have the specified role and the LTFT programme's DBC.
    *
    * @param roleName the role name to filter by
-   * @param ltftDbc the LTFT application's programme DBC
+   * @param ltftDbc  the LTFT application's programme DBC
    * @return list of matching admin DTOs
    */
   @Transactional(readOnly = true)
   public List<BasicHeeUserDTO> findLtftAdmins(String roleName, String ltftDbc) {
     List<HeeUser> heeUsers = heeUserRepository.findByRoleAndDbc(roleName, ltftDbc);
+    return heeUserMapper.heeUsersToBasicHeeUserDTOs(heeUsers);
+  }
+
+  /**
+   * Find LTFT reviewer candidates who hold all of the given roles and have the specified programme
+   * assigned.
+   *
+   * @param programmeNumber the assigned programme number to match
+   * @return list of matching reviewer DTOs
+   */
+  @Transactional(readOnly = true)
+  public List<BasicHeeUserDTO> findLtftReviewers(String programmeNumber) {
+    List<String> requiredRoles = List.of(
+        "NHSE LTFT Admin",
+        "HEE Programme Admin"
+    );
+
+    List<HeeUser> heeUsers = heeUserRepository.findByRoleNamesAndProgrammeNumber(
+        requiredRoles, programmeNumber, requiredRoles.size());
     return heeUserMapper.heeUsersToBasicHeeUserDTOs(heeUsers);
   }
 }

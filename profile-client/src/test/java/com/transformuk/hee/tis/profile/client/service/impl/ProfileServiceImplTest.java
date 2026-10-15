@@ -153,8 +153,8 @@ public class ProfileServiceImplTest {
 
     // then
     verify(profileRestTemplate)
-        .getForEntity(eq(PROFILE_URL + "/api/users?offset&limit&designatedBodyCode=" + DBC +
-            "&permissions=" + PERMISSIONS), eq(JSONObject.class));
+        .getForEntity(eq(PROFILE_URL + "/api/users?offset&limit&designatedBodyCode=" + DBC
+            + "&permissions=" + PERMISSIONS), eq(JSONObject.class));
   }
 
   @Test
