@@ -590,11 +590,14 @@ public class HeeUserResourceIntTest {
     reviewerProgramme.setProgrammeName("LTFT Programme");
     reviewerProgramme.setProgrammeId(123L);
 
+    // LTFT Admin: Included
     createUser("Reviewer", "Matching", true, newHashSet(ltftAdminRole, programmeAdminRole),
         newHashSet(),
         newHashSet(reviewerProgramme));
+    // LTFT Admin: Included
     createUser("Reviewer", "Not Programme Admin", true, newHashSet(ltftAdminRole), newHashSet(),
         newHashSet(reviewerProgramme));
+    // Not LTFT Admin: Excluded
     createUser("Reviewer", "Not LTFT Admin", true, newHashSet(programmeAdminRole), newHashSet(),
         newHashSet(reviewerProgramme));
 
@@ -603,7 +606,7 @@ public class HeeUserResourceIntTest {
             .header("Authorization", "Bearer " + TOKEN))
         .andExpect(status().isOk())
         .andExpect(content().contentType(TestUtil.JSON))
-        .andExpect(jsonPath("$", hasSize(1)))
+        .andExpect(jsonPath("$", hasSize(2)))
         .andExpect(jsonPath("$.[0].name").value("reviewer.matching"));
   }
 

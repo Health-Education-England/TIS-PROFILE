@@ -83,13 +83,8 @@ public class UserService {
    */
   @Transactional(readOnly = true)
   public List<BasicHeeUserDTO> findLtftReviewers(String programmeNumber) {
-    List<String> requiredRoles = List.of(
-        "NHSE LTFT Admin",
-        "HEE Programme Admin"
-    );
-
-    List<HeeUser> heeUsers = heeUserRepository.findByRoleNamesAndProgrammeNumber(
-        requiredRoles, programmeNumber, requiredRoles.size());
+    List<HeeUser> heeUsers = heeUserRepository
+            .findByRoleNameAndProgrammeNumber("NHSE LTFT Admin", programmeNumber);
     return heeUserMapper.heeUsersToBasicHeeUserDTOs(heeUsers);
   }
 }

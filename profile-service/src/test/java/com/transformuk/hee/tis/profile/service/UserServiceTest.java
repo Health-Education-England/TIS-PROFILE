@@ -277,7 +277,7 @@ public class UserServiceTest {
   @Test
   public void findLtftReviewersShouldReturnMappedBasicHeeUserDTOs() {
     String programmeNumber = "10000123";
-    List<String> requiredRoles = Arrays.asList("NHSE LTFT Admin", "HEE Programme Admin");
+    String requiredRole = "NHSE LTFT Admin";
 
     heeUser1WithTrusts.setName(FIRST_NAME_1);
     heeUser2EmptyTrusts.setName(FIRST_NAME_2);
@@ -289,8 +289,8 @@ public class UserServiceTest {
     basicDto2.setName(FIRST_NAME_2);
     List<BasicHeeUserDTO> mappedDtos = Arrays.asList(basicDto1, basicDto2);
 
-    when(heeUserRepositoryMock.findByRoleNamesAndProgrammeNumber(requiredRoles, programmeNumber,
-        requiredRoles.size())).thenReturn(foundUsers);
+    when(heeUserRepositoryMock.findByRoleNameAndProgrammeNumber(requiredRole, programmeNumber))
+            .thenReturn(foundUsers);
     when(heeUserMapperMock.heeUsersToBasicHeeUserDTOs(foundUsers)).thenReturn(mappedDtos);
 
     List<BasicHeeUserDTO> result = testObj.findLtftReviewers(programmeNumber);
@@ -299,18 +299,18 @@ public class UserServiceTest {
     Assert.assertEquals(FIRST_NAME_1, result.get(0).getName());
     Assert.assertEquals(FIRST_NAME_2, result.get(1).getName());
 
-    verify(heeUserRepositoryMock).findByRoleNamesAndProgrammeNumber(requiredRoles,
-        programmeNumber, requiredRoles.size());
+    verify(heeUserRepositoryMock).findByRoleNameAndProgrammeNumber(requiredRole,
+        programmeNumber);
     verify(heeUserMapperMock).heeUsersToBasicHeeUserDTOs(foundUsers);
   }
 
   @Test
   public void findLtftReviewersShouldReturnEmptyListWhenNoUsersFound() {
     String programmeNumber = "10000123";
-    List<String> requiredRoles = Arrays.asList("NHSE LTFT Admin", "HEE Programme Admin");
+    String requiredRole = "NHSE LTFT Admin";
 
-    when(heeUserRepositoryMock.findByRoleNamesAndProgrammeNumber(requiredRoles, programmeNumber,
-        requiredRoles.size())).thenReturn(Collections.emptyList());
+    when(heeUserRepositoryMock.findByRoleNameAndProgrammeNumber(requiredRole, programmeNumber))
+        .thenReturn(Collections.emptyList());
     when(heeUserMapperMock.heeUsersToBasicHeeUserDTOs(Collections.emptyList()))
         .thenReturn(Collections.emptyList());
 
@@ -319,8 +319,8 @@ public class UserServiceTest {
     Assert.assertNotNull(result);
     Assert.assertTrue(result.isEmpty());
 
-    verify(heeUserRepositoryMock).findByRoleNamesAndProgrammeNumber(requiredRoles,
-        programmeNumber, requiredRoles.size());
+    verify(heeUserRepositoryMock).findByRoleNameAndProgrammeNumber(requiredRole,
+        programmeNumber);
     verify(heeUserMapperMock).heeUsersToBasicHeeUserDTOs(Collections.emptyList());
   }
 }
