@@ -267,7 +267,7 @@ public class HeeUserResource {
   /**
    * GET /hee-users/ltft-reviewers : get reviewers assignable to an LTFT application.
    *
-   * <p>Returns active users with the "LTFT Admin" and "HEE Programme Admin" roles who have the
+   * <p>Returns active users with the "LTFT Admin" role who have the
    * LTFT application's programme assigned.
    *
    * @param programmeNumber The programme number used to identify the assignable reviewers.
