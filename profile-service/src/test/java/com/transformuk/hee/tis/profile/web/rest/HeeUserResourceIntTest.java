@@ -516,18 +516,14 @@ public class HeeUserResourceIntTest {
     ltftAdminRole.setName("NHSE LTFT Admin");
     roleRepository.saveAndFlush(ltftAdminRole);
 
-    Role programmeAdminRole = new Role();
-    programmeAdminRole.setName("HEE Programme Admin");
-    roleRepository.saveAndFlush(programmeAdminRole);
-
     UserProgramme reviewerProgramme = new UserProgramme();
     reviewerProgramme.setProgrammeNumber("10000123");
     reviewerProgramme.setProgrammeName("LTFT Programme");
     reviewerProgramme.setProgrammeId(123L);
 
-    createUser("Reviewer", "One", true, newHashSet(ltftAdminRole, programmeAdminRole), newHashSet(),
+    createUser("Reviewer", "One", true, newHashSet(ltftAdminRole), newHashSet(),
         newHashSet(reviewerProgramme));
-    createUser("Reviewer", "Two", true, newHashSet(ltftAdminRole, programmeAdminRole), newHashSet(),
+    createUser("Reviewer", "Two", true, newHashSet(ltftAdminRole), newHashSet(),
         newHashSet(reviewerProgramme));
 
     restHeeUserMockMvc.perform(get("/api/hee-users/ltft-reviewers")
@@ -546,22 +542,18 @@ public class HeeUserResourceIntTest {
     ltftAdminRole.setName("NHSE LTFT Admin");
     roleRepository.saveAndFlush(ltftAdminRole);
 
-    Role programmeAdminRole = new Role();
-    programmeAdminRole.setName("HEE Programme Admin");
-    roleRepository.saveAndFlush(programmeAdminRole);
-
     UserProgramme reviewerProgramme = new UserProgramme();
     reviewerProgramme.setProgrammeNumber("10000123");
     reviewerProgramme.setProgrammeName("LTFT Programme");
     reviewerProgramme.setProgrammeId(123L);
 
-    createUser("AAA", "AAA", true, newHashSet(ltftAdminRole, programmeAdminRole), newHashSet(),
+    createUser("AAA", "AAA", true, newHashSet(ltftAdminRole), newHashSet(),
         newHashSet(reviewerProgramme));
-    createUser("BBB", "BBB", true, newHashSet(ltftAdminRole, programmeAdminRole), newHashSet(),
+    createUser("BBB", "BBB", true, newHashSet(ltftAdminRole), newHashSet(),
         newHashSet(reviewerProgramme));
-    createUser("AAA", "BBB", true, newHashSet(ltftAdminRole, programmeAdminRole), newHashSet(),
+    createUser("AAA", "BBB", true, newHashSet(ltftAdminRole), newHashSet(),
         newHashSet(reviewerProgramme));
-    createUser("BBB", "AAA", true, newHashSet(ltftAdminRole, programmeAdminRole), newHashSet(),
+    createUser("BBB", "AAA", true, newHashSet(ltftAdminRole), newHashSet(),
         newHashSet(reviewerProgramme));
 
     restHeeUserMockMvc.perform(get("/api/hee-users/ltft-reviewers")
@@ -576,29 +568,29 @@ public class HeeUserResourceIntTest {
 
   @Test
   @Transactional
-  public void getLtftReviewersShouldExcludeUsersMissingOneOfTheRoles() throws Exception {
+  public void getLtftReviewersShouldExcludeUsersMissingLtftAdminRole() throws Exception {
     Role ltftAdminRole = new Role();
     ltftAdminRole.setName("NHSE LTFT Admin");
     roleRepository.saveAndFlush(ltftAdminRole);
 
-    Role programmeAdminRole = new Role();
-    programmeAdminRole.setName("HEE Programme Admin");
-    roleRepository.saveAndFlush(programmeAdminRole);
+    Role otherAdminRole = new Role();
+    otherAdminRole.setName("Any Other Role");
+    roleRepository.saveAndFlush(otherAdminRole);
 
     UserProgramme reviewerProgramme = new UserProgramme();
     reviewerProgramme.setProgrammeNumber("10000123");
     reviewerProgramme.setProgrammeName("LTFT Programme");
     reviewerProgramme.setProgrammeId(123L);
 
-    // LTFT Admin: Included
-    createUser("Reviewer", "Matching", true, newHashSet(ltftAdminRole, programmeAdminRole),
+    // LTFT Admin and other role: Included
+    createUser("Reviewer", "Matching", true, newHashSet(ltftAdminRole, otherAdminRole),
         newHashSet(),
         newHashSet(reviewerProgramme));
-    // LTFT Admin: Included
-    createUser("Reviewer", "Not Programme Admin", true, newHashSet(ltftAdminRole), newHashSet(),
+    // LTFT Admin only: Included
+    createUser("Reviewer", "LTFT Admin", true, newHashSet(ltftAdminRole), newHashSet(),
         newHashSet(reviewerProgramme));
     // Not LTFT Admin: Excluded
-    createUser("Reviewer", "Not LTFT Admin", true, newHashSet(programmeAdminRole), newHashSet(),
+    createUser("Reviewer", "Not LTFT Admin", true, newHashSet(otherAdminRole), newHashSet(),
         newHashSet(reviewerProgramme));
 
     restHeeUserMockMvc.perform(get("/api/hee-users/ltft-reviewers")
@@ -607,7 +599,7 @@ public class HeeUserResourceIntTest {
         .andExpect(status().isOk())
         .andExpect(content().contentType(TestUtil.JSON))
         .andExpect(jsonPath("$", hasSize(2)))
-        .andExpect(jsonPath("$.[0].name").value("reviewer.matching"));
+        .andExpect(jsonPath("$.[0].name").value("reviewer.ltft.admin"));
   }
 
   @Test
@@ -617,15 +609,11 @@ public class HeeUserResourceIntTest {
     ltftAdminRole.setName("NHSE LTFT Admin");
     roleRepository.saveAndFlush(ltftAdminRole);
 
-    Role programmeAdminRole = new Role();
-    programmeAdminRole.setName("HEE Programme Admin");
-    roleRepository.saveAndFlush(programmeAdminRole);
-
     UserProgramme reviewerProgramme = new UserProgramme();
     reviewerProgramme.setProgrammeNumber("10000123");
     reviewerProgramme.setProgrammeName("LTFT Programme");
     reviewerProgramme.setProgrammeId(123L);
-    createUser("Reviewer", "Matching", true, newHashSet(ltftAdminRole, programmeAdminRole),
+    createUser("Reviewer", "Matching", true, newHashSet(ltftAdminRole),
         newHashSet(),
         newHashSet(reviewerProgramme));
 
@@ -634,7 +622,7 @@ public class HeeUserResourceIntTest {
     notReviewerProgramme.setProgrammeName("Not LTFT Programme");
     notReviewerProgramme.setProgrammeId(456L);
     createUser("Reviewer", "Different Programme", true,
-        newHashSet(ltftAdminRole, programmeAdminRole),
+        newHashSet(ltftAdminRole),
         newHashSet(),
         newHashSet(notReviewerProgramme));
 
@@ -654,19 +642,15 @@ public class HeeUserResourceIntTest {
     ltftAdminRole.setName("NHSE LTFT Admin");
     roleRepository.saveAndFlush(ltftAdminRole);
 
-    Role programmeAdminRole = new Role();
-    programmeAdminRole.setName("HEE Programme Admin");
-    roleRepository.saveAndFlush(programmeAdminRole);
-
     UserProgramme reviewerProgramme = new UserProgramme();
     reviewerProgramme.setProgrammeNumber("10000123");
     reviewerProgramme.setProgrammeName("LTFT Programme");
     reviewerProgramme.setProgrammeId(123L);
 
-    createUser("Reviewer", "Active", true, newHashSet(ltftAdminRole, programmeAdminRole),
+    createUser("Reviewer", "Active", true, newHashSet(ltftAdminRole),
         newHashSet(),
         newHashSet(reviewerProgramme));
-    createUser("Reviewer", "Inactive", false, newHashSet(ltftAdminRole, programmeAdminRole),
+    createUser("Reviewer", "Inactive", false, newHashSet(ltftAdminRole),
         newHashSet(),
         newHashSet(reviewerProgramme));
 
@@ -687,16 +671,12 @@ public class HeeUserResourceIntTest {
     ltftAdminRole.setName("NHSE LTFT Admin");
     roleRepository.saveAndFlush(ltftAdminRole);
 
-    Role programmeAdminRole = new Role();
-    programmeAdminRole.setName("HEE Programme Admin");
-    roleRepository.saveAndFlush(programmeAdminRole);
-
     UserProgramme reviewerProgramme = new UserProgramme();
     reviewerProgramme.setProgrammeNumber("88888888");
     reviewerProgramme.setProgrammeName("Other Programme");
     reviewerProgramme.setProgrammeId(888L);
 
-    createUser("Reviewer", "One", true, newHashSet(ltftAdminRole, programmeAdminRole), newHashSet(),
+    createUser("Reviewer", "One", true, newHashSet(ltftAdminRole), newHashSet(),
         newHashSet(reviewerProgramme));
 
     restHeeUserMockMvc.perform(get("/api/hee-users/ltft-reviewers")
