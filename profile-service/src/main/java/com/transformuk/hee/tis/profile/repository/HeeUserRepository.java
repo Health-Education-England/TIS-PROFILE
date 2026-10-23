@@ -137,25 +137,18 @@ public interface HeeUserRepository extends JpaRepository<HeeUser, String>,
   /**
    * Finds active users with all of the specified roles and the specified programme assigned.
    *
-   * @param roleNames       the role names that must all be present
+   * @param roleName        the role name that must be present
    * @param programmeNumber the programme number that must be assigned
-   * @param roleCount       the number of roles expected
    * @return distinct list of matching users
    */
   @Query(value = "select distinct u.* from HeeUser u "
-      + "where u.active = true "
-      + "and u.name in ( "
-      + "  select ur.userName from UserRole ur "
-      + "  where ur.roleName in (:roleNames) "
-      + "  group by ur.userName "
-      + "  having count(distinct ur.roleName) = :roleCount "
-      + ") "
-      + "and u.name in ( "
-      + "  select up.heeUser from UserProgramme up "
-      + "  where up.programmeNumber = :programmeNumber "
-      + ") "
-      + "order by u.firstName, u.lastName", nativeQuery = true)
-  List<HeeUser> findByRoleNamesAndProgrammeNumber(@Param("roleNames") List<String> roleNames,
-      @Param("programmeNumber") String programmeNumber,
-      @Param("roleCount") long roleCount);
+          + "join UserRole ur on ur.userName = u.name "
+          + "join UserProgramme up on up.heeUser = u.name "
+          + "where u.active = true "
+          + "and ur.roleName = :roleName "
+          + "and up.programmeNumber = :programmeNumber "
+          + "order by u.firstName, u.lastName", nativeQuery = true)
+  List<HeeUser> findByRoleNameAndProgrammeNumber(
+          @Param("roleName") String roleName,
+          @Param("programmeNumber") String programmeNumber);
 }

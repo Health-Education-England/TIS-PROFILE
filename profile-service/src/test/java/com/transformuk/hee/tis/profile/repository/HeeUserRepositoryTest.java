@@ -5,6 +5,7 @@ import static com.google.common.collect.Sets.newHashSet;
 import com.transformuk.hee.tis.profile.ProfileApp;
 import com.transformuk.hee.tis.profile.domain.HeeUser;
 import com.transformuk.hee.tis.profile.domain.Role;
+import com.transformuk.hee.tis.profile.domain.UserProgramme;
 import com.transformuk.hee.tis.profile.domain.UserTrust;
 import java.util.List;
 import java.util.Optional;
@@ -56,6 +57,12 @@ public class HeeUserRepositoryTest {
   private static final String LTFT_ADMIN_ROLE = "NHSE LTFT Admin";
   private static final String DBC_1 = "1-AIIDWX";
   private static final String DBC_2 = "1-OTHER";
+  private static final String PROGRAMME_NAME_1 = "PROGRAMME NAME 1";
+  private static final String PROGRAMME_NAME_2 = "PROGRAMME NAME 1";
+  private static final Long PROGRAMME_ID_1 = 1234L;
+  private static final Long PROGRAMME_ID_2 = 5678L;
+  private static final String PROGRAMME_NUMBER_1 = "PROG-001";
+  private static final String PROGRAMME_NUMBER_2 = "PROG-002";
 
   @Autowired
   private HeeUserRepository heeUserRepository;
@@ -63,6 +70,8 @@ public class HeeUserRepositoryTest {
   private UserTrustRepository userTrustRepository;
   @Autowired
   private RoleRepository roleRepository;
+  @Autowired
+  private UserProgrammeRepository programmeRepository;
 
   private UserTrust userTrust1, userTrust2;
 
@@ -126,6 +135,16 @@ public class HeeUserRepositoryTest {
     userTrust2.setTrustId(TRUST_ID_2);
     userTrust2.setTrustName(TRUST_NAME_2);
 
+  }
+
+  private UserProgramme saveUserProgramme(HeeUser user, Long programmeId, String programmeName,
+         String programmeNumber) {
+    UserProgramme userProgramme = new UserProgramme();
+    userProgramme.setHeeUser(user);
+    userProgramme.setProgrammeId(programmeId);
+    userProgramme.setProgrammeName(programmeName);
+    userProgramme.setProgrammeNumber(programmeNumber);
+    return programmeRepository.saveAndFlush(userProgramme);
   }
 
   @After
@@ -363,6 +382,154 @@ public class HeeUserRepositoryTest {
 
     heeUserRepository.deleteById("admin.zara");
     heeUserRepository.deleteById("admin.anna");
+    roleRepository.deleteById(LTFT_ADMIN_ROLE);
+  }
+
+  @Test
+  public void findByRoleNameAndProgrammeNumberShouldReturnActiveUserWithRoleAndProgramme() {
+    Role ltftAdminRole = new Role();
+    ltftAdminRole.setName(LTFT_ADMIN_ROLE);
+    roleRepository.saveAndFlush(ltftAdminRole);
+
+    HeeUser matchingUser = new HeeUser();
+    matchingUser.setName("admin.match");
+    matchingUser.setFirstName("Alice");
+    matchingUser.setLastName("Admin");
+    matchingUser.emailAddress("alice@hee.nhs.uk");
+    matchingUser.setActive(true);
+    matchingUser.setRoles(newHashSet(ltftAdminRole));
+    heeUserRepository.saveAndFlush(matchingUser);
+    UserProgramme userProgramme = saveUserProgramme(matchingUser, PROGRAMME_ID_1, PROGRAMME_NAME_1,
+            PROGRAMME_NUMBER_1);
+
+    List<HeeUser> results =
+            heeUserRepository.findByRoleNameAndProgrammeNumber(LTFT_ADMIN_ROLE, PROGRAMME_NUMBER_1);
+
+    Assert.assertTrue(results.stream()
+            .anyMatch(u -> u.getName().equals("admin.match")));
+
+    programmeRepository.deleteById(userProgramme.getId());
+    heeUserRepository.deleteById("admin.match");
+    roleRepository.deleteById(LTFT_ADMIN_ROLE);
+  }
+
+  @Test
+  public void findByRoleNameAndProgrammeNumberShouldNotReturnInactiveUsers() {
+    Role ltftAdminRole = new Role();
+    ltftAdminRole.setName(LTFT_ADMIN_ROLE);
+    roleRepository.saveAndFlush(ltftAdminRole);
+
+    HeeUser inactiveUser = new HeeUser();
+    inactiveUser.setName("admin.inactive");
+    inactiveUser.setFirstName("Carol");
+    inactiveUser.setLastName("Admin");
+    inactiveUser.emailAddress("carol@hee.nhs.uk");
+    inactiveUser.setActive(false);
+    inactiveUser.setRoles(newHashSet(ltftAdminRole));
+    heeUserRepository.saveAndFlush(inactiveUser);
+    UserProgramme userProgramme = saveUserProgramme(inactiveUser, PROGRAMME_ID_1,
+            PROGRAMME_NAME_1, PROGRAMME_NUMBER_1);
+
+    List<HeeUser> results =
+            heeUserRepository.findByRoleNameAndProgrammeNumber(LTFT_ADMIN_ROLE, PROGRAMME_NUMBER_1);
+
+    Assert.assertTrue(results.stream()
+            .noneMatch(u -> u.getName().equals("admin.inactive")));
+
+    programmeRepository.deleteById(userProgramme.getId());
+    heeUserRepository.deleteById("admin.inactive");
+    roleRepository.deleteById(LTFT_ADMIN_ROLE);
+  }
+
+  @Test
+  public void findByRoleNameAndProgrammeNumberShouldNotReturnUsersWithDifferentRole() {
+    Role ltftAdminRole = new Role();
+    ltftAdminRole.setName(LTFT_ADMIN_ROLE);
+    Role otherRole = new Role();
+    otherRole.setName("Other Role");
+    roleRepository.saveAndFlush(ltftAdminRole);
+    roleRepository.saveAndFlush(otherRole);
+
+    HeeUser userWithOtherRole = new HeeUser();
+    userWithOtherRole.setName("admin.other.role");
+    userWithOtherRole.setFirstName("Dave");
+    userWithOtherRole.setLastName("Admin");
+    userWithOtherRole.emailAddress("dave@hee.nhs.uk");
+    userWithOtherRole.setActive(true);
+    userWithOtherRole.setRoles(newHashSet(otherRole));
+    heeUserRepository.saveAndFlush(userWithOtherRole);
+    UserProgramme userProgramme = saveUserProgramme(userWithOtherRole, PROGRAMME_ID_1,
+            PROGRAMME_NAME_1, PROGRAMME_NUMBER_1);
+
+    List<HeeUser> results =
+            heeUserRepository.findByRoleNameAndProgrammeNumber(LTFT_ADMIN_ROLE, PROGRAMME_NUMBER_1);
+
+    Assert.assertTrue(results.stream()
+            .noneMatch(u -> u.getName().equals("admin.other.role")));
+
+    programmeRepository.deleteById(userProgramme.getId());
+    heeUserRepository.deleteById("admin.other.role");
+    roleRepository.deleteById(LTFT_ADMIN_ROLE);
+    roleRepository.deleteById("Other Role");
+  }
+
+  @Test
+  public void findByRoleNameAndProgrammeNumberShouldNotReturnUsersWithDifferentProgramme() {
+    Role ltftAdminRole = new Role();
+    ltftAdminRole.setName(LTFT_ADMIN_ROLE);
+    roleRepository.saveAndFlush(ltftAdminRole);
+
+    HeeUser userOtherProgramme = new HeeUser();
+    userOtherProgramme.setName("admin.other.programme");
+    userOtherProgramme.setFirstName("Erin");
+    userOtherProgramme.setLastName("Admin");
+    userOtherProgramme.emailAddress("erin@hee.nhs.uk");
+    userOtherProgramme.setActive(true);
+    userOtherProgramme.setRoles(newHashSet(ltftAdminRole));
+    heeUserRepository.saveAndFlush(userOtherProgramme);
+    UserProgramme userProgramme = saveUserProgramme(userOtherProgramme, PROGRAMME_ID_2,
+            PROGRAMME_NAME_2, PROGRAMME_NUMBER_2);
+
+    List<HeeUser> results =
+            heeUserRepository.findByRoleNameAndProgrammeNumber(LTFT_ADMIN_ROLE, PROGRAMME_NUMBER_1);
+
+    Assert.assertTrue(results.stream()
+            .noneMatch(u -> u.getName().equals("admin.other.programme")));
+
+    programmeRepository.deleteById(userProgramme.getId());
+    heeUserRepository.deleteById("admin.other.programme");
+    roleRepository.deleteById(LTFT_ADMIN_ROLE);
+  }
+
+  @Test
+  public void findByRoleNameAndProgrammeNumShouldNotReturnDuplicatesForUserWithMultiProgrammes() {
+    Role ltftAdminRole = new Role();
+    ltftAdminRole.setName(LTFT_ADMIN_ROLE);
+    roleRepository.saveAndFlush(ltftAdminRole);
+
+    HeeUser user = new HeeUser();
+    user.setName("admin.multi");
+    user.setFirstName("Frank");
+    user.setLastName("Admin");
+    user.emailAddress("frank@hee.nhs.uk");
+    user.setActive(true);
+    user.setRoles(newHashSet(ltftAdminRole));
+    heeUserRepository.saveAndFlush(user);
+    UserProgramme userProgramme1 = saveUserProgramme(user, PROGRAMME_ID_1,
+            PROGRAMME_NAME_1, PROGRAMME_NUMBER_1);
+    UserProgramme userProgramme2 = saveUserProgramme(user, PROGRAMME_ID_2,
+            PROGRAMME_NAME_2, PROGRAMME_NUMBER_2);
+
+    List<HeeUser> results =
+            heeUserRepository.findByRoleNameAndProgrammeNumber(LTFT_ADMIN_ROLE, PROGRAMME_NUMBER_1);
+
+    Assert.assertEquals(1, results.stream()
+            .filter(u -> u.getName().equals("admin.multi"))
+            .count());
+
+    programmeRepository.deleteById(userProgramme1.getId());
+    programmeRepository.deleteById(userProgramme2.getId());
+    heeUserRepository.deleteById("admin.multi");
     roleRepository.deleteById(LTFT_ADMIN_ROLE);
   }
 }
