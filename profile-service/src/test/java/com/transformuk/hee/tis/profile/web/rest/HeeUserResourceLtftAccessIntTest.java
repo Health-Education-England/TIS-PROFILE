@@ -9,9 +9,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.transformuk.hee.tis.profile.ProfileApp;
 import com.transformuk.hee.tis.profile.domain.HeeUser;
+import com.transformuk.hee.tis.profile.domain.Permission;
 import com.transformuk.hee.tis.profile.domain.Role;
 import com.transformuk.hee.tis.profile.domain.UserProgramme;
 import com.transformuk.hee.tis.profile.repository.HeeUserRepository;
+import com.transformuk.hee.tis.profile.repository.PermissionRepository;
 import com.transformuk.hee.tis.profile.repository.RoleRepository;
 import com.transformuk.hee.tis.profile.web.rest.errors.ExceptionTranslator;
 import java.util.Set;
@@ -61,6 +63,9 @@ public class HeeUserResourceLtftAccessIntTest {
   private RoleRepository roleRepository;
 
   @Autowired
+  private PermissionRepository permissionRepository;
+
+  @Autowired
   private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
   @Autowired
@@ -80,7 +85,10 @@ public class HeeUserResourceLtftAccessIntTest {
   @WithMockUser(authorities = LTFT_VIEW_PERMISSION)
   public void getLtftAdminsShouldReturnAdminsWhenRequesterHasLtftViewPermission()
       throws Exception {
-    Role ltftAdminRole = roleRepository.findById(LTFT_ADMIN_ROLE).orElseThrow();
+    Role ltftAdminRole = new Role();
+    ltftAdminRole.setName(LTFT_ADMIN_ROLE);
+    ltftAdminRole.setPermissions(newHashSet(getOrCreatePermission(LTFT_VIEW_PERMISSION)));
+    roleRepository.saveAndFlush(ltftAdminRole);
 
     // Save the requesting user with the matching DBC so they are authorised to view admins
     HeeUser requester = new HeeUser();
@@ -120,7 +128,10 @@ public class HeeUserResourceLtftAccessIntTest {
   @WithMockUser(authorities = LTFT_VIEW_PERMISSION)
   public void getLtftReviewersShouldReturnReviewersWhenRequesterHasLtftViewPermission()
       throws Exception {
-    Role ltftAdminRole = roleRepository.findById(LTFT_ADMIN_ROLE).orElseThrow();
+    Role ltftAdminRole = new Role();
+    ltftAdminRole.setName(LTFT_ADMIN_ROLE);
+    ltftAdminRole.setPermissions(newHashSet(getOrCreatePermission(LTFT_VIEW_PERMISSION)));
+    roleRepository.saveAndFlush(ltftAdminRole);
 
     UserProgramme reviewerProgramme = new UserProgramme();
     reviewerProgramme.setProgrammeNumber("10000123");
@@ -179,5 +190,21 @@ public class HeeUserResourceLtftAccessIntTest {
     }
 
     heeUserRepository.saveAndFlush(user);
+  }
+
+  /**
+   * Helper function to get an existing Permission by name or create and save a new one if it
+   * doesn't exist.
+   *
+   * @param permissionName the name of the Permission to find or create.
+   * @return the existing or newly created Permission.
+   */
+  private Permission getOrCreatePermission(String permissionName) {
+    return permissionRepository.findById(permissionName)
+        .orElseGet(() -> {
+          Permission permission = new Permission();
+          permission.setName(permissionName);
+          return permissionRepository.saveAndFlush(permission);
+        });
   }
 }
