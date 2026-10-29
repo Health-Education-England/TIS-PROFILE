@@ -248,7 +248,7 @@ public class HeeUserResource {
    */
   @GetMapping("/hee-users/ltft-admins")
   @Timed
-  @PreAuthorize("hasAuthority('profile:view:entities')")
+  @PreAuthorize("hasAuthority('profile:view:entities') or hasAuthority('ltft:view')")
   public ResponseEntity<List<BasicHeeUserDTO>> getLtftAdmins(
       @RequestParam String ltftDbc,
       @RequestHeader(value = "Authorization") String authorizationToken) {
@@ -275,7 +275,7 @@ public class HeeUserResource {
    */
   @GetMapping("/hee-users/ltft-reviewers")
   @Timed
-  @PreAuthorize("hasAuthority('profile:view:entities')")
+  @PreAuthorize("hasAuthority('profile:view:entities') or hasAuthority('ltft:view')")
   public ResponseEntity<List<BasicHeeUserDTO>> getLtftReviewers(
       @RequestParam String programmeNumber) {
     log.debug("REST request to get LTFT reviewers for Programme : {}", programmeNumber);
