@@ -2,7 +2,9 @@ package com.transformuk.hee.tis.profile.web.rest;
 
 import static com.google.common.collect.Sets.newHashSet;
 import static org.hamcrest.Matchers.hasItems;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -26,6 +28,9 @@ import com.transformuk.hee.tis.profile.validators.HeeUserValidator;
 import com.transformuk.hee.tis.profile.web.rest.errors.CustomParameterizedException;
 import com.transformuk.hee.tis.profile.web.rest.errors.ExceptionTranslator;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import org.junit.Before;
@@ -54,6 +59,8 @@ public class HeeUserResourceInt2Test {
   private static final String EXISTING_EMAIL = "existing@nhs.net";
   private static final String DIFFERENT_EMAIL = "different@nhs.net";
   private static final String UPDATED_FIRSTNAME = "UpdatedFirst";
+  private static final String EXISTING_USERNAME = "A.B23@nhs.net";
+  private static final String REQUEST_USERNAME = "a.b23@nhs.net";
   private static final char CTRL_A = '\u0001';
   @MockBean
   private HeeUserRepository heeUserRepositoryMock;
@@ -296,7 +303,8 @@ public class HeeUserResourceInt2Test {
     heeUser.setName(TESTNAME_1);
     heeUser.setEmailAddress(DIFFERENT_EMAIL);
 
-    when(heeUserRepositoryMock.findById(TESTNAME_1)).thenReturn(Optional.of(existingUser));
+    when(heeUserRepositoryMock.findByNameIgnoreCase(TESTNAME_1))
+        .thenReturn(Collections.singletonList(existingUser));
     when(heeUserMapperMock.heeUserDTOToHeeUser(heeUserDTO)).thenReturn(heeUser);
 
     final String errorMessage = "Email address does not match the existing user's email address";
@@ -329,7 +337,8 @@ public class HeeUserResourceInt2Test {
     heeUser.setFirstName(UPDATED_FIRSTNAME);
     heeUser.setEmailAddress(EXISTING_EMAIL);
 
-    when(heeUserRepositoryMock.findById(TESTNAME_1)).thenReturn(Optional.of(existingUser));
+    when(heeUserRepositoryMock.findByNameIgnoreCase(TESTNAME_1))
+        .thenReturn(Collections.singletonList(existingUser));
     when(heeUserMapperMock.heeUserDTOToHeeUser(heeUserDTO)).thenReturn(heeUser);
     when(heeUserRepositoryMock.save(heeUser)).thenReturn(heeUser);
     when(heeUserRepositoryMock.findByNameWithTrustsAndProgrammes(TESTNAME_1))
@@ -341,5 +350,83 @@ public class HeeUserResourceInt2Test {
             .content(TestUtil.convertObjectToJsonBytes(heeUserDTO)))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.firstName").value(UPDATED_FIRSTNAME));
+  }
+
+  @Test
+  public void updateHeeUserShouldMatchExistingUsernameIgnoringCase() throws Exception {
+    HeeUser existingUser = new HeeUser();
+    existingUser.setName(EXISTING_USERNAME);
+    existingUser.setEmailAddress(EXISTING_EMAIL);
+    existingUser.setAssociatedTrusts(new HashSet<>());
+    existingUser.setAssociatedProgrammes(new HashSet<>());
+
+    HeeUserDTO requestDto = new HeeUserDTO();
+    requestDto.setName(REQUEST_USERNAME);
+    requestDto.setEmailAddress(EXISTING_EMAIL);
+    requestDto.setFirstName(UPDATED_FIRSTNAME);
+    requestDto.setAssociatedTrusts(new HashSet<>());
+    requestDto.setAssociatedProgrammes(new HashSet<>());
+
+    HeeUser mappedUser = new HeeUser();
+    mappedUser.setName(EXISTING_USERNAME);
+    mappedUser.setEmailAddress(EXISTING_EMAIL);
+    mappedUser.setFirstName(UPDATED_FIRSTNAME);
+    mappedUser.setAssociatedTrusts(new HashSet<>());
+    mappedUser.setAssociatedProgrammes(new HashSet<>());
+
+    HeeUserDTO resultDto = new HeeUserDTO();
+    resultDto.setName(EXISTING_USERNAME);
+    resultDto.setEmailAddress(EXISTING_EMAIL);
+    resultDto.setFirstName(UPDATED_FIRSTNAME);
+
+    when(heeUserRepositoryMock.findByNameIgnoreCase(REQUEST_USERNAME))
+        .thenReturn(Collections.singletonList(existingUser));
+
+    when(heeUserMapperMock.heeUserDTOToHeeUser(any(HeeUserDTO.class)))
+        .thenReturn(mappedUser);
+
+    when(heeUserRepositoryMock.save(mappedUser))
+        .thenReturn(mappedUser);
+
+    when(heeUserRepositoryMock.findByNameWithTrustsAndProgrammes(EXISTING_USERNAME))
+        .thenReturn(Optional.of(mappedUser));
+
+    when(heeUserMapperMock.heeUserToHeeUserDTO(mappedUser))
+        .thenReturn(resultDto);
+
+    restHeeUserMockMvc.perform(
+            put("/api/hee-users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(TestUtil.convertObjectToJsonBytes(requestDto)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.name").value(EXISTING_USERNAME))
+        .andExpect(jsonPath("$.firstName").value(UPDATED_FIRSTNAME));
+
+    verify(heeUserRepositoryMock).findByNameIgnoreCase(REQUEST_USERNAME);
+
+    verify(heeUserRepositoryMock).save(mappedUser);
+  }
+
+  @Test
+  public void updateHeeUserShouldThrowExceptionWhenMultipleUsersMatchIgnoringCase()
+      throws Exception {
+    HeeUser firstUser = new HeeUser();
+    firstUser.setName(EXISTING_USERNAME);
+
+    HeeUser secondUser = new HeeUser();
+    secondUser.setName(REQUEST_USERNAME);
+
+    HeeUserDTO requestDto = new HeeUserDTO();
+    requestDto.setName(REQUEST_USERNAME);
+    requestDto.setEmailAddress(EXISTING_EMAIL);
+
+    when(heeUserRepositoryMock.findByNameIgnoreCase(REQUEST_USERNAME))
+      .thenReturn(Arrays.asList(firstUser, secondUser));
+
+    restHeeUserMockMvc.perform(
+            put("/api/hee-users")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(TestUtil.convertObjectToJsonBytes(requestDto)))
+      .andExpect(status().isInternalServerError());
   }
 }

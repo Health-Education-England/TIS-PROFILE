@@ -133,13 +133,26 @@ public class HeeUserResource {
       throws URISyntaxException {
     log.debug("REST request to update HeeUser : {}", heeUserDTO);
 
-    Optional<HeeUser> dbHeeUser = heeUserRepository.findById(heeUserDTO.getName());
-    if (dbHeeUser.isEmpty()) {
+    List<HeeUser> matchingUsersDb = heeUserRepository.findByNameIgnoreCase(heeUserDTO.getName());
+
+    if (matchingUsersDb.isEmpty()) {
       return createHeeUser(heeUserDTO);
     }
+
+    if (matchingUsersDb.size() > 1) {
+      throw new IllegalStateException(
+          "Multiple users found matching username ignoring case: "
+          + heeUserDTO.getName());
+    }
+
+    HeeUser dbHeeUser = matchingUsersDb.get(0);
+    String existingUserName = dbHeeUser.getName();
+    heeUserDTO.setName(existingUserName);
+
     HeeUser heeUser = heeUserMapper.heeUserDTOToHeeUser(heeUserDTO);
+
     //Validate
-    validateHeeUser(heeUser, dbHeeUser.get());
+    validateHeeUser(heeUser, dbHeeUser);
 
     //fix bi directional link to trusts
     heeUser.getAssociatedTrusts().forEach(a -> a.setHeeUser(heeUser));
