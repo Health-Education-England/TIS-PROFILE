@@ -58,6 +58,8 @@ public class HeeUserResourceInt2Test {
   private static final String TESTNAME_2 = "TESTNAME2@hee.nhs.uk";
   private static final String EXISTING_EMAIL = "existing@nhs.net";
   private static final String DIFFERENT_EMAIL = "different@nhs.net";
+  private static final String EXISTING_EMAIL_1 = "A.B23@nhs.net";
+  private static final String REQUEST_EMAIL = "a.b23@nhs.net";
   private static final String UPDATED_FIRSTNAME = "UpdatedFirst";
   private static final String EXISTING_USERNAME = "A.B23@nhs.net";
   private static final String REQUEST_USERNAME = "a.b23@nhs.net";
@@ -428,5 +430,54 @@ public class HeeUserResourceInt2Test {
         .contentType(MediaType.APPLICATION_JSON)
         .content(TestUtil.convertObjectToJsonBytes(requestDto)))
       .andExpect(status().isInternalServerError());
+  }
+
+  @Test
+  public void updateHeeUserWithEmailDifferentCaseShouldSucceed() throws Exception {
+    HeeUser existingUser = new HeeUser();
+    existingUser.setName(EXISTING_USERNAME);
+    existingUser.setEmailAddress(EXISTING_EMAIL_1);
+    existingUser.setAssociatedTrusts(new HashSet<>());
+    existingUser.setAssociatedProgrammes(new HashSet<>());
+
+    HeeUserDTO requestDto = new HeeUserDTO();
+    requestDto.setName(REQUEST_USERNAME);
+    requestDto.setEmailAddress(REQUEST_EMAIL);
+    requestDto.setFirstName(UPDATED_FIRSTNAME);
+    requestDto.setAssociatedTrusts(new HashSet<>());
+    requestDto.setAssociatedProgrammes(new HashSet<>());
+
+    HeeUser mappedUser = new HeeUser();
+    mappedUser.setName(EXISTING_USERNAME);
+    mappedUser.setEmailAddress(REQUEST_EMAIL);
+    mappedUser.setFirstName(UPDATED_FIRSTNAME);
+    mappedUser.setAssociatedTrusts(new HashSet<>());
+    mappedUser.setAssociatedProgrammes(new HashSet<>());
+
+    HeeUserDTO resultDto = new HeeUserDTO();
+    resultDto.setName(EXISTING_USERNAME);
+    resultDto.setEmailAddress(REQUEST_EMAIL);
+    resultDto.setFirstName(UPDATED_FIRSTNAME);
+
+    when(heeUserRepositoryMock.findByNameIgnoreCase(REQUEST_USERNAME))
+        .thenReturn(Collections.singletonList(existingUser));
+
+    when(heeUserMapperMock.heeUserDTOToHeeUser(any(HeeUserDTO.class)))
+        .thenReturn(mappedUser);
+
+    when(heeUserRepositoryMock.save(mappedUser))
+        .thenReturn(mappedUser);
+
+    when(heeUserRepositoryMock.findByNameWithTrustsAndProgrammes(EXISTING_USERNAME))
+        .thenReturn(Optional.of(mappedUser));
+
+    when(heeUserMapperMock.heeUserToHeeUserDTO(mappedUser))
+        .thenReturn(resultDto);
+
+    restHeeUserMockMvc.perform(
+            put("/api/hee-users")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(TestUtil.convertObjectToJsonBytes(requestDto)))
+      .andExpect(status().isOk());
   }
 }

@@ -1,5 +1,6 @@
 package com.transformuk.hee.tis.profile.validators;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
@@ -178,5 +179,23 @@ class HeeUserValidatorTest {
   void shouldThrowExceptionIfEmailAddressIsDifferentOnUpdate() {
     assertThrows(CustomParameterizedException.class, () ->
         testObj.validateEmailAddressMatchesExisting(DIFFERENT_EMAIL, EXISTING_EMAIL));
+  }
+
+  @Test
+  void validateEmailAddressMatchesExistingShouldIgnoreCase() {
+    String emailAddress = "a.b23@nhs.net";
+    String existingEmailAddress = "A.B23@nhs.net";
+
+    assertDoesNotThrow(() ->
+        testObj.validateEmailAddressMatchesExisting(
+            emailAddress, existingEmailAddress));
+  }
+
+  @Test
+  void validateEmailAddressMatchesExistingShouldThrowWhenEmailsAreDifferent() {
+    assertThrows(
+        CustomParameterizedException.class,
+        () -> testObj.validateEmailAddressMatchesExisting(
+            EXISTING_EMAIL, DIFFERENT_EMAIL));
   }
 }

@@ -7,8 +7,8 @@ import com.transformuk.hee.tis.profile.web.rest.errors.CustomParameterizedExcept
 import com.transformuk.hee.tis.profile.web.rest.errors.ErrorConstants;
 import com.transformuk.hee.tis.reference.api.dto.DBCDTO;
 import com.transformuk.hee.tis.reference.client.ReferenceService;
-import java.util.Objects;
 import java.util.Set;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -90,7 +90,7 @@ public class HeeUserValidator {
    */
   public void validateEmailAddressMatchesExisting(String updatedEmailAddress,
       String existingEmailAddress) {
-    if (!Objects.equals(updatedEmailAddress, existingEmailAddress)) {
+    if (!StringUtils.equalsIgnoreCase(updatedEmailAddress, existingEmailAddress)) {
       throw new CustomParameterizedException(
           "Email address does not match the existing user's email address",
           ErrorConstants.ERR_VALIDATION);
